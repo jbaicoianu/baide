@@ -313,8 +313,8 @@
     const turretRotationSpeed = 0.02;
     const cannonElevationSpeed = 0.02;
     let cannonElevation = 0;
-    const maxElevation = Math.PI / 4;
-    const minElevation = -Math.PI / 6;
+    const maxElevation = Math.PI / 2; // Up to vertical
+    const minElevation = -Math.PI / 6; // Prevent aiming too far down
 
     // Event listeners for user input
     const keysPressed = {};
@@ -351,7 +351,8 @@
 
       // Initialize trail
       snowball.trail = new THREE.BufferGeometry();
-      const trailPoints = new Float32Array(300); // 100 points max
+      const maxTrailPoints = 20; // Limit trail to last 20 points
+      const trailPoints = new Float32Array(maxTrailPoints * 3); // x, y, z for each point
       snowball.trail.setAttribute('position', new THREE.BufferAttribute(trailPoints, 3));
       snowball.trailDraw = new THREE.Line(
         snowball.trail,
@@ -400,7 +401,7 @@
 
         // Update trail
         snowball.trailPoints.push(snowball.position.clone());
-        if (snowball.trailPoints.length > 100) {
+        if (snowball.trailPoints.length > 20) { // Keep only last 20 points
           snowball.trailPoints.shift();
         }
 
