@@ -32,6 +32,8 @@
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true; // Enable shadow maps
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Optional: softer shadows
     document.body.appendChild(renderer.domElement);
 
     // Controls
@@ -44,6 +46,7 @@
     const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff }); // White snow
     const ground = new THREE.Mesh(groundGeometry, groundMaterial);
     ground.rotation.x = -Math.PI / 2;
+    ground.receiveShadow = true; // Ground receives shadows
     scene.add(ground);
 
     // Lighting
@@ -53,6 +56,17 @@
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
     dirLight.position.set(-100, 100, -100);
+    dirLight.castShadow = true; // Directional light casts shadows
+
+    // Configure shadow properties for the directional light
+    dirLight.shadow.mapSize.width = 1024;
+    dirLight.shadow.mapSize.height = 1024;
+    dirLight.shadow.camera.near = 0.5;
+    dirLight.shadow.camera.far = 500;
+    dirLight.shadow.camera.left = -100;
+    dirLight.shadow.camera.right = 100;
+    dirLight.shadow.camera.top = 100;
+    dirLight.shadow.camera.bottom = -100;
     scene.add(dirLight);
 
     // Function to create a tree
@@ -64,6 +78,7 @@
       const trunkMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
       const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
       trunk.position.y = 2.5;
+      trunk.castShadow = true; // Trunk casts shadow
       tree.add(trunk);
 
       // Foliage with snow
@@ -71,6 +86,7 @@
       const foliageMaterial = new THREE.MeshLambertMaterial({ color: 0x006400 }); // Dark green
       const foliage = new THREE.Mesh(foliageGeometry, foliageMaterial);
       foliage.position.y = 7;
+      foliage.castShadow = true; // Foliage casts shadow
       tree.add(foliage);
 
       // Snow on foliage
@@ -84,6 +100,7 @@
           (Math.random() - 0.5) * 3
         );
         snow.rotation.y = Math.random() * Math.PI;
+        snow.castShadow = true; // Snow cones cast shadows
         tree.add(snow);
       }
 
@@ -107,6 +124,8 @@
     const houseMaterial = new THREE.MeshLambertMaterial({ color: 0xfff5ee }); // Seashell color
     const houseBase = new THREE.Mesh(houseGeometry, houseMaterial);
     houseBase.position.y = 3;
+    houseBase.castShadow = true; // House base casts shadow
+    houseBase.receiveShadow = true; // House base receives shadow
     house.add(houseBase);
 
     // Roof with snow
@@ -115,6 +134,7 @@
     const roof = new THREE.Mesh(roofGeometry, roofMaterial);
     roof.rotation.y = Math.PI / 4;
     roof.position.y = 6;
+    roof.castShadow = true; // Roof casts shadow
     house.add(roof);
 
     // Snow on roof
@@ -123,6 +143,7 @@
     const snowRoof = new THREE.Mesh(snowRoofGeometry, snowRoofMaterial);
     snowRoof.rotation.y = Math.PI / 4;
     snowRoof.position.y = 6.25;
+    snowRoof.castShadow = true; // Snow on roof casts shadow
     house.add(snowRoof);
 
     // Door
@@ -130,6 +151,7 @@
     const doorMaterial = new THREE.MeshLambertMaterial({ color: 0x654321 });
     const door = new THREE.Mesh(doorGeometry, doorMaterial);
     door.position.set(0, 1.5, 5.05);
+    door.castShadow = true; // Door casts shadow
     house.add(door);
 
     // Windows with ice
@@ -137,6 +159,7 @@
     const windowMaterial = new THREE.MeshLambertMaterial({ color: 0xd3d3d3 }); // Light gray for ice
     const window1 = new THREE.Mesh(windowGeometry, windowMaterial);
     window1.position.set(-3, 3, 5.05);
+    window1.receiveShadow = true; // Windows receive shadow
     house.add(window1);
 
     const window2 = window1.clone();
@@ -155,18 +178,21 @@
       const bottomMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
       const bottom = new THREE.Mesh(bottomGeometry, bottomMaterial);
       bottom.position.y = 2;
+      bottom.castShadow = true; // Bottom sphere casts shadow
       snowman.add(bottom);
 
       // Middle sphere
       const middleGeometry = new THREE.SphereGeometry(1.5, 32, 32);
       const middle = new THREE.Mesh(middleGeometry, bottomMaterial);
       middle.position.y = 4;
+      middle.castShadow = true; // Middle sphere casts shadow
       snowman.add(middle);
 
       // Head sphere
       const headGeometry = new THREE.SphereGeometry(1, 32, 32);
       const head = new THREE.Mesh(headGeometry, bottomMaterial);
       head.position.y = 5.5;
+      head.castShadow = true; // Head casts shadow
       snowman.add(head);
 
       // Eyes
@@ -174,6 +200,7 @@
       const eyeMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
       const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
       leftEye.position.set(-0.3, 5.6, 0.9);
+      leftEye.castShadow = true; // Eyes cast shadow
       snowman.add(leftEye);
 
       const rightEye = leftEye.clone();
@@ -186,12 +213,14 @@
       const nose = new THREE.Mesh(noseGeometry, noseMaterial);
       nose.position.set(0, 5.5, 1);
       nose.rotation.x = Math.PI / 2;
+      nose.castShadow = true; // Nose casts shadow
       snowman.add(nose);
 
       // Buttons
       for (let i = 0; i < 3; i++) {
         const button = new THREE.Mesh(eyeGeometry, eyeMaterial);
         button.position.set(0, 4.5 - i * 0.7, 1.4);
+        button.castShadow = true; // Buttons cast shadow
         snowman.add(button);
       }
 
@@ -202,6 +231,7 @@
       const leftArm = new THREE.Mesh(armGeometry, armMaterial);
       leftArm.position.set(-1.5, 4.5, 0.5);
       leftArm.rotation.z = Math.PI / 4;
+      leftArm.castShadow = true; // Arms cast shadow
       snowman.add(leftArm);
 
       const rightArm = leftArm.clone();
@@ -226,18 +256,21 @@
       const bodyMaterial = new THREE.MeshLambertMaterial({ color: 0x8B4513 }); // Saddle brown
       const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
       body.position.y = 1;
+      body.castShadow = true; // Body casts shadow
       squirrel.add(body);
 
       // Head
       const headGeometry = new THREE.SphereGeometry(0.3, 16, 16);
       const head = new THREE.Mesh(headGeometry, bodyMaterial);
       head.position.set(0.7, 1.2, 0);
+      head.castShadow = true; // Head casts shadow
       squirrel.add(head);
 
       // Ears
       const earGeometry = new THREE.SphereGeometry(0.1, 8, 8);
       const ear = new THREE.Mesh(earGeometry, bodyMaterial);
       ear.position.set(0.85, 1.4, 0.1);
+      ear.castShadow = true; // Ears cast shadow
       squirrel.add(ear);
 
       const ear2 = ear.clone();
@@ -250,6 +283,7 @@
       const tail = new THREE.Mesh(tailGeometry, tailMaterial);
       tail.rotation.x = Math.PI / 2;
       tail.position.set(-0.3, 1, 0);
+      tail.castShadow = true; // Tail casts shadow
       squirrel.add(tail);
 
       // Position the squirrel
@@ -274,6 +308,8 @@
           Math.random() * 200 - 100
         );
         snowflake.velocity = Math.random() * 0.5;
+        snowflake.castShadow = false; // For performance, snowflakes do not cast shadows
+        snowflake.receiveShadow = false; // Snowflakes do not receive shadows
         scene.add(snowflake);
         snowflakes.push(snowflake);
       }
@@ -288,6 +324,8 @@
     const turretBaseGeometry = new THREE.CylinderGeometry(1.5, 1.5, 1, 32);
     const turretBaseMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
     const turretBase = new THREE.Mesh(turretBaseGeometry, turretBaseMaterial);
+    turretBase.castShadow = true; // Turret base casts shadow
+    turretBase.receiveShadow = true; // Turret base receives shadow
     turret.add(turretBase);
 
     // Rotating part of the turret
@@ -295,6 +333,8 @@
     const turretTopMaterial = new THREE.MeshLambertMaterial({ color: 0x555555 });
     const turretTop = new THREE.Mesh(turretTopGeometry, turretTopMaterial);
     turretTop.position.y = 1;
+    turretTop.castShadow = true; // Turret top casts shadow
+    turretTop.receiveShadow = true; // Turret top receives shadow
     turret.add(turretTop);
 
     // Cannon of the turret
@@ -303,6 +343,7 @@
     const cannon = new THREE.Mesh(cannonGeometry, cannonMaterial);
     cannon.position.set(0, 0.75, 1.5);
     cannon.rotation.x = Math.PI / 6;
+    cannon.castShadow = true; // Cannon casts shadow
     turretTop.add(cannon);
 
     // Position the turret near the house
@@ -361,6 +402,8 @@
       snowball.trailPoints = [];
       scene.add(snowball.trailDraw);
 
+      snowball.castShadow = true; // Snowball casts shadow
+      snowball.receiveShadow = true; // Snowball receives shadow
       scene.add(snowball);
       snowballs.push(snowball);
     }
