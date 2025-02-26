@@ -349,6 +349,17 @@
       const speed = 1;
       snowball.velocity = cannonDirection.multiplyScalar(speed);
 
+      // Initialize trail
+      snowball.trail = new THREE.BufferGeometry();
+      const trailPoints = new Float32Array(300); // 100 points max
+      snowball.trail.setAttribute('position', new THREE.BufferAttribute(trailPoints, 3));
+      snowball.trailDraw = new THREE.Line(
+        snowball.trail,
+        new THREE.LineBasicMaterial({ color: 0x888888, transparent: true, opacity: 0.6 })
+      );
+      snowball.trailPoints = [];
+      scene.add(snowball.trailDraw);
+
       scene.add(snowball);
       snowballs.push(snowball);
     }
@@ -387,8 +398,25 @@
         // Update position
         snowball.position.add(snowball.velocity);
 
+        // Update trail
+        snowball.trailPoints.push(snowball.position.clone());
+        if (snowball.trailPoints.length > 100) {
+          snowball.trailPoints.shift();
+        }
+
+        // Update trail geometry
+        const positions = snowball.trail.attributes.position.array;
+        for (let j = 0; j < snowball.trailPoints.length; j++) {
+          positions[j * 3] = snowball.trailPoints[j].x;
+          positions[j * 3 + 1] = snowball.trailPoints[j].y;
+          positions[j * 3 + 2] = snowball.trailPoints[j].z;
+        }
+        snowball.trail.setDrawRange(0, snowball.trailPoints.length);
+        snowball.trail.attributes.position.needsUpdate = true;
+
         // Remove snowball if it hits the ground or goes too far
         if (snowball.position.y <= 0 || snowball.position.length() > 200) {
+          scene.remove(snowball.trailDraw);
           scene.remove(snowball);
           snowballs.splice(i, 1);
         }
@@ -412,7 +440,7 @@
       // Update turret based on input
       updateTurret();
 
-      // Update snowballs with physics
+      // Update snowballs with physics and trails
       updateSnowballs();
 
       renderer.render(scene, camera);
