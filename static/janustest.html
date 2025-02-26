@@ -44,7 +44,7 @@
   </assets>
   <room onload="defineElements()">
     <!-- Court Floor -->
-    <object js_id="floor" id="cube" scale="28.7 0.1 15.2" rotation="0 90 0" image_id="court-texture" col="white" collision_id="cube" />
+    <object js_id="floor" id="cube" scale="15.2 0.1 28.7" rotation="0 0 0" image_id="court-texture" col="white" collision_id="cube" />
 
     <!-- Additional Floor Below the Court -->
     <object js_id="additional-floor" id="cube" scale="15.2 0.1 28.7" position="0 -0.1 0" col="#808080" collision_id="cube" />
@@ -79,6 +79,10 @@
 
     <object js_id="right-corner-left" id="cube" position="7.5 0.05 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
     <object js_id="right-corner-right" id="cube" position="7.5 0.05 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
+
+    <!-- Hoops at Respective Ends -->
+    <basketball-hoop pos="0 0 -13" rotation="0 0 0" />
+    <basketball-hoop pos="0 0 13" rotation="0 180 0" />
   </room>
 </janus-viewer>
 </body>
