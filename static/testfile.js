@@ -33,7 +33,7 @@
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true; // Enable shadow maps
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Optional: softer shadows
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
     document.body.appendChild(renderer.domElement);
 
     // Controls
@@ -55,21 +55,20 @@
     scene.add(hemiLight);
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-    dirLight.position.set(0, 100, 0); // Moved to the center-top of the scene
+    dirLight.position.set(0, 100, 0); // Positioned at the center-top of the scene
     dirLight.castShadow = true; // Directional light casts shadows
 
     // Configure shadow properties for the directional light
-    dirLight.shadow.mapSize.width = 2048; // Increased shadow map size for better quality
-    dirLight.shadow.mapSize.height = 2048;
+    dirLight.shadow.mapSize.width = 4096; // Increased shadow map size for higher quality
+    dirLight.shadow.mapSize.height = 4096;
     dirLight.shadow.camera.near = 0.5;
     dirLight.shadow.camera.far = 500;
 
-    // Adjust shadow camera to tightly fit the scene
-    const shadowCamSize = 100;
-    dirLight.shadow.camera.left = -shadowCamSize;
-    dirLight.shadow.camera.right = shadowCamSize;
-    dirLight.shadow.camera.top = shadowCamSize;
-    dirLight.shadow.camera.bottom = -shadowCamSize;
+    // Expand the shadow camera to cover the entire scene
+    dirLight.shadow.camera.left = -150;
+    dirLight.shadow.camera.right = 150;
+    dirLight.shadow.camera.top = 150;
+    dirLight.shadow.camera.bottom = -150;
 
     // Optional: Add a bias to reduce shadow artifacts
     dirLight.shadow.bias = -0.0001;
