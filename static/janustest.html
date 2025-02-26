@@ -36,9 +36,12 @@
   }
 </script>
 <janus-viewer>
+  <asset>
+    <assetimage id="court-texture" src="https://static.vecteezy.com/system/resources/previews/036/080/518/non_2x/basketball-court-floor-with-line-on-wood-texture-background-illustration-vector.jpg" />
+  </asset>
   <room onload="defineElements()">
     <!-- Floor -->
-    <object js_id="floor" id="cube" scale="15.2 0.1 28.7" col="#dfbb85" />
+    <object js_id="floor" id="cube" scale="15.2 0.1 28.7" image_id="court-texture" col="white" />
 
     <!-- Midcourt Line -->
     <object js_id="midcourt-line" id="plane" position="0 0.05 0" rotation="0 0 0" scale="15.2 0.05 0.1" col="#FFFFFF" />
