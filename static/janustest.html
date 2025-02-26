@@ -3,6 +3,7 @@
 <script src="https://web.janusxr.org/1.5.53/janusweb.js"></script>
 <script>
   function defineElements() {
+    // Register basketball-hoop element
     janus.registerElement('basketball-hoop', {
       create() {
         // Create rim using torus, positioned near the bottom of the backboard
@@ -36,6 +37,27 @@
         // Code to run every frame
       }
     });
+
+    // Register basketball-stands element
+    janus.registerElement('basketball-stands', {
+      create() {
+        const length = parseFloat(this.getAttribute('length')) || 5; // Default length
+        const rows = parseInt(this.getAttribute('rows')) || 5; // Default rows
+
+        for (let i = 0; i < rows; i++) {
+          this.createObject('object', { 
+            id: `bench_row_${i}`, 
+            scale: `${length} 0.01 1`, // length x, height y, depth z
+            position: `${0} ${0.01 * i} ${i * 1.2}`, // stagger benches slightly forward
+            col: '#8B4513', // Saddle Brown for benches
+            collision_id: 'cube'
+          });
+        }
+      },
+      update(dt) {
+        // Code to run every frame if needed
+      }
+    });
   }
 </script>
 <janus-viewer>
@@ -47,19 +69,19 @@
     <object js_id="floor" id="cube" scale="28.7 0.1 15.2" rotation="0 90 0" image_id="court-texture" col="white" collision_id="cube" />
 
     <!-- Additional Floor Below the Court -->
-    <object js_id="additional-floor" id="cube" scale="31.2 .1 44.7" position="0 -0.1 0" col="#808080" collision_id="cube" />
+    <object js_id="additional-floor" id="cube" scale="15.2 0.1 28.7" position="0 -0.1 0" col="#808080" collision_id="cube" />
 
     <!-- Front Wall -->
-    <object js_id="front_wall" id="cube" scale="31.2 5 0.5" position="0 2.5 -22.35" col="#A9A9A9" collision_id="cube" />
+    <object js_id="front_wall" id="cube" scale="15.2 5 0.5" position="0 2.5 -14.35" col="#A9A9A9" collision_id="cube" />
 
     <!-- Back Wall -->
-    <object js_id="back_wall" id="cube" scale="31.2 5 0.5" position="0 2.5 22.35" col="#A9A9A9" collision_id="cube" />
+    <object js_id="back_wall" id="cube" scale="15.2 5 0.5" position="0 2.5 14.35" col="#A9A9A9" collision_id="cube" />
 
     <!-- Left Wall -->
-    <object js_id="left_wall" id="cube" scale="0.5 5 44.7" position="-15.6 2.5 0" col="#A9A9A9" collision_id="cube" />
+    <object js_id="left_wall" id="cube" scale="0.5 5 28.7" position="-7.6 2.5 0" col="#A9A9A9" collision_id="cube" />
 
     <!-- Right Wall -->
-    <object js_id="right_wall" id="cube" scale="0.5 5 44.7" position="15.6 2.5 0" col="#A9A9A9" collision_id="cube" />
+    <object js_id="right_wall" id="cube" scale="0.5 5 28.7" position="7.6 2.5 0" col="#A9A9A9" collision_id="cube" />
 
     <!-- Left Stand Front -->
     <object js_id="left_stand_front" id="cube" scale="3 1 2" position="-10 0.5 -7" col="#A9A9A9" collision_id="cube" />
@@ -83,6 +105,10 @@
     <!-- Hoops at Respective Ends -->
     <basketball-hoop pos="0 0 -13" rotation="0 0 0" />
     <basketball-hoop pos="0 0 13" rotation="0 180 0" />
+
+    <!-- Basketball Stands -->
+    <basketball-stands length="5" rows="5" position="-10 0 -7" />
+    <basketball-stands length="5" rows="5" position="10 0 7" />
   </room>
 </janus-viewer>
 </body>
