@@ -7,12 +7,21 @@
     body { margin: 0; overflow: hidden; }
     canvas { display: block; }
   </style>
+  <!-- Import Map -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.153.0/build/three.module.js",
+      "OrbitControls": "https://unpkg.com/three@0.153.0/examples/jsm/controls/OrbitControls.js"
+    }
+  }
+  </script>
 </head>
 <body>
   <!-- Import Three.js and OrbitControls as modules -->
   <script type="module">
-    import * as THREE from 'https://unpkg.com/three@0.153.0/build/three.module.js';
-    import { OrbitControls } from 'https://unpkg.com/three@0.153.0/examples/jsm/controls/OrbitControls.js';
+    import * as THREE from 'three';
+    import { OrbitControls } from 'OrbitControls';
 
     // Scene, Camera, Renderer
     const scene = new THREE.Scene();
