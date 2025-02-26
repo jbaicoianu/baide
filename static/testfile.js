@@ -55,18 +55,25 @@
     scene.add(hemiLight);
 
     const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-    dirLight.position.set(-100, 100, -100);
+    dirLight.position.set(0, 100, 0); // Moved to the center-top of the scene
     dirLight.castShadow = true; // Directional light casts shadows
 
     // Configure shadow properties for the directional light
-    dirLight.shadow.mapSize.width = 1024;
-    dirLight.shadow.mapSize.height = 1024;
+    dirLight.shadow.mapSize.width = 2048; // Increased shadow map size for better quality
+    dirLight.shadow.mapSize.height = 2048;
     dirLight.shadow.camera.near = 0.5;
     dirLight.shadow.camera.far = 500;
-    dirLight.shadow.camera.left = -100;
-    dirLight.shadow.camera.right = 100;
-    dirLight.shadow.camera.top = 100;
-    dirLight.shadow.camera.bottom = -100;
+
+    // Adjust shadow camera to tightly fit the scene
+    const shadowCamSize = 100;
+    dirLight.shadow.camera.left = -shadowCamSize;
+    dirLight.shadow.camera.right = shadowCamSize;
+    dirLight.shadow.camera.top = shadowCamSize;
+    dirLight.shadow.camera.bottom = -shadowCamSize;
+
+    // Optional: Add a bias to reduce shadow artifacts
+    dirLight.shadow.bias = -0.0001;
+
     scene.add(dirLight);
 
     // Function to create a tree
