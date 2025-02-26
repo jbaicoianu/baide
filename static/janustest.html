@@ -5,7 +5,7 @@
   function defineElements() {
     janus.registerElement('basketball-hoop', {
       create() {
-        // Create rim using torus, positioned closer to the bottom of the backboard
+        // Create rim using torus, positioned near the bottom of the backboard
         this.rim = this.createObject('object', { 
           id: 'torus', 
           pos: "0 3.05 0", 
@@ -14,10 +14,10 @@
           rotation: "90 0 0", 
           geometry: { tube: 0.05, segments: 16 } 
         });
-        // Create backboard with 6 feet width (1.8288 meters)
+        // Create backboard with 6 feet width (1.8288 meters), positioned above the rim
         this.backboard = this.createObject('object', { 
           id: 'cube', 
-          pos: "0 3 0", 
+          pos: "0 3.585 0", 
           scale: "1.8288 1.07 0.05", 
           col: 'white' 
         });
@@ -25,7 +25,7 @@
         this.pole = this.createObject('object', { 
           id: 'cylinder', 
           pos: "0 0 0", 
-          scale: "0.05 3 0.05", 
+          scale: "0.05 3.05 0.05", 
           col: 'gray' 
         });
       },
@@ -44,10 +44,10 @@
     <object js_id="midcourt-line" id="plane" position="0 0.05 0" rotation="0 0 0" scale="15.2 0.05 0.1" col="#FFFFFF" />
 
     <!-- Left Basket (Center of End) -->
-    <basketball-hoop pos="0 0 -13" rotation="0 0 0" />
+    <basketball-hoop pos="-7 0 -13" rotation="0 0 0" />
 
     <!-- Right Basket (Center of End) -->
-    <basketball-hoop pos="0 0 13" rotation="0 180 0" />
+    <basketball-hoop pos="7 0 13" rotation="0 180 0" />
 
     <!-- Free Throw Lines -->
     <object js_id="left-free-throw-line" id="plane" position="-5 0.05 0" rotation="0 0 0" scale="0.05 0.05 5" col="#FFFFFF" />
