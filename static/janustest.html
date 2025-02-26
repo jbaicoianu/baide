@@ -46,9 +46,9 @@
         for (let i = 0; i < this.rows; i++) {
           this.createObject('object', { 
             id: 'cube', 
-            scale: `${this.length} 0.5 0.25`, // length x, height y, depth z
-            position: `0 0.25 ${i * 0.25}`, // y=0.25m to sit on ground, z spaced by 0.25m
-            col: '#8B4513', // Saddle Brown for benches
+            scale: `${this.length} 0.01 0.25`, // length x, height y, depth z
+            position: `0 0 ${i * 0.5}`,         // z spacing of 0.5m between benches
+            col: '#8B4513',                    // Saddle Brown for benches
             collision_id: 'cube'
           });
         }
