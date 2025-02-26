@@ -23,57 +23,68 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'OrbitControls';
 
-    // Scene, Camera, Renderer
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xb0c4de); // Light steel blue sky
+    // Create a container object to hold all Three.js objects
+    const THREEObjects = {};
 
-    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(50, 50, 50);
+    // Scene
+    THREEObjects.scene = new THREE.Scene();
+    THREEObjects.scene.background = new THREE.Color(0xb0c4de); // Light steel blue sky
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true; // Enable shadow maps
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
-    document.body.appendChild(renderer.domElement);
+    // Camera
+    THREEObjects.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    THREEObjects.camera.position.set(50, 50, 50);
+
+    // Renderer
+    THREEObjects.renderer = new THREE.WebGLRenderer({ antialias: true });
+    THREEObjects.renderer.setSize(window.innerWidth, window.innerHeight);
+    THREEObjects.renderer.shadowMap.enabled = true; // Enable shadow maps
+    THREEObjects.renderer.shadowMap.type = THREE.PCFSoftShadowMap; // Softer shadows
+    document.body.appendChild(THREEObjects.renderer.domElement);
 
     // Controls
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.target.set(0, 5, 0);
-    controls.update();
+    THREEObjects.controls = new OrbitControls(THREEObjects.camera, THREEObjects.renderer.domElement);
+    THREEObjects.controls.target.set(0, 5, 0);
+    THREEObjects.controls.update();
 
     // Ground
     const groundGeometry = new THREE.PlaneGeometry(200, 200);
     const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff }); // White snow
-    const ground = new THREE.Mesh(groundGeometry, groundMaterial);
-    ground.rotation.x = -Math.PI / 2;
-    ground.receiveShadow = true; // Ground receives shadows
-    scene.add(ground);
+    THREEObjects.ground = new THREE.Mesh(groundGeometry, groundMaterial);
+    THREEObjects.ground.rotation.x = -Math.PI / 2;
+    THREEObjects.ground.receiveShadow = true; // Ground receives shadows
+    THREEObjects.scene.add(THREEObjects.ground);
 
-    // Lighting
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
-    hemiLight.position.set(0, 200, 0);
-    scene.add(hemiLight);
+    // Hemisphere Light
+    THREEObjects.hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
+    THREEObjects.hemiLight.position.set(0, 200, 0);
+    THREEObjects.scene.add(THREEObjects.hemiLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-    dirLight.position.set(0, 100, 0); // Positioned at the center-top of the scene
-    dirLight.castShadow = true; // Directional light casts shadows
+    // Directional Light
+    THREEObjects.dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    THREEObjects.dirLight.position.set(0, 100, 0); // Positioned at the center-top of the scene
+    THREEObjects.dirLight.castShadow = true; // Directional light casts shadows
 
     // Configure shadow properties for the directional light
-    dirLight.shadow.mapSize.width = 4096; // Increased shadow map size for higher quality
-    dirLight.shadow.mapSize.height = 4096;
-    dirLight.shadow.camera.near = 0.5;
-    dirLight.shadow.camera.far = 500;
+    THREEObjects.dirLight.shadow.mapSize.width = 4096; // Increased shadow map size for higher quality
+    THREEObjects.dirLight.shadow.mapSize.height = 4096;
+    THREEObjects.dirLight.shadow.camera.near = 0.5;
+    THREEObjects.dirLight.shadow.camera.far = 500;
 
     // Expand the shadow camera to cover the entire scene
-    dirLight.shadow.camera.left = -150;
-    dirLight.shadow.camera.right = 150;
-    dirLight.shadow.camera.top = 150;
-    dirLight.shadow.camera.bottom = -150;
+    const shadowCamSize = 150;
+    THREEObjects.dirLight.shadow.camera.left = -shadowCamSize;
+    THREEObjects.dirLight.shadow.camera.right = shadowCamSize;
+    THREEObjects.dirLight.shadow.camera.top = shadowCamSize;
+    THREEObjects.dirLight.shadow.camera.bottom = -shadowCamSize;
 
     // Optional: Add a bias to reduce shadow artifacts
-    dirLight.shadow.bias = -0.0001;
+    THREEObjects.dirLight.shadow.bias = -0.0001;
 
-    scene.add(dirLight);
+    THREEObjects.scene.add(THREEObjects.dirLight);
+
+    // Add LightHelper for the directional light
+    THREEObjects.dirLightHelper = new THREE.DirectionalLightHelper(THREEObjects.dirLight, 10, 0xff0000);
+    THREEObjects.scene.add(THREEObjects.dirLightHelper);
 
     // Function to create a tree
     function createTree(x, z) {
@@ -112,7 +123,7 @@
 
       // Position the tree
       tree.position.set(x, 0, z);
-      scene.add(tree);
+      THREEObjects.scene.add(tree);
     }
 
     // Create multiple trees
@@ -173,7 +184,7 @@
     house.add(window2);
 
     house.position.set(0, 0, 0);
-    scene.add(house);
+    THREEObjects.scene.add(house);
 
     // Function to create a snowman
     function createSnowman(x, z) {
@@ -247,7 +258,7 @@
 
       // Position the snowman
       snowman.position.set(x, 0, z);
-      scene.add(snowman);
+      THREEObjects.scene.add(snowman);
     }
 
     // Create a snowman in front of the house
@@ -294,14 +305,14 @@
 
       // Position the squirrel
       squirrel.position.set(x, 0, z);
-      scene.add(squirrel);
+      THREEObjects.scene.add(squirrel);
     }
 
     // Create a squirrel on a tree
     createSquirrel(-20, -20);
 
     // Function to animate snowflakes
-    const snowflakes = [];
+    THREEObjects.snowflakes = [];
     const snowGeometry = new THREE.SphereGeometry(0.05, 8, 8);
     const snowMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
 
@@ -316,8 +327,8 @@
         snowflake.velocity = Math.random() * 0.5;
         snowflake.castShadow = false; // For performance, snowflakes do not cast shadows
         snowflake.receiveShadow = false; // Snowflakes do not receive shadows
-        scene.add(snowflake);
-        snowflakes.push(snowflake);
+        THREEObjects.scene.add(snowflake);
+        THREEObjects.snowflakes.push(snowflake);
       }
     }
 
@@ -354,7 +365,10 @@
 
     // Position the turret near the house
     turret.position.set(-15, 0, -15);
-    scene.add(turret);
+    THREEObjects.scene.add(turret);
+
+    // Add turret to the global object
+    THREEObjects.turret = turret;
 
     // Variables for turret control
     const turretRotationSpeed = 0.02;
@@ -406,11 +420,11 @@
         new THREE.LineBasicMaterial({ color: 0x888888, transparent: true, opacity: 0.6 })
       );
       snowball.trailPoints = [];
-      scene.add(snowball.trailDraw);
+      THREEObjects.scene.add(snowball.trailDraw);
 
       snowball.castShadow = true; // Snowball casts shadow
       snowball.receiveShadow = true; // Snowball receives shadow
-      scene.add(snowball);
+      THREEObjects.scene.add(snowball);
       snowballs.push(snowball);
     }
 
@@ -466,19 +480,19 @@
 
         // Remove snowball if it hits the ground or goes too far
         if (snowball.position.y <= 0 || snowball.position.length() > 200) {
-          scene.remove(snowball.trailDraw);
-          scene.remove(snowball);
+          THREEObjects.scene.remove(snowball.trailDraw);
+          THREEObjects.scene.remove(snowball);
           snowballs.splice(i, 1);
         }
       }
     }
 
-    // Animation
+    // Animation loop
     function animate() {
       requestAnimationFrame(animate);
 
       // Animate snowflakes
-      snowflakes.forEach(flake => {
+      THREEObjects.snowflakes.forEach(flake => {
         flake.position.y -= flake.velocity;
         if (flake.position.y < 0) {
           flake.position.y = 100;
@@ -493,7 +507,7 @@
       // Update snowballs with physics and trails
       updateSnowballs();
 
-      renderer.render(scene, camera);
+      THREEObjects.renderer.render(THREEObjects.scene, THREEObjects.camera);
     }
 
     animate();
@@ -502,10 +516,13 @@
     window.addEventListener('resize', function() {
       const width = window.innerWidth;
       const height = window.innerHeight;
-      renderer.setSize(width, height);
-      camera.aspect = width / height;
-      camera.updateProjectionMatrix();
+      THREEObjects.renderer.setSize(width, height);
+      THREEObjects.camera.aspect = width / height;
+      THREEObjects.camera.updateProjectionMatrix();
     });
+
+    // Make all Three.js objects accessible globally
+    window.scene = THREEObjects;
   </script>
 </body>
 </html>
