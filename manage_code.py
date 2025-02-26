@@ -4,7 +4,7 @@ import re
 import argparse
 import subprocess
 import difflib
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template_string, send_from_directory
 import openai
 
 # Instantiate an OpenAI client with your API key.
@@ -102,6 +102,11 @@ def build_messages(system_prompt, conversation, model):
     return messages
 
 app = Flask(__name__)
+
+# Route to serve static files from the static/ directory.
+@app.route("/static/<path:filename>")
+def serve_static(filename):
+    return send_from_directory("static", filename)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
