@@ -1,0 +1,38 @@
+<html>
+<body>
+<script src="https://web.janusxr.org/1.5.53/janusweb.js"></script>
+<janus-viewer>
+  <room>
+    <!-- Floor -->
+    <object js_id="floor" id="cube" scale="15.2 0.1 28.7" col="#dfbb85" />
+
+    <!-- Midcourt Line -->
+    <object js_id="midcourt-line" id="plane" position="0 0.1 0" rotation="0 0 0" scale="15.2 0.1 0.05" col="#FFFFFF" />
+
+    <!-- Left Basket -->
+    <object js_id="left-basket-backboard" id="cube" position="-7 1.5 -13" rotation="0 90 0" scale="0.1 2 4" col="#000000" />
+    <object js_id="left-basket-rim" id="cylinder" position="-7 3 -13" rotation="90 0 0" scale="0.5 0.1 0.5" col="#FF0000" />
+
+    <!-- Right Basket -->
+    <object js_id="right-basket-backboard" id="cube" position="7 1.5 13" rotation="0 -90 0" scale="0.1 2 4" col="#000000" />
+    <object js_id="right-basket-rim" id="cylinder" position="7 3 13" rotation="90 0 0" scale="0.5 0.1 0.5" col="#FF0000" />
+
+    <!-- Free Throw Lines -->
+    <object js_id="left-free-throw-line" id="plane" position="-5 0.1 0" rotation="0 0 0" scale="0.05 0.1 5" col="#FFFFFF" />
+    <object js_id="right-free-throw-line" id="plane" position="5 0.1 0" rotation="0 180 0" scale="0.05 0.1 5" col="#FFFFFF" />
+
+    <!-- Three-Point Arcs -->
+    <!-- Left Side -->
+    <object js_id="left-three-point-arc" id="pipe" position="-7 0.1 0" rotation="0 0 0" scale="1 1 1" col="#FFFFFF" radius="6" length="0.1" />
+    <!-- Right Side -->
+    <object js_id="right-three-point-arc" id="pipe" position="7 0.1 0" rotation="0 180 0" scale="1 1 1" col="#FFFFFF" radius="6" length="0.1" />
+
+    <!-- Corner Markers -->
+    <object js_id="left-corner-left" id="cube" position="-7.5 0.1 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
+    <object js_id="left-corner-right" id="cube" position="-7.5 0.1 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
+    <object js_id="right-corner-left" id="cube" position="7.5 0.1 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
+    <object js_id="right-corner-right" id="cube" position="7.5 0.1 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
+  </room>
+</janus-viewer>
+</body>
+</html>
