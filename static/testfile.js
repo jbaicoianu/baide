@@ -334,7 +334,7 @@
     // Function to shoot a snowball
     const snowballs = [];
     const snowballGeometry = new THREE.SphereGeometry(0.2, 8, 8);
-    const snowballMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+    const snowballMaterial = new THREE.MeshLambertMaterial({ color: 0xcccccc }); // Slightly grayish
 
     function shootSnowball() {
       const snowball = new THREE.Mesh(snowballGeometry, snowballMaterial);
@@ -382,10 +382,13 @@
     function updateSnowballs() {
       for (let i = snowballs.length - 1; i >= 0; i--) {
         const snowball = snowballs[i];
+        // Apply gravity
+        snowball.velocity.add(new THREE.Vector3(0, -0.01, 0)); // gravity acceleration
+        // Update position
         snowball.position.add(snowball.velocity);
 
-        // Remove snowball if it goes below ground or too far
-        if (snowball.position.y < 0 || snowball.position.length() > 200) {
+        // Remove snowball if it hits the ground or goes too far
+        if (snowball.position.y <= 0 || snowball.position.length() > 200) {
           scene.remove(snowball);
           snowballs.splice(i, 1);
         }
@@ -409,7 +412,7 @@
       // Update turret based on input
       updateTurret();
 
-      // Update snowballs
+      // Update snowballs with physics
       updateSnowballs();
 
       renderer.render(scene, camera);
