@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import os
 import re
+import json
 import argparse
 import subprocess
 import difflib
@@ -14,7 +15,7 @@ client = openai.Client(api_key=API_KEY)
 # Global variable for the file we are managing.
 SOURCE_FILE = None
 
-# HTML template for a simple chat interface.
+# HTML template for the chat interface.
 HTML_TEMPLATE = """
 <!doctype html>
 <html>
@@ -50,9 +51,36 @@ HTML_TEMPLATE = """
 # In-memory conversation history.
 chat_history = []
 
+def transcript_filename():
+    """Return the transcript filename based on the source file basename."""
+    base, _ = os.path.splitext(SOURCE_FILE)
+    return f"{base}-transcript.json"
+
+def load_transcript():
+    """Load the transcript from disk into chat_history, if it exists."""
+    fname = transcript_filename()
+    if os.path.exists(fname):
+        try:
+            with open(fname, "r") as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    return data
+        except Exception:
+            pass
+    return []
+
+def update_transcript():
+    """Write the current chat_history to the transcript file and commit it."""
+    fname = transcript_filename()
+    with open(fname, "w") as f:
+        json.dump(chat_history, f, indent=2)
+    # Commit the transcript update.
+    transcript_commit_msg = f"Update transcript for {os.path.basename(SOURCE_FILE)}"
+    commit_changes(fname, transcript_commit_msg)
+
 def extract_code(text):
     """
-    Extracts text enclosed in triple backticks (with an optional language hint).
+    Extracts text enclosed in triple backticks (optionally with a language hint).
     If no code block is found, returns the entire text.
     """
     match = re.search(r"```(?:\w+)?\n(.*?)```", text, re.DOTALL)
@@ -76,7 +104,7 @@ def compute_diff(old_content, new_content):
 
 def commit_changes(file_path, commit_message):
     """
-    Stages the file and commits changes to git with the provided commit message.
+    Stages the given file and commits changes to git with the provided commit message.
     """
     try:
         subprocess.run(["git", "add", file_path], check=True)
@@ -88,9 +116,8 @@ def commit_changes(file_path, commit_message):
 def build_messages(system_prompt, conversation, model):
     """
     Constructs the messages list for the API call.
-    Because the o1-mini model does not support messages with role "system",
-    we incorporate the system instructions as the first message with role "user".
-    For other models, you could use a "system" message.
+    Since the o1-mini model does not support a "system" message, we incorporate the system instructions
+    as the first message with role "user". The remaining conversation is appended normally.
     """
     messages = []
     if model == "o1-mini":
@@ -115,7 +142,7 @@ def index():
         user_input = request.form["prompt"]
         chat_history.append({"role": "User", "content": user_input})
 
-        # Determine if this is the first request (i.e. file is empty or non-existent).
+        # Determine if this is the first request (i.e. the file is empty or does not exist).
         first_request = not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0
 
         if first_request:
@@ -165,7 +192,11 @@ def index():
             else:
                 chat_history.append({"role": "Assistant", "content": "No changes detected."})
 
+        # Update and commit the transcript.
+        update_transcript()
+
         return render_template_string(HTML_TEMPLATE, history=chat_history)
+
     return render_template_string(HTML_TEMPLATE, history=chat_history)
 
 if __name__ == "__main__":
@@ -173,7 +204,13 @@ if __name__ == "__main__":
     parser.add_argument("source_file", help="Path to the project file to manage.")
     args = parser.parse_args()
     SOURCE_FILE = args.source_file
+
+    # Create the source file if it doesn't exist.
     if not os.path.exists(SOURCE_FILE):
         open(SOURCE_FILE, "w").close()
+
+    # Load existing transcript if available.
+    chat_history = load_transcript()
+
     app.run(port=5000)
 
