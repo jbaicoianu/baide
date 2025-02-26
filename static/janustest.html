@@ -40,15 +40,14 @@
 
     // Register basketball-stands element
     janus.registerElement('basketball-stands', {
+      length: 5.0, // Default length of each bench
+      rows: 5,     // Default number of bench rows
       create() {
-        const length = parseFloat(this.getAttribute('length')) || 5; // Default length
-        const rows = parseInt(this.getAttribute('rows')) || 5; // Default rows
-
-        for (let i = 0; i < rows; i++) {
+        for (let i = 0; i < this.rows; i++) {
           this.createObject('object', { 
             id: `bench_row_${i}`, 
-            scale: `${length} 0.01 1`, // length x, height y, depth z
-            position: `${0} ${0.01 * i} ${i * 1.2}`, // stagger benches slightly forward
+            scale: `${this.length} 0.01 1`, // length x, height y, depth z
+            position: `0 ${0.01 * i} ${i * 1.2}`, // stagger benches slightly forward
             col: '#8B4513', // Saddle Brown for benches
             collision_id: 'cube'
           });
@@ -107,8 +106,8 @@
     <basketball-hoop pos="0 0 13" rotation="0 180 0" />
 
     <!-- Basketball Stands -->
-    <basketball-stands length="5" rows="5" position="-10 0 -7" />
-    <basketball-stands length="5" rows="5" position="10 0 7" />
+    <basketball-stands length="5" rows="5" pos="-10 0 -7" />
+    <basketball-stands length="5" rows="5" pos="10 0 7" />
   </room>
 </janus-viewer>
 </body>
