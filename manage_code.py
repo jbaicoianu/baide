@@ -116,8 +116,9 @@ def commit_changes(file_path, commit_message):
 def build_messages(system_prompt, conversation, model):
     """
     Constructs the messages list for the API call.
-    Since the o1-mini model does not support a "system" message, we incorporate the system instructions
-    as the first message with role "user". The remaining conversation is appended normally.
+    Since the o1-mini model does not support a "system" message,
+    we incorporate the system instructions as the first message with role "user".
+    The remaining conversation is appended normally.
     """
     messages = []
     if model == "o1-mini":
@@ -142,7 +143,7 @@ def index():
         user_input = request.form["prompt"]
         chat_history.append({"role": "User", "content": user_input})
 
-        # Determine if this is the first request (i.e. the file is empty or does not exist).
+        # Determine if this is the first request (i.e. file is empty or non-existent).
         first_request = not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0
 
         if first_request:
@@ -202,7 +203,9 @@ def index():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
     parser.add_argument("source_file", help="Path to the project file to manage.")
+    parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
     args = parser.parse_args()
+
     SOURCE_FILE = args.source_file
 
     # Create the source file if it doesn't exist.
@@ -212,5 +215,5 @@ if __name__ == "__main__":
     # Load existing transcript if available.
     chat_history = load_transcript()
 
-    app.run(port=5000)
+    app.run(port=args.port)
 
