@@ -46,8 +46,8 @@
         for (let i = 0; i < this.rows; i++) {
           this.createObject('object', { 
             id: 'cube', 
-            scale: `${this.length} 0.01 0.25`, // length x, height y, depth z
-            position: `0 ${0.25 * i} ${i * 1.2}`, // stagger benches vertically and forward
+            scale: `${this.length} 0.5 0.25`, // length x, height y, depth z
+            position: `0 0.25 ${i * 0.25}`, // y=0.25m to sit on ground, z spaced by 0.25m
             col: '#8B4513', // Saddle Brown for benches
             collision_id: 'cube'
           });
@@ -97,6 +97,7 @@
     <!-- Corner Markers -->
     <object js_id="left-corner-left" id="cube" position="-7.5 0.05 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
     <object js_id="left-corner-right" id="cube" position="-7.5 0.05 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
+
     <object js_id="right-corner-left" id="cube" position="7.5 0.05 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
     <object js_id="right-corner-right" id="cube" position="7.5 0.05 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
 
