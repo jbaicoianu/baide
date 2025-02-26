@@ -8,7 +8,7 @@
         // Create rim using torus, positioned closer to the bottom of the backboard
         this.rim = this.createObject('object', { 
           id: 'torus', 
-          pos: "0 1.05 0", 
+          pos: "0 3.05 0", 
           scale: "0.45 0.45 0.45", 
           col: 'orange', 
           rotation: "90 0 0", 
@@ -17,14 +17,14 @@
         // Create backboard with 6 feet width (1.8288 meters)
         this.backboard = this.createObject('object', { 
           id: 'cube', 
-          pos: "0 1.5 0", 
+          pos: "0 3 0", 
           scale: "1.8288 1.07 0.05", 
           col: 'white' 
         });
         // Create pole positioned on the ground
         this.pole = this.createObject('object', { 
           id: 'cylinder', 
-          pos: "0 1.5 0", 
+          pos: "0 0 0", 
           scale: "0.05 3 0.05", 
           col: 'gray' 
         });
@@ -43,11 +43,11 @@
     <!-- Midcourt Line -->
     <object js_id="midcourt-line" id="plane" position="0 0.05 0" rotation="0 0 0" scale="15.2 0.05 0.1" col="#FFFFFF" />
 
-    <!-- Left Basket -->
-    <basketball-hoop pos="-7 0 -13" rotation="0 90 0" />
+    <!-- Left Basket (Center of End) -->
+    <basketball-hoop pos="0 0 -13" rotation="0 0 0" />
 
-    <!-- Right Basket -->
-    <basketball-hoop pos="7 0 13" rotation="0 -90 0" />
+    <!-- Right Basket (Center of End) -->
+    <basketball-hoop pos="0 0 13" rotation="0 180 0" />
 
     <!-- Free Throw Lines -->
     <object js_id="left-free-throw-line" id="plane" position="-5 0.05 0" rotation="0 0 0" scale="0.05 0.05 5" col="#FFFFFF" />
