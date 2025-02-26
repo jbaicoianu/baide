@@ -45,7 +45,7 @@
       create() {
         for (let i = 0; i < this.rows; i++) {
           this.createObject('object', { 
-            id: `bench_row_${i}`, 
+            id: 'cube', 
             scale: `${this.length} 0.01 1`, // length x, height y, depth z
             position: `0 ${0.01 * i} ${i * 1.2}`, // stagger benches slightly forward
             col: '#8B4513', // Saddle Brown for benches
@@ -68,7 +68,7 @@
     <object js_id="floor" id="cube" scale="28.7 0.1 15.2" rotation="0 90 0" image_id="court-texture" col="white" collision_id="cube" />
 
     <!-- Additional Floor Below the Court -->
-    <object js_id="additional-floor" id="cube" scale="15.2 0.1 28.7" position="0 -0.1 0" col="#808080" collision_id="cube" />
+    <object js_id="additional-floor" id="cube" scale="31.2 0.1 44.7" position="0 -0.1 0" col="#808080" collision_id="cube" />
 
     <!-- Front Wall -->
     <object js_id="front_wall" id="cube" scale="15.2 5 0.5" position="0 2.5 -14.35" col="#A9A9A9" collision_id="cube" />
@@ -106,8 +106,8 @@
     <basketball-hoop pos="0 0 13" rotation="0 180 0" />
 
     <!-- Basketball Stands -->
-    <basketball-stands length="5" rows="5" pos="-10 0 -7" />
-    <basketball-stands length="5" rows="5" pos="10 0 7" />
+    <basketball-stands pos="-10 0 -7" />
+    <basketball-stands pos="10 0 7" />
   </room>
 </janus-viewer>
 </body>
