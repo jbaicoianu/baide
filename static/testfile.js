@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Winter Forest Scene with House, Snowman, and Squirrel</title>
+  <title>Winter Forest Scene with House, Snowman, Squirrel, and Turret</title>
   <style>
     body { margin: 0; overflow: hidden; }
     canvas { display: block; }
@@ -281,6 +281,117 @@
 
     createSnowflakes();
 
+    // Function to create a turret
+    const turret = new THREE.Group();
+
+    // Base of the turret
+    const turretBaseGeometry = new THREE.CylinderGeometry(1.5, 1.5, 1, 32);
+    const turretBaseMaterial = new THREE.MeshLambertMaterial({ color: 0x333333 });
+    const turretBase = new THREE.Mesh(turretBaseGeometry, turretBaseMaterial);
+    turret.add(turretBase);
+
+    // Rotating part of the turret
+    const turretTopGeometry = new THREE.BoxGeometry(2, 0.5, 2);
+    const turretTopMaterial = new THREE.MeshLambertMaterial({ color: 0x555555 });
+    const turretTop = new THREE.Mesh(turretTopGeometry, turretTopMaterial);
+    turretTop.position.y = 1;
+    turret.add(turretTop);
+
+    // Cannon of the turret
+    const cannonGeometry = new THREE.BoxGeometry(0.5, 0.5, 3);
+    const cannonMaterial = new THREE.MeshLambertMaterial({ color: 0x000000 });
+    const cannon = new THREE.Mesh(cannonGeometry, cannonMaterial);
+    cannon.position.set(0, 0.75, 1.5);
+    cannon.rotation.x = Math.PI / 6;
+    turretTop.add(cannon);
+
+    // Position the turret near the house
+    turret.position.set(-15, 0, -15);
+    scene.add(turret);
+
+    // Variables for turret control
+    const turretRotationSpeed = 0.02;
+    const cannonElevationSpeed = 0.02;
+    let cannonElevation = 0;
+    const maxElevation = Math.PI / 4;
+    const minElevation = -Math.PI / 6;
+
+    // Event listeners for user input
+    const keysPressed = {};
+    window.addEventListener('keydown', (event) => {
+      keysPressed[event.key.toLowerCase()] = true;
+
+      // Shoot snowball on spacebar
+      if (event.key === ' ') {
+        shootSnowball();
+      }
+    });
+
+    window.addEventListener('keyup', (event) => {
+      keysPressed[event.key.toLowerCase()] = false;
+    });
+
+    // Function to shoot a snowball
+    const snowballs = [];
+    const snowballGeometry = new THREE.SphereGeometry(0.2, 8, 8);
+    const snowballMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+
+    function shootSnowball() {
+      const snowball = new THREE.Mesh(snowballGeometry, snowballMaterial);
+      // Position the snowball at the end of the cannon
+      const cannonWorldPosition = new THREE.Vector3();
+      cannon.getWorldPosition(cannonWorldPosition);
+      snowball.position.copy(cannonWorldPosition);
+
+      // Set the velocity based on the cannon's direction
+      const cannonDirection = new THREE.Vector3();
+      cannon.getWorldDirection(cannonDirection);
+      const speed = 1;
+      snowball.velocity = cannonDirection.multiplyScalar(speed);
+
+      scene.add(snowball);
+      snowballs.push(snowball);
+    }
+
+    // Function to update turret based on user input
+    function updateTurret() {
+      // Rotate turret left/right
+      if (keysPressed['a']) {
+        turret.rotation.y += turretRotationSpeed;
+      }
+      if (keysPressed['d']) {
+        turret.rotation.y -= turretRotationSpeed;
+      }
+
+      // Elevate cannon up/down
+      if (keysPressed['w']) {
+        if (cannonElevation < maxElevation) {
+          cannon.rotation.x -= cannonElevationSpeed;
+          cannonElevation += cannonElevationSpeed;
+        }
+      }
+      if (keysPressed['s']) {
+        if (cannonElevation > minElevation) {
+          cannon.rotation.x += cannonElevationSpeed;
+          cannonElevation -= cannonElevationSpeed;
+        }
+      }
+    }
+
+    // Function to update snowballs
+    function updateSnowballs() {
+      for (let i = snowballs.length - 1; i >= 0; i--) {
+        const snowball = snowballs[i];
+        snowball.position.add(snowball.velocity);
+
+        // Remove snowball if it goes below ground or too far
+        if (snowball.position.y < 0 || snowball.position.length() > 200) {
+          scene.remove(snowball);
+          snowballs.splice(i, 1);
+        }
+      }
+    }
+
     // Animation
     function animate() {
       requestAnimationFrame(animate);
@@ -294,6 +405,12 @@
           flake.position.z = Math.random() * 200 - 100;
         }
       });
+
+      // Update turret based on input
+      updateTurret();
+
+      // Update snowballs
+      updateSnowballs();
 
       renderer.render(scene, camera);
     }
