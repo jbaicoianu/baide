@@ -2,20 +2,22 @@
 <body>
 <script src="https://web.janusxr.org/1.5.53/janusweb.js"></script>
 <script>
-  janus.registerElement('basketball-hoop', {
-    create() {
-      // Create rim
-      this.rim = this.createObject('object', { id: 'cylinder', pos: "0 3.05 0", scale: "0.45 0.01 0.45", col: 'orange' });
-      // Create backboard
-      this.backboard = this.createObject('object', { id: 'cube', pos: "0 3 0", scale: "0.1829 1.07 0.01", col: 'white' });
-    },
-    update(dt) {
-      // Code to run every frame
-    }
-  });
+  function defineElements() {
+    janus.registerElement('basketball-hoop', {
+      create() {
+        // Create rim
+        this.rim = this.createObject('object', { id: 'cylinder', pos: "0 3.05 0", scale: "0.45 0.01 0.45", col: 'orange' });
+        // Create backboard
+        this.backboard = this.createObject('object', { id: 'cube', pos: "0 3 0", scale: "0.1829 1.07 0.01", col: 'white' });
+      },
+      update(dt) {
+        // Code to run every frame
+      }
+    });
+  }
 </script>
 <janus-viewer>
-  <room>
+  <room onload="defineElements()">
     <!-- Floor -->
     <object js_id="floor" id="cube" scale="15.2 0.1 28.7" col="#dfbb85" />
 
@@ -23,7 +25,7 @@
     <object js_id="midcourt-line" id="plane" position="0 0.1 0" rotation="0 0 0" scale="15.2 0.1 0.05" col="#FFFFFF" />
 
     <!-- Left Basket -->
-    <basketball-hoop pos="-7 0  -13" rotation="0 90 0" />
+    <basketball-hoop pos="-7 0 -13" rotation="0 90 0" />
 
     <!-- Right Basket -->
     <basketball-hoop pos="7 0 13" rotation="0 -90 0" />
