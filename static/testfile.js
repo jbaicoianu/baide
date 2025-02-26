@@ -48,20 +48,20 @@
 
     // Ground
     const groundGeometry = new THREE.PlaneGeometry(200, 200);
-    const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff }); // White snow
+    const groundMaterial = new THREE.MeshLambertMaterial({ color: 0xf0f0f0 }); // Light gray to better show shadows
     THREEObjects.ground = new THREE.Mesh(groundGeometry, groundMaterial);
     THREEObjects.ground.rotation.x = -Math.PI / 2;
     THREEObjects.ground.receiveShadow = true; // Ground receives shadows
     THREEObjects.scene.add(THREEObjects.ground);
 
     // Hemisphere Light
-    THREEObjects.hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.5);
+    THREEObjects.hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.0); // Reduced intensity to balance with directional light
     THREEObjects.hemiLight.position.set(0, 200, 0);
     THREEObjects.scene.add(THREEObjects.hemiLight);
 
     // Directional Light
     THREEObjects.dirLight = new THREE.DirectionalLight(0xffffff, 1);
-    THREEObjects.dirLight.position.set(0, 100, 0); // Positioned at the center-top of the scene
+    THREEObjects.dirLight.position.set(100, 150, 100); // Positioned at an angle to cast visible shadows
     THREEObjects.dirLight.castShadow = true; // Directional light casts shadows
 
     // Configure shadow properties for the directional light
@@ -82,9 +82,12 @@
 
     THREEObjects.scene.add(THREEObjects.dirLight);
 
-    // Add LightHelper for the directional light
+    // Add LightHelper and ShadowCameraHelper for debugging
     THREEObjects.dirLightHelper = new THREE.DirectionalLightHelper(THREEObjects.dirLight, 10, 0xff0000);
     THREEObjects.scene.add(THREEObjects.dirLightHelper);
+
+    THREEObjects.shadowCameraHelper = new THREE.CameraHelper(THREEObjects.dirLight.shadow.camera);
+    THREEObjects.scene.add(THREEObjects.shadowCameraHelper);
 
     // Function to create a tree
     function createTree(x, z) {
