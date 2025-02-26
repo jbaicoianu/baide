@@ -44,22 +44,19 @@
   </assets>
   <room onload="defineElements()">
     <!-- Court Floor -->
-    <object js_id="floor" id="cube" scale="38.7 0.1 25.2" rotation="0 90 0" image_id="court-texture" col="white" collision_id="cube" />
-
-    <!-- Additional Floor Below the Court -->
-    <object js_id="additional-floor" id="cube" scale="28.7 0.1 15.2" position="0 -0.1 0" col="#808080" collision_id="cube" />
+    <object js_id="floor" id="cube" scale="15.2 0.1 28.7" rotation="0 0 0" image_id="court-texture" col="white" collision_id="cube" />
 
     <!-- Front Wall -->
-    <object js_id="front_wall" id="cube" scale="28.7 5 0.5" position="0 2.5 -19.6" col="#A9A9A9" collision_id="cube" />
+    <object js_id="front_wall" id="cube" scale="15.2 5 0.5" position="0 2.5 -14.35" col="#A9A9A9" collision_id="cube" />
 
     <!-- Back Wall -->
-    <object js_id="back_wall" id="cube" scale="28.7 5 0.5" position="0 2.5 19.6" col="#A9A9A9" collision_id="cube" />
+    <object js_id="back_wall" id="cube" scale="15.2 5 0.5" position="0 2.5 14.35" col="#A9A9A9" collision_id="cube" />
 
     <!-- Left Wall -->
-    <object js_id="left_wall" id="cube" scale="0.5 5 15.2" position="-19.25 2.5 0" col="#A9A9A9" collision_id="cube" />
+    <object js_id="left_wall" id="cube" scale="0.5 5 28.7" position="-7.6 2.5 0" col="#A9A9A9" collision_id="cube" />
 
     <!-- Right Wall -->
-    <object js_id="right_wall" id="cube" scale="0.5 5 15.2" position="19.25 2.5 0" col="#A9A9A9" collision_id="cube" />
+    <object js_id="right_wall" id="cube" scale="0.5 5 28.7" position="7.6 2.5 0" col="#A9A9A9" collision_id="cube" />
 
     <!-- Left Stand Front -->
     <object js_id="left_stand_front" id="cube" scale="3 1 2" position="-10 0.5 -7" col="#A9A9A9" collision_id="cube" />
@@ -74,11 +71,10 @@
     <object js_id="right_stand_back" id="cube" scale="3 1 2" position="10 0.5 7" col="#A9A9A9" collision_id="cube" />
 
     <!-- Corner Markers -->
-    <object js_id="left-corner-left" id="cube" position="-7.5 0.05 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
-    <object js_id="left-corner-right" id="cube" position="-7.5 0.05 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
-
-    <object js_id="right-corner-left" id="cube" position="7.5 0.05 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
-    <object js_id="right-corner-right" id="cube" position="7.5 0.05 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" />
+    <object js_id="left-corner-left" id="cube" position="-7.5 0.05 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
+    <object js_id="left-corner-right" id="cube" position="-7.5 0.05 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
+    <object js_id="right-corner-left" id="cube" position="7.5 0.05 -13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
+    <object js_id="right-corner-right" id="cube" position="7.5 0.05 13" rotation="0 0 0" scale="0.2 0.2 0.2" col="#FFFFFF" collision_id="cube" />
   </room>
 </janus-viewer>
 </body>
