@@ -1,21 +1,21 @@
 #!/usr/bin/env python3
 import os
 import re
-import sys
 import argparse
 import subprocess
 import difflib
 from flask import Flask, request, render_template_string
 import openai
 
-# Ensure your OpenAI API key is set, e.g. via the OPENAI_API_KEY environment variable.
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Instantiate an OpenAI client with your API key.
+API_KEY = os.getenv("OPENAI_API_KEY")
+client = openai.Client(api_key=API_KEY)
 
 # Global variable for the file we are managing.
 SOURCE_FILE = None
 
-# A simple HTML template to mimic a chat interface.
-HTML_TEMPLATE = '''
+# HTML template for a simple chat interface.
+HTML_TEMPLATE = """
 <!doctype html>
 <html>
   <head>
@@ -45,29 +45,25 @@ HTML_TEMPLATE = '''
     </form>
   </body>
 </html>
-'''
+"""
 
 # In-memory conversation history.
 chat_history = []
 
 def extract_code(text):
     """
-    Extracts text enclosed in triple backticks (optionally with a language hint)
-    and returns the contents. If no code block is found, returns the entire text.
+    Extracts text enclosed in triple backticks (with an optional language hint).
+    If no code block is found, returns the entire text.
     """
     match = re.search(r"```(?:\w+)?\n(.*?)```", text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-    return text.strip()
+    return match.group(1).strip() if match else text.strip()
 
 def extract_commit_summary(text):
     """
-    Looks for a line starting with "Commit Summary:" and returns the summary.
+    Searches for a line starting with 'Commit Summary:' and returns the summary.
     """
     match = re.search(r"Commit Summary:\s*(.*)", text)
-    if match:
-        return match.group(1).strip()
-    return None
+    return match.group(1).strip() if match else None
 
 def compute_diff(old_content, new_content):
     """
@@ -75,71 +71,68 @@ def compute_diff(old_content, new_content):
     """
     old_lines = old_content.splitlines(keepends=True)
     new_lines = new_content.splitlines(keepends=True)
-    diff_lines = list(difflib.unified_diff(old_lines, new_lines,
-                                           fromfile='Before',
-                                           tofile='After'))
-    return ''.join(diff_lines)
+    diff_lines = difflib.unified_diff(old_lines, new_lines, fromfile="Before", tofile="After")
+    return "".join(diff_lines)
 
-def commit_changes(source_file, commit_message):
+def commit_changes(file_path, commit_message):
     """
     Stages the file and commits changes to git with the provided commit message.
     """
     try:
-        subprocess.run(["git", "add", source_file], check=True)
+        subprocess.run(["git", "add", file_path], check=True)
         subprocess.run(["git", "commit", "-m", commit_message], check=True)
         return True
     except subprocess.CalledProcessError:
         return False
 
-def build_messages(system_prompt, chat_history):
+def build_messages(system_prompt, conversation, model):
     """
-    Constructs the messages list for the API call, including system prompt and full conversation history.
-    Converts role names to lowercase.
+    Constructs the messages list for the API call.
+    Because the o1-mini model does not support messages with role "system",
+    we incorporate the system instructions as the first message with role "user".
+    For other models, you could use a "system" message.
     """
-    messages = [{"role": "system", "content": system_prompt}]
-    for msg in chat_history:
-        # Ensure roles are lowercase ('user' or 'assistant')
-        role = msg["role"].lower()
-        messages.append({"role": role, "content": msg["content"]})
+    messages = []
+    if model == "o1-mini":
+        messages.append({"role": "user", "content": system_prompt})
+    else:
+        messages.append({"role": "system", "content": system_prompt})
+    for msg in conversation:
+        messages.append({"role": msg["role"].lower(), "content": msg["content"]})
     return messages
 
-# Create the Flask app.
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     global chat_history, SOURCE_FILE
-
     if request.method == "POST":
-        user_prompt = request.form["prompt"]
-        chat_history.append({"role": "User", "content": user_prompt})
+        user_input = request.form["prompt"]
+        chat_history.append({"role": "User", "content": user_input})
 
         # Determine if this is the first request (i.e. file is empty or non-existent).
         first_request = not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0
 
         if first_request:
             system_prompt = (
-                "You are an assistant that helps manage a software project. "
-                "When given a prompt, generate the complete code for the project file. "
-                "Output only the code in a single code block (using triple backticks) without any commentary."
+                "You are an assistant managing a software project. When given a prompt, generate the complete contents "
+                "for the project file. Output only the code in a single code block (using triple backticks) without commentary."
             )
         else:
             system_prompt = (
-                "You are an assistant that helps manage a software project. "
-                "The file already has content. When given a prompt for changes, generate the complete updated file contents. "
-                "Output only the updated code in a single code block (using triple backticks). "
-                "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' "
-                "followed by a brief description of the changes."
+                "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, "
+                "generate the complete updated file contents. Output only the updated code in a single code block (using triple backticks). "
+                "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
             )
 
-        # Build the conversation messages (maintaining full context).
-        messages = build_messages(system_prompt, chat_history)
+        model = "o1-mini"
+        messages = build_messages(system_prompt, chat_history, model)
 
         try:
-            response = openai.ChatCompletion.create(
-                model="o1-mini",
+            response = client.chat.completions.create(
+                model=model,
                 messages=messages,
-                temperature=0
+                temperature=1
             )
         except Exception as e:
             chat_history.append({"role": "Assistant", "content": f"Error calling OpenAI API: {str(e)}"})
@@ -148,45 +141,34 @@ def index():
         reply = response.choices[0].message.content
         chat_history.append({"role": "Assistant", "content": reply})
 
-        # Extract the complete new file contents from the API response.
         new_file_content = extract_code(reply)
         commit_summary = extract_commit_summary(reply)
 
         if first_request:
-            # Write the complete code to the file.
             with open(SOURCE_FILE, "w") as f:
                 f.write(new_file_content)
         else:
-            # Read the current content.
             with open(SOURCE_FILE, "r") as f:
                 old_content = f.read()
-            # Compute the diff.
             diff_text = compute_diff(old_content, new_file_content)
             if diff_text:
-                # Overwrite the file with the new content.
                 with open(SOURCE_FILE, "w") as f:
                     f.write(new_file_content)
-                # Use commit summary from the API if provided; otherwise, a default message.
-                commit_msg = commit_summary if commit_summary else f"Applied changes: {user_prompt}"
+                commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
                 if not commit_changes(SOURCE_FILE, commit_msg):
                     chat_history.append({"role": "Assistant", "content": "Error committing changes to git."})
             else:
                 chat_history.append({"role": "Assistant", "content": "No changes detected."})
 
         return render_template_string(HTML_TEMPLATE, history=chat_history)
-
     return render_template_string(HTML_TEMPLATE, history=chat_history)
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Manage a software project via ChatGPT API.")
-    parser.add_argument("source_file", help="Path to the source code file to manage.")
+    parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
+    parser.add_argument("source_file", help="Path to the project file to manage.")
     args = parser.parse_args()
-
     SOURCE_FILE = args.source_file
-    # Create an empty file if it doesn't exist.
     if not os.path.exists(SOURCE_FILE):
         open(SOURCE_FILE, "w").close()
-
-    # Start the Flask web server on port 5000.
     app.run(port=5000)
 
