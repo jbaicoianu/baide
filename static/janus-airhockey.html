@@ -19,7 +19,7 @@ function defineCustomElements() {
         booleanattribute: true,
     
         create() {
-            this.createObject('object', { id: 'cube', name: 'table', pos: "0 0 0", scale: "10 1 5", col: "#00FF00" });
+            this.createObject('object', { id: 'cube', name: 'table', pos: "0 0 0", scale: "10 1 5", col: "#FFFFFF" });
             this.createObject('airhockey-goal', { name: 'goal1', pos: "-5 0 0", col: "#FF0000", player: 1 });
             this.createObject('airhockey-goal', { name: 'goal2', pos: "5 0 0", col: "#0000FF", player: 2 });
             this.createObject('airhockey-puck', { name: 'puck', pos: "0 1 0", col: "#FFFFFF" });
@@ -76,8 +76,8 @@ function defineCustomElements() {
         booleanattribute: true,
     
         create() {
-            // Swapped y and z scale to make y-axis represent height
-            this.createObject('object', { id: 'cube', name: 'goal-box', pos: "0 0 0", scale: "2 0.5 1", col: this.col });
+            // Swapped x and z scale to make y-axis represent height
+            this.createObject('object', { id: 'cube', name: 'goal-box', pos: "0 0 0", scale: "1 0.5 2", col: this.col });
         },
         update(dt) {
             // Goal collision detection logic
