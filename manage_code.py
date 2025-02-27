@@ -16,7 +16,7 @@ client = openai.Client(api_key=API_KEY)
 SOURCE_FILE = None
 
 # HTML template for the chat interface.
-# It loads the Marked library from a CDN to render Markdown.
+# It loads Marked from a CDN for Markdown parsing.
 HTML_TEMPLATE = """
 <!doctype html>
 <html>
@@ -30,7 +30,21 @@ HTML_TEMPLATE = """
       .message { margin-bottom: 10px; }
       .User { color: blue; }
       .Assistant { color: green; }
-      #throbber { display: none; }
+      /* Spinner styles */
+      #throbber {
+        display: none;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #ccc;
+        border-top: 4px solid #333;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
     </style>
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -39,7 +53,6 @@ HTML_TEMPLATE = """
       function renderMarkdown(text) {
         const renderer = new marked.Renderer();
         renderer.html = function(html) {
-          // Ensure html is a string before replacing.
           return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         };
         return marked.parse(text, {
@@ -58,7 +71,7 @@ HTML_TEMPLATE = """
     <div id="chatBox">
       <!-- Existing conversation will be loaded here -->
     </div>
-    <div id="throbber">⏳ Loading...</div>
+    <div id="throbber"></div>
     <hr>
     <form id="chatForm">
       <textarea id="promptInput" rows="5" cols="60" placeholder="Enter your prompt here..."></textarea><br>
@@ -71,7 +84,7 @@ HTML_TEMPLATE = """
       const chatBox = document.getElementById('chatBox');
       const throbber = document.getElementById('throbber');
 
-      // Append a message to chatBox; content is rendered as Markdown.
+      // Append a message to the chatBox; content is rendered as Markdown.
       function appendMessage(role, content) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message';
@@ -105,6 +118,7 @@ HTML_TEMPLATE = """
         appendMessage("User", prompt);
         scrollToBottom();
         promptInput.value = "";
+        // Show the spinner.
         throbber.style.display = "block";
 
         try {
@@ -124,6 +138,7 @@ HTML_TEMPLATE = """
         } catch (error) {
           console.error("Fetch error:", error);
         }
+        // Hide the spinner.
         throbber.style.display = "none";
       });
 
