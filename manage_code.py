@@ -12,11 +12,11 @@ import openai
 API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.Client(api_key=API_KEY)
 
-# Global variable for the file we are managing.
+# Global variables for the file we are managing and for debugging.
 SOURCE_FILE = None
+DEBUG = False
 
 # HTML template for the chat interface.
-# It loads Marked from a CDN for Markdown parsing.
 HTML_TEMPLATE = """
 <!doctype html>
 <html>
@@ -30,7 +30,7 @@ HTML_TEMPLATE = """
       .message { margin-bottom: 10px; }
       .User { color: blue; }
       .Assistant { color: green; }
-      /* Spinner styles */
+      /* CSS spinner */
       #throbber {
         display: none;
         width: 40px;
@@ -84,7 +84,7 @@ HTML_TEMPLATE = """
       const chatBox = document.getElementById('chatBox');
       const throbber = document.getElementById('throbber');
 
-      // Append a message to the chatBox; content is rendered as Markdown.
+      // Append a message to chatBox; content is rendered as Markdown.
       function appendMessage(role, content) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message';
@@ -118,7 +118,6 @@ HTML_TEMPLATE = """
         appendMessage("User", prompt);
         scrollToBottom();
         promptInput.value = "";
-        // Show the spinner.
         throbber.style.display = "block";
 
         try {
@@ -138,7 +137,6 @@ HTML_TEMPLATE = """
         } catch (error) {
           console.error("Fetch error:", error);
         }
-        // Hide the spinner.
         throbber.style.display = "none";
       });
 
@@ -157,7 +155,7 @@ def transcript_filename():
     base, _ = os.path.splitext(SOURCE_FILE)
     return f"{base}-transcript.json"
 
-def load_transcript():
+def load_transcript_from_disk():
     """Load transcript from disk into chat_history (if it exists)."""
     fname = transcript_filename()
     if os.path.exists(fname):
@@ -177,6 +175,42 @@ def update_transcript():
         json.dump(chat_history, f, indent=2)
     transcript_commit_msg = f"Update transcript for {os.path.basename(SOURCE_FILE)}"
     commit_changes(fname, transcript_commit_msg)
+
+def strip_code(text):
+    """Remove any code blocks (delimited by triple backticks) from the text."""
+    return re.sub(r"```.*?```", "[code omitted]", text, flags=re.DOTALL)
+
+def build_prompt_messages(system_prompt, conversation, source_file, model):
+    """
+    Build a list of messages for the API:
+      - The first message is the system prompt. If the model is "o1-mini" (which doesn't support
+        the "system" role), include it as a user message prefixed with "SYSTEM:".
+      - Then include the conversation: user messages verbatim, assistant messages with code stripped.
+      - Finally, append a user message containing the exact on-disk file contents.
+    """
+    messages = []
+    if model == "o1-mini":
+        messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
+    else:
+        messages.append({"role": "system", "content": system_prompt})
+    for msg in conversation:
+        role = msg["role"].lower()
+        if role == "assistant":
+            content = strip_code(msg["content"])
+        else:
+            content = msg["content"]
+        messages.append({"role": role, "content": content})
+    try:
+        with open(source_file, "r") as f:
+            file_contents = f.read()
+    except Exception:
+        file_contents = ""
+    final_msg = {
+        "role": "user",
+        "content": "The following is the code which has been generated so far:\n" + file_contents
+    }
+    messages.append(final_msg)
+    return messages
 
 def extract_code(text):
     """Extract text enclosed in triple backticks (if any), else return full text."""
@@ -204,21 +238,6 @@ def commit_changes(file_path, commit_message):
     except subprocess.CalledProcessError:
         return False
 
-def build_messages(system_prompt, conversation, model):
-    """
-    Construct the messages list for the API call.
-    For the "o1-mini" model (which doesn't support a 'system' role),
-    include the system prompt as the first 'user' message.
-    """
-    messages = []
-    if model == "o1-mini":
-        messages.append({"role": "user", "content": system_prompt})
-    else:
-        messages.append({"role": "system", "content": system_prompt})
-    for msg in conversation:
-        messages.append({"role": msg["role"].lower(), "content": msg["content"]})
-    return messages
-
 app = Flask(__name__)
 
 # Route to serve static files from the static/ directory.
@@ -234,16 +253,14 @@ def get_transcript():
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
 def chat():
-    global chat_history, SOURCE_FILE
+    global chat_history, SOURCE_FILE, DEBUG
     data = request.get_json()
     if not data or "prompt" not in data:
         return jsonify({"error": "No prompt provided."}), 400
     user_input = data["prompt"]
     chat_history.append({"role": "User", "content": user_input})
 
-    first_request = not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0
-
-    if first_request:
+    if not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0:
         system_prompt = (
             "You are an assistant managing a software project. When given a prompt, generate the complete contents "
             "for the project file. Output only the code in a single code block (using triple backticks) without commentary."
@@ -255,12 +272,15 @@ def chat():
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
-    model = "o1-mini"
-    messages = build_messages(system_prompt, chat_history, model)
+    messages = build_prompt_messages(system_prompt, chat_history, SOURCE_FILE, "o1-mini")
+
+    if DEBUG:
+        print("DEBUG: AI prompt messages:")
+        print(json.dumps(messages, indent=2))
 
     try:
         response = client.chat.completions.create(
-            model=model,
+            model="o1-mini",
             messages=messages,
             temperature=1
         )
@@ -276,7 +296,7 @@ def chat():
     new_file_content = extract_code(reply)
     commit_summary = extract_commit_summary(reply)
 
-    if first_request:
+    if not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0:
         with open(SOURCE_FILE, "w") as f:
             f.write(new_file_content)
     else:
@@ -304,13 +324,14 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
     parser.add_argument("source_file", help="Path to the project file to manage.")
     parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
+    parser.add_argument("--debug", action="store_true", help="Print full AI prompt on each API call for debugging.")
     args = parser.parse_args()
 
     SOURCE_FILE = args.source_file
+    DEBUG = args.debug
     if not os.path.exists(SOURCE_FILE):
         open(SOURCE_FILE, "w").close()
-    # Load any existing transcript for the active file into memory.
-    chat_history = load_transcript()
+    chat_history = load_transcript_from_disk()
 
     app.run(port=args.port)
 
