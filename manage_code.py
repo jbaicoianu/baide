@@ -190,9 +190,25 @@ def extract_commit_summary(text):
     return match.group(1).strip() if match else ""
 
 def extract_code(text):
-    """Extract text enclosed in triple backticks (if any), else return full text."""
-    match = re.search(r"```(?:\w+)?\n(.*?)```", text, re.DOTALL)
-    return match.group(1).strip() if match else text.strip()
+    """
+    Extract the contents of the first code block using a simple state machine.
+    The code block is assumed to start with a line that (after stripping whitespace)
+    starts with three backticks and ends when a line that is exactly three backticks is encountered.
+    """
+    lines = text.splitlines()
+    in_code_block = False
+    code_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if not in_code_block:
+            if stripped.startswith("```"):
+                in_code_block = True
+            continue
+        else:
+            if stripped == "```":
+                break
+            code_lines.append(line)
+    return "\n".join(code_lines).strip()
 
 def compute_diff(old_content, new_content):
     """Compute a unified diff between old_content and new_content."""
@@ -217,8 +233,7 @@ def build_prompt_messages(system_prompt, conversation, source_file, model):
         include it as a user message prefixed with "SYSTEM:".
       - For each user message, include it verbatim.
       - For each assistant message, include only the commit summary.
-      - Append a final user message with the current on-disk file contents,
-        with triple backticks escaped.
+      - Append a final user message with the current on-disk file contents.
     """
     messages = []
     if model == "o1-mini":
@@ -237,8 +252,6 @@ def build_prompt_messages(system_prompt, conversation, source_file, model):
             file_contents = f.read()
     except Exception:
         file_contents = ""
-    # Escape triple backticks in the file contents.
-    file_contents = file_contents.replace("```", "\\`\\`\\`")
     final_msg = {
         "role": "user",
         "content": "The following is the code which has been generated so far:\n" + file_contents
