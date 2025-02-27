@@ -63,7 +63,9 @@
               })
               .start();
           },
-          // Removed the update function to avoid overriding internal mechanisms
+          update(dt) {
+            this.rotation = V(this.rotation);
+          }
         });
       }
 
