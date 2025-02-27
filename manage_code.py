@@ -111,6 +111,14 @@ HTML_TEMPLATE = """
         }
       }
 
+      // Listen for Ctrl+Enter to submit the form.
+      promptInput.addEventListener("keydown", function(e) {
+        if (e.ctrlKey && e.key === "Enter") {
+          e.preventDefault();
+          chatForm.dispatchEvent(new Event("submit", {cancelable: true}));
+        }
+      });
+
       chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const prompt = promptInput.value.trim();
