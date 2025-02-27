@@ -19,12 +19,12 @@ function defineCustomElements() {
         booleanattribute: true,
     
         create() {
-            this.createObject('box', { id: 'table', pos: "0 0 0", scale: "10 1 5", col: "#00FF00" });
-            this.createObject('airhockey-goal', { id: 'goal1', pos: "-5 0 0", scale: "1 2 0.5", col: "#FF0000", player: 1 });
-            this.createObject('airhockey-goal', { id: 'goal2', pos: "5 0 0", scale: "1 2 0.5", col: "#0000FF", player: 2 });
-            this.createObject('airhockey-puck', { id: 'puck', pos: "0 1 0", scale: "0.2 0.2 0.2", col: "#FFFFFF" });
-            this.createObject('airhockey-paddle', { id: 'paddle1', pos: "-2 1 2", scale: "0.5 0.5 0.5", col: "#FFFF00", player: 1 });
-            this.createObject('airhockey-paddle', { id: 'paddle2', pos: "2 1 2", scale: "0.5 0.5 0.5", col: "#FFA500", player: 2 });
+            this.createObject('object', { id: 'cube', name: 'table', pos: "0 0 0", scale: "10 1 5", col: "#00FF00" });
+            this.createObject('object', { id: 'cube', name: 'goal1', pos: "-5 0 0", scale: "1 2 0.5", col: "#FF0000", player: 1 });
+            this.createObject('object', { id: 'cube', name: 'goal2', pos: "5 0 0", scale: "1 2 0.5", col: "#0000FF", player: 2 });
+            this.createObject('object', { id: 'sphere', name: 'puck', pos: "0 1 0", scale: "0.2 0.2 0.2", col: "#FFFFFF" });
+            this.createObject('object', { id: 'sphere', name: 'paddle1', pos: "-2 1 2", scale: "0.5 0.5 0.5", col: "#FFFF00", player: 1 });
+            this.createObject('object', { id: 'sphere', name: 'paddle2', pos: "2 1 2", scale: "0.5 0.5 0.5", col: "#FFA500", player: 2 });
         },
         update(dt) {
             // Table update logic
@@ -37,7 +37,7 @@ function defineCustomElements() {
         booleanattribute: true,
     
         create() {
-            this.createObject('sphere', { id: 'paddle-sphere', pos: "0 0 0", scale: "0.5 0.5 0.5", col: this.col });
+            this.createObject('object', { id: 'sphere', name: 'paddle-sphere', pos: "0 0 0", scale: "0.5 0.5 0.5", col: this.col });
         },
         update(dt) {
             // Paddle movement logic
@@ -50,7 +50,7 @@ function defineCustomElements() {
         booleanattribute: true,
     
         create() {
-            this.createObject('sphere', { id: 'puck-sphere', pos: "0 0 0", scale: "0.2 0.2 0.2", col: this.col });
+            this.createObject('object', { id: 'sphere', name: 'puck-sphere', pos: "0 0 0", scale: "0.2 0.2 0.2", col: this.col });
         },
         update(dt) {
             // Puck movement and collision logic
@@ -76,7 +76,7 @@ function defineCustomElements() {
         booleanattribute: true,
     
         create() {
-            this.createObject('box', { id: 'goal-box', pos: "0 0 0", scale: "1 2 0.1", col: this.col });
+            this.createObject('object', { id: 'cube', name: 'goal-box', pos: "0 0 0", scale: "1 2 0.1", col: this.col });
         },
         update(dt) {
             // Goal collision detection logic
