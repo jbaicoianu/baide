@@ -184,17 +184,14 @@ def update_transcript():
     transcript_commit_msg = f"Update transcript for {os.path.basename(SOURCE_FILE)}"
     commit_changes(fname, transcript_commit_msg)
 
-def strip_code(text):
-    """Remove any code blocks (delimited by triple backticks) from the text."""
-    return re.sub(r"```.*?```", "[code omitted]", text, flags=re.DOTALL)
-
 def build_prompt_messages(system_prompt, conversation, source_file, model):
     """
     Build a list of messages for the API:
-      - The first message is the system prompt. If the model is "o1-mini" (which doesn't support
-        the "system" role), include it as a user message prefixed with "SYSTEM:".
-      - Then include the conversation: user messages verbatim, assistant messages with code stripped.
-      - Finally, append a user message containing the exact on-disk file contents.
+      - Include the system prompt. If the model is "o1-mini" (which doesn't support 'system'),
+        include it as a user message prefixed with "SYSTEM:".
+      - For each user message, include it verbatim.
+      - For each assistant message, include only the commit summary.
+      - Append a final user message with the current on-disk file contents.
     """
     messages = []
     if model == "o1-mini":
@@ -204,10 +201,11 @@ def build_prompt_messages(system_prompt, conversation, source_file, model):
     for msg in conversation:
         role = msg["role"].lower()
         if role == "assistant":
-            content = strip_code(msg["content"])
+            # Extract only the commit summary.
+            commit = extract_commit_summary(msg["content"]) or ""
+            messages.append({"role": role, "content": commit})
         else:
-            content = msg["content"]
-        messages.append({"role": role, "content": content})
+            messages.append({"role": role, "content": msg["content"]})
     try:
         with open(source_file, "r") as f:
             file_contents = f.read()
@@ -220,15 +218,15 @@ def build_prompt_messages(system_prompt, conversation, source_file, model):
     messages.append(final_msg)
     return messages
 
+def extract_commit_summary(text):
+    """Search for a line starting with 'Commit Summary:' and return its content."""
+    match = re.search(r"Commit Summary:\s*(.*)", text)
+    return match.group(1).strip() if match else ""
+
 def extract_code(text):
     """Extract text enclosed in triple backticks (if any), else return full text."""
     match = re.search(r"```(?:\w+)?\n(.*?)```", text, re.DOTALL)
     return match.group(1).strip() if match else text.strip()
-
-def extract_commit_summary(text):
-    """Search for a line starting with 'Commit Summary:' and return its content."""
-    match = re.search(r"Commit Summary:\s*(.*)", text)
-    return match.group(1).strip() if match else None
 
 def compute_diff(old_content, new_content):
     """Compute a unified diff between old_content and new_content."""
