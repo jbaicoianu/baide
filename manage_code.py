@@ -16,10 +16,12 @@ client = openai.Client(api_key=API_KEY)
 SOURCE_FILE = None
 
 # HTML template for the chat interface.
+# This template loads Marked from CDN for Markdown support.
 HTML_TEMPLATE = """
 <!doctype html>
 <html>
   <head>
+    <meta charset="utf-8">
     <title>Project Manager Chat</title>
     <style>
       body { font-family: sans-serif; margin: 20px; }
@@ -30,6 +32,24 @@ HTML_TEMPLATE = """
       .Assistant { color: green; }
       #throbber { display: none; }
     </style>
+    <!-- Load marked for markdown parsing -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script>
+      // Define a renderMarkdown function that escapes raw HTML.
+      function renderMarkdown(text) {
+        // Create a custom renderer that escapes raw HTML.
+        const renderer = new marked.Renderer();
+        renderer.html = function(html) {
+          return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        };
+        // Parse the markdown using the custom renderer.
+        return marked.parse(text, {
+          renderer: renderer,
+          headerIds: false,
+          mangle: false
+        });
+      }
+    </script>
   </head>
   <body>
     <div id="header">
@@ -52,20 +72,21 @@ HTML_TEMPLATE = """
       const chatBox = document.getElementById('chatBox');
       const throbber = document.getElementById('throbber');
 
-      // Helper: Append a message to chatBox.
+      // Append a message to the chatBox. The message content is processed as Markdown.
       function appendMessage(role, content) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message';
-        msgDiv.innerHTML = '<strong class="' + role + '">' + role + ':</strong><pre style="white-space: pre-wrap;">' + content + '</pre>';
+        // Escape the role (we assume it's safe) and render markdown for the content.
+        msgDiv.innerHTML = '<strong class="' + role + '">' + role + ':</strong><div>' + renderMarkdown(content) + '</div>';
         chatBox.appendChild(msgDiv);
       }
 
-      // Helper: Scroll chatBox to bottom.
+      // Scroll the chatBox to the bottom.
       function scrollToBottom() {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
 
-      // Load initial chat transcript (if any) from the server.
+      // Load initial transcript from the server.
       async function loadTranscript() {
         try {
           const response = await fetch('/transcript');
@@ -115,7 +136,7 @@ HTML_TEMPLATE = """
         throbber.style.display = "none";
       });
 
-      // Load any existing transcript on startup.
+      // Load transcript on startup.
       loadTranscript();
     </script>
   </body>
@@ -189,7 +210,7 @@ def commit_changes(file_path, commit_message):
 def build_messages(system_prompt, conversation, model):
     """
     Constructs the messages list for the API call.
-    For the "o1-mini" model (which doesn't support 'system' role),
+    For the "o1-mini" model (which doesn't support the 'system' role),
     include the system prompt as the first 'user' message.
     """
     messages = []
@@ -223,7 +244,7 @@ def chat():
     user_input = data["prompt"]
     chat_history.append({"role": "User", "content": user_input})
 
-    # Determine if this is the first request (file empty or non-existent).
+    # Determine if this is the first request (file is empty or non-existent).
     first_request = not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0
 
     if first_request:
