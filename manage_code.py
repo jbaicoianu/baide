@@ -39,7 +39,8 @@ HTML_TEMPLATE = """
       function renderMarkdown(text) {
         const renderer = new marked.Renderer();
         renderer.html = function(html) {
-          return html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+          // Ensure html is a string before replacing.
+          return String(html).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         };
         return marked.parse(text, {
           renderer: renderer,
@@ -70,7 +71,7 @@ HTML_TEMPLATE = """
       const chatBox = document.getElementById('chatBox');
       const throbber = document.getElementById('throbber');
 
-      // Append a message to the chatBox; content is rendered as Markdown.
+      // Append a message to chatBox; content is rendered as Markdown.
       function appendMessage(role, content) {
         const msgDiv = document.createElement('div');
         msgDiv.className = 'message';
@@ -78,7 +79,7 @@ HTML_TEMPLATE = """
         chatBox.appendChild(msgDiv);
       }
 
-      // Scroll to the bottom of chatBox.
+      // Scroll chatBox to the bottom.
       function scrollToBottom() {
         chatBox.scrollTop = chatBox.scrollHeight;
       }
