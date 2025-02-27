@@ -4,19 +4,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
     <script>
       function defineElements() {
+        // Counter to generate unique collision_ids
+        let collisionIdCounter = 0;
+
         // Register the clickable-cube custom element
         janus.registerElement('clickable-cube', {
           create() {
             this.isAnimating = false;
-            this.addEventListener('click', () => this.jumpAndSpin());
+
+            // Generate a unique collision_id
+            this.collision_id = 'clickable-cube-' + (collisionIdCounter++);
+
+            // Create a visible cube object as a child of this element
+            this.cube = this.createObject('object', {
+              pos: this.position,
+              scale: this.scale,
+              col: this.col || 'white',
+              collision_id: this.collision_id
+            });
+
+            // Add event listener to the cube for click events
+            this.cube.addEventListener('click', () => this.jumpAndSpin());
           },
           jumpAndSpin() {
             if (this.isAnimating) return;
             this.isAnimating = true;
 
             // Store original position and rotation
-            const originalPosition = this.position.clone();
-            const originalRotation = this.rotation.clone();
+            const originalPosition = this.cube.position.clone();
+            const originalRotation = this.cube.rotation.clone();
 
             // Jump Animation
             const jumpHeight = 2;
@@ -26,23 +42,26 @@
             const spinDuration = 0.2; // seconds
             const spinAngle = Math.PI * 2; // one full rotation
 
-            // Using Tween for animation
-            new TWEEN.Tween(this.position)
+            // Jump Up
+            new TWEEN.Tween(this.cube.position)
               .to({ y: originalPosition.y + jumpHeight }, jumpDuration * 1000)
               .easing(TWEEN.Easing.Quadratic.Out)
               .onComplete(() => {
-                new TWEEN.Tween(this.position)
+                // Jump Down
+                new TWEEN.Tween(this.cube.position)
                   .to({ y: originalPosition.y }, jumpDuration * 1000)
                   .easing(TWEEN.Easing.Quadratic.In)
                   .start();
               })
               .start();
 
-            new TWEEN.Tween(this.rotation)
+            // Spin
+            new TWEEN.Tween(this.cube.rotation)
               .to({ y: originalRotation.y + spinAngle }, spinDuration * 1000)
               .easing(TWEEN.Easing.Linear.None)
               .onComplete(() => {
-                this.rotation.copy(originalRotation);
+                // Reset rotation to original
+                this.cube.rotation.copy(originalRotation);
                 this.isAnimating = false;
               })
               .start();
@@ -50,8 +69,6 @@
           // Removed the update function to avoid overriding internal mechanisms
         });
       }
-
-      // Removed the call to defineElements() from the script
 
       // Global animation loop for TWEEN
       function animate(time) {
