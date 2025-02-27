@@ -35,7 +35,7 @@
 
             // Spin Animation
             const spinDuration = 0.2; // seconds
-            const spinAngle = Math.PI * 2; // one full rotation
+            const spinAngle = 360; // one full rotation in degrees
 
             // Jump Up
             new TWEEN.Tween(this.cube.position)
@@ -64,7 +64,7 @@
               .start();
           },
           update(dt) {
-            // Removed the rotation update line
+            // No additional updates needed
           }
         });
       }
