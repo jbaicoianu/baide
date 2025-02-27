@@ -1,0 +1,66 @@
+<html>
+  <body>
+    <script src="https://web.janusxr.org/1.5.53/janusweb.js"></script>
+    <janus-viewer>
+      <assets>
+        <assetscript>
+          // Function to handle jump and spin animation
+          function jumpAndSpin(object) {
+            if (object.isAnimating) return;
+
+            object.isAnimating = true;
+
+            // Store original position and rotation
+            const originalPosition = object.position.clone();
+            const originalRotation = object.rotation.clone();
+
+            // Jump Animation
+            const jumpHeight = 2;
+            const jumpDuration = 0.2; // in seconds
+
+            // Spin Animation
+            const spinDuration = 0.2; // in seconds
+            const spinAngle = Math.PI * 2; // one full rotation
+
+            // Using Tween for animation
+            new TWEEN.Tween(object.position)
+              .to({ y: originalPosition.y + jumpHeight }, jumpDuration * 1000)
+              .easing(TWEEN.Easing.Quadratic.Out)
+              .onComplete(() => {
+                new TWEEN.Tween(object.position)
+                  .to({ y: originalPosition.y }, jumpDuration * 1000)
+                  .easing(TWEEN.Easing.Quadratic.In)
+                  .start();
+              })
+              .start();
+
+            new TWEEN.Tween(object.rotation)
+              .to({ y: originalRotation.y + spinAngle }, spinDuration * 1000)
+              .easing(TWEEN.Easing.Linear.None)
+              .onComplete(() => {
+                object.rotation.copy(originalRotation);
+                object.isAnimating = false;
+              })
+              .start();
+          }
+
+          // Update function to be called every frame
+          function update() {
+            TWEEN.update();
+          }
+
+          // Register the update callback
+          room.registerUpdateCallback(update);
+        </assetscript>
+      </assets>
+      <room pos="0 1.6 0">
+        <object pos="-3 0 -5" scale="1 1 1" col="blue" onclick="jumpAndSpin(this)" />
+        <object pos="0 0 -5" scale="1 1 1" col="green" onclick="jumpAndSpin(this)" />
+        <object pos="3 0 -5" scale="1 1 1" col="red" onclick="jumpAndSpin(this)" />
+        <object pos="-3 0 -10" scale="1 1 1" col="yellow" onclick="jumpAndSpin(this)" />
+        <object pos="0 0 -10" scale="1 1 1" col="purple" onclick="jumpAndSpin(this)" />
+        <object pos="3 0 -10" scale="1 1 1" col="orange" onclick="jumpAndSpin(this)" />
+      </room>
+    </janus-viewer>
+  </body>
+</html>
