@@ -4,23 +4,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tween.js/18.6.4/tween.umd.js"></script>
     <script>
       function defineElements() {
-        // Counter to generate unique collision_ids
-        let collisionIdCounter = 0;
-
         // Register the clickable-cube custom element
         janus.registerElement('clickable-cube', {
           create() {
             this.isAnimating = false;
 
-            // Generate a unique collision_id
-            this.collision_id = 'clickable-cube-' + (collisionIdCounter++);
-
-            // Create a visible cube object as a child of this element
+            // Create a visible cube object as a child of this element with fixed id and collision_id
             this.cube = this.createObject('object', {
+              id: 'cube',
+              collision_id: 'cube',
               pos: this.position,
               scale: this.scale,
-              col: this.col || 'white',
-              collision_id: this.collision_id
+              col: this.col || 'white'
             });
 
             // Add event listener to the cube for click events
@@ -51,6 +46,9 @@
                 new TWEEN.Tween(this.cube.position)
                   .to({ y: originalPosition.y }, jumpDuration * 1000)
                   .easing(TWEEN.Easing.Quadratic.In)
+                  .onComplete(() => {
+                    this.isAnimating = false;
+                  })
                   .start();
               })
               .start();
@@ -62,7 +60,6 @@
               .onComplete(() => {
                 // Reset rotation to original
                 this.cube.rotation.copy(originalRotation);
-                this.isAnimating = false;
               })
               .start();
           },
