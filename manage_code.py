@@ -97,21 +97,34 @@ HTML_TEMPLATE = """
               const data = await response.json();
               
               // Populate code section
-              const latestCode = data.find(msg => msg.role === "Assistant" && msg.code);
-              if (latestCode) {
-                codeTextarea.value = latestCode.code;
+              if (data.latest_code) {
+                codeTextarea.value = data.latest_code;
+              } else {
+                // Fallback to chat history if latest_code is not available
+                const latestCode = data.chat_history.find(msg => msg.role === "Assistant" && msg.code);
+                if (latestCode) {
+                  codeTextarea.value = latestCode.code;
+                }
               }
 
               // Populate changelog section
-              data.forEach(msg => {
-                if (msg.role === "Assistant" && msg.commit_summary) {
-                  appendMessage(changelogBox, "Assistant", msg.commit_summary);
-                }
-              });
-              scrollToBottom(changelogBox);
+              if (data.changelog) {
+                data.changelog.forEach(commit => {
+                  appendMessage(changelogBox, "Assistant", `${commit.commit_hash}: ${commit.commit_message}`);
+                });
+                scrollToBottom(changelogBox);
+              } else {
+                // Fallback to chat history if changelog is not available
+                data.chat_history.forEach(msg => {
+                  if (msg.role === "Assistant" && msg.commit_summary) {
+                    appendMessage(changelogBox, "Assistant", msg.commit_summary);
+                  }
+                });
+                scrollToBottom(changelogBox);
+              }
 
               // Populate conversation section
-              data.forEach(msg => {
+              data.chat_history.forEach(msg => {
                 if (msg.role === "User" || (msg.role === "Assistant" && msg.conversation)) {
                   if (msg.role === "Assistant" && msg.conversation) {
                     appendMessage(conversationBox, msg.role, msg.conversation);
@@ -153,7 +166,7 @@ HTML_TEMPLATE = """
             if (response.ok) {
               const data = await response.json();
               // Update code section
-              const latest = data[data.length - 1];
+              const latest = data.chat_history[data.chat_history.length - 1];
               if (latest.code) {
                 codeTextarea.value = latest.code;
               }
@@ -227,17 +240,22 @@ def load_transcript_from_disk():
         try:
             with open(fname, "r") as f:
                 data = json.load(f)
-                if isinstance(data, list):
+                if isinstance(data, dict):
                     return data
         except Exception:
             pass
-    return []
+    return {"chat_history": [], "latest_code": "", "changelog": []}
 
 def update_transcript():
     """Write the current chat_history to the transcript file and commit it to git."""
     fname = transcript_filename()
+    transcript_data = {
+        "chat_history": chat_history,
+        "latest_code": read_source_file(),
+        "changelog": get_last_n_git_commits(20)
+    }
     with open(fname, "w") as f:
-        json.dump(chat_history, f, indent=2)
+        json.dump(transcript_data, f, indent=2)
     transcript_commit_msg = f"Update transcript for {os.path.basename(SOURCE_FILE)}"
     commit_changes(fname, transcript_commit_msg)
 
@@ -311,7 +329,7 @@ def load_coding_contexts(context_names):
             print(f"Context file '{context_path}' does not exist.")
     return contexts
 
-def build_prompt_messages(system_prompt, conversation, source_file, model, coding_contexts):
+def build_prompt_messages(system_prompt, transcript, source_file, model, coding_contexts):
     """
     Build a list of messages for the API:
       - Include the coding contexts at the beginning of the system prompt.
@@ -329,7 +347,7 @@ def build_prompt_messages(system_prompt, conversation, source_file, model, codin
         messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
     else:
         messages.append({"role": "system", "content": system_prompt})
-    for msg in conversation:
+    for msg in transcript["chat_history"]:
         role = msg["role"].lower()
         if role == "assistant":
             commit = extract_commit_summary(msg["content"])
@@ -340,17 +358,40 @@ def build_prompt_messages(system_prompt, conversation, source_file, model, codin
                 messages.append({"role": "assistant", "content": convo})
         else:
             messages.append({"role": "user", "content": msg["content"]})
-    try:
-        with open(source_file, "r") as f:
-            file_contents = f.read()
-    except Exception:
-        file_contents = ""
     final_msg = {
         "role": "user",
-        "content": "The following is the code which has been generated so far:\n" + file_contents
+        "content": "The following is the code which has been generated so far:\n" + transcript["latest_code"]
     }
     messages.append(final_msg)
     return messages
+
+def read_source_file():
+    """Read and return the content of the source file."""
+    try:
+        with open(SOURCE_FILE, "r") as f:
+            return f.read()
+    except Exception:
+        return ""
+
+def get_last_n_git_commits(n=20):
+    """Retrieve the last n git commits."""
+    try:
+        result = subprocess.run(
+            ["git", "log", f"-n{n}", "--pretty=format:%H|%s"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=True
+        )
+        commits = []
+        for line in result.stdout.strip().split('\n'):
+            if '|' in line:
+                commit_hash, commit_message = line.split('|', 1)
+                commits.append({"commit_hash": commit_hash, "commit_message": commit_message})
+        return commits
+    except subprocess.CalledProcessError as e:
+        print(f"Error retrieving git commits: {e.stderr}")
+        return []
 
 app = Flask(__name__)
 
@@ -362,7 +403,12 @@ def serve_static(filename):
 # Route to return the current transcript as JSON.
 @app.route("/transcript", methods=["GET"])
 def get_transcript():
-    return jsonify(chat_history)
+    transcript = {
+        "chat_history": chat_history,
+        "latest_code": read_source_file(),
+        "changelog": get_last_n_git_commits(20)
+    }
+    return jsonify(transcript)
 
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
@@ -387,7 +433,8 @@ def chat():
             "Additionally, provide a conversational response as if you're a coworker discussing the changes."
         )
 
-    messages = build_prompt_messages(system_prompt, chat_history, SOURCE_FILE, "o1-mini", CODING_CONTEXTS)
+    transcript = load_transcript_from_disk()
+    messages = build_prompt_messages(system_prompt, transcript, SOURCE_FILE, "o1-mini", CODING_CONTEXTS)
 
     if DEBUG:
         print("DEBUG: AI prompt messages:")
@@ -403,7 +450,7 @@ def chat():
         error_msg = f"Error calling OpenAI API: {str(e)}"
         chat_history.append({"role": "Assistant", "content": error_msg})
         update_transcript()
-        return jsonify(chat_history), 500
+        return jsonify({"chat_history": chat_history}), 500
 
     reply = response.choices[0].message.content
     # Parse the reply into code, commit summary, and conversation
@@ -421,8 +468,7 @@ def chat():
             with open(SOURCE_FILE, "w") as f:
                 f.write(new_file_content)
         else:
-            with open(SOURCE_FILE, "r") as f:
-                old_content = f.read()
+            old_content = read_source_file()
             diff_text = compute_diff(old_content, new_file_content)
             if diff_text:
                 with open(SOURCE_FILE, "w") as f:
@@ -434,7 +480,11 @@ def chat():
                 chat_history.append({"role": "Assistant", "content": "No changes detected."})
 
     update_transcript()
-    return jsonify(chat_history)
+    return jsonify({
+        "chat_history": chat_history,
+        "latest_code": read_source_file(),
+        "changelog": get_last_n_git_commits(20)
+    })
 
 # Main page: serves the HTML page with the active file indicator.
 @app.route("/", methods=["GET"])
@@ -453,7 +503,7 @@ if __name__ == "__main__":
     DEBUG = args.debug
     if not os.path.exists(SOURCE_FILE):
         open(SOURCE_FILE, "w").close()
-    chat_history = load_transcript_from_disk()
+    transcript = load_transcript_from_disk()
     CODING_CONTEXTS = load_coding_contexts(args.contexts)
 
     app.run(port=args.port)
