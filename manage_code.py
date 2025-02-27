@@ -12,8 +12,9 @@ import openai
 API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.Client(api_key=API_KEY)
 
-# Global variables for the file we are managing and for debugging.
+# Global variables for the file we are managing, coding contexts, and debugging.
 SOURCE_FILE = None
+CODING_CONTEXTS = []
 DEBUG = False
 
 # HTML template for the chat interface.
@@ -226,9 +227,27 @@ def commit_changes(file_path, commit_message):
     except subprocess.CalledProcessError:
         return False
 
-def build_prompt_messages(system_prompt, conversation, source_file, model):
+def load_coding_contexts(context_names):
+    """Load coding contexts from the contexts/ directory based on provided context names."""
+    contexts = []
+    for name in context_names:
+        context_path = os.path.join("contexts", f"{name}.txt")
+        if os.path.exists(context_path):
+            try:
+                with open(context_path, "r") as f:
+                    content = f.read().strip()
+                    if content:
+                        contexts.append(content)
+            except Exception as e:
+                print(f"Error loading context '{name}': {e}")
+        else:
+            print(f"Context file '{context_path}' does not exist.")
+    return contexts
+
+def build_prompt_messages(system_prompt, conversation, source_file, model, coding_contexts):
     """
     Build a list of messages for the API:
+      - Include the coding contexts at the beginning of the system prompt.
       - Include the system prompt. If the model is "o1-mini" (which doesn't support 'system'),
         include it as a user message prefixed with "SYSTEM:".
       - For each user message, include it verbatim.
@@ -236,6 +255,9 @@ def build_prompt_messages(system_prompt, conversation, source_file, model):
       - Append a final user message with the current on-disk file contents.
     """
     messages = []
+    if coding_contexts:
+        combined_context = "\n".join([f"Context: {ctx}" for ctx in coding_contexts])
+        system_prompt = f"{combined_context}\n\n{system_prompt}"
     if model == "o1-mini":
         messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
     else:
@@ -293,7 +315,7 @@ def chat():
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
-    messages = build_prompt_messages(system_prompt, chat_history, SOURCE_FILE, "o1-mini")
+    messages = build_prompt_messages(system_prompt, chat_history, SOURCE_FILE, "o1-mini", CODING_CONTEXTS)
 
     if DEBUG:
         print("DEBUG: AI prompt messages:")
@@ -346,6 +368,7 @@ if __name__ == "__main__":
     parser.add_argument("source_file", help="Path to the project file to manage.")
     parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
     parser.add_argument("--debug", action="store_true", help="Print full AI prompt on each API call for debugging.")
+    parser.add_argument("--contexts", nargs='*', default=[], help="List of coding contexts to apply.")
     args = parser.parse_args()
 
     SOURCE_FILE = args.source_file
@@ -353,6 +376,6 @@ if __name__ == "__main__":
     if not os.path.exists(SOURCE_FILE):
         open(SOURCE_FILE, "w").close()
     chat_history = load_transcript_from_disk()
+    CODING_CONTEXTS = load_coding_contexts(args.contexts)
 
     app.run(port=args.port)
-
