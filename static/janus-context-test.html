@@ -1,66 +1,69 @@
 <html>
   <body>
     <script src="https://web.janusxr.org/1.5.53/janusweb.js"></script>
+    <script>
+      function defineElements() {
+        // Register the clickable-cube custom element
+        janus.registerElement('clickable-cube', {
+          create() {
+            this.isAnimating = false;
+          },
+          init() {
+            this.addEventListener('click', () => this.jumpAndSpin());
+          },
+          jumpAndSpin() {
+            if (this.isAnimating) return;
+            this.isAnimating = true;
+
+            // Store original position and rotation
+            const originalPosition = this.position.clone();
+            const originalRotation = this.rotation.clone();
+
+            // Jump Animation
+            const jumpHeight = 2;
+            const jumpDuration = 0.2; // seconds
+
+            // Spin Animation
+            const spinDuration = 0.2; // seconds
+            const spinAngle = Math.PI * 2; // one full rotation
+
+            // Using Tween for animation
+            new TWEEN.Tween(this.position)
+              .to({ y: originalPosition.y + jumpHeight }, jumpDuration * 1000)
+              .easing(TWEEN.Easing.Quadratic.Out)
+              .onComplete(() => {
+                new TWEEN.Tween(this.position)
+                  .to({ y: originalPosition.y }, jumpDuration * 1000)
+                  .easing(TWEEN.Easing.Quadratic.In)
+                  .start();
+              })
+              .start();
+
+            new TWEEN.Tween(this.rotation)
+              .to({ y: originalRotation.y + spinAngle }, spinDuration * 1000)
+              .easing(TWEEN.Easing.Linear.None)
+              .onComplete(() => {
+                this.rotation.copy(originalRotation);
+                this.isAnimating = false;
+              })
+              .start();
+          },
+          update(dt) {
+            TWEEN.update();
+          }
+        });
+
+        // Register the update callback
+        janus.registerUpdateCallback(() => {
+          janus.elements.updateAll();
+        });
+      }
+    </script>
     <janus-viewer>
       <assets>
-        <assetscript>
-          // Register the clickable-cube custom element
-          room.registerElement('clickable-cube', {
-            create() {
-              this.isAnimating = false;
-            },
-            init() {
-              this.addEventListener('click', () => this.jumpAndSpin());
-            },
-            jumpAndSpin() {
-              if (this.isAnimating) return;
-              this.isAnimating = true;
-
-              // Store original position and rotation
-              const originalPosition = this.position.clone();
-              const originalRotation = this.rotation.clone();
-
-              // Jump Animation
-              const jumpHeight = 2;
-              const jumpDuration = 0.2; // seconds
-
-              // Spin Animation
-              const spinDuration = 0.2; // seconds
-              const spinAngle = Math.PI * 2; // one full rotation
-
-              // Using Tween for animation
-              new TWEEN.Tween(this.position)
-                .to({ y: originalPosition.y + jumpHeight }, jumpDuration * 1000)
-                .easing(TWEEN.Easing.Quadratic.Out)
-                .onComplete(() => {
-                  new TWEEN.Tween(this.position)
-                    .to({ y: originalPosition.y }, jumpDuration * 1000)
-                    .easing(TWEEN.Easing.Quadratic.In)
-                    .start();
-                })
-                .start();
-
-              new TWEEN.Tween(this.rotation)
-                .to({ y: originalRotation.y + spinAngle }, spinDuration * 1000)
-                .easing(TWEEN.Easing.Linear.None)
-                .onComplete(() => {
-                  this.rotation.copy(originalRotation);
-                  this.isAnimating = false;
-                })
-                .start();
-            },
-            update(dt) {
-              TWEEN.update();
-            }
-          });
-
-          // Register the update callback
-          room.registerUpdateCallback(() => {
-            room.elements.updateAll();
-          });
-        </assetscript>
+        <!-- Removed <assetscript> since elements are now defined globally -->
       </assets>
-      <room pos="0 1.6 0">
+      <room pos="0 1.6 0" onload="defineElements()">
         <clickable-cube pos="-3 0 -5" scale="1 1 1" col="blue" />
         <clickable-cube pos="0 0 -5" scale="1 1 1" col="green" />
         <clickable-cube pos="3 0 -5" scale="1 1 1" col="red" />
