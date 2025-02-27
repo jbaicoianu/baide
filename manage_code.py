@@ -23,6 +23,7 @@ HTML_TEMPLATE = """
     <title>Project Manager Chat</title>
     <style>
       body { font-family: sans-serif; margin: 20px; }
+      #header { margin-bottom: 20px; }
       #chatBox { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
       .message { margin-bottom: 10px; }
       .User { color: blue; }
@@ -31,7 +32,10 @@ HTML_TEMPLATE = """
     </style>
   </head>
   <body>
-    <h1>Project Manager Chat Interface</h1>
+    <div id="header">
+      <h1>Project Manager Chat Interface</h1>
+      <p>Currently working on file: <strong>{{ source_file }}</strong></p>
+    </div>
     <div id="chatBox">
       <!-- Chat messages will be appended here -->
     </div>
@@ -148,24 +152,33 @@ def update_transcript():
     commit_changes(fname, transcript_commit_msg)
 
 def extract_code(text):
-    """Extract text enclosed in triple backticks (with an optional language hint)."""
+    """
+    Extracts text enclosed in triple backticks (optionally with a language hint).
+    If no code block is found, returns the entire text.
+    """
     match = re.search(r"```(?:\w+)?\n(.*?)```", text, re.DOTALL)
     return match.group(1).strip() if match else text.strip()
 
 def extract_commit_summary(text):
-    """Search for a line starting with 'Commit Summary:' and return the summary."""
+    """
+    Searches for a line starting with 'Commit Summary:' and returns the summary.
+    """
     match = re.search(r"Commit Summary:\s*(.*)", text)
     return match.group(1).strip() if match else None
 
 def compute_diff(old_content, new_content):
-    """Compute a unified diff between old_content and new_content."""
+    """
+    Computes a unified diff between old_content and new_content.
+    """
     old_lines = old_content.splitlines(keepends=True)
     new_lines = new_content.splitlines(keepends=True)
     diff_lines = difflib.unified_diff(old_lines, new_lines, fromfile="Before", tofile="After")
     return "".join(diff_lines)
 
 def commit_changes(file_path, commit_message):
-    """Stage the file and commit changes to git with the provided commit message."""
+    """
+    Stages the given file and commits changes to git with the provided commit message.
+    """
     try:
         subprocess.run(["git", "add", file_path], check=True)
         subprocess.run(["git", "commit", "-m", commit_message], check=True)
@@ -175,7 +188,7 @@ def commit_changes(file_path, commit_message):
 
 def build_messages(system_prompt, conversation, model):
     """
-    Construct the messages list for the API call.
+    Constructs the messages list for the API call.
     For the "o1-mini" model (which doesn't support 'system' role),
     include the system prompt as the first 'user' message.
     """
@@ -266,10 +279,10 @@ def chat():
     update_transcript()
     return jsonify(chat_history)
 
+# Main page: serves the HTML page.
 @app.route("/", methods=["GET"])
 def index():
-    # The main page simply serves the HTML template.
-    return render_template_string(HTML_TEMPLATE)
+    return render_template_string(HTML_TEMPLATE, source_file=SOURCE_FILE)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
