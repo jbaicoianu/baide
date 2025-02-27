@@ -78,7 +78,7 @@ function defineCustomElements() {
     
         create() {
             // Swapped x and z scale to make y-axis represent height
-            this.createObject('object', { id: 'cube', name: 'goal-box', pos: "0 0 0.5", scale: "1 0.5 2", col: this.col, collision_id: "cube" });
+            this.createObject('object', { id: 'cube', name: 'goal-box', pos: "0 0 0", scale: "1 0.5 2", col: this.col, collision_id: "cube" });
         },
         update(dt) {
             // Goal collision detection logic
