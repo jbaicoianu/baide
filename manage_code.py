@@ -184,40 +184,6 @@ def update_transcript():
     transcript_commit_msg = f"Update transcript for {os.path.basename(SOURCE_FILE)}"
     commit_changes(fname, transcript_commit_msg)
 
-def build_prompt_messages(system_prompt, conversation, source_file, model):
-    """
-    Build a list of messages for the API:
-      - Include the system prompt. If the model is "o1-mini" (which doesn't support 'system'),
-        include it as a user message prefixed with "SYSTEM:".
-      - For each user message, include it verbatim.
-      - For each assistant message, include only the commit summary.
-      - Append a final user message with the current on-disk file contents.
-    """
-    messages = []
-    if model == "o1-mini":
-        messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
-    else:
-        messages.append({"role": "system", "content": system_prompt})
-    for msg in conversation:
-        role = msg["role"].lower()
-        if role == "assistant":
-            # Extract only the commit summary.
-            commit = extract_commit_summary(msg["content"]) or ""
-            messages.append({"role": role, "content": commit})
-        else:
-            messages.append({"role": role, "content": msg["content"]})
-    try:
-        with open(source_file, "r") as f:
-            file_contents = f.read()
-    except Exception:
-        file_contents = ""
-    final_msg = {
-        "role": "user",
-        "content": "The following is the code which has been generated so far:\n" + file_contents
-    }
-    messages.append(final_msg)
-    return messages
-
 def extract_commit_summary(text):
     """Search for a line starting with 'Commit Summary:' and return its content."""
     match = re.search(r"Commit Summary:\s*(.*)", text)
@@ -243,6 +209,42 @@ def commit_changes(file_path, commit_message):
         return True
     except subprocess.CalledProcessError:
         return False
+
+def build_prompt_messages(system_prompt, conversation, source_file, model):
+    """
+    Build a list of messages for the API:
+      - Include the system prompt. If the model is "o1-mini" (which doesn't support 'system'),
+        include it as a user message prefixed with "SYSTEM:".
+      - For each user message, include it verbatim.
+      - For each assistant message, include only the commit summary.
+      - Append a final user message with the current on-disk file contents,
+        with triple backticks escaped.
+    """
+    messages = []
+    if model == "o1-mini":
+        messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
+    else:
+        messages.append({"role": "system", "content": system_prompt})
+    for msg in conversation:
+        role = msg["role"].lower()
+        if role == "assistant":
+            commit = extract_commit_summary(msg["content"])
+            messages.append({"role": role, "content": commit})
+        else:
+            messages.append({"role": role, "content": msg["content"]})
+    try:
+        with open(source_file, "r") as f:
+            file_contents = f.read()
+    except Exception:
+        file_contents = ""
+    # Escape triple backticks in the file contents.
+    file_contents = file_contents.replace("```", "\\`\\`\\`")
+    final_msg = {
+        "role": "user",
+        "content": "The following is the code which has been generated so far:\n" + file_contents
+    }
+    messages.append(final_msg)
+    return messages
 
 app = Flask(__name__)
 
