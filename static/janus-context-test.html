@@ -7,8 +7,6 @@
         janus.registerElement('clickable-cube', {
           create() {
             this.isAnimating = false;
-          },
-          init() {
             this.addEventListener('click', () => this.jumpAndSpin());
           },
           jumpAndSpin() {
