@@ -50,8 +50,7 @@
         });
       }
 
-      // Initialize custom elements
-      defineElements();
+      // Removed the call to defineElements() from the script
 
       // Global animation loop for TWEEN
       function animate(time) {
@@ -64,7 +63,7 @@
       <assets>
         <!-- Removed <assetscript> since elements are now defined globally -->
       </assets>
-      <room pos="0 1.6 0">
+      <room pos="0 1.6 0" onload="defineElements()">
         <clickable-cube pos="-3 0 -5" scale="1 1 1" col="blue" />
         <clickable-cube pos="0 0 -5" scale="1 1 1" col="green" />
         <clickable-cube pos="3 0 -5" scale="1 1 1" col="red" />
