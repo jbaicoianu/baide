@@ -169,7 +169,7 @@ HTML_TEMPLATE = """
 
       // Function to extract commit summary
       function extractCommitSummary(content) {
-        const regex = /Commit Summary:\s*(.+)/;
+        const regex = /^Commit Summary:\s*(.+)/m;
         const match = content.match(regex);
         return match ? match[1].trim() : null;
       }
@@ -301,8 +301,8 @@ def update_transcript():
     commit_changes(fname, transcript_commit_msg)
 
 def extract_commit_summary(text):
-    """Search for a line starting with 'Commit Summary:' and return its content."""
-    match = re.search(r"Commit Summary:\s*(.*)", text)
+    """Search for a line starting with 'Commit Summary:' at the beginning of a line and return its content."""
+    match = re.search(r"^Commit Summary:\s*(.*)", text, re.MULTILINE)
     return match.group(1).strip() if match else ""
 
 def extract_code(text):
