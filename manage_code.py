@@ -1025,6 +1025,9 @@ def create_file():
     if os.path.exists(file_name):
         return jsonify({"error": "File already exists."}), 400
     try:
+        directory = os.path.dirname(file_name)
+        if directory:  # Check if a directory path is provided
+            os.makedirs(directory, exist_ok=True)  # Create directories as needed
         with open(file_name, "w") as f:
             f.write("")  # Create an empty file
         commit_msg = f"Create new file {file_name}"
