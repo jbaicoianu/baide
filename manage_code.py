@@ -74,6 +74,19 @@ HTML_TEMPLATE = """
         padding: 5px;
         border-bottom: 1px solid #eee;
       }
+      /* Styles for active coding contexts */
+      #codingContextsContainer {
+        margin-top: 20px;
+      }
+      #codingContexts {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 100px;
+        overflow-y: auto;
+      }
+      .coding-context {
+        margin-bottom: 5px;
+      }
     </style>
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -139,6 +152,14 @@ HTML_TEMPLATE = """
         commitSummaries.appendChild(summaryDiv);
       }
 
+      // Append a coding context to codingContexts
+      function appendCodingContext(context) {
+        const contextDiv = document.createElement('div');
+        contextDiv.className = 'coding-context';
+        contextDiv.textContent = context;
+        codingContexts.appendChild(contextDiv);
+      }
+
       // Scroll chatBox to the bottom.
       function scrollToBottom(element) {
         element.scrollTop = element.scrollHeight;
@@ -165,8 +186,17 @@ HTML_TEMPLATE = """
             scrollToBottom(chatBox);
             scrollToBottom(commitSummaries);
           }
+          // Load coding contexts
+          const contextsResponse = await fetch('/coding_contexts');
+          if (contextsResponse.ok) {
+            const contextsData = await contextsResponse.json();
+            contextsData.forEach(ctx => {
+              appendCodingContext(ctx);
+            });
+            scrollToBottom(codingContexts);
+          }
         } catch (e) {
-          console.error('Error loading transcript:', e);
+          console.error('Error loading transcript or coding contexts:', e);
         }
       }
 
@@ -191,6 +221,7 @@ HTML_TEMPLATE = """
         const throbber = document.getElementById("throbber");
         const chatBox = document.getElementById("chatBox");
         const commitSummaries = document.getElementById("commitSummaries");
+        const codingContexts = document.getElementById("codingContexts");
 
         promptInput.addEventListener("keydown", function(e) {
           if (e.ctrlKey && e.key === "Enter") {
@@ -217,7 +248,8 @@ HTML_TEMPLATE = """
             if (response.ok) {
               const data = await response.json();
               chatBox.innerHTML = "";
-              document.getElementById("commitSummaries").innerHTML = "";
+              commitSummaries.innerHTML = "";
+              codingContexts.innerHTML = "";
               data.forEach(msg => {
                 if (msg.role.toLowerCase() === 'assistant') {
                   const professionalMessage = extractProfessionalMessage(msg.content);
@@ -232,8 +264,11 @@ HTML_TEMPLATE = """
               });
               scrollToBottom(chatBox);
               scrollToBottom(commitSummaries);
+              scrollToBottom(codingContexts);
               // Reload the source code after AI updates
               await loadSourceCode();
+              // Reload coding contexts
+              await loadCodingContexts();
             } else {
               console.error("Server error:", response.statusText);
             }
@@ -244,7 +279,23 @@ HTML_TEMPLATE = """
         });
       }
 
-      // On startup, load the previous conversation (if any) and the source code.
+      // Function to load coding contexts
+      async function loadCodingContexts() {
+        try {
+          const response = await fetch('/coding_contexts');
+          if (response.ok) {
+            const data = await response.json();
+            data.forEach(ctx => {
+              appendCodingContext(ctx);
+            });
+            scrollToBottom(codingContexts);
+          }
+        } catch (e) {
+          console.error('Error loading coding contexts:', e);
+        }
+      }
+
+      // On startup, load the previous conversation (if any), source code, and coding contexts.
       window.onload = function() {
         loadTranscript();
         loadSourceCode();
@@ -256,6 +307,16 @@ HTML_TEMPLATE = """
     <div id="header">
       <h1>Project Manager Chat Interface</h1>
       <p>Currently working on file: <strong>{{ source_file }}</strong></p>
+      {% if coding_contexts %}
+      <div id="codingContextsContainer">
+        <h2>Active Coding Contexts</h2>
+        <div id="codingContexts">
+          {% for context in coding_contexts %}
+            <div class="coding-context">{{ context }}</div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
     </div>
     <div id="chatBox">
       <!-- Existing conversation will be loaded here -->
@@ -456,6 +517,11 @@ def update_source():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# New Route to get coding contexts as JSON
+@app.route("/coding_contexts", methods=["GET"])
+def get_coding_contexts():
+    return jsonify(CODING_CONTEXTS)
+
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -523,7 +589,7 @@ def chat():
 # Main page: serves the HTML page with the active file indicator.
 @app.route("/", methods=["GET"])
 def index():
-    return render_template_string(HTML_TEMPLATE, source_file=SOURCE_FILE)
+    return render_template_string(HTML_TEMPLATE, source_file=SOURCE_FILE, coding_contexts=CODING_CONTEXTS)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
