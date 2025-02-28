@@ -70,5 +70,13 @@
   {
     "role": "Assistant",
     "content": "Added a section to display the list of active coding contexts in the web interface, showing them after the \"Currently working on file:\" section."
+  },
+  {
+    "role": "User",
+    "content": "Don't print the full contents of the coding context, just a list of names of active contexts. Maybe we can display the full text on hover or in an infobox on click?"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the code to display only the names of active coding contexts in the web interface. The full content of each context is now available as a tooltip when hovering over the context name. This enhances the user interface by keeping it clean while still providing access to detailed context information when needed."
   }
 ]
