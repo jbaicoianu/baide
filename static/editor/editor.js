@@ -95,6 +95,9 @@ function createProjectTree(structure, parentElement, currentPath = '') {
     const itemDiv = document.createElement('div');
     const dirSpan = document.createElement('span');
     dirSpan.textContent = dir.name;
+    if (dir.name.startsWith('.')) {
+      dirSpan.classList.add('hiddenfile');
+    }
     dirSpan.addEventListener('click', () => {
       childContainer.classList.toggle('hidden');
       dirSpan.classList.toggle('open');
@@ -121,6 +124,9 @@ function createProjectTree(structure, parentElement, currentPath = '') {
     const fileSpan = document.createElement('span');
     fileSpan.textContent = file.name;
     fileSpan.className = 'file';
+    if (file.name.startsWith('.')) {
+      fileSpan.classList.add('hiddenfile');
+    }
     const fullPath = currentPath + file.name;
     fileSpan.addEventListener('click', () => {
       openFileInTab(fullPath);
