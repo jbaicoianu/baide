@@ -155,10 +155,13 @@ HTML_TEMPLATE = """
 
       // Append a coding context to codingContexts
       function appendCodingContext(context) {
+        if (!context || !context.name) return;
         const contextDiv = document.createElement('div');
         contextDiv.className = 'coding-context';
         contextDiv.textContent = context.name;
-        contextDiv.title = context.content; // Tooltip with full content
+        if (context.content) {
+          contextDiv.title = context.content; // Tooltip with full content
+        }
         codingContexts.appendChild(contextDiv);
       }
 
@@ -192,10 +195,12 @@ HTML_TEMPLATE = """
           const contextsResponse = await fetch('/coding_contexts');
           if (contextsResponse.ok) {
             const contextsData = await contextsResponse.json();
-            contextsData.forEach(ctx => {
-              appendCodingContext(ctx);
-            });
-            scrollToBottom(codingContexts);
+            if (contextsData && contextsData.length > 0) {
+              contextsData.forEach(ctx => {
+                appendCodingContext(ctx);
+              });
+              scrollToBottom(codingContexts);
+            }
           }
         } catch (e) {
           console.error('Error loading transcript or coding contexts:', e);
@@ -266,7 +271,6 @@ HTML_TEMPLATE = """
               });
               scrollToBottom(chatBox);
               scrollToBottom(commitSummaries);
-              scrollToBottom(codingContexts);
               // Reload the source code after AI updates
               await loadSourceCode();
               // Reload coding contexts
@@ -287,10 +291,12 @@ HTML_TEMPLATE = """
           const response = await fetch('/coding_contexts');
           if (response.ok) {
             const data = await response.json();
-            data.forEach(ctx => {
-              appendCodingContext(ctx);
-            });
-            scrollToBottom(codingContexts);
+            if (data && data.length > 0) {
+              data.forEach(ctx => {
+                appendCodingContext(ctx);
+              });
+              scrollToBottom(codingContexts);
+            }
           }
         } catch (e) {
           console.error('Error loading coding contexts:', e);
@@ -309,7 +315,12 @@ HTML_TEMPLATE = """
     <div id="header">
       <h1>Project Manager Chat Interface</h1>
       <p>Currently working on file: <strong>{{ source_file }}</strong></p>
-      <!-- Removed server-side rendering of coding contexts to prevent duplication -->
+      <div id="activeCodingContextsContainer">
+        <h2>Active Coding Contexts</h2>
+        <div id="codingContexts">
+          <!-- Coding contexts will be loaded here via JavaScript -->
+        </div>
+      </div>
     </div>
     <div id="chatBox">
       <!-- Existing conversation will be loaded here -->
@@ -333,14 +344,6 @@ HTML_TEMPLATE = """
       <textarea id="sourceCode" readonly></textarea>
       <!-- Optional: Add a button to manually update source code if editing is allowed -->
       <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
-    </div>
-    
-    <!-- New Section for Active Coding Contexts -->
-    <div id="codingContextsContainer">
-      <h2>Active Coding Contexts</h2>
-      <div id="codingContexts">
-        <!-- Coding contexts will be loaded here via JavaScript -->
-      </div>
     </div>
   </body>
 </html>
@@ -461,7 +464,8 @@ def build_prompt_messages(system_prompt, conversation, source_file, model, codin
         role = msg["role"].lower()
         if role == "assistant":
             commit = extract_commit_summary(msg["content"])
-            messages.append({"role": role, "content": commit})
+            if commit:
+                messages.append({"role": role, "content": commit})
         else:
             messages.append({"role": role, "content": msg["content"]})
     try:
@@ -572,8 +576,11 @@ def chat():
         with open(SOURCE_FILE, "w") as f:
             f.write(new_file_content)
     else:
-        with open(SOURCE_FILE, "r") as f:
-            old_content = f.read()
+        try:
+            with open(SOURCE_FILE, "r") as f:
+                old_content = f.read()
+        except Exception:
+            old_content = ""
         diff_text = compute_diff(old_content, new_file_content)
         if diff_text:
             with open(SOURCE_FILE, "w") as f:
@@ -605,6 +612,6 @@ if __name__ == "__main__":
     if not os.path.exists(SOURCE_FILE):
         open(SOURCE_FILE, "w").close()
     chat_history = load_transcript_from_disk()
-    CODING_CONTEXTS = load_coding_contexts(args.contexts)
+    CODING_CONTEXTS = load_coding_contexts(args.contexts) if args.contexts else []
 
     app.run(port=args.port)
