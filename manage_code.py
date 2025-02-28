@@ -94,7 +94,7 @@ HTML_TEMPLATE = """
         overflow-y: auto;
         background-color: #1e1e1e;
         border-radius: 4px;
-        max-height: 300px;
+        max-height: 150px;
       }
       .message { margin-bottom: 10px; }
       .User { color: #4FC3F7; }
@@ -172,6 +172,7 @@ HTML_TEMPLATE = """
       input[type="submit"] {
         padding: 10px;
         cursor: pointer;
+        display: none;
       }
       form {
         display: flex;
