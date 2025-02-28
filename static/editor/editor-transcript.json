@@ -22,5 +22,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the project code to ensure that tabs for already open files are correctly created when restoring the page state on refresh. This involved making the `loadOpenFiles` function asynchronous and adjusting the `window.onload` handler to await the loading of project structures and open files before setting the active tab."
+  },
+  {
+    "role": "User",
+    "content": "The <div class=\"tab\"> elements are not being created if the file was opened on load, this needs to be fixed"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've addressed the issue where `<div class=\"tab\">` elements were not being created when files were opened on load. The `openFileInTab` function has been updated to ensure that tabs are properly created regardless of whether the file was previously open. Additionally, I've refined the logic to avoid prematurely returning when a file is already marked as open, ensuring that all necessary DOM elements are instantiated correctly during the initial load."
   }
 ]
