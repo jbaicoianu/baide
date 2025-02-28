@@ -6,5 +6,13 @@
   {
     "role": "Assistant",
     "content": "I've swapped the background colors for the active and inactive tabs in the source editor as requested. Let me know if you need any further adjustments or have additional suggestions."
+  },
+  {
+    "role": "User",
+    "content": "Remember the currently-opened files and the state of the project browser (eg, which directories are open) in localStorage so the tabs and project tree view persist across reloads"
+  },
+  {
+    "role": "Assistant",
+    "content": "To implement the persistence of currently opened files and the state of the project browser, I've added functionality to save and retrieve this information using `localStorage`. This ensures that the tabs and project tree view remain consistent across page reloads. Please review the updates below:"
   }
 ]
