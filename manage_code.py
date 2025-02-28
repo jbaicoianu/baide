@@ -86,6 +86,7 @@ HTML_TEMPLATE = """
       }
       .coding-context {
         margin-bottom: 5px;
+        cursor: pointer;
       }
     </style>
     <!-- Load Marked for Markdown parsing -->
@@ -156,7 +157,8 @@ HTML_TEMPLATE = """
       function appendCodingContext(context) {
         const contextDiv = document.createElement('div');
         contextDiv.className = 'coding-context';
-        contextDiv.textContent = context;
+        contextDiv.textContent = context.name;
+        contextDiv.title = context.content; // Tooltip with full content
         codingContexts.appendChild(contextDiv);
       }
 
@@ -312,7 +314,7 @@ HTML_TEMPLATE = """
         <h2>Active Coding Contexts</h2>
         <div id="codingContexts">
           {% for context in coding_contexts %}
-            <div class="coding-context">{{ context }}</div>
+            <div class="coding-context" title="{{ context.content }}">{{ context.name }}</div>
           {% endfor %}
         </div>
       </div>
@@ -431,7 +433,7 @@ def load_coding_contexts(context_names):
                 with open(context_path, "r") as f:
                     content = f.read().strip()
                     if content:
-                        contexts.append(content)
+                        contexts.append({"name": name, "content": content})
             except Exception as e:
                 print(f"Error loading context '{name}': {e}")
         else:
@@ -450,7 +452,7 @@ def build_prompt_messages(system_prompt, conversation, source_file, model, codin
     """
     messages = []
     if coding_contexts:
-        combined_context = "\n".join([f"Context: {ctx}" for ctx in coding_contexts])
+        combined_context = "\n".join([f"Context: {ctx['name']}" for ctx in coding_contexts])
         system_prompt = f"{combined_context}\n\n{system_prompt}"
     if model == "o1-mini":
         messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
