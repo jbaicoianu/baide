@@ -134,5 +134,13 @@
   {
     "role": "Assistant",
     "content": "Moved the active coding contexts display into the main content area and styled them as inline badges to prevent duplication and enhance the UI."
+  },
+  {
+    "role": "User",
+    "content": "We don't need a label for \"active coding contexts\" - nothing but a simple list of small badges along the top, floating to the right of the section label"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've reviewed the provided code and ensured that code blocks are properly stripped from the chatbox messages on initial load. The `extract_commit_summary` function's regex now correctly matches lines starting with \"Commit Summary:\" at the beginning of a line, preventing self-matching issues. Additionally, I addressed the duplication of coding contexts and handled cases where `codingContexts` might not be present to avoid runtime errors."
   }
 ]
