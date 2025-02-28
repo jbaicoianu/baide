@@ -59,6 +59,21 @@ HTML_TEMPLATE = """
         border: 1px solid #ccc;
         resize: none;
       }
+      /* Styles for commit summaries */
+      #commitSummariesContainer {
+        margin-top: 20px;
+      }
+      #commitSummaries {
+        border: 1px solid #ccc;
+        padding: 10px;
+        height: 200px;
+        overflow-y: scroll;
+      }
+      .commit-summary {
+        margin-bottom: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #eee;
+      }
     </style>
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -116,9 +131,17 @@ HTML_TEMPLATE = """
         chatBox.appendChild(msgDiv);
       }
 
+      // Append a commit summary to commitSummaries
+      function appendCommitSummary(summary) {
+        const summaryDiv = document.createElement('div');
+        summaryDiv.className = 'commit-summary';
+        summaryDiv.textContent = summary;
+        commitSummaries.appendChild(summaryDiv);
+      }
+
       // Scroll chatBox to the bottom.
-      function scrollToBottom() {
-        chatBox.scrollTop = chatBox.scrollHeight;
+      function scrollToBottom(element) {
+        element.scrollTop = element.scrollHeight;
       }
 
       // Load the existing conversation transcript from the server.
@@ -127,12 +150,28 @@ HTML_TEMPLATE = """
           const response = await fetch('/transcript');
           if (response.ok) {
             const data = await response.json();
-            data.forEach(msg => appendMessage(msg.role, msg.content));
-            scrollToBottom();
+            data.forEach(msg => {
+              appendMessage(msg.role, msg.content);
+              if (msg.role.toLowerCase() === 'assistant') {
+                const commit = extractCommitSummary(msg.content);
+                if (commit) {
+                  appendCommitSummary(commit);
+                }
+              }
+            });
+            scrollToBottom(chatBox);
+            scrollToBottom(commitSummaries);
           }
         } catch (e) {
           console.error('Error loading transcript:', e);
         }
+      }
+
+      // Function to extract commit summary
+      function extractCommitSummary(content) {
+        const regex = /Commit Summary:\s*(.+)/;
+        const match = content.match(regex);
+        return match ? match[1].trim() : null;
       }
 
       // Listen for Ctrl+Enter to submit the form.
@@ -141,6 +180,7 @@ HTML_TEMPLATE = """
         const chatForm = document.getElementById("chatForm");
         const throbber = document.getElementById("throbber");
         const chatBox = document.getElementById("chatBox");
+        const commitSummaries = document.getElementById("commitSummaries");
 
         promptInput.addEventListener("keydown", function(e) {
           if (e.ctrlKey && e.key === "Enter") {
@@ -154,7 +194,7 @@ HTML_TEMPLATE = """
           const prompt = promptInput.value.trim();
           if (!prompt) return;
           appendMessage("User", prompt);
-          scrollToBottom();
+          scrollToBottom(chatBox);
           promptInput.value = "";
           throbber.style.display = "block";
 
@@ -167,8 +207,18 @@ HTML_TEMPLATE = """
             if (response.ok) {
               const data = await response.json();
               chatBox.innerHTML = "";
-              data.forEach(msg => appendMessage(msg.role, msg.content));
-              scrollToBottom();
+              document.getElementById("commitSummaries").innerHTML = "";
+              data.forEach(msg => {
+                appendMessage(msg.role, msg.content);
+                if (msg.role.toLowerCase() === 'assistant') {
+                  const commit = extractCommitSummary(msg.content);
+                  if (commit) {
+                    appendCommitSummary(commit);
+                  }
+                }
+              });
+              scrollToBottom(chatBox);
+              scrollToBottom(commitSummaries);
               // Reload the source code after AI updates
               await loadSourceCode();
             } else {
@@ -196,6 +246,12 @@ HTML_TEMPLATE = """
     </div>
     <div id="chatBox">
       <!-- Existing conversation will be loaded here -->
+    </div>
+    <div id="commitSummariesContainer">
+      <h2>Commit Summaries</h2>
+      <div id="commitSummaries">
+        <!-- Commit summaries will be loaded here -->
+      </div>
     </div>
     <div id="throbber"></div>
     <hr>
