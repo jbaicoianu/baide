@@ -309,16 +309,7 @@ HTML_TEMPLATE = """
     <div id="header">
       <h1>Project Manager Chat Interface</h1>
       <p>Currently working on file: <strong>{{ source_file }}</strong></p>
-      {% if coding_contexts %}
-      <div id="codingContextsContainer">
-        <h2>Active Coding Contexts</h2>
-        <div id="codingContexts">
-          {% for context in coding_contexts %}
-            <div class="coding-context" title="{{ context.content }}">{{ context.name }}</div>
-          {% endfor %}
-        </div>
-      </div>
-      {% endif %}
+      <!-- Removed server-side rendering of coding contexts to prevent duplication -->
     </div>
     <div id="chatBox">
       <!-- Existing conversation will be loaded here -->
@@ -342,6 +333,14 @@ HTML_TEMPLATE = """
       <textarea id="sourceCode" readonly></textarea>
       <!-- Optional: Add a button to manually update source code if editing is allowed -->
       <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
+    </div>
+    
+    <!-- New Section for Active Coding Contexts -->
+    <div id="codingContextsContainer">
+      <h2>Active Coding Contexts</h2>
+      <div id="codingContexts">
+        <!-- Coding contexts will be loaded here via JavaScript -->
+      </div>
     </div>
   </body>
 </html>
@@ -591,7 +590,7 @@ def chat():
 # Main page: serves the HTML page with the active file indicator.
 @app.route("/", methods=["GET"])
 def index():
-    return render_template_string(HTML_TEMPLATE, source_file=SOURCE_FILE, coding_contexts=CODING_CONTEXTS)
+    return render_template_string(HTML_TEMPLATE, source_file=SOURCE_FILE)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
