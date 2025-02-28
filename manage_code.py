@@ -62,6 +62,9 @@ HTML_TEMPLATE = """
       }
       /* Active Coding Contexts */
       #activeCodingContextsContainer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         margin-bottom: 10px;
       }
       #activeCodingContexts {
@@ -303,6 +306,7 @@ HTML_TEMPLATE = """
           const contextsResponse = await fetch('/coding_contexts');
           if (contextsResponse.ok) {
             const contextsData = await contextsResponse.json();
+            codingContexts.innerHTML = ""; // Prevent duplication
             if (contextsData && contextsData.length > 0) {
               contextsData.forEach(ctx => {
                 appendCodingContext(ctx);
@@ -399,6 +403,7 @@ HTML_TEMPLATE = """
           const response = await fetch('/coding_contexts');
           if (response.ok) {
             const data = await response.json();
+            codingContexts.innerHTML = ""; // Prevent duplication
             if (data && data.length > 0) {
               data.forEach(ctx => {
                 appendCodingContext(ctx);
@@ -429,13 +434,12 @@ HTML_TEMPLATE = """
       <!-- Middle Column - Active Coding Contexts, Source Code Editor and Chat -->
       <div id="mainContent">
         <div id="activeCodingContextsContainer">
-          <h2>Active Coding Contexts</h2>
+          <h2>Source Code Editor</h2>
           <div id="activeCodingContexts">
             <!-- Coding contexts will be loaded here via JavaScript as badges -->
           </div>
         </div>
         <div id="sourceCodeContainer">
-          <h2>Source Code Editor</h2>
           <textarea id="sourceCode" readonly></textarea>
           <!-- Optional: Add a button to manually update source code if editing is allowed -->
           <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
