@@ -174,5 +174,13 @@
   {
     "role": "Assistant",
     "content": "To accommodate multiple open files with a tabbed interface in the source code editor, the following updates have been made:\n\n1. **Frontend Enhancements**:\n   - Added a tab bar above the source code editor to manage multiple open files.\n   - Implemented JavaScript functions to handle opening, switching, and closing tabs.\n   - Updated the project browser to open files in new tabs and load corresponding chat histories.\n\n2. **Backend Modifications**:\n   - Updated the transcript management to handle multiple files by maintaining a separate chat history for each file.\n   - Adjusted routes and helper functions to support operations on multiple files.\n\nThese changes enhance the application's usability by allowing users to work on multiple files simultaneously and view their respective histories seamlessly."
+  },
+  {
+    "role": "User",
+    "content": "When selecting a file from the project browser, make sure we send the full path so we can open files in subdirectories"
+  },
+  {
+    "role": "Assistant",
+    "content": "Implemented the functionality to send the full path when selecting a file from the project browser, enabling the opening of files in subdirectories."
   }
 ]
