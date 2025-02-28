@@ -63,7 +63,7 @@ HTML_TEMPLATE = """
       /* Active Coding Contexts */
       #activeCodingContextsContainer {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-end;
         align-items: center;
         margin-bottom: 10px;
       }
@@ -106,7 +106,7 @@ HTML_TEMPLATE = """
       #chatContainer {
         display: flex;
         flex-direction: column;
-        max-height: 50%;
+        max-height: 200px;
       }
       #chatBox {
         flex: 1;
@@ -434,12 +434,12 @@ HTML_TEMPLATE = """
       <!-- Middle Column - Active Coding Contexts, Source Code Editor and Chat -->
       <div id="mainContent">
         <div id="activeCodingContextsContainer">
-          <h2>Source Code Editor</h2>
           <div id="activeCodingContexts">
-            <!-- Coding contexts will be loaded here via JavaScript as badges -->
+            <!-- Coding contexts will be loaded here as badges -->
           </div>
         </div>
         <div id="sourceCodeContainer">
+          <h2>Source Code Editor</h2>
           <textarea id="sourceCode" readonly></textarea>
           <!-- Optional: Add a button to manually update source code if editing is allowed -->
           <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
@@ -560,14 +560,12 @@ def load_coding_contexts(context_names):
             print(f"Context file '{context_path}' does not exist.")
     return contexts
 
-def build_prompt_messages(system_prompt, conversation, source_file, model, coding_contexts):
+def build_prompt_messages(system_prompt, user_prompt, source_file, model, coding_contexts):
     """
     Build a list of messages for the API:
       - Include the coding contexts at the beginning of the system prompt.
       - Include the system prompt. If the model is "o1-mini" (which doesn't support 'system'),
         include it as a user message prefixed with "SYSTEM:".
-      - For each user message, include it verbatim.
-      - For each assistant message, include only the commit summary.
       - Append a final user message with the current on-disk file contents.
     """
     messages = []
@@ -578,14 +576,11 @@ def build_prompt_messages(system_prompt, conversation, source_file, model, codin
         messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
     else:
         messages.append({"role": "system", "content": system_prompt})
-    for msg in conversation:
-        role = msg["role"].lower()
-        if role == "assistant":
-            commit = extract_commit_summary(msg["content"])
-            if commit:
-                messages.append({"role": role, "content": commit})
-        else:
-            messages.append({"role": role, "content": msg["content"]})
+    
+    # Add the most recent user prompt
+    messages.append({"role": "user", "content": user_prompt})
+    
+    # Append a final user message with the current on-disk file contents.
     try:
         with open(source_file, "r") as f:
             file_contents = f.read()
@@ -665,7 +660,7 @@ def chat():
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
-    messages = build_prompt_messages(system_prompt, chat_history, SOURCE_FILE, "o1-mini", CODING_CONTEXTS)
+    messages = build_prompt_messages(system_prompt, user_input, SOURCE_FILE, "o1-mini", CODING_CONTEXTS)
 
     if DEBUG:
         print("DEBUG: AI prompt messages:")
