@@ -222,5 +222,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `create_file` function to ensure that any necessary directories are created when a new file is being created in a non-existent path. This enhancement handles cases where the specified directory structure does not already exist, preventing potential errors during file creation."
+  },
+  {
+    "role": "User",
+    "content": "Replace the hardcoded HTML template in this file with a Jinja2 template, which is stored at templates/editor.html"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have replaced the hardcoded `HTML_TEMPLATE` with a Jinja2 template located at `templates/editor.html`. The Flask application now uses `render_template` to render the HTML page. Please ensure that the `templates/editor.html` file exists and contains the appropriate HTML structure."
   }
 ]
