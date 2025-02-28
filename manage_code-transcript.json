@@ -158,5 +158,13 @@
   {
     "role": "Assistant",
     "content": "I've fixed the JavaScript error by correctly referencing the `activeCodingContexts` DOM element instead of the undefined `codingContexts`. This ensures that the coding contexts are properly loaded and manipulated."
+  },
+  {
+    "role": "User",
+    "content": "Populate the project browser with the directory structure of the active directory"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project to populate the Project Browser with the directory structure of the active directory. A new server-side route retrieves the directory structure, and the front-end dynamically fetches and displays it."
   }
 ]
