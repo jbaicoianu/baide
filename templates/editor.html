@@ -256,13 +256,12 @@
         cursor: pointer;
         font-weight: bold;
         position: relative;
-        /* Adjusted padding to align arrows in the gutter */
-        padding-left: 20px;
+        padding-left: 0;
       }
       .directory > span::before {
         content: '▶';
         position: absolute;
-        left: 0;
+        left: -20px;
         transition: transform 0.2s;
         /* Positioned arrow in the gutter */
         width: 15px;
@@ -270,7 +269,7 @@
       }
       .directory > span.open::before {
         transform: rotate(90deg);
-        content: '▼';
+        content: '▶';
       }
       .hidden {
         display: none;
