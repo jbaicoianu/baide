@@ -326,6 +326,11 @@ def extract_code(text):
             code_lines.append(line)
     return "\n".join(code_lines).strip()
 
+def extract_professional_message(text):
+    """Extract the professional message before the code block."""
+    match = re.match(r"^(.*?)```", text, re.DOTALL)
+    return match.group(1).strip() if match else text.strip()
+
 def compute_diff(old_content, new_content):
     """Compute a unified diff between old_content and new_content."""
     old_lines = old_content.splitlines(keepends=True)
@@ -477,7 +482,8 @@ def chat():
         return jsonify(chat_history), 500
 
     reply = response.choices[0].message.content
-    chat_history.append({"role": "Assistant", "content": reply})
+    professional_message = extract_professional_message(reply)
+    chat_history.append({"role": "Assistant", "content": professional_message})
 
     new_file_content = extract_code(reply)
     commit_summary = extract_commit_summary(reply)
