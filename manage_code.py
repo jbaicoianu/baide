@@ -272,7 +272,7 @@ HTML_TEMPLATE = """
       }
 
       // Function to create the project tree
-      function createProjectTree(structure, parentElement) {
+      function createProjectTree(structure, parentElement, currentPath = '') {
         structure.forEach(item => {
           const itemDiv = document.createElement('div');
           if (item.type === 'directory') {
@@ -284,14 +284,16 @@ HTML_TEMPLATE = """
             itemDiv.appendChild(dirSpan);
             const childContainer = document.createElement('div');
             childContainer.className = 'directory hidden';
-            createProjectTree(item.children, childContainer);
+            // Recursively create tree with updated path
+            createProjectTree(item.children, childContainer, currentPath + item.name + '/');
             itemDiv.appendChild(childContainer);
           } else {
             const fileSpan = document.createElement('span');
             fileSpan.textContent = item.name;
             fileSpan.className = 'file';
+            const fullPath = currentPath + item.name;
             fileSpan.addEventListener('click', () => {
-              openFileInTab(item.name);
+              openFileInTab(fullPath);
             });
             itemDiv.appendChild(fileSpan);
           }
@@ -547,7 +549,7 @@ HTML_TEMPLATE = """
             code_lines.push(line);
           }
         }
-        return code_lines.join("\n").trim();
+        return code_lines.join("\\n").trim();
       }
 
       // Function to extract commit summary from assistant response
@@ -731,6 +733,27 @@ def extract_commit_summary(text):
     """Search for a line starting with 'Commit Summary:' at the beginning of a line and return its content."""
     match = re.search(r"^Commit Summary:\s*(.*)", text, re.MULTILINE)
     return match.group(1).strip() if match else ""
+
+def extract_code(text):
+    """
+    Extract the contents of the first code block using a simple state machine.
+    The code block is assumed to start with a line that (after stripping whitespace)
+    starts with three backticks and ends when a line that is exactly three backticks is encountered
+    """
+    lines = text.splitlines()
+    in_code_block = False
+    code_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if not in_code_block:
+            if stripped.startswith("```"):
+                in_code_block = True
+            continue
+        else:
+            if stripped == "```":
+                break
+            code_lines.append(line)
+    return "\n".join(code_lines).strip()
 
 def extract_professional_message(text):
     """Extract the professional message before the code block."""
@@ -934,7 +957,7 @@ def chat():
     professional_message = extract_professional_message(reply)
     chat_histories[file_name].append({"role": "Assistant", "content": professional_message})
 
-    new_file_content = extract_code_from_response(reply)
+    new_file_content = extract_code(reply)
     commit_summary = extract_commit_summary(reply)
 
     if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
