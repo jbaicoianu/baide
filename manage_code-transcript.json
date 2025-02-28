@@ -150,5 +150,13 @@
   {
     "role": "Assistant",
     "content": "Updated the prompt construction to include only the system prompt, active coding contexts, the most recent user request, and the code printout. This change ensures that the full conversation history is no longer sent with each request, streamlining the interaction with the AI."
+  },
+  {
+    "role": "User",
+    "content": "\ufffc(index):298 Error loading transcript or coding contexts: ReferenceError: codingContexts is not defined\n    at loadTranscript (\ufffc(index):289:13)"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've fixed the JavaScript error by correctly referencing the `activeCodingContexts` DOM element instead of the undefined `codingContexts`. This ensures that the coding contexts are properly loaded and manipulated."
   }
 ]
