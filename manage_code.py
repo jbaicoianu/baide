@@ -115,18 +115,16 @@ HTML_TEMPLATE = """
         color: #fff;
         margin-bottom: 5px;
       }
-      #sourceCode {
+      /* CodeMirror styles override */
+      .CodeMirror {
         flex: 1;
+        height: auto;
         background-color: #1e1e1e;
         color: #d4d4d4;
-        font-family: monospace;
-        font-size: 14px;
-        padding: 10px;
         border: 1px solid #444;
-        resize: none;
         border-radius: 4px;
-        overflow: auto;
       }
+      /* Chat Container */
       #chatContainer {
         display: flex;
         flex-direction: column;
@@ -237,9 +235,55 @@ HTML_TEMPLATE = """
     </style>
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- Load CodeMirror from CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
     <script>
       let activeFile = null;
       let openFiles = {};
+      let editor = null;
+
+      // Initialize CodeMirror editor
+      function initializeCodeMirror() {
+        const textarea = document.getElementById('sourceCode');
+        editor = CodeMirror.fromTextArea(textarea, {
+          mode: 'python',
+          theme: 'dracula',
+          lineNumbers: true,
+          lineWrapping: true,
+          tabSize: 4,
+          indentUnit: 4,
+          extraKeys: {
+            "Ctrl-S": function(cm) {
+              saveFile();
+            }
+          }
+        });
+      }
+
+      // Save file function triggered by Ctrl+S
+      function saveFile() {
+        if (!activeFile) return;
+        const updatedContent = editor.getValue();
+        fetch('/update_source', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ file: activeFile, content: updatedContent })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message) {
+            console.log(data.message);
+          } else if (data.error) {
+            console.error(data.error);
+          }
+        })
+        .catch(error => {
+          console.error('Error saving file:', error);
+        });
+      }
 
       // Render Markdown while escaping any raw HTML.
       function renderMarkdown(text) {
@@ -335,8 +379,11 @@ HTML_TEMPLATE = """
               t.classList.remove('active');
             });
             tabs.appendChild(tab);
-            // Load content
+            // Load content into CodeMirror editor
             document.getElementById('sourceCode').value = data.content;
+            if (editor) {
+              editor.setValue(data.content);
+            }
             activeFile = filename;
             openFiles[filename] = true;
             // Load transcript
@@ -365,6 +412,9 @@ HTML_TEMPLATE = """
           if (response.ok) {
             const data = await response.json();
             document.getElementById('sourceCode').value = data.content;
+            if (editor) {
+              editor.setValue(data.content);
+            }
             // Load transcript
             await loadTranscript(filename);
           }
@@ -388,44 +438,14 @@ HTML_TEMPLATE = """
             } else {
               activeFile = null;
               document.getElementById('sourceCode').value = '';
+              if (editor) {
+                editor.setValue('');
+              }
               document.getElementById('chatBox').innerHTML = '';
               document.getElementById('commitSummaries').innerHTML = '';
               document.getElementById('activeCodingContexts').innerHTML = '';
             }
           }
-        }
-      }
-
-      // Function to load source code into the editor
-      async function loadSourceCode(filename) {
-        try {
-          const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
-          if (response.ok) {
-            const data = await response.json();
-            document.getElementById('sourceCode').value = data.content;
-          }
-        } catch (e) {
-          console.error('Error loading source code:', e);
-        }
-      }
-
-      // Function to update source code from the editor
-      async function updateSourceCode() {
-        if (!activeFile) return;
-        const updatedContent = document.getElementById('sourceCode').value;
-        try {
-          const response = await fetch('/update_source', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ file: activeFile, content: updatedContent })
-          });
-          if (response.ok) {
-            console.log('Source code updated successfully.');
-          } else {
-            console.error('Failed to update source code.');
-          }
-        } catch (e) {
-          console.error('Error updating source code:', e);
         }
       }
 
@@ -462,23 +482,6 @@ HTML_TEMPLATE = """
         element.scrollTop = element.scrollHeight;
       }
 
-      // Function to load and display the project structure
-      async function loadProjectStructure() {
-        try {
-          const response = await fetch('/project_structure');
-          if (response.ok) {
-            const data = await response.json();
-            const projectBrowser = document.getElementById('projectBrowser');
-            projectBrowser.innerHTML = '<h2>Project Browser</h2>';
-            const treeContainer = document.createElement('div');
-            createProjectTree(data, treeContainer);
-            projectBrowser.appendChild(treeContainer);
-          }
-        } catch (e) {
-          console.error('Error loading project structure:', e);
-        }
-      }
-
       // Function to load the existing conversation transcript for a specific file from the server.
       async function loadTranscript(filename) {
         try {
@@ -490,9 +493,9 @@ HTML_TEMPLATE = """
             document.getElementById('activeCodingContexts').innerHTML = '';
             data.forEach(msg => {
               if (msg.role.toLowerCase() === 'assistant') {
-                const professionalMessage = extractProfessionalMessage(msg.content);
+                const professionalMessage = extract_professional_message(msg.content);
                 appendMessage(msg.role, professionalMessage);
-                const commit = extractCommit_summary(msg.content);
+                const commit = extract_commit_summary(msg.content);
                 if (commit) {
                   appendCommitSummary(commit);
                 }
@@ -532,35 +535,6 @@ HTML_TEMPLATE = """
         const regex = /^(.*?)```/s;
         const match = content.match(regex);
         return match ? match[1].trim() : content.trim();
-      }
-
-      // Function to extract code from assistant response
-      function extract_code_from_response(content) {
-        const lines = content.splitlines();
-        let in_code_block = false;
-        let code_lines = [];
-        for (let line of lines) {
-          let stripped = line.trim();
-          if (!in_code_block) {
-            if (stripped.startsWith("```")) {
-              in_code_block = true;
-            }
-            continue;
-          } else {
-            if (stripped === "```") {
-              break;
-            }
-            code_lines.push(line);
-          }
-        }
-        return code_lines.join("\\n").trim();
-      }
-
-      // Function to extract commit summary from assistant response
-      function extract_commit_summary_from_response(content) {
-        const regex = /^Commit Summary:\s*(.+)/m;
-        const match = content.match(regex);
-        return match ? match[1].trim() : "";
       }
 
       // Listen for Ctrl+Enter to submit the form.
@@ -649,8 +623,25 @@ HTML_TEMPLATE = """
         }
       }
 
-      // On startup, load the project structure and set up event listeners.
+      // Function to load the existing source code content for a specific file into CodeMirror
+      async function loadSourceCode(filename) {
+        try {
+          const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+          if (response.ok) {
+            const data = await response.json();
+            document.getElementById('sourceCode').value = data.content;
+            if (editor) {
+              editor.setValue(data.content);
+            }
+          }
+        } catch (e) {
+          console.error('Error loading source code:', e);
+        }
+      }
+
+      // On startup, load the project structure, initialize CodeMirror, and set up event listeners.
       window.onload = function() {
+        initializeCodeMirror();
         loadProjectStructure();
         setupEventListeners();
       };
@@ -676,8 +667,6 @@ HTML_TEMPLATE = """
         <div id="sourceCodeContainer">
           <h2>Source Code Editor</h2>
           <textarea id="sourceCode" readonly></textarea>
-          <!-- Optional: Add a button to manually update source code if editing is allowed -->
-          <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
         </div>
         <div id="chatContainer">
           <div id="chatBox">
