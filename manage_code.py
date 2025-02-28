@@ -170,6 +170,7 @@ def get_directory_structure(path):
                 })
     except PermissionError:
         pass  # Skip directories for which the user does not have permissions
+    structure.sort(key=lambda x: 0 if x["type"] == "directory" else 1)
     return structure
 
 app = Flask(__name__)
