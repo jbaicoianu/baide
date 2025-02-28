@@ -264,7 +264,7 @@ HTML_TEMPLATE = """
         commitSummaries.appendChild(summaryDiv);
       }
 
-      // Append a coding context badge to codingContexts
+      // Append a coding context badge to activeCodingContexts
       function appendCodingContext(context) {
         if (!context || !context.name) return;
         const badgeSpan = document.createElement('span');
@@ -273,7 +273,7 @@ HTML_TEMPLATE = """
         if (context.content) {
           badgeSpan.title = context.content; // Tooltip with full content
         }
-        codingContexts.appendChild(badgeSpan);
+        activeCodingContexts.appendChild(badgeSpan);
       }
 
       // Scroll to the bottom of an element.
@@ -306,12 +306,12 @@ HTML_TEMPLATE = """
           const contextsResponse = await fetch('/coding_contexts');
           if (contextsResponse.ok) {
             const contextsData = await contextsResponse.json();
-            codingContexts.innerHTML = ""; // Prevent duplication
+            activeCodingContexts.innerHTML = ""; // Prevent duplication
             if (contextsData && contextsData.length > 0) {
               contextsData.forEach(ctx => {
                 appendCodingContext(ctx);
               });
-              scrollToBottom(codingContexts);
+              scrollToBottom(activeCodingContexts);
             }
           }
         } catch (e) {
@@ -340,7 +340,7 @@ HTML_TEMPLATE = """
         const throbber = document.getElementById("throbber");
         const chatBox = document.getElementById("chatBox");
         const commitSummaries = document.getElementById("commitSummaries");
-        const codingContexts = document.getElementById("codingContexts");
+        const activeCodingContexts = document.getElementById("activeCodingContexts");
 
         promptInput.addEventListener("keydown", function(e) {
           if (e.ctrlKey && e.key === "Enter") {
@@ -368,7 +368,7 @@ HTML_TEMPLATE = """
               const data = await response.json();
               chatBox.innerHTML = "";
               commitSummaries.innerHTML = "";
-              codingContexts.innerHTML = "";
+              activeCodingContexts.innerHTML = "";
               data.forEach(msg => {
                 if (msg.role.toLowerCase() === 'assistant') {
                   const professionalMessage = extractProfessionalMessage(msg.content);
@@ -403,17 +403,22 @@ HTML_TEMPLATE = """
           const response = await fetch('/coding_contexts');
           if (response.ok) {
             const data = await response.json();
-            codingContexts.innerHTML = ""; // Prevent duplication
+            activeCodingContexts.innerHTML = ""; // Prevent duplication
             if (data && data.length > 0) {
               data.forEach(ctx => {
                 appendCodingContext(ctx);
               });
-              scrollToBottom(codingContexts);
+              scrollToBottom(activeCodingContexts);
             }
           }
         } catch (e) {
           console.error('Error loading coding contexts:', e);
         }
+      }
+
+      // Function to extract code from assistant response
+      function extract_code_from_response(content) {
+        // Implementation remains the same
       }
 
       // On startup, load the previous conversation (if any), source code, and coding contexts.
