@@ -182,5 +182,13 @@
   {
     "role": "Assistant",
     "content": "Implemented the functionality to send the full path when selecting a file from the project browser, enabling the opening of files in subdirectories."
+  },
+  {
+    "role": "User",
+    "content": "Clicking the tabs at the top should set that tab as the active file"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have implemented the functionality to set a tab as the active file when it is clicked. Now, clicking on any existing tab will activate it, load the corresponding source code, chat history, and commit summaries accordingly. This ensures a seamless user experience when navigating between multiple open files."
   }
 ]
