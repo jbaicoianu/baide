@@ -151,12 +151,15 @@ HTML_TEMPLATE = """
           if (response.ok) {
             const data = await response.json();
             data.forEach(msg => {
-              appendMessage(msg.role, msg.content);
               if (msg.role.toLowerCase() === 'assistant') {
+                const professionalMessage = extractProfessionalMessage(msg.content);
+                appendMessage(msg.role, professionalMessage);
                 const commit = extractCommitSummary(msg.content);
                 if (commit) {
                   appendCommitSummary(commit);
                 }
+              } else {
+                appendMessage(msg.role, msg.content);
               }
             });
             scrollToBottom(chatBox);
@@ -172,6 +175,13 @@ HTML_TEMPLATE = """
         const regex = /^Commit Summary:\s*(.+)/m;
         const match = content.match(regex);
         return match ? match[1].trim() : null;
+      }
+
+      // Function to extract the professional message before the code block.
+      function extractProfessionalMessage(content) {
+        const regex = /^(.*?)```/s;
+        const match = content.match(regex);
+        return match ? match[1].trim() : content.trim();
       }
 
       // Listen for Ctrl+Enter to submit the form.
@@ -209,12 +219,15 @@ HTML_TEMPLATE = """
               chatBox.innerHTML = "";
               document.getElementById("commitSummaries").innerHTML = "";
               data.forEach(msg => {
-                appendMessage(msg.role, msg.content);
                 if (msg.role.toLowerCase() === 'assistant') {
+                  const professionalMessage = extractProfessionalMessage(msg.content);
+                  appendMessage(msg.role, professionalMessage);
                   const commit = extractCommitSummary(msg.content);
                   if (commit) {
                     appendCommitSummary(commit);
                   }
+                } else {
+                  appendMessage(msg.role, msg.content);
                 }
               });
               scrollToBottom(chatBox);
