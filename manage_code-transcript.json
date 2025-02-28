@@ -238,5 +238,13 @@
   {
     "role": "Assistant",
     "content": "Implemented tracking of the `editor.html` template's last modified time to ensure it is reloaded from disk whenever changes are detected. This ensures that the latest version of the template is always served."
+  },
+  {
+    "role": "User",
+    "content": "Sort directories in the project browser view to the top of their respective levels"
+  },
+  {
+    "role": "Assistant",
+    "content": "Implemented sorting to display directories before files in the project browser view."
   }
 ]
