@@ -133,7 +133,7 @@ function createProjectTree(structure, parentElement, currentPath = '') {
 // Function to open a file in a new tab
 async function openFileInTab(filename) {
   if (openFiles[filename]) {
-    switchToTab(filename);
+    await switchToTab(filename);
     return;
   }
 
@@ -475,13 +475,13 @@ function saveOpenFiles() {
 }
 
 // Load open files from localStorage
-function loadOpenFiles() {
+async function loadOpenFiles() {
   const storedOpenFiles = localStorage.getItem('openFiles');
   if (storedOpenFiles) {
     openFiles = JSON.parse(storedOpenFiles);
-    Object.keys(openFiles).forEach(filename => {
-      openFileInTab(filename);
-    });
+    for (const filename of Object.keys(openFiles)) {
+      await openFileInTab(filename);
+    }
   }
 }
 
@@ -529,15 +529,14 @@ function restoreOpenDirectories(parentElement, currentPath = '') {
 }
 
 // On startup, load the project structure, initialize CodeMirror, set up event listeners, and restore state.
-window.onload = function() {
+window.onload = async function() {
   initializeCodeMirror();
   loadOpenDirectories();
-  loadProjectStructure().then(() => {
-    loadOpenFiles();
-    loadActiveFile();
-    if (activeFile) {
-      switchToTab(activeFile);
-    }
-  });
+  await loadProjectStructure();
+  await loadOpenFiles();
+  loadActiveFile();
+  if (activeFile) {
+    await switchToTab(activeFile);
+  }
   setupEventListeners();
 };
