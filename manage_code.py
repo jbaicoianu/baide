@@ -25,12 +25,72 @@ HTML_TEMPLATE = """
     <meta charset="utf-8">
     <title>Project Manager Chat</title>
     <style>
-      body { font-family: sans-serif; margin: 20px; }
-      #header { margin-bottom: 20px; }
-      #chatBox { border: 1px solid #ccc; padding: 10px; height: 400px; overflow-y: scroll; }
+      body { 
+        font-family: sans-serif; 
+        margin: 0; 
+        padding: 0; 
+        background-color: #2e2e2e; 
+        color: #f0f0f0;
+      }
+      #container {
+        display: flex;
+        height: 100vh;
+      }
+      /* Left Column - Project Browser */
+      #projectBrowser {
+        width: 20%;
+        border-right: 1px solid #444;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      #projectBrowser h2 {
+        color: #fff;
+      }
+      /* Middle Column - Source Code Editor and Chat */
+      #mainContent {
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        box-sizing: border-box;
+      }
+      #sourceCodeContainer {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+      }
+      #sourceCodeContainer h2 {
+        color: #fff;
+        margin-bottom: 5px;
+      }
+      #sourceCode {
+        flex: 1;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        font-family: monospace;
+        font-size: 14px;
+        padding: 10px;
+        border: 1px solid #444;
+        resize: none;
+        border-radius: 4px;
+      }
+      #chatContainer {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      #chatBox {
+        flex: 1;
+        border: 1px solid #444;
+        padding: 10px;
+        overflow-y: scroll;
+        background-color: #1e1e1e;
+        border-radius: 4px;
+      }
       .message { margin-bottom: 10px; }
-      .User { color: blue; }
-      .Assistant { color: green; }
+      .User { color: #4FC3F7; }
+      .Assistant { color: #81C784; }
       /* CSS spinner */
       #throbber {
         display: none;
@@ -46,47 +106,63 @@ HTML_TEMPLATE = """
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
-      /* Styles for the source code editor */
-      #sourceCodeContainer {
-        margin-top: 20px;
-      }
-      #sourceCode {
-        width: 100%;
-        height: 400px;
-        font-family: monospace;
-        font-size: 14px;
-        padding: 10px;
-        border: 1px solid #ccc;
-        resize: none;
-      }
       /* Styles for commit summaries */
       #commitSummariesContainer {
-        margin-top: 20px;
+        width: 20%;
+        border-left: 1px solid #444;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: #1e1e1e;
+      }
+      #commitSummariesContainer h2 {
+        color: #fff;
       }
       #commitSummaries {
-        border: 1px solid #ccc;
-        padding: 10px;
-        height: 200px;
+        height: calc(100% - 40px);
         overflow-y: scroll;
       }
       .commit-summary {
         margin-bottom: 10px;
         padding: 5px;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px solid #555;
       }
       /* Styles for active coding contexts */
-      #codingContextsContainer {
-        margin-top: 20px;
+      #activeCodingContextsContainer {
+        margin-top: 10px;
+      }
+      #activeCodingContextsContainer h2 {
+        color: #fff;
+        margin-bottom: 5px;
       }
       #codingContexts {
-        border: 1px solid #ccc;
+        border: 1px solid #444;
         padding: 10px;
         height: 100px;
         overflow-y: auto;
+        background-color: #1e1e1e;
+        border-radius: 4px;
       }
       .coding-context {
         margin-bottom: 5px;
         cursor: pointer;
+      }
+      /* Dark mode adjustments */
+      textarea, input[type="submit"] {
+        background-color: #3c3c3c;
+        color: #f0f0f0;
+        border: 1px solid #555;
+        border-radius: 4px;
+      }
+      textarea::placeholder {
+        color: #bbb;
+      }
+      input[type="submit"] {
+        padding: 10px;
+        cursor: pointer;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
       }
     </style>
     <!-- Load Marked for Markdown parsing -->
@@ -165,7 +241,7 @@ HTML_TEMPLATE = """
         codingContexts.appendChild(contextDiv);
       }
 
-      // Scroll chatBox to the bottom.
+      // Scroll to the bottom of an element.
       function scrollToBottom(element) {
         element.scrollTop = element.scrollHeight;
       }
@@ -312,38 +388,44 @@ HTML_TEMPLATE = """
     </script>
   </head>
   <body>
-    <div id="header">
-      <h1>Project Manager Chat Interface</h1>
-      <p>Currently working on file: <strong>{{ source_file }}</strong></p>
-      <div id="activeCodingContextsContainer">
-        <h2>Active Coding Contexts</h2>
-        <div id="codingContexts">
-          <!-- Coding contexts will be loaded here via JavaScript -->
+    <div id="container">
+      <!-- Left Column - Project Browser -->
+      <div id="projectBrowser">
+        <h2>Project Browser</h2>
+        <p>Placeholder for project files.</p>
+      </div>
+      <!-- Middle Column - Source Code Editor and Chat -->
+      <div id="mainContent">
+        <div id="sourceCodeContainer">
+          <h2>Source Code Editor</h2>
+          <textarea id="sourceCode" readonly></textarea>
+          <!-- Optional: Add a button to manually update source code if editing is allowed -->
+          <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
+        </div>
+        <div id="chatContainer">
+          <div id="chatBox">
+            <!-- Existing conversation will be loaded here -->
+          </div>
+          <div id="throbber"></div>
+          <form id="chatForm">
+            <textarea id="promptInput" rows="3" placeholder="Enter your prompt here..."></textarea><br>
+            <input type="submit" value="Submit">
+          </form>
+        </div>
+      </div>
+      <!-- Right Column - Commit Summaries -->
+      <div id="commitSummariesContainer">
+        <h2>Commit Summaries</h2>
+        <div id="commitSummaries">
+          <!-- Commit summaries will be loaded here -->
         </div>
       </div>
     </div>
-    <div id="chatBox">
-      <!-- Existing conversation will be loaded here -->
-    </div>
-    <div id="commitSummariesContainer">
-      <h2>Commit Summaries</h2>
-      <div id="commitSummaries">
-        <!-- Commit summaries will be loaded here -->
+    <div id="activeCodingContextsContainer">
+      <h2>Active Coding Contexts</h2>
+      <div id="codingContexts">
+        <!-- Coding contexts will be loaded here via JavaScript -->
       </div>
-    </div>
-    <div id="throbber"></div>
-    <hr>
-    <form id="chatForm">
-      <textarea id="promptInput" rows="5" cols="60" placeholder="Enter your prompt here..."></textarea><br>
-      <input type="submit" value="Submit">
-    </form>
-
-    <!-- New Section for Source Code Editor -->
-    <div id="sourceCodeContainer">
-      <h2>Source Code Editor</h2>
-      <textarea id="sourceCode" readonly></textarea>
-      <!-- Optional: Add a button to manually update source code if editing is allowed -->
-      <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
     </div>
   </body>
 </html>
