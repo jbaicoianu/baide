@@ -136,48 +136,56 @@ HTML_TEMPLATE = """
       }
 
       // Listen for Ctrl+Enter to submit the form.
-      promptInput.addEventListener("keydown", function(e) {
-        if (e.ctrlKey && e.key === "Enter") {
-          e.preventDefault();
-          chatForm.dispatchEvent(new Event("submit", {cancelable: true}));
-        }
-      });
+      function setupEventListeners() {
+        const promptInput = document.getElementById("promptInput");
+        const chatForm = document.getElementById("chatForm");
+        const throbber = document.getElementById("throbber");
+        const chatBox = document.getElementById("chatBox");
 
-      chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const prompt = promptInput.value.trim();
-        if (!prompt) return;
-        appendMessage("User", prompt);
-        scrollToBottom();
-        promptInput.value = "";
-        throbber.style.display = "block";
-
-        try {
-          const response = await fetch("/chat", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: prompt })
-          });
-          if (response.ok) {
-            const data = await response.json();
-            chatBox.innerHTML = "";
-            data.forEach(msg => appendMessage(msg.role, msg.content));
-            scrollToBottom();
-            // Reload the source code after AI updates
-            await loadSourceCode();
-          } else {
-            console.error("Server error:", response.statusText);
+        promptInput.addEventListener("keydown", function(e) {
+          if (e.ctrlKey && e.key === "Enter") {
+            e.preventDefault();
+            chatForm.dispatchEvent(new Event("submit", {cancelable: true}));
           }
-        } catch (error) {
-          console.error("Fetch error:", error);
-        }
-        throbber.style.display = "none";
-      });
+        });
+
+        chatForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const prompt = promptInput.value.trim();
+          if (!prompt) return;
+          appendMessage("User", prompt);
+          scrollToBottom();
+          promptInput.value = "";
+          throbber.style.display = "block";
+
+          try {
+            const response = await fetch("/chat", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ prompt: prompt })
+            });
+            if (response.ok) {
+              const data = await response.json();
+              chatBox.innerHTML = "";
+              data.forEach(msg => appendMessage(msg.role, msg.content));
+              scrollToBottom();
+              // Reload the source code after AI updates
+              await loadSourceCode();
+            } else {
+              console.error("Server error:", response.statusText);
+            }
+          } catch (error) {
+            console.error("Fetch error:", error);
+          }
+          throbber.style.display = "none";
+        });
+      }
 
       // On startup, load the previous conversation (if any) and the source code.
       window.onload = function() {
         loadTranscript();
         loadSourceCode();
+        setupEventListeners();
       };
     </script>
   </head>
