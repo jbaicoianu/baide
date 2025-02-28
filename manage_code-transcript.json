@@ -142,5 +142,13 @@
   {
     "role": "Assistant",
     "content": "I've reviewed the provided code and ensured that code blocks are properly stripped from the chatbox messages on initial load. The `extract_commit_summary` function's regex now correctly matches lines starting with \"Commit Summary:\" at the beginning of a line, preventing self-matching issues. Additionally, I addressed the duplication of coding contexts and handled cases where `codingContexts` might not be present to avoid runtime errors."
+  },
+  {
+    "role": "User",
+    "content": "Don't send the full back-and-forth conversation with each request. We'll just send the system prompt, any active coding contexts, the most recent user request, and the code printout."
+  },
+  {
+    "role": "Assistant",
+    "content": "Updated the prompt construction to include only the system prompt, active coding contexts, the most recent user request, and the code printout. This change ensures that the full conversation history is no longer sent with each request, streamlining the interaction with the AI."
   }
 ]
