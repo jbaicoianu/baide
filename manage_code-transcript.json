@@ -62,5 +62,13 @@
   {
     "role": "Assistant",
     "content": "Updated the `loadTranscript` function to strip code blocks from chatbox messages during the initial load. Now, only the professional messages without code blocks and commit summaries are displayed in the chatbox, ensuring a cleaner user interface."
+  },
+  {
+    "role": "User",
+    "content": "Print a simple list of active coding contexts at the top of our web interface, right after the \"currently working on file:\" section"
+  },
+  {
+    "role": "Assistant",
+    "content": "Added a section to display the list of active coding contexts in the web interface, showing them after the \"Currently working on file:\" section."
   }
 ]
