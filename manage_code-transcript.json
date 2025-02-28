@@ -230,5 +230,13 @@
   {
     "role": "Assistant",
     "content": "I have replaced the hardcoded `HTML_TEMPLATE` with a Jinja2 template located at `templates/editor.html`. The Flask application now uses `render_template` to render the HTML page. Please ensure that the `templates/editor.html` file exists and contains the appropriate HTML structure."
+  },
+  {
+    "role": "User",
+    "content": "Keep track of the last modified time of the editor.html template - if it changes, make sure the template is reloaded from the disk so we always serve up the latest version"
+  },
+  {
+    "role": "Assistant",
+    "content": "Implemented tracking of the `editor.html` template's last modified time to ensure it is reloaded from disk whenever changes are detected. This ensures that the latest version of the template is always served."
   }
 ]
