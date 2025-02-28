@@ -83,7 +83,6 @@ HTML_TEMPLATE = """
         overflow: auto;
       }
       #chatContainer {
-        flex: 1;
         display: flex;
         flex-direction: column;
       }
