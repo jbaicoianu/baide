@@ -14,5 +14,13 @@
   {
     "role": "Assistant",
     "content": "To implement the persistence of currently opened files and the state of the project browser, I've added functionality to save and retrieve this information using `localStorage`. This ensures that the tabs and project tree view remain consistent across page reloads. Please review the updates below:"
+  },
+  {
+    "role": "User",
+    "content": "Big problem, we're not creating tabs for any files which are already open. Please make sure that the tabs are created when we restore the state of the page on refresh."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project code to ensure that tabs for already open files are correctly created when restoring the page state on refresh. This involved making the `loadOpenFiles` function asynchronous and adjusting the `window.onload` handler to await the loading of project structures and open files before setting the active tab."
   }
 ]
