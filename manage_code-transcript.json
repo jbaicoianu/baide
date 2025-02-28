@@ -126,5 +126,13 @@
   {
     "role": "Assistant",
     "content": "Removed the `flex` parameter from the `#chatContainer` element to resolve layout issues and prevent unintended resizing behavior. Please review the changes to ensure the chat container displays as expected."
+  },
+  {
+    "role": "User",
+    "content": "Move the active coding contexts display up to the top of the second column, in the space next to where it says \"source code editor\". Change them to be a simple inline list of small badges."
+  },
+  {
+    "role": "Assistant",
+    "content": "Moved the active coding contexts display into the main content area and styled them as inline badges to prevent duplication and enhance the UI."
   }
 ]
