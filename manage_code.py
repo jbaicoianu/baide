@@ -305,13 +305,11 @@ def chat():
 
     if not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0:
         system_prompt = (
-            "You are an assistant managing a software project. When given a prompt, generate the complete contents "
-            "for the project file. Output only the code in a single code block (using triple backticks) without commentary."
+            "You are an assistant managing a software project. When given a prompt, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete contents for the project file. Output only the code in a single code block (using triple backticks) without additional commentary."
         )
     else:
         system_prompt = (
-            "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, "
-            "generate the complete updated file contents. Output only the updated code in a single code block (using triple backticks). "
+            "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete updated file contents. Output only the updated code in a single code block (using triple backticks). "
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
