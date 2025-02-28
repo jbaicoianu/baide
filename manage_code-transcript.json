@@ -78,5 +78,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the code to display only the names of active coding contexts in the web interface. The full content of each context is now available as a tooltip when hovering over the context name. This enhances the user interface by keeping it clean while still providing access to detailed context information when needed."
+  },
+  {
+    "role": "User",
+    "content": "The coding contexts are being displayed twice now"
+  },
+  {
+    "role": "Assistant",
+    "content": "Noted the issue with coding contexts being displayed twice. Removed the server-side rendering of coding contexts from the HTML template to rely solely on the client-side JavaScript for displaying active coding contexts."
   }
 ]
