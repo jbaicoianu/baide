@@ -199,6 +199,17 @@ HTML_TEMPLATE = """
           flex: 1;
         }
       }
+      /* Styles for project browser tree */
+      .directory, .file {
+        margin-left: 20px;
+      }
+      .directory > span {
+        cursor: pointer;
+        font-weight: bold;
+      }
+      .hidden {
+        display: none;
+      }
     </style>
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -279,6 +290,62 @@ HTML_TEMPLATE = """
       // Scroll to the bottom of an element.
       function scrollToBottom(element) {
         element.scrollTop = element.scrollHeight;
+      }
+
+      // Function to create the project tree
+      function createProjectTree(structure, parentElement) {
+        structure.forEach(item => {
+          const itemDiv = document.createElement('div');
+          if (item.type === 'directory') {
+            const dirSpan = document.createElement('span');
+            dirSpan.textContent = item.name;
+            dirSpan.addEventListener('click', () => {
+              childContainer.classList.toggle('hidden');
+            });
+            itemDiv.appendChild(dirSpan);
+            const childContainer = document.createElement('div');
+            childContainer.className = 'directory hidden';
+            createProjectTree(item.children, childContainer);
+            itemDiv.appendChild(childContainer);
+          } else {
+            const fileSpan = document.createElement('span');
+            fileSpan.textContent = item.name;
+            fileSpan.className = 'file';
+            itemDiv.appendChild(fileSpan);
+          }
+          parentElement.appendChild(itemDiv);
+        });
+      }
+
+      // Function to load and display the project structure
+      async function loadProjectStructure() {
+        try {
+          const response = await fetch('/project_structure');
+          if (response.ok) {
+            const data = await response.json();
+            const projectBrowser = document.getElementById('projectBrowser');
+            projectBrowser.innerHTML = '<h2>Project Browser</h2>';
+            const treeContainer = document.createElement('div');
+            createProjectTree(data, treeContainer);
+            projectBrowser.appendChild(treeContainer);
+          }
+        } catch (e) {
+          console.error('Error loading project structure:', e);
+        }
+      }
+
+      // Append a coding context badge to activeCodingContexts
+      // (Existing function duplicated here to ensure it's available when reloading
+      // the DOM after loading project structure)
+      function appendCodingContext(context) {
+        if (!context || !context.name) return;
+        const badgeSpan = document.createElement('span');
+        badgeSpan.className = 'badge';
+        badgeSpan.textContent = context.name;
+        if (context.content) {
+          badgeSpan.title = context.content; // Tooltip with full content
+        }
+        activeCodingContexts.appendChild(badgeSpan);
       }
 
       // Load the existing conversation transcript from the server.
@@ -387,6 +454,8 @@ HTML_TEMPLATE = """
               await loadSourceCode();
               // Reload coding contexts
               await loadCodingContexts();
+              // Reload project structure
+              await loadProjectStructure();
             } else {
               console.error("Server error:", response.statusText);
             }
@@ -425,6 +494,7 @@ HTML_TEMPLATE = """
       window.onload = function() {
         loadTranscript();
         loadSourceCode();
+        loadProjectStructure();
         setupEventListeners();
       };
     </script>
@@ -434,7 +504,7 @@ HTML_TEMPLATE = """
       <!-- Left Column - Project Browser -->
       <div id="projectBrowser">
         <h2>Project Browser</h2>
-        <p>Placeholder for project files.</p>
+        <!-- Project structure will be loaded here dynamically -->
       </div>
       <!-- Middle Column - Active Coding Contexts, Source Code Editor and Chat -->
       <div id="mainContent">
@@ -598,6 +668,27 @@ def build_prompt_messages(system_prompt, user_prompt, source_file, model, coding
     messages.append(final_msg)
     return messages
 
+def get_directory_structure(path):
+    """Recursively build a directory structure as a list of dictionaries."""
+    structure = []
+    try:
+        for item in os.listdir(path):
+            item_path = os.path.join(path, item)
+            if os.path.isdir(item_path):
+                structure.append({
+                    "type": "directory",
+                    "name": item,
+                    "children": get_directory_structure(item_path)
+                })
+            else:
+                structure.append({
+                    "type": "file",
+                    "name": item
+                })
+    except PermissionError:
+        pass  # Skip directories for which the user does not have permissions
+    return structure
+
 app = Flask(__name__)
 
 # Route to serve static files from the static/ directory.
@@ -644,6 +735,13 @@ def update_source():
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
     return jsonify(CODING_CONTEXTS)
+
+# New Route to get project structure as JSON
+@app.route("/project_structure", methods=["GET"])
+def project_structure():
+    project_dir = os.path.dirname(os.path.abspath(SOURCE_FILE))
+    structure = get_directory_structure(project_dir)
+    return jsonify(structure)
 
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
