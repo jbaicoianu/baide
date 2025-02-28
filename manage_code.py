@@ -47,9 +47,54 @@ HTML_TEMPLATE = """
         padding: 10px;
         box-sizing: border-box;
         overflow-y: auto;
+        position: relative;
       }
       #projectBrowser h2 {
         color: #fff;
+      }
+      /* New File Button */
+      #newFileBtn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+      }
+      /* Modal Styles */
+      .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgba(0,0,0,0.4); 
+      }
+      .modal-content {
+        background-color: #333;
+        margin: 15% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px; 
+        border-radius: 5px;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover,
+      .close:focus {
+        color: #fff;
+        text-decoration: none;
       }
       /* Middle Column - Active Coding Contexts, Tabs, Source Code Editor and Chat */
       #mainContent {
@@ -234,6 +279,26 @@ HTML_TEMPLATE = """
       .hidden {
         display: none;
       }
+      /* New File Modal Styles */
+      .modal input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+      }
+      .modal button {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+      }
+      .modal button.cancel {
+        background-color: #f44336;
+        margin-left: 10px;
+      }
     </style>
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -308,6 +373,13 @@ HTML_TEMPLATE = """
             const data = await response.json();
             const projectBrowser = document.getElementById('projectBrowser');
             projectBrowser.innerHTML = '<h2>Project Browser</h2>';
+            // Add New File Button
+            const newFileBtn = document.createElement('button');
+            newFileBtn.id = 'newFileBtn';
+            newFileBtn.textContent = 'New File';
+            newFileBtn.addEventListener('click', openNewFileModal);
+            projectBrowser.appendChild(newFileBtn);
+
             const treeContainer = document.createElement('div');
             createProjectTree(data, treeContainer);
             projectBrowser.appendChild(treeContainer);
@@ -641,6 +713,46 @@ HTML_TEMPLATE = """
         }
       }
 
+      // Modal functionality
+      function openNewFileModal() {
+        const modal = document.getElementById("newFileModal");
+        modal.style.display = "block";
+      }
+
+      function closeNewFileModal() {
+        const modal = document.getElementById("newFileModal");
+        modal.style.display = "none";
+        document.getElementById("newFileName").value = "";
+      }
+
+      async function createNewFile() {
+        const fileName = document.getElementById("newFileName").value.trim();
+        if (!fileName) {
+          alert("File name cannot be empty.");
+          return;
+        }
+        const response = await fetch("/create_file", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ file: fileName })
+        });
+        const data = await response.json();
+        if (data.success) {
+          closeNewFileModal();
+          await loadProjectStructure();
+        } else {
+          alert("Error creating file: " + data.error);
+        }
+      }
+
+      // Close modal when clicking outside of it
+      window.onclick = function(event) {
+        const modal = document.getElementById("newFileModal");
+        if (event.target == modal) {
+          closeNewFileModal();
+        }
+      }
+
       // On startup, load the project structure, initialize CodeMirror, and set up event listeners.
       window.onload = function() {
         initializeCodeMirror();
@@ -654,7 +766,18 @@ HTML_TEMPLATE = """
       <!-- Left Column - Project Browser -->
       <div id="projectBrowser">
         <h2>Project Browser</h2>
+        <!-- New File Button will be inserted here dynamically -->
         <!-- Project structure will be loaded here dynamically -->
+      </div>
+      <!-- New File Modal -->
+      <div id="newFileModal" class="modal">
+        <div class="modal-content">
+          <span class="close" onclick="closeNewFileModal()">&times;</span>
+          <h3>Create New File</h3>
+          <input type="text" id="newFileName" placeholder="Enter file name...">
+          <button onclick="createNewFile()">Create</button>
+          <button class="cancel" onclick="closeNewFileModal()">Cancel</button>
+        </div>
       </div>
       <!-- Middle Column - Active Coding Contexts, Tabs, Source Code Editor and Chat -->
       <div id="mainContent">
@@ -889,6 +1012,26 @@ def update_source():
             return jsonify({"message": "Source code updated successfully."})
         else:
             return jsonify({"error": "Failed to commit changes to git."}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# Route to create a new file.
+@app.route("/create_file", methods=["POST"])
+def create_file():
+    data = request.get_json()
+    if not data or "file" not in data:
+        return jsonify({"error": "No file name specified."}), 400
+    file_name = data["file"]
+    if os.path.exists(file_name):
+        return jsonify({"error": "File already exists."}), 400
+    try:
+        with open(file_name, "w") as f:
+            f.write("")  # Create an empty file
+        commit_msg = f"Create new file {file_name}"
+        if commit_changes(file_name, commit_msg):
+            return jsonify({"success": True})
+        else:
+            return jsonify({"error": "Failed to commit new file to git."}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
