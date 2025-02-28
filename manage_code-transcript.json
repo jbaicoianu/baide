@@ -86,5 +86,13 @@
   {
     "role": "Assistant",
     "content": "Noted the issue with coding contexts being displayed twice. Removed the server-side rendering of coding contexts from the HTML template to rely solely on the client-side JavaScript for displaying active coding contexts."
+  },
+  {
+    "role": "User",
+    "content": "We need to handle the case when codingContexts is not present, as this currently throws errors when a response comes back from the server when not using a specific coding context"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the project to gracefully handle cases where `CODING_CONTEXTS` is not present. This includes adding necessary checks in both the backend and frontend to prevent errors when no coding contexts are specified. Additionally, I addressed the issue of coding contexts being displayed twice by ensuring they are loaded and appended only once."
   }
 ]
