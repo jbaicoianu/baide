@@ -110,6 +110,7 @@ HTML_TEMPLATE = """
         display: flex;
         flex-direction: column;
         margin-bottom: 10px;
+        overflow: auto;
       }
       #sourceCodeContainer h2 {
         color: #fff;
