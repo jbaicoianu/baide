@@ -1,0 +1,290 @@
+      body { 
+        font-family: sans-serif; 
+        margin: 0; 
+        padding: 0; 
+        background-color: #2e2e2e; 
+        color: #f0f0f0;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #container {
+        display: flex;
+        height: 100%;
+        width: 100%;
+      }
+      /* Left Column - Project Browser */
+      #projectBrowser {
+        width: 20%;
+        min-width: 200px;
+        border-right: 1px solid #444;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow-y: auto;
+        position: relative;
+      }
+      #projectBrowser h2 {
+        color: #fff;
+      }
+      /* New File Button */
+      #newFileBtn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+      }
+      /* Modal Styles */
+      .modal {
+        display: none; 
+        position: fixed; 
+        z-index: 1; 
+        left: 0;
+        top: 0;
+        width: 100%; 
+        height: 100%; 
+        overflow: auto; 
+        background-color: rgba(0,0,0,0.4); 
+      }
+      .modal-content {
+        background-color: #333;
+        margin: 15% auto; 
+        padding: 20px;
+        border: 1px solid #888;
+        width: 300px; 
+        border-radius: 5px;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      .close:hover,
+      .close:focus {
+        color: #fff;
+        text-decoration: none;
+      }
+      /* Middle Column - Active Coding Contexts, Tabs, Source Code Editor and Chat */
+      #mainContent {
+        width: 60%;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+        box-sizing: border-box;
+        overflow: hidden;
+      }
+      /* Active Coding Contexts */
+      #activeCodingContextsContainer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+      #activeCodingContexts {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 2px;
+        background-color: #4CAF50;
+        border-radius: 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      /* Tabs */
+      #tabs {
+        display: flex;
+        border-bottom: 1px solid #444;
+        margin-bottom: 10px;
+      }
+      .tab {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #3c3c3c;
+        margin-right: 2px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+      .tab.active {
+        background-color: #1e1e1e;
+        border-bottom: 1px solid #1e1e1e;
+      }
+      .close-btn {
+        margin-left: 5px;
+        color: #f44336;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      /* Source Code Editor */
+      #sourceCodeContainer {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 10px;
+        overflow: auto;
+      }
+      #sourceCodeContainer h2 {
+        color: #fff;
+        margin-bottom: 5px;
+      }
+      /* CodeMirror styles override */
+      .CodeMirror {
+        flex: 1;
+        height: auto;
+        background-color: #1e1e1e;
+        color: #d4d4d4;
+        border: 1px solid #444;
+        border-radius: 4px;
+      }
+      /* Chat Container */
+      #chatContainer {
+        display: flex;
+        flex-direction: column;
+        max-height: 200px;
+        flex-shrink: 0;
+      }
+      #chatBox {
+        flex: 1;
+        border: 1px solid #444;
+        padding: 10px;
+        overflow-y: auto;
+        background-color: #1e1e1e;
+        border-radius: 4px;
+        max-height: 150px;
+      }
+      .message { margin-bottom: 10px; }
+      .User { color: #4FC3F7; }
+      .Assistant { color: #81C784; }
+      /* CSS spinner */
+      #throbber {
+        display: none;
+        width: 40px;
+        height: 40px;
+        border: 4px solid #ccc;
+        border-top: 4px solid #333;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+      }
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      /* Styles for commit summaries */
+      #commitSummariesContainer {
+        width: 20%;
+        min-width: 200px;
+        border-left: 1px solid #444;
+        padding: 10px;
+        box-sizing: border-box;
+        background-color: #1e1e1e;
+        overflow-y: auto;
+      }
+      #commitSummariesContainer h2 {
+        color: #fff;
+      }
+      #commitSummaries {
+        height: 100%;
+        overflow-y: auto;
+      }
+      .commit-summary {
+        margin-bottom: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #555;
+      }
+      /* Dark mode adjustments */
+      textarea, input[type="submit"] {
+        background-color: #3c3c3c;
+        color: #f0f0f0;
+        border: 1px solid #555;
+        border-radius: 4px;
+      }
+      textarea::placeholder {
+        color: #bbb;
+      }
+      input[type="submit"] {
+        padding: 10px;
+        cursor: pointer;
+        display: none;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      /* Responsive adjustments */
+      @media (max-width: 1200px) {
+        #projectBrowser, #commitSummariesContainer {
+          width: 25%;
+        }
+        #mainContent {
+          width: 50%;
+        }
+      }
+      @media (max-width: 800px) {
+        #container {
+          flex-direction: column;
+        }
+        #projectBrowser, #commitSummariesContainer {
+          width: 100%;
+          min-width: unset;
+          height: 150px;
+        }
+        #mainContent {
+          width: 100%;
+          flex: 1;
+        }
+      }
+      /* Styles for project browser tree */
+      .directory, .file {
+        /* Removed margin-left to ensure consistent alignment */
+        padding-left: 20px;
+      }
+      .directory > span {
+        cursor: pointer;
+        font-weight: bold;
+        position: relative;
+        padding-left: 0;
+      }
+      .directory > span::before {
+        content: '▶';
+        position: absolute;
+        left: -20px;
+        transition: transform 0.2s;
+        /* Positioned arrow in the gutter */
+        width: 15px;
+        text-align: center;
+      }
+      .directory > span.open::before {
+        transform: rotate(90deg);
+        content: '▶';
+      }
+      .hidden {
+        display: none;
+      }
+      /* New File Modal Styles */
+      .modal input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-top: 10px;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+      }
+      .modal button {
+        padding: 8px 16px;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 4px;
+        color: #fff;
+        cursor: pointer;
+      }
+      .modal button.cancel {
+        background-color: #f44336;
+        margin-left: 10px;
+      }
