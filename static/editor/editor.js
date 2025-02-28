@@ -132,7 +132,8 @@ function createProjectTree(structure, parentElement, currentPath = '') {
 
 // Function to open a file in a new tab
 async function openFileInTab(filename) {
-  if (openFiles[filename]) {
+  // Check if the tab already exists in the DOM
+  if (document.getElementById(`tab-${filename}`)) {
     await switchToTab(filename);
     return;
   }
@@ -144,7 +145,7 @@ async function openFileInTab(filename) {
       // Create a new tab
       const tabs = document.getElementById('tabs');
       const tab = document.createElement('div');
-      tab.className = 'tab active';
+      tab.className = 'tab';
       tab.id = `tab-${filename}`;
       tab.textContent = filename;
       const closeBtn = document.createElement('span');
@@ -164,6 +165,8 @@ async function openFileInTab(filename) {
         t.classList.remove('active');
       });
       tabs.appendChild(tab);
+      // Activate the new tab
+      tab.classList.add('active');
       // Load content into CodeMirror editor
       document.getElementById('sourceCode').value = data.content;
       if (editor) {
