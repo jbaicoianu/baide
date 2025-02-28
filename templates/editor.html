@@ -249,19 +249,24 @@
       }
       /* Styles for project browser tree */
       .directory, .file {
-        margin-left: 20px;
+        /* Removed margin-left to ensure consistent alignment */
+        padding-left: 20px;
       }
       .directory > span {
         cursor: pointer;
         font-weight: bold;
         position: relative;
-        padding-left: 15px;
+        /* Adjusted padding to align arrows in the gutter */
+        padding-left: 20px;
       }
       .directory > span::before {
         content: '▶';
         position: absolute;
         left: 0;
         transition: transform 0.2s;
+        /* Positioned arrow in the gutter */
+        width: 15px;
+        text-align: center;
       }
       .directory > span.open::before {
         transform: rotate(90deg);
