@@ -20,6 +20,12 @@ DEBUG = False
 # In-memory conversation histories mapped by filename.
 chat_histories = {}
 
+# Global variable to track the last modification time of editor.html
+editor_template_mtime = None
+editor_template_path = os.path.join("templates", "editor.html")
+if os.path.exists(editor_template_path):
+    editor_template_mtime = os.path.getmtime(editor_template_path)
+
 def transcript_filename(file_name):
     """Return the transcript filename based on the provided filename's basename."""
     base, _ = os.path.splitext(file_name)
@@ -324,9 +330,15 @@ def chat():
     update_transcript(file_name)
     return jsonify(chat_histories[file_name])
 
-# Main page: serves the HTML page without specifying a default active file.
+# Main page: serves the HTML page with template reloading logic.
 @app.route("/", methods=["GET"])
 def index():
+    global editor_template_mtime
+    if os.path.exists(editor_template_path):
+        current_mtime = os.path.getmtime(editor_template_path)
+        if editor_template_mtime != current_mtime:
+            app.jinja_env.cache = {}
+            editor_template_mtime = current_mtime
     return render_template("editor.html")
 
 if __name__ == "__main__":
