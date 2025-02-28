@@ -326,6 +326,10 @@ HTML_TEMPLATE = """
               closeTab(filename);
             });
             tab.appendChild(closeBtn);
+            // Add event listener to switch tab on click
+            tab.addEventListener('click', () => {
+              switchToTab(filename);
+            });
             // Deactivate other tabs
             Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
               t.classList.remove('active');
@@ -488,7 +492,7 @@ HTML_TEMPLATE = """
               if (msg.role.toLowerCase() === 'assistant') {
                 const professionalMessage = extractProfessionalMessage(msg.content);
                 appendMessage(msg.role, professionalMessage);
-                const commit = extractCommitSummary(msg.content);
+                const commit = extractCommit_summary(msg.content);
                 if (commit) {
                   appendCommitSummary(commit);
                 }
@@ -517,14 +521,14 @@ HTML_TEMPLATE = """
       }
 
       // Function to extract commit summary
-      function extractCommitSummary(content) {
+      function extract_commit_summary(text) {
         const regex = /^Commit Summary:\s*(.+)/m;
-        const match = content.match(regex);
+        const match = text.match(regex);
         return match ? match[1].trim() : null;
       }
 
       // Function to extract the professional message before the code block.
-      function extractProfessionalMessage(content) {
+      function extract_professional_message(content) {
         const regex = /^(.*?)```/s;
         const match = content.match(regex);
         return match ? match[1].trim() : content.trim();
@@ -598,9 +602,9 @@ HTML_TEMPLATE = """
               document.getElementById('activeCodingContexts').innerHTML = '';
               data.forEach(msg => {
                 if (msg.role.toLowerCase() === 'assistant') {
-                  const professionalMessage = extractProfessionalMessage(msg.content);
+                  const professionalMessage = extract_professional_message(msg.content);
                   appendMessage(msg.role, professionalMessage);
-                  const commit = extractCommitSummary(msg.content);
+                  const commit = extract_commit_summary(msg.content);
                   if (commit) {
                     appendCommitSummary(commit);
                   }
