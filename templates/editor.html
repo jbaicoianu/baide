@@ -254,6 +254,18 @@
       .directory > span {
         cursor: pointer;
         font-weight: bold;
+        position: relative;
+        padding-left: 15px;
+      }
+      .directory > span::before {
+        content: '▶';
+        position: absolute;
+        left: 0;
+        transition: transform 0.2s;
+      }
+      .directory > span.open::before {
+        transform: rotate(90deg);
+        content: '▼';
       }
       .hidden {
         display: none;
@@ -377,10 +389,12 @@
             dirSpan.textContent = item.name;
             dirSpan.addEventListener('click', () => {
               childContainer.classList.toggle('hidden');
+              dirSpan.classList.toggle('open');
             });
+            itemDiv.className = 'directory';
             itemDiv.appendChild(dirSpan);
             const childContainer = document.createElement('div');
-            childContainer.className = 'directory hidden';
+            childContainer.className = 'directory-children hidden';
             // Recursively create tree with updated path
             createProjectTree(item.children, childContainer, currentPath + item.name + '/');
             itemDiv.appendChild(childContainer);
