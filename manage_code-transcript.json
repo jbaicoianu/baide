@@ -118,5 +118,13 @@
   {
     "role": "Assistant",
     "content": "Updated the chat window to have a reduced height and hid the submit button to streamline the user interface."
+  },
+  {
+    "role": "User",
+    "content": "Remove the flex parameter from the chatContainer element"
+  },
+  {
+    "role": "Assistant",
+    "content": "Removed the `flex` parameter from the `#chatContainer` element to resolve layout issues and prevent unintended resizing behavior. Please review the changes to ensure the chat container displays as expected."
   }
 ]
