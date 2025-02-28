@@ -46,6 +46,19 @@ HTML_TEMPLATE = """
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
       }
+      /* Styles for the source code editor */
+      #sourceCodeContainer {
+        margin-top: 20px;
+      }
+      #sourceCode {
+        width: 100%;
+        height: 400px;
+        font-family: monospace;
+        font-size: 14px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        resize: none;
+      }
     </style>
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -62,28 +75,38 @@ HTML_TEMPLATE = """
           mangle: false
         });
       }
-    </script>
-  </head>
-  <body>
-    <div id="header">
-      <h1>Project Manager Chat Interface</h1>
-      <p>Currently working on file: <strong>{{ source_file }}</strong></p>
-    </div>
-    <div id="chatBox">
-      <!-- Existing conversation will be loaded here -->
-    </div>
-    <div id="throbber"></div>
-    <hr>
-    <form id="chatForm">
-      <textarea id="promptInput" rows="5" cols="60" placeholder="Enter your prompt here..."></textarea><br>
-      <input type="submit" value="Submit">
-    </form>
 
-    <script>
-      const chatForm = document.getElementById('chatForm');
-      const promptInput = document.getElementById('promptInput');
-      const chatBox = document.getElementById('chatBox');
-      const throbber = document.getElementById('throbber');
+      // Function to load source code into the editor
+      async function loadSourceCode() {
+        try {
+          const response = await fetch('/source');
+          if (response.ok) {
+            const data = await response.json();
+            document.getElementById('sourceCode').value = data.content;
+          }
+        } catch (e) {
+          console.error('Error loading source code:', e);
+        }
+      }
+
+      // Function to update source code from the editor (optional)
+      async function updateSourceCode() {
+        const updatedContent = document.getElementById('sourceCode').value;
+        try {
+          const response = await fetch('/update_source', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ content: updatedContent })
+          });
+          if (response.ok) {
+            console.log('Source code updated successfully.');
+          } else {
+            console.error('Failed to update source code.');
+          }
+        } catch (e) {
+          console.error('Error updating source code:', e);
+        }
+      }
 
       // Append a message to chatBox; content is rendered as Markdown.
       function appendMessage(role, content) {
@@ -140,6 +163,8 @@ HTML_TEMPLATE = """
             chatBox.innerHTML = "";
             data.forEach(msg => appendMessage(msg.role, msg.content));
             scrollToBottom();
+            // Reload the source code after AI updates
+            await loadSourceCode();
           } else {
             console.error("Server error:", response.statusText);
           }
@@ -149,9 +174,35 @@ HTML_TEMPLATE = """
         throbber.style.display = "none";
       });
 
-      // On startup, load the previous conversation (if any).
-      loadTranscript();
+      // On startup, load the previous conversation (if any) and the source code.
+      window.onload = function() {
+        loadTranscript();
+        loadSourceCode();
+      };
     </script>
+  </head>
+  <body>
+    <div id="header">
+      <h1>Project Manager Chat Interface</h1>
+      <p>Currently working on file: <strong>{{ source_file }}</strong></p>
+    </div>
+    <div id="chatBox">
+      <!-- Existing conversation will be loaded here -->
+    </div>
+    <div id="throbber"></div>
+    <hr>
+    <form id="chatForm">
+      <textarea id="promptInput" rows="5" cols="60" placeholder="Enter your prompt here..."></textarea><br>
+      <input type="submit" value="Submit">
+    </form>
+
+    <!-- New Section for Source Code Editor -->
+    <div id="sourceCodeContainer">
+      <h2>Source Code Editor</h2>
+      <textarea id="sourceCode" readonly></textarea>
+      <!-- Optional: Add a button to manually update source code if editing is allowed -->
+      <!-- <button onclick="updateSourceCode()">Update Source Code</button> -->
+    </div>
   </body>
 </html>
 """
@@ -292,6 +343,36 @@ def serve_static(filename):
 @app.route("/transcript", methods=["GET"])
 def get_transcript():
     return jsonify(chat_history)
+
+# New Route to get the current source code content
+@app.route("/source", methods=["GET"])
+def get_source():
+    if not os.path.exists(SOURCE_FILE):
+        return jsonify({"content": ""})
+    try:
+        with open(SOURCE_FILE, "r") as f:
+            content = f.read()
+        return jsonify({"content": content})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# New Route to update the source code (optional)
+@app.route("/update_source", methods=["POST"])
+def update_source():
+    data = request.get_json()
+    if not data or "content" not in data:
+        return jsonify({"error": "No content provided."}), 400
+    new_content = data["content"]
+    try:
+        with open(SOURCE_FILE, "w") as f:
+            f.write(new_content)
+        commit_msg = "Manually updated source code via web UI."
+        if commit_changes(SOURCE_FILE, commit_msg):
+            return jsonify({"message": "Source code updated successfully."})
+        else:
+            return jsonify({"error": "Failed to commit changes to git."}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
