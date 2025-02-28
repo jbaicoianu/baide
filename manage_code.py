@@ -60,6 +60,24 @@ HTML_TEMPLATE = """
         box-sizing: border-box;
         overflow: hidden;
       }
+      /* Active Coding Contexts */
+      #activeCodingContextsContainer {
+        margin-bottom: 10px;
+      }
+      #activeCodingContexts {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 2px;
+        background-color: #4CAF50;
+        border-radius: 12px;
+        font-size: 12px;
+        cursor: pointer;
+      }
+      /* Source Code Editor */
       #sourceCodeContainer {
         flex: 2;
         display: flex;
@@ -85,6 +103,7 @@ HTML_TEMPLATE = """
       #chatContainer {
         display: flex;
         flex-direction: column;
+        max-height: 50%;
       }
       #chatBox {
         flex: 1;
@@ -134,29 +153,6 @@ HTML_TEMPLATE = """
         margin-bottom: 10px;
         padding: 5px;
         border-bottom: 1px solid #555;
-      }
-      /* Styles for active coding contexts */
-      #activeCodingContextsContainer {
-        padding: 10px;
-        border-top: 1px solid #444;
-        background-color: #1e1e1e;
-        overflow-y: auto;
-      }
-      #activeCodingContextsContainer h2 {
-        color: #fff;
-        margin-bottom: 5px;
-      }
-      #codingContexts {
-        border: 1px solid #444;
-        padding: 10px;
-        max-height: 100px;
-        overflow-y: auto;
-        background-color: #1e1e1e;
-        border-radius: 4px;
-      }
-      .coding-context {
-        margin-bottom: 5px;
-        cursor: pointer;
       }
       /* Dark mode adjustments */
       textarea, input[type="submit"] {
@@ -265,16 +261,16 @@ HTML_TEMPLATE = """
         commitSummaries.appendChild(summaryDiv);
       }
 
-      // Append a coding context to codingContexts
+      // Append a coding context badge to codingContexts
       function appendCodingContext(context) {
         if (!context || !context.name) return;
-        const contextDiv = document.createElement('div');
-        contextDiv.className = 'coding-context';
-        contextDiv.textContent = context.name;
+        const badgeSpan = document.createElement('span');
+        badgeSpan.className = 'badge';
+        badgeSpan.textContent = context.name;
         if (context.content) {
-          contextDiv.title = context.content; // Tooltip with full content
+          badgeSpan.title = context.content; // Tooltip with full content
         }
-        codingContexts.appendChild(contextDiv);
+        codingContexts.appendChild(badgeSpan);
       }
 
       // Scroll to the bottom of an element.
@@ -430,8 +426,14 @@ HTML_TEMPLATE = """
         <h2>Project Browser</h2>
         <p>Placeholder for project files.</p>
       </div>
-      <!-- Middle Column - Source Code Editor and Chat -->
+      <!-- Middle Column - Active Coding Contexts, Source Code Editor and Chat -->
       <div id="mainContent">
+        <div id="activeCodingContextsContainer">
+          <h2>Active Coding Contexts</h2>
+          <div id="activeCodingContexts">
+            <!-- Coding contexts will be loaded here via JavaScript as badges -->
+          </div>
+        </div>
         <div id="sourceCodeContainer">
           <h2>Source Code Editor</h2>
           <textarea id="sourceCode" readonly></textarea>
@@ -455,12 +457,6 @@ HTML_TEMPLATE = """
         <div id="commitSummaries">
           <!-- Commit summaries will be loaded here -->
         </div>
-      </div>
-    </div>
-    <div id="activeCodingContextsContainer">
-      <h2>Active Coding Contexts</h2>
-      <div id="codingContexts">
-        <!-- Coding contexts will be loaded here via JavaScript -->
       </div>
     </div>
   </body>
