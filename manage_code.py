@@ -12,12 +12,12 @@ import openai
 API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.Client(api_key=API_KEY)
 
-# Global variables for the file we are managing, coding contexts, and debugging.
-SOURCE_FILE = None
+# Global variables for managing multiple files, coding contexts, and debugging.
+ACTIVE_FILES = []
 CODING_CONTEXTS = []
 DEBUG = False
 
-# HTML template for the chat interface.
+# HTML template for the chat interface with tabs.
 HTML_TEMPLATE = """
 <!doctype html>
 <html>
@@ -51,7 +51,7 @@ HTML_TEMPLATE = """
       #projectBrowser h2 {
         color: #fff;
       }
-      /* Middle Column - Source Code Editor and Chat */
+      /* Middle Column - Active Coding Contexts, Tabs, Source Code Editor and Chat */
       #mainContent {
         width: 60%;
         display: flex;
@@ -78,6 +78,30 @@ HTML_TEMPLATE = """
         background-color: #4CAF50;
         border-radius: 12px;
         font-size: 12px;
+        cursor: pointer;
+      }
+      /* Tabs */
+      #tabs {
+        display: flex;
+        border-bottom: 1px solid #444;
+        margin-bottom: 10px;
+      }
+      .tab {
+        padding: 10px;
+        cursor: pointer;
+        background-color: #3c3c3c;
+        margin-right: 2px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+      .tab.active {
+        background-color: #1e1e1e;
+        border-bottom: 1px solid #1e1e1e;
+      }
+      .close-btn {
+        margin-left: 5px;
+        color: #f44336;
+        font-weight: bold;
         cursor: pointer;
       }
       /* Source Code Editor */
@@ -214,6 +238,9 @@ HTML_TEMPLATE = """
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script>
+      let activeFile = null;
+      let openFiles = {};
+
       // Render Markdown while escaping any raw HTML.
       function renderMarkdown(text) {
         const renderer = new marked.Renderer();
@@ -227,10 +254,146 @@ HTML_TEMPLATE = """
         });
       }
 
-      // Function to load source code into the editor
-      async function loadSourceCode() {
+      // Function to load project structure and set up event listeners for files
+      async function loadProjectStructure() {
         try {
-          const response = await fetch('/source');
+          const response = await fetch('/project_structure');
+          if (response.ok) {
+            const data = await response.json();
+            const projectBrowser = document.getElementById('projectBrowser');
+            projectBrowser.innerHTML = '<h2>Project Browser</h2>';
+            const treeContainer = document.createElement('div');
+            createProjectTree(data, treeContainer);
+            projectBrowser.appendChild(treeContainer);
+          }
+        } catch (e) {
+          console.error('Error loading project structure:', e);
+        }
+      }
+
+      // Function to create the project tree
+      function createProjectTree(structure, parentElement) {
+        structure.forEach(item => {
+          const itemDiv = document.createElement('div');
+          if (item.type === 'directory') {
+            const dirSpan = document.createElement('span');
+            dirSpan.textContent = item.name;
+            dirSpan.addEventListener('click', () => {
+              childContainer.classList.toggle('hidden');
+            });
+            itemDiv.appendChild(dirSpan);
+            const childContainer = document.createElement('div');
+            childContainer.className = 'directory hidden';
+            createProjectTree(item.children, childContainer);
+            itemDiv.appendChild(childContainer);
+          } else {
+            const fileSpan = document.createElement('span');
+            fileSpan.textContent = item.name;
+            fileSpan.className = 'file';
+            fileSpan.addEventListener('click', () => {
+              openFileInTab(item.name);
+            });
+            itemDiv.appendChild(fileSpan);
+          }
+          parentElement.appendChild(itemDiv);
+        });
+      }
+
+      // Function to open a file in a new tab
+      async function openFileInTab(filename) {
+        if (openFiles[filename]) {
+          switchToTab(filename);
+          return;
+        }
+
+        try {
+          const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+          if (response.ok) {
+            const data = await response.json();
+            // Create a new tab
+            const tabs = document.getElementById('tabs');
+            const tab = document.createElement('div');
+            tab.className = 'tab active';
+            tab.id = `tab-${filename}`;
+            tab.textContent = filename;
+            const closeBtn = document.createElement('span');
+            closeBtn.className = 'close-btn';
+            closeBtn.textContent = '×';
+            closeBtn.addEventListener('click', (e) => {
+              e.stopPropagation();
+              closeTab(filename);
+            });
+            tab.appendChild(closeBtn);
+            // Deactivate other tabs
+            Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
+              t.classList.remove('active');
+            });
+            tabs.appendChild(tab);
+            // Load content
+            document.getElementById('sourceCode').value = data.content;
+            activeFile = filename;
+            openFiles[filename] = true;
+            // Load transcript
+            await loadTranscript(filename);
+          }
+        } catch (e) {
+          console.error('Error opening file:', e);
+        }
+      }
+
+      // Function to switch to an existing tab
+      async function switchToTab(filename) {
+        activeFile = filename;
+        // Activate the selected tab
+        const tabs = document.getElementById('tabs');
+        Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
+          if (t.id === `tab-${filename}`) {
+            t.classList.add('active');
+          } else {
+            t.classList.remove('active');
+          }
+        });
+        // Load source code
+        try {
+          const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+          if (response.ok) {
+            const data = await response.json();
+            document.getElementById('sourceCode').value = data.content;
+            // Load transcript
+            await loadTranscript(filename);
+          }
+        } catch (e) {
+          console.error('Error switching tabs:', e);
+        }
+      }
+
+      // Function to close a tab
+      function closeTab(filename) {
+        const tab = document.getElementById(`tab-${filename}`);
+        if (tab) {
+          tab.parentNode.removeChild(tab);
+          delete openFiles[filename];
+          // If the closed tab was active, switch to another tab
+          if (activeFile === filename) {
+            const remainingTabs = document.getElementById('tabs').getElementsByClassName('tab');
+            if (remainingTabs.length > 0) {
+              const newActiveFilename = remainingTabs[remainingTabs.length - 1].id.replace('tab-', '');
+              switchToTab(newActiveFilename);
+            } else {
+              activeFile = null;
+              document.getElementById('sourceCode').value = '';
+              document.getElementById('chatBox').innerHTML = '';
+              document.getElementById('commitSummaries').innerHTML = '';
+              document.getElementById('activeCodingContexts').innerHTML = '';
+            }
+          }
+        }
+      }
+
+      // Function to load source code into the editor
+      async function loadSourceCode(filename) {
+        try {
+          const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
           if (response.ok) {
             const data = await response.json();
             document.getElementById('sourceCode').value = data.content;
@@ -240,14 +403,15 @@ HTML_TEMPLATE = """
         }
       }
 
-      // Function to update source code from the editor (optional)
+      // Function to update source code from the editor
       async function updateSourceCode() {
+        if (!activeFile) return;
         const updatedContent = document.getElementById('sourceCode').value;
         try {
           const response = await fetch('/update_source', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ content: updatedContent })
+            body: JSON.stringify({ file: activeFile, content: updatedContent })
           });
           if (response.ok) {
             console.log('Source code updated successfully.');
@@ -292,31 +456,6 @@ HTML_TEMPLATE = """
         element.scrollTop = element.scrollHeight;
       }
 
-      // Function to create the project tree
-      function createProjectTree(structure, parentElement) {
-        structure.forEach(item => {
-          const itemDiv = document.createElement('div');
-          if (item.type === 'directory') {
-            const dirSpan = document.createElement('span');
-            dirSpan.textContent = item.name;
-            dirSpan.addEventListener('click', () => {
-              childContainer.classList.toggle('hidden');
-            });
-            itemDiv.appendChild(dirSpan);
-            const childContainer = document.createElement('div');
-            childContainer.className = 'directory hidden';
-            createProjectTree(item.children, childContainer);
-            itemDiv.appendChild(childContainer);
-          } else {
-            const fileSpan = document.createElement('span');
-            fileSpan.textContent = item.name;
-            fileSpan.className = 'file';
-            itemDiv.appendChild(fileSpan);
-          }
-          parentElement.appendChild(itemDiv);
-        });
-      }
-
       // Function to load and display the project structure
       async function loadProjectStructure() {
         try {
@@ -334,26 +473,15 @@ HTML_TEMPLATE = """
         }
       }
 
-      // Append a coding context badge to activeCodingContexts
-      // (Existing function duplicated here to ensure it's available when reloading
-      // the DOM after loading project structure)
-      function appendCodingContext(context) {
-        if (!context || !context.name) return;
-        const badgeSpan = document.createElement('span');
-        badgeSpan.className = 'badge';
-        badgeSpan.textContent = context.name;
-        if (context.content) {
-          badgeSpan.title = context.content; // Tooltip with full content
-        }
-        activeCodingContexts.appendChild(badgeSpan);
-      }
-
-      // Load the existing conversation transcript from the server.
-      async function loadTranscript() {
+      // Function to load the existing conversation transcript for a specific file from the server.
+      async function loadTranscript(filename) {
         try {
-          const response = await fetch('/transcript');
+          const response = await fetch(`/transcript?file=${encodeURIComponent(filename)}`);
           if (response.ok) {
             const data = await response.json();
+            document.getElementById('chatBox').innerHTML = '';
+            document.getElementById('commitSummaries').innerHTML = '';
+            document.getElementById('activeCodingContexts').innerHTML = '';
             data.forEach(msg => {
               if (msg.role.toLowerCase() === 'assistant') {
                 const professionalMessage = extractProfessionalMessage(msg.content);
@@ -400,6 +528,35 @@ HTML_TEMPLATE = """
         return match ? match[1].trim() : content.trim();
       }
 
+      // Function to extract code from assistant response
+      function extract_code_from_response(content) {
+        const lines = content.splitlines();
+        let in_code_block = false;
+        let code_lines = [];
+        for (let line of lines) {
+          let stripped = line.trim();
+          if (!in_code_block) {
+            if (stripped.startsWith("```")) {
+              in_code_block = true;
+            }
+            continue;
+          } else {
+            if (stripped === "```") {
+              break;
+            }
+            code_lines.push(line);
+          }
+        }
+        return code_lines.join("\n").trim();
+      }
+
+      // Function to extract commit summary from assistant response
+      function extract_commit_summary_from_response(content) {
+        const regex = /^Commit Summary:\s*(.+)/m;
+        const match = content.match(regex);
+        return match ? match[1].trim() : "";
+      }
+
       // Listen for Ctrl+Enter to submit the form.
       function setupEventListeners() {
         const promptInput = document.getElementById("promptInput");
@@ -418,6 +575,7 @@ HTML_TEMPLATE = """
 
         chatForm.addEventListener('submit', async (e) => {
           e.preventDefault();
+          if (!activeFile) return;
           const prompt = promptInput.value.trim();
           if (!prompt) return;
           appendMessage("User", prompt);
@@ -429,13 +587,13 @@ HTML_TEMPLATE = """
             const response = await fetch("/chat", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ prompt: prompt })
+              body: JSON.stringify({ prompt: prompt, file: activeFile })
             });
             if (response.ok) {
               const data = await response.json();
-              chatBox.innerHTML = "";
-              commitSummaries.innerHTML = "";
-              activeCodingContexts.innerHTML = "";
+              document.getElementById('chatBox').innerHTML = '';
+              document.getElementById('commitSummaries').innerHTML = '';
+              document.getElementById('activeCodingContexts').innerHTML = '';
               data.forEach(msg => {
                 if (msg.role.toLowerCase() === 'assistant') {
                   const professionalMessage = extractProfessionalMessage(msg.content);
@@ -451,7 +609,7 @@ HTML_TEMPLATE = """
               scrollToBottom(chatBox);
               scrollToBottom(commitSummaries);
               // Reload the source code after AI updates
-              await loadSourceCode();
+              await loadSourceCode(activeFile);
               // Reload coding contexts
               await loadCodingContexts();
               // Reload project structure
@@ -485,15 +643,8 @@ HTML_TEMPLATE = """
         }
       }
 
-      // Function to extract code from assistant response
-      function extract_code_from_response(content) {
-        // Implementation remains the same
-      }
-
-      // On startup, load the previous conversation (if any), source code, and coding contexts.
+      // On startup, load the project structure and set up event listeners.
       window.onload = function() {
-        loadTranscript();
-        loadSourceCode();
         loadProjectStructure();
         setupEventListeners();
       };
@@ -506,12 +657,15 @@ HTML_TEMPLATE = """
         <h2>Project Browser</h2>
         <!-- Project structure will be loaded here dynamically -->
       </div>
-      <!-- Middle Column - Active Coding Contexts, Source Code Editor and Chat -->
+      <!-- Middle Column - Active Coding Contexts, Tabs, Source Code Editor and Chat -->
       <div id="mainContent">
         <div id="activeCodingContextsContainer">
           <div id="activeCodingContexts">
             <!-- Coding contexts will be loaded here as badges -->
           </div>
+        </div>
+        <div id="tabs">
+          <!-- Tabs will be dynamically added here -->
         </div>
         <div id="sourceCodeContainer">
           <h2>Source Code Editor</h2>
@@ -542,60 +696,41 @@ HTML_TEMPLATE = """
 </html>
 """
 
-# In-memory conversation history.
-chat_history = []
+# In-memory conversation histories mapped by filename.
+chat_histories = {}
 
-def transcript_filename():
-    """Return the transcript filename based on the active file's basename."""
-    base, _ = os.path.splitext(SOURCE_FILE)
+def transcript_filename(file_name):
+    """Return the transcript filename based on the provided filename's basename."""
+    base, _ = os.path.splitext(file_name)
     return f"{base}-transcript.json"
 
-def load_transcript_from_disk():
-    """Load transcript from disk into chat_history (if it exists)."""
-    fname = transcript_filename()
+def load_transcript_from_disk(file_name):
+    """Load transcript from disk into chat_histories for the given file (if it exists)."""
+    fname = transcript_filename(file_name)
     if os.path.exists(fname):
         try:
             with open(fname, "r") as f:
                 data = json.load(f)
                 if isinstance(data, list):
+                    chat_histories[file_name] = data
                     return data
         except Exception:
             pass
-    return []
+    chat_histories[file_name] = []
+    return chat_histories[file_name]
 
-def update_transcript():
-    """Write the current chat_history to the transcript file and commit it to git."""
-    fname = transcript_filename()
+def update_transcript(file_name):
+    """Write the current chat_history for the given file to the transcript file and commit it to git."""
+    fname = transcript_filename(file_name)
     with open(fname, "w") as f:
-        json.dump(chat_history, f, indent=2)
-    transcript_commit_msg = f"Update transcript for {os.path.basename(SOURCE_FILE)}"
+        json.dump(chat_histories[file_name], f, indent=2)
+    transcript_commit_msg = f"Update transcript for {os.path.basename(file_name)}"
     commit_changes(fname, transcript_commit_msg)
 
 def extract_commit_summary(text):
     """Search for a line starting with 'Commit Summary:' at the beginning of a line and return its content."""
     match = re.search(r"^Commit Summary:\s*(.*)", text, re.MULTILINE)
     return match.group(1).strip() if match else ""
-
-def extract_code(text):
-    """
-    Extract the contents of the first code block using a simple state machine.
-    The code block is assumed to start with a line that (after stripping whitespace)
-    starts with three backticks and ends when a line that is exactly three backticks is encountered.
-    """
-    lines = text.splitlines()
-    in_code_block = False
-    code_lines = []
-    for line in lines:
-        stripped = line.strip()
-        if not in_code_block:
-            if stripped.startswith("```"):
-                in_code_block = True
-            continue
-        else:
-            if stripped == "```":
-                break
-            code_lines.append(line)
-    return "\n".join(code_lines).strip()
 
 def extract_professional_message(text):
     """Extract the professional message before the code block."""
@@ -635,7 +770,7 @@ def load_coding_contexts(context_names):
             print(f"Context file '{context_path}' does not exist.")
     return contexts
 
-def build_prompt_messages(system_prompt, user_prompt, source_file, model, coding_contexts):
+def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts):
     """
     Build a list of messages for the API:
       - Include the coding contexts at the beginning of the system prompt.
@@ -657,7 +792,7 @@ def build_prompt_messages(system_prompt, user_prompt, source_file, model, coding
     
     # Append a final user message with the current on-disk file contents.
     try:
-        with open(source_file, "r") as f:
+        with open(file_name, "r") as f:
             file_contents = f.read()
     except Exception:
         file_contents = ""
@@ -696,64 +831,78 @@ app = Flask(__name__)
 def serve_static(filename):
     return send_from_directory("static", filename)
 
-# Route to return the current transcript as JSON.
+# Route to return the current transcript as JSON for a specific file.
 @app.route("/transcript", methods=["GET"])
 def get_transcript():
-    return jsonify(chat_history)
+    file_name = request.args.get('file')
+    if not file_name:
+        return jsonify({"error": "No file specified."}), 400
+    transcript = load_transcript_from_disk(file_name)
+    return jsonify(transcript)
 
-# New Route to get the current source code content
+# Route to return the current source code content for a specific file.
 @app.route("/source", methods=["GET"])
 def get_source():
-    if not os.path.exists(SOURCE_FILE):
+    file_name = request.args.get('file')
+    if not file_name:
+        return jsonify({"content": ""})
+    if not os.path.exists(file_name):
         return jsonify({"content": ""})
     try:
-        with open(SOURCE_FILE, "r") as f:
+        with open(file_name, "r") as f:
             content = f.read()
         return jsonify({"content": content})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# New Route to update the source code (optional)
+# Route to update the source code for a specific file.
 @app.route("/update_source", methods=["POST"])
 def update_source():
     data = request.get_json()
-    if not data or "content" not in data:
-        return jsonify({"error": "No content provided."}), 400
+    if not data or "content" not in data or "file" not in data:
+        return jsonify({"error": "No content or file specified."}), 400
     new_content = data["content"]
+    file_name = data["file"]
     try:
-        with open(SOURCE_FILE, "w") as f:
+        with open(file_name, "w") as f:
             f.write(new_content)
         commit_msg = "Manually updated source code via web UI."
-        if commit_changes(SOURCE_FILE, commit_msg):
+        if commit_changes(file_name, commit_msg):
             return jsonify({"message": "Source code updated successfully."})
         else:
             return jsonify({"error": "Failed to commit changes to git."}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# New Route to get coding contexts as JSON
+# Route to get coding contexts as JSON
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
     return jsonify(CODING_CONTEXTS)
 
-# New Route to get project structure as JSON
+# Route to get project structure as JSON
 @app.route("/project_structure", methods=["GET"])
 def project_structure():
-    project_dir = os.path.dirname(os.path.abspath(SOURCE_FILE))
+    if not ACTIVE_FILES:
+        return jsonify([])
+    # Assuming all active files are in the same directory
+    project_dir = os.path.dirname(os.path.abspath(ACTIVE_FILES[0]))
     structure = get_directory_structure(project_dir)
     return jsonify(structure)
 
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
 def chat():
-    global chat_history, SOURCE_FILE, DEBUG
+    global chat_histories, CODING_CONTEXTS, DEBUG
     data = request.get_json()
-    if not data or "prompt" not in data:
-        return jsonify({"error": "No prompt provided."}), 400
+    if not data or "prompt" not in data or "file" not in data:
+        return jsonify({"error": "No prompt or file specified."}), 400
     user_input = data["prompt"]
-    chat_history.append({"role": "User", "content": user_input})
+    file_name = data["file"]
+    if file_name not in chat_histories:
+        load_transcript_from_disk(file_name)
+    chat_histories[file_name].append({"role": "User", "content": user_input})
 
-    if not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0:
+    if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
         system_prompt = (
             "You are an assistant managing a software project. When given a prompt, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete contents for the project file. Output only the code in a single code block (using triple backticks) without additional commentary."
         )
@@ -763,7 +912,7 @@ def chat():
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
-    messages = build_prompt_messages(system_prompt, user_input, SOURCE_FILE, "o1-mini", CODING_CONTEXTS)
+    messages = build_prompt_messages(system_prompt, user_input, file_name, "o1-mini", CODING_CONTEXTS)
 
     if DEBUG:
         print("DEBUG: AI prompt messages:")
@@ -777,57 +926,58 @@ def chat():
         )
     except Exception as e:
         error_msg = f"Error calling OpenAI API: {str(e)}"
-        chat_history.append({"role": "Assistant", "content": error_msg})
-        update_transcript()
-        return jsonify(chat_history), 500
+        chat_histories[file_name].append({"role": "Assistant", "content": error_msg})
+        update_transcript(file_name)
+        return jsonify(chat_histories[file_name]), 500
 
     reply = response.choices[0].message.content
     professional_message = extract_professional_message(reply)
-    chat_history.append({"role": "Assistant", "content": professional_message})
+    chat_histories[file_name].append({"role": "Assistant", "content": professional_message})
 
-    new_file_content = extract_code(reply)
+    new_file_content = extract_code_from_response(reply)
     commit_summary = extract_commit_summary(reply)
 
-    if not os.path.exists(SOURCE_FILE) or os.path.getsize(SOURCE_FILE) == 0:
-        with open(SOURCE_FILE, "w") as f:
+    if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
+        with open(file_name, "w") as f:
             f.write(new_file_content)
     else:
         try:
-            with open(SOURCE_FILE, "r") as f:
+            with open(file_name, "r") as f:
                 old_content = f.read()
         except Exception:
             old_content = ""
         diff_text = compute_diff(old_content, new_file_content)
         if diff_text:
-            with open(SOURCE_FILE, "w") as f:
+            with open(file_name, "w") as f:
                 f.write(new_file_content)
             commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
-            if not commit_changes(SOURCE_FILE, commit_msg):
-                chat_history.append({"role": "Assistant", "content": "Error committing changes to git."})
+            if not commit_changes(file_name, commit_msg):
+                chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git."})
         else:
-            chat_history.append({"role": "Assistant", "content": "No changes detected."})
+            chat_histories[file_name].append({"role": "Assistant", "content": "No changes detected."})
 
-    update_transcript()
-    return jsonify(chat_history)
+    update_transcript(file_name)
+    return jsonify(chat_histories[file_name])
 
-# Main page: serves the HTML page with the active file indicator.
+# Main page: serves the HTML page without specifying a default active file.
 @app.route("/", methods=["GET"])
 def index():
-    return render_template_string(HTML_TEMPLATE, source_file=SOURCE_FILE)
+    return render_template_string(HTML_TEMPLATE)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
-    parser.add_argument("source_file", help="Path to the project file to manage.")
+    parser.add_argument("source_files", nargs='+', help="Paths to the project files to manage.")
     parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
     parser.add_argument("--debug", action="store_true", help="Print full AI prompt on each API call for debugging.")
     parser.add_argument("--contexts", nargs='*', default=[], help="List of coding contexts to apply.")
     args = parser.parse_args()
 
-    SOURCE_FILE = args.source_file
     DEBUG = args.debug
-    if not os.path.exists(SOURCE_FILE):
-        open(SOURCE_FILE, "w").close()
-    chat_history = load_transcript_from_disk()
     CODING_CONTEXTS = load_coding_contexts(args.contexts) if args.contexts else []
+    for source_file in args.source_files:
+        if not os.path.exists(source_file):
+            open(source_file, "w").close()
+        load_transcript_from_disk(source_file)
+        ACTIVE_FILES.append(source_file)
 
     app.run(port=args.port)
