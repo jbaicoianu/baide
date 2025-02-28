@@ -14,5 +14,13 @@
   {
     "role": "Assistant",
     "content": "I've aligned the directory tree arrows to the left gutter, ensured consistent padding for both directories and files to maintain alignment, and adjusted the arrow orientation to point downwards when expanded."
+  },
+  {
+    "role": "User",
+    "content": "In addition to sorting directories to the top, sort directories and files alphabetically while preserving this grouping."
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the project browser to sort directories and files alphabetically while ensuring that directories are listed above files. This enhancement improves the organization and navigability of the project structure. Please let me know if you have any specific sorting preferences or if further adjustments are needed."
   }
 ]
