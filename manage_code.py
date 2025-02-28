@@ -31,17 +31,22 @@ HTML_TEMPLATE = """
         padding: 0; 
         background-color: #2e2e2e; 
         color: #f0f0f0;
+        height: 100vh;
+        overflow: hidden;
       }
       #container {
         display: flex;
-        height: 100vh;
+        height: 100%;
+        width: 100%;
       }
       /* Left Column - Project Browser */
       #projectBrowser {
         width: 20%;
+        min-width: 200px;
         border-right: 1px solid #444;
         padding: 10px;
         box-sizing: border-box;
+        overflow-y: auto;
       }
       #projectBrowser h2 {
         color: #fff;
@@ -53,9 +58,10 @@ HTML_TEMPLATE = """
         flex-direction: column;
         padding: 10px;
         box-sizing: border-box;
+        overflow: hidden;
       }
       #sourceCodeContainer {
-        flex: 1;
+        flex: 2;
         display: flex;
         flex-direction: column;
         margin-bottom: 10px;
@@ -74,6 +80,7 @@ HTML_TEMPLATE = """
         border: 1px solid #444;
         resize: none;
         border-radius: 4px;
+        overflow: auto;
       }
       #chatContainer {
         flex: 1;
@@ -84,9 +91,10 @@ HTML_TEMPLATE = """
         flex: 1;
         border: 1px solid #444;
         padding: 10px;
-        overflow-y: scroll;
+        overflow-y: auto;
         background-color: #1e1e1e;
         border-radius: 4px;
+        max-height: 300px;
       }
       .message { margin-bottom: 10px; }
       .User { color: #4FC3F7; }
@@ -109,17 +117,19 @@ HTML_TEMPLATE = """
       /* Styles for commit summaries */
       #commitSummariesContainer {
         width: 20%;
+        min-width: 200px;
         border-left: 1px solid #444;
         padding: 10px;
         box-sizing: border-box;
         background-color: #1e1e1e;
+        overflow-y: auto;
       }
       #commitSummariesContainer h2 {
         color: #fff;
       }
       #commitSummaries {
-        height: calc(100% - 40px);
-        overflow-y: scroll;
+        height: 100%;
+        overflow-y: auto;
       }
       .commit-summary {
         margin-bottom: 10px;
@@ -128,7 +138,10 @@ HTML_TEMPLATE = """
       }
       /* Styles for active coding contexts */
       #activeCodingContextsContainer {
-        margin-top: 10px;
+        padding: 10px;
+        border-top: 1px solid #444;
+        background-color: #1e1e1e;
+        overflow-y: auto;
       }
       #activeCodingContextsContainer h2 {
         color: #fff;
@@ -137,7 +150,7 @@ HTML_TEMPLATE = """
       #codingContexts {
         border: 1px solid #444;
         padding: 10px;
-        height: 100px;
+        max-height: 100px;
         overflow-y: auto;
         background-color: #1e1e1e;
         border-radius: 4px;
@@ -163,6 +176,29 @@ HTML_TEMPLATE = """
       form {
         display: flex;
         flex-direction: column;
+      }
+      /* Responsive adjustments */
+      @media (max-width: 1200px) {
+        #projectBrowser, #commitSummariesContainer {
+          width: 25%;
+        }
+        #mainContent {
+          width: 50%;
+        }
+      }
+      @media (max-width: 800px) {
+        #container {
+          flex-direction: column;
+        }
+        #projectBrowser, #commitSummariesContainer {
+          width: 100%;
+          min-width: unset;
+          height: 150px;
+        }
+        #mainContent {
+          width: 100%;
+          flex: 1;
+        }
       }
     </style>
     <!-- Load Marked for Markdown parsing -->
