@@ -161,9 +161,6 @@ body {
 .dropdown-content .tab:hover {
   background-color: #3c3c3c;
 }
-.tab.more-tabs:hover .dropdown-content {
-  display: block;
-}
 /* Removed the double arrow indicator */
 /* Source Code Editor */
 #sourceCodeContainer {
