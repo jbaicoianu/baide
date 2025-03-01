@@ -246,5 +246,13 @@
   {
     "role": "Assistant",
     "content": "Implemented sorting to display directories before files in the project browser view."
+  },
+  {
+    "role": "User",
+    "content": "Add the following endpoints to support viewing and changing git branches in the project browser UI:\n- /git_current_branch\n- /git_branches\n- /git_switch_branch\n- /git_create_branch"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have added the requested endpoints to support viewing and changing Git branches in the project browser UI. These endpoints include `/git_current_branch`, `/git_branches`, `/git_switch_branch`, and `/git_create_branch`. Please ensure that the server has the necessary permissions to execute Git commands and that the project directory is a valid Git repository."
   }
 ]
