@@ -86,5 +86,13 @@
   {
     "role": "Assistant",
     "content": ""
+  },
+  {
+    "role": "User",
+    "content": "Make our tab indicator show when the classname \"show\" is added to the dropdown-content element. Also, remove the double arrow indicator in the ::after pseudoclass, since this is already in the markup."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the CSS to remove the double arrow indicator from the `.tab.more-tabs::after` pseudoclass and added styles to display the tab indicator when the `show` class is added to the `.dropdown-content` element. Please review the changes below and let me know if you have any questions or require further adjustments."
   }
 ]
