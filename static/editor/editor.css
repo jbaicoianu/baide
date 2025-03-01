@@ -24,6 +24,7 @@ body {
 }
 #projectBrowser h2 {
   color: #fff;
+  margin: 0;
 }
 /* New File Button */
 #newFileBtn {
