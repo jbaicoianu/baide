@@ -170,6 +170,20 @@ body {
 .dropdown-content .tab:hover {
   background-color: #2a2a2a;
 }
+/* Added styles for dropdown-item elements */
+.tab.more-tabs > .dropdown-content > .dropdown-item {
+  display: block;
+  padding: 10px;
+  background-color: #1e1e1e;
+  border: none;
+  width: 100%;
+  text-align: left;
+  margin: 0;
+  transition: background-color 0.3s;
+}
+.tab.more-tabs > .dropdown-content > .dropdown-item:hover {
+  background-color: #2a2a2a;
+}
 /* Source Code Editor */
 #sourceCodeContainer {
   flex: 1;
