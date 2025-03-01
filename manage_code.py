@@ -286,13 +286,13 @@ def git_branches():
 def git_switch_branch():
     data = request.get_json()
     if not data or "branch" not in data:
-        return jsonify({"error": "No branch specified."}), 400
+        return jsonify({"success": False, "error": "No branch specified."}), 400
     branch = data["branch"]
     try:
         subprocess.run(["git", "checkout", branch], check=True)
-        return jsonify({"ok": True})
+        return jsonify({"success": True})
     except subprocess.CalledProcessError as e:
-        return jsonify({"error": f"Failed to switch to branch '{branch}'.", "details": e.stderr.strip()}), 500
+        return jsonify({"success": False, "error": f"Failed to switch to branch '{branch}'."}), 500
 
 # New Endpoint: Create Git Branch
 @app.route("/git_create_branch", methods=["POST"])
