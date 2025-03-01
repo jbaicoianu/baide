@@ -254,5 +254,13 @@
   {
     "role": "Assistant",
     "content": "I have added the requested endpoints to support viewing and changing Git branches in the project browser UI. These endpoints include `/git_current_branch`, `/git_branches`, `/git_switch_branch`, and `/git_create_branch`. Please ensure that the server has the necessary permissions to execute Git commands and that the project directory is a valid Git repository."
+  },
+  {
+    "role": "User",
+    "content": "The /git_switch_branch endpoint should return a json object with { \"ok\": true } on success"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `/git_switch_branch` endpoint to return a JSON object with `{ \"ok\": true }` upon a successful branch switch, as requested. This change ensures a consistent and simplified success response."
   }
 ]
