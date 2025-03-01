@@ -214,5 +214,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the Git branch display CSS to align with the dark mode styling of the rest of the project. Let me know if you have any further adjustments or questions."
+  },
+  {
+    "role": "User",
+    "content": "Current branch is currently coming back as \"undefined\". The output from the backend call looks like this:\n\n{\"current_branch\":\"improved-ui-v4\"}"
+  },
+  {
+    "role": "Assistant",
+    "content": "The issue arises because the frontend is attempting to access the `branch` property from the backend response, whereas the backend provides the current branch under the `current_branch` key. I have updated the code to correctly reference `current_branch`. Additionally, I recommend reviewing other API response fields to ensure consistency between the frontend and backend."
   }
 ]
