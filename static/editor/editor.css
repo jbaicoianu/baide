@@ -27,15 +27,13 @@ body {
 }
 /* New File Button */
 #newFileBtn {
-  position: absolute;
-  top: 10px;
-  right: 10px;
   padding: 5px 10px;
   background-color: #4CAF50;
   border: none;
   border-radius: 4px;
   color: #fff;
   cursor: pointer;
+  margin-top: 10px;
 }
 /* Modal Styles */
 .modal {
@@ -124,6 +122,7 @@ body {
   cursor: pointer;
 }
 /* More Tabs Dropdown */
+.more-tabs-position: relative;
 .tab.more-tabs {
   position: relative;
   padding: 10px;
