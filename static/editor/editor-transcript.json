@@ -102,5 +102,13 @@
   {
     "role": "Assistant",
     "content": "Hello,\n\nI have removed the `overflow: hidden` property from the `#tabs` selector to allow the dropdown to display correctly. Please review the changes and let me know if further adjustments are needed."
+  },
+  {
+    "role": "User",
+    "content": "Remove the display: block declaration for .tab.more-tabs:hover .dropdown-content"
+  },
+  {
+    "role": "Assistant",
+    "content": "Removed the `display: block;` declaration for `.tab.more-tabs:hover .dropdown-content`."
   }
 ]
