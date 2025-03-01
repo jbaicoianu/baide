@@ -222,5 +222,13 @@
   {
     "role": "Assistant",
     "content": "The issue arises because the frontend is attempting to access the `branch` property from the backend response, whereas the backend provides the current branch under the `current_branch` key. I have updated the code to correctly reference `current_branch`. Additionally, I recommend reviewing other API response fields to ensure consistency between the frontend and backend."
+  },
+  {
+    "role": "User",
+    "content": "Improve the styling of the current branch view, maybe put a slight border with curved borders around it?"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've enhanced the styling of the branch view by adding a slight border with curved corners as requested. Please review the updated CSS below."
   }
 ]
