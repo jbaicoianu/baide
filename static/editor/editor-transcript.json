@@ -94,5 +94,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the CSS to remove the double arrow indicator from the `.tab.more-tabs::after` pseudoclass and added styles to display the tab indicator when the `show` class is added to the `.dropdown-content` element. Please review the changes below and let me know if you have any questions or require further adjustments."
+  },
+  {
+    "role": "User",
+    "content": "The dropdown is not showing because the #tabs has overflow: hidden set. Is this necessary? If not, remove it, otherwise let's figure out what we need to do to make our dropdown show."
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI have removed the `overflow: hidden` property from the `#tabs` selector to allow the dropdown to display correctly. Please review the changes and let me know if further adjustments are needed."
   }
 ]
