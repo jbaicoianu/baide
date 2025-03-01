@@ -401,6 +401,22 @@ function setupEventListeners() {
     }
     throbber.style.display = "none";
   });
+
+  // Add event listener for new file form
+  const newFileForm = document.getElementById("newFileForm");
+  newFileForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    createNewFile();
+  });
+
+  // Listen for Enter key in the new file name input
+  const newFileNameInput = document.getElementById("newFileName");
+  newFileNameInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      newFileForm.dispatchEvent(new Event("submit", {cancelable: true}));
+    }
+  });
 }
 
 // Function to load coding contexts
@@ -445,19 +461,7 @@ function openNewFileModal() {
   const newFileNameInput = document.getElementById("newFileName");
   newFileNameInput.focus();
 
-  const newFileForm = document.getElementById("newFileForm");
-  newFileForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    createNewFile();
-  });
-
-  // Listen for Enter key in the new file name input
-  newFileNameInput.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      newFileForm.dispatchEvent(new Event("submit", {cancelable: true}));
-    }
-  });
+  // Removed event listeners from here to prevent multiple registrations
 }
 
 function closeNewFileModal() {
