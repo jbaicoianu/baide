@@ -206,5 +206,13 @@
   {
     "role": "Assistant",
     "content": "I've added functionality to display the active Git branch at the top of the project browser. When clicked, it opens a popup that allows you to select a different branch from the available branches and provides a button to add a new branch. Any necessary CSS has been included as comments within the relevant functions."
+  },
+  {
+    "role": "User",
+    "content": "Update the git branch display CSS to fit the style of the rest of the code (dark mode)"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the Git branch display CSS to align with the dark mode styling of the rest of the project. Let me know if you have any further adjustments or questions."
   }
 ]
