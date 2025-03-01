@@ -362,16 +362,19 @@ form {
   border-bottom: 1px solid #444;
   font-weight: bold;
   color: #f0f0f0;
+  border: 1px solid #555;
+  border-radius: 8px;
 }
 #branchPopup {
   position: absolute;
   top: 50px;
   left: 10px;
   background-color: #2e2e2e;
-  border: 1px solid #444;
+  border: 1px solid #555;
   padding: 20px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.5);
   z-index: 1000;
+  border-radius: 8px;
 }
 #branchPopup.hidden {
   display: none;
