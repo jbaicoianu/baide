@@ -158,5 +158,13 @@
   {
     "role": "Assistant",
     "content": "The \"New File\" button has been floated to the right as requested. Let me know if you need any further adjustments or have additional changes in mind."
+  },
+  {
+    "role": "User",
+    "content": "Add position: relative; to the tab container. Also, add a hover state on the tabs so it's more obvious which one your mouse is over."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project file by adding `position: relative;` to the `#tabs` container and implemented a hover state for the `.tab` class to enhance user interactivity. Please review the changes and let me know if you have any further adjustments or suggestions."
   }
 ]
