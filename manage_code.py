@@ -290,7 +290,7 @@ def git_switch_branch():
     branch = data["branch"]
     try:
         subprocess.run(["git", "checkout", branch], check=True)
-        return jsonify({"message": f"Switched to branch '{branch}' successfully."})
+        return jsonify({"ok": True})
     except subprocess.CalledProcessError as e:
         return jsonify({"error": f"Failed to switch to branch '{branch}'.", "details": e.stderr.strip()}), 500
 
