@@ -631,12 +631,30 @@ function adjustTabs() {
     usedWidth += tab.offsetWidth;
     if (usedWidth > availableWidth - moreBtn.offsetWidth) {
       tab.style.display = 'none';
+      // Create dropdown item with close button
       const dropdownItem = document.createElement('div');
-      dropdownItem.textContent = tab.textContent.slice(0, -1); // Remove close button
+      dropdownItem.className = 'dropdown-item';
+
+      const tabName = document.createElement('span');
+      tabName.textContent = tab.textContent.slice(0, -1); // Remove close button text
+      dropdownItem.appendChild(tabName);
+
+      const closeX = document.createElement('span');
+      closeX.textContent = '×';
+      closeX.className = 'close-btn';
+      closeX.style.marginLeft = '8px';
+      closeX.style.cursor = 'pointer';
+      closeX.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeTab(tab.textContent.slice(0, -1));
+      });
+      dropdownItem.appendChild(closeX);
+
       dropdownItem.addEventListener('click', () => {
         switchToTab(tab.textContent.slice(0, -1)); // Remove close button text
         dropdown.classList.remove('show');
       });
+
       dropdown.appendChild(dropdownItem);
       moreBtn.style.display = 'inline-block';
     }
