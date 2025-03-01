@@ -138,7 +138,7 @@ async function loadGitBranch() {
     if (response.ok) {
       const data = await response.json();
       const gitBranchDiv = document.getElementById('gitBranchDisplay');
-      gitBranchDiv.textContent = `Current Branch: ${data.branch}`;
+      gitBranchDiv.textContent = `Current Branch: ${data.current_branch}`;
     } else {
       console.error('Failed to load current Git branch.');
     }
