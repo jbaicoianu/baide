@@ -54,5 +54,13 @@
   {
     "role": "Assistant",
     "content": "Implemented the requested functionality by auto-focusing the filename input when the New File dialog is opened and enabling form submission when the Enter key is pressed."
+  },
+  {
+    "role": "User",
+    "content": "\"Uncaught (in promise) TypeError: Cannot read properties of null (reading 'addEventListener')\"\n\nDon't try to add the event listener to the new file form until after the new file dialog has been created"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the event listener for the `newFileForm` to ensure it is added only after the new file dialog has been created. This change prevents attempting to add an event listener to a `null` element, which was causing the error."
   }
 ]
