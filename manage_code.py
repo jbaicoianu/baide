@@ -261,6 +261,52 @@ def project_structure():
     structure = get_directory_structure(project_dir)
     return jsonify(structure)
 
+# New Endpoint: Get Current Git Branch
+@app.route("/git_current_branch", methods=["GET"])
+def git_current_branch():
+    try:
+        result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True)
+        current_branch = result.stdout.strip()
+        return jsonify({"current_branch": current_branch})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": "Failed to get current branch.", "details": e.stderr.strip()}), 500
+
+# New Endpoint: List All Git Branches
+@app.route("/git_branches", methods=["GET"])
+def git_branches():
+    try:
+        result = subprocess.run(["git", "branch"], capture_output=True, text=True, check=True)
+        branches = [line.strip().lstrip("* ").strip() for line in result.stdout.strip().split('\n')]
+        return jsonify({"branches": branches})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": "Failed to list branches.", "details": e.stderr.strip()}), 500
+
+# New Endpoint: Switch Git Branch
+@app.route("/git_switch_branch", methods=["POST"])
+def git_switch_branch():
+    data = request.get_json()
+    if not data or "branch" not in data:
+        return jsonify({"error": "No branch specified."}), 400
+    branch = data["branch"]
+    try:
+        subprocess.run(["git", "checkout", branch], check=True)
+        return jsonify({"message": f"Switched to branch '{branch}' successfully."})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": f"Failed to switch to branch '{branch}'.", "details": e.stderr.strip()}), 500
+
+# New Endpoint: Create Git Branch
+@app.route("/git_create_branch", methods=["POST"])
+def git_create_branch():
+    data = request.get_json()
+    if not data or "branch" not in data:
+        return jsonify({"error": "No branch name specified."}), 400
+    branch = data["branch"]
+    try:
+        subprocess.run(["git", "checkout", "-b", branch], check=True)
+        return jsonify({"message": f"Branch '{branch}' created and switched to successfully."})
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": f"Failed to create branch '{branch}'.", "details": e.stderr.strip()}), 500
+
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
 def chat():
