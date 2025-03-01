@@ -108,6 +108,7 @@ function createProjectTree(structure, parentElement, currentPath = '') {
         openDirectories.add(fullPath);
       }
       saveOpenDirectories();
+      adjustTabs(); // Adjust tabs when directories are toggled
     });
     itemDiv.className = 'directory';
     itemDiv.appendChild(dirSpan);
@@ -139,7 +140,7 @@ function createProjectTree(structure, parentElement, currentPath = '') {
 // Function to open a file in a new tab
 async function openFileInTab(filename) {
   // Check if the tab already exists in the DOM
-  if (document.getElementById(`tab-${filename}`)) {
+  if (document.getElementById(`tab-${sanitizeId(filename)}`)) {
     await switchToTab(filename);
     return;
   }
@@ -150,10 +151,12 @@ async function openFileInTab(filename) {
       const data = await response.json();
       // Create a new tab
       const tabs = document.getElementById('tabs');
+      
       const tab = document.createElement('div');
       tab.className = 'tab';
-      tab.id = `tab-${filename}`;
+      tab.id = `tab-${sanitizeId(filename)}`;
       tab.textContent = filename;
+      
       const closeBtn = document.createElement('span');
       closeBtn.className = 'close-btn';
       closeBtn.textContent = '×';
@@ -162,17 +165,22 @@ async function openFileInTab(filename) {
         closeTab(filename);
       });
       tab.appendChild(closeBtn);
+      
       // Add event listener to switch tab on click
       tab.addEventListener('click', () => {
         switchToTab(filename);
       });
+      
+      tabs.insertBefore(tab, document.getElementById('moreTabs')); // Insert before 'moreTabs'
+      
       // Deactivate other tabs
       Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
         t.classList.remove('active');
       });
-      tabs.appendChild(tab);
+      
       // Activate the new tab
       tab.classList.add('active');
+      
       // Load content into CodeMirror editor
       document.getElementById('sourceCode').value = data.content;
       if (editor) {
@@ -184,10 +192,17 @@ async function openFileInTab(filename) {
       saveActiveFile();
       // Load transcript
       await loadTranscript(filename);
+      
+      adjustTabs(); // Adjust tabs after adding a new tab
     }
   } catch (e) {
     console.error('Error opening file:', e);
   }
+}
+
+// Function to sanitize filename for use in HTML IDs
+function sanitizeId(filename) {
+  return filename.replace(/[^a-zA-Z0-9-_]/g, '_');
 }
 
 // Function to switch to an existing tab
@@ -196,7 +211,7 @@ async function switchToTab(filename) {
   // Activate the selected tab
   const tabs = document.getElementById('tabs');
   Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
-    if (t.id === `tab-${filename}`) {
+    if (t.id === `tab-${sanitizeId(filename)}`) {
       t.classList.add('active');
     } else {
       t.classList.remove('active');
@@ -222,16 +237,18 @@ async function switchToTab(filename) {
 
 // Function to close a tab
 function closeTab(filename) {
-  const tab = document.getElementById(`tab-${filename}`);
+  const sanitizedId = sanitizeId(filename);
+  const tab = document.getElementById(`tab-${sanitizedId}`);
   if (tab) {
     tab.parentNode.removeChild(tab);
     delete openFiles[filename];
     saveOpenFiles();
     // If the closed tab was active, switch to another tab
     if (activeFile === filename) {
-      const remainingTabs = document.getElementById('tabs').getElementsByClassName('tab');
+      const remainingTabs = document.querySelectorAll('#tabs .tab');
       if (remainingTabs.length > 0) {
-        const newActiveFilename = remainingTabs[remainingTabs.length - 1].id.replace('tab-', '');
+        const newActiveTab = remainingTabs[remainingTabs.length - 1];
+        const newActiveFilename = newActiveTab.textContent.slice(0, -1); // Remove close button
         switchToTab(newActiveFilename);
       } else {
         activeFile = null;
@@ -245,6 +262,7 @@ function closeTab(filename) {
         document.getElementById('activeCodingContexts').innerHTML = '';
       }
     }
+    adjustTabs(); // Adjust tabs after closing a tab
   }
 }
 
@@ -559,10 +577,73 @@ function restoreOpenDirectories(parentElement, currentPath = '') {
   });
 }
 
+// Function to adjust tabs for responsiveness
+function adjustTabs() {
+  const tabsContainer = document.getElementById('tabs');
+  const moreTabs = document.getElementById('moreTabs');
+  if (!moreTabs) {
+    // Create 'moreTabs' dropdown if it doesn't exist
+    const moreBtn = document.createElement('div');
+    moreBtn.id = 'moreTabs';
+    moreBtn.className = 'tab more-tabs';
+    moreBtn.textContent = '>>';
+    const dropdown = document.createElement('div');
+    dropdown.className = 'dropdown-content';
+    moreBtn.appendChild(dropdown);
+    tabsContainer.appendChild(moreBtn);
+
+    // Toggle dropdown on click
+    moreBtn.addEventListener('click', () => {
+      dropdown.classList.toggle('show');
+    });
+
+    // Close the dropdown if the user clicks outside of it
+    window.addEventListener('click', function(event) {
+      if (!moreBtn.contains(event.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+  }
+
+  const availableWidth = tabsContainer.clientWidth;
+  let usedWidth = 0;
+  const tabs = Array.from(tabsContainer.getElementsByClassName('tab')).filter(tab => tab.id !== 'moreTabs');
+  const dropdown = document.querySelector('#moreTabs .dropdown-content');
+  dropdown.innerHTML = ''; // Clear previous dropdown items
+
+  tabs.forEach(tab => {
+    tab.style.display = 'inline-block'; // Reset display
+  });
+
+  const moreBtn = document.getElementById('moreTabs');
+  moreBtn.style.display = 'none';
+
+  tabs.forEach(tab => {
+    usedWidth += tab.offsetWidth;
+    if (usedWidth > availableWidth - moreBtn.offsetWidth) {
+      tab.style.display = 'none';
+      const dropdownItem = document.createElement('div');
+      dropdownItem.textContent = tab.textContent;
+      dropdownItem.addEventListener('click', () => {
+        switchToTab(tab.textContent.slice(0, -1)); // Remove close button text
+        dropdown.classList.remove('show');
+      });
+      dropdown.appendChild(dropdownItem);
+      moreBtn.style.display = 'inline-block';
+    }
+  });
+
+  if (dropdown.children.length === 0) {
+    moreBtn.style.display = 'none';
+  }
+}
+
+// Listen to window resize to adjust tabs
+window.addEventListener('resize', adjustTabs);
+
 // On startup, load the project structure, initialize CodeMirror, set up event listeners, and restore state.
 window.onload = async function() {
   initializeCodeMirror();
-  loadOpenDirectories();
   await loadProjectStructure();
   await loadOpenFiles();
   loadActiveFile();
@@ -570,4 +651,5 @@ window.onload = async function() {
     await switchToTab(activeFile);
   }
   setupEventListeners();
+  adjustTabs(); // Initial adjustment
 };
