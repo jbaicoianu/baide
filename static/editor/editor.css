@@ -133,10 +133,6 @@ body {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
 }
-.tab.more-tabs::after {
-  content: '>>';
-  color: #f0f0f0;
-}
 .dropdown-content {
   display: none;
   position: absolute;
@@ -148,6 +144,11 @@ body {
   z-index: 1;
   border: 1px solid #444;
   border-radius: 4px;
+}
+.dropdown-content.show {
+  display: block;
+  /* Tab indicator style */
+  border-top: 2px solid #4CAF50;
 }
 .dropdown-content .tab {
   display: block;
@@ -164,6 +165,7 @@ body {
 .tab.more-tabs:hover .dropdown-content {
   display: block;
 }
+/* Removed the double arrow indicator */
 /* Source Code Editor */
 #sourceCodeContainer {
   flex: 1;
