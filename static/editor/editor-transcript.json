@@ -110,5 +110,13 @@
   {
     "role": "Assistant",
     "content": "Removed the `display: block;` declaration for `.tab.more-tabs:hover .dropdown-content`."
+  },
+  {
+    "role": "User",
+    "content": "It seems that while we're saving the open files between page loads, we're not saving which one is active, which means every time I refresh I'm viewing the last file in the list. We should save and restore the active file instead."
+  },
+  {
+    "role": "Assistant",
+    "content": "Thank you for pointing out the issue with saving and restoring the active file. I've updated the code to ensure that the `activeFile` is correctly saved to and restored from `localStorage`. Specifically, I've modified the `openFileInTab` function to accept an `activate` parameter, allowing it to open files without changing the active file during the restoration process. This ensures that after a page reload, the previously active file is correctly set as active."
   }
 ]
