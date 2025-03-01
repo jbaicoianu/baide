@@ -190,5 +190,13 @@
   {
     "role": "Assistant",
     "content": "Certainly, I'll add styles for the `.tab.more-tabs > .dropdown-content > .dropdown-item` elements to ensure they are properly styled and visible. Let me know if you have any specific styling preferences for these dropdown items."
+  },
+  {
+    "role": "User",
+    "content": "Hide the \"more tabs\" popup when a tab is selected"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project to hide the \"more tabs\" popup whenever a tab is selected. This ensures a cleaner user interface by preventing the dropdown from remaining open after a selection."
   }
 ]
