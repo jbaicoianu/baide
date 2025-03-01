@@ -198,5 +198,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the project to hide the \"more tabs\" popup whenever a tab is selected. This ensures a cleaner user interface by preventing the dropdown from remaining open after a selection."
+  },
+  {
+    "role": "User",
+    "content": "Show the active git branch at the top of the project browser. When clicked, display a popup that allows you to select a different branch from the currently available branches, along with a button to add a new branch. If any CSS is needed, add it as a comment inside of this function."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added functionality to display the active Git branch at the top of the project browser. When clicked, it opens a popup that allows you to select a different branch from the available branches and provides a button to add a new branch. Any necessary CSS has been included as comments within the relevant functions."
   }
 ]
