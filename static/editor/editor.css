@@ -358,18 +358,19 @@ form {
 /* CSS for Git Branch Display and Popup */
 #gitBranchDisplay {
   padding: 10px;
-  background-color: #f5f5f5;
-  border-bottom: 1px solid #ddd;
+  background-color: #3c3c3c;
+  border-bottom: 1px solid #444;
   font-weight: bold;
+  color: #f0f0f0;
 }
 #branchPopup {
   position: absolute;
   top: 50px;
   left: 10px;
-  background-color: white;
-  border: 1px solid #ccc;
+  background-color: #2e2e2e;
+  border: 1px solid #444;
   padding: 20px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
   z-index: 1000;
 }
 #branchPopup.hidden {
@@ -382,7 +383,8 @@ form {
 .branchItem {
   padding: 5px 0;
   cursor: pointer;
+  color: #f0f0f0;
 }
 .branchItem:hover {
-  background-color: #f0f0f0;
+  background-color: #444;
 }
