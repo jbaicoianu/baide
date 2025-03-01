@@ -103,6 +103,7 @@ body {
   display: flex;
   border-bottom: 1px solid #444;
   margin-bottom: 10px;
+  position: relative;
 }
 .tab {
   padding: 10px;
@@ -116,6 +117,9 @@ body {
 .tab.active {
   background-color: #3c3c3c;
   border-bottom: 1px solid #1e1e1e;
+}
+.tab:hover {
+  background-color: #3c3c3c;
 }
 .close-btn {
   margin-left: 5px;
