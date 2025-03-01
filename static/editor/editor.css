@@ -288,3 +288,8 @@ form {
   background-color: #f44336;
   margin-left: 10px;
 }
+/* Styles for hidden files and directories */
+.hiddenfile {
+  color: #aaa;
+  opacity: 0.6;
+}
