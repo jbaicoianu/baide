@@ -126,5 +126,13 @@
   {
     "role": "Assistant",
     "content": "I've addressed the issue with the project browser tree state not being saved properly by ensuring that the `openDirectories` state is loaded from `localStorage` before attempting to restore the tree's state. This change ensures that the application correctly remembers which directories were open during the previous session."
+  },
+  {
+    "role": "User",
+    "content": "The x button in the additional tabs is currently not active, it should have the same display and functionality as the x in the regular tabs"
+  },
+  {
+    "role": "Assistant",
+    "content": ""
   }
 ]
