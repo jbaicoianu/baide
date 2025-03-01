@@ -199,6 +199,12 @@ async function openFileInTab(filename, activate = true) {
         await loadTranscript(filename);
         
         adjustTabs(); // Adjust tabs after adding a new tab
+
+        // Hide the "more tabs" dropdown
+        const moreDropdown = document.querySelector('#moreTabs .dropdown-content');
+        if (moreDropdown) {
+          moreDropdown.classList.remove('show');
+        }
       } else {
         openFiles[filename] = true;
         saveOpenFiles();
@@ -241,6 +247,12 @@ async function switchToTab(filename) {
     }
   } catch (e) {
     console.error('Error switching tabs:', e);
+  }
+
+  // Hide the "more tabs" dropdown
+  const moreDropdown = document.querySelector('#moreTabs .dropdown-content');
+  if (moreDropdown) {
+    moreDropdown.classList.remove('show');
   }
 }
 
