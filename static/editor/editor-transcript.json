@@ -118,5 +118,13 @@
   {
     "role": "Assistant",
     "content": "Thank you for pointing out the issue with saving and restoring the active file. I've updated the code to ensure that the `activeFile` is correctly saved to and restored from `localStorage`. Specifically, I've modified the `openFileInTab` function to accept an `activate` parameter, allowing it to open files without changing the active file during the restoration process. This ensures that after a page reload, the previously active file is correctly set as active."
+  },
+  {
+    "role": "User",
+    "content": "The project browser tree state isn't being properly saved anymore either"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've addressed the issue with the project browser tree state not being saved properly by ensuring that the `openDirectories` state is loaded from `localStorage` before attempting to restore the tree's state. This change ensures that the application correctly remembers which directories were open during the previous session."
   }
 ]
