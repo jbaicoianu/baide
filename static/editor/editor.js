@@ -344,8 +344,7 @@ function setupEventListeners() {
   const chatBox = document.getElementById("chatBox");
   const commitSummaries = document.getElementById("commitSummaries");
   const activeCodingContexts = document.getElementById("activeCodingContexts");
-  const newFileForm = document.getElementById("newFileForm"); // Assuming the form has this ID
-
+  
   promptInput.addEventListener("keydown", function(e) {
     if (e.ctrlKey && e.key === "Enter") {
       e.preventDefault();
@@ -402,21 +401,6 @@ function setupEventListeners() {
     }
     throbber.style.display = "none";
   });
-
-  // New File form submission
-  newFileForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    createNewFile();
-  });
-
-  // Listen for Enter key in the new file name input
-  const newFileNameInput = document.getElementById("newFileName");
-  newFileNameInput.addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      newFileForm.dispatchEvent(new Event("submit", {cancelable: true}));
-    }
-  });
 }
 
 // Function to load coding contexts
@@ -458,7 +442,22 @@ async function loadSourceCode(filename) {
 function openNewFileModal() {
   const modal = document.getElementById("newFileModal");
   modal.style.display = "block";
-  document.getElementById("newFileName").focus();
+  const newFileNameInput = document.getElementById("newFileName");
+  newFileNameInput.focus();
+
+  const newFileForm = document.getElementById("newFileForm");
+  newFileForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    createNewFile();
+  });
+
+  // Listen for Enter key in the new file name input
+  newFileNameInput.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      newFileForm.dispatchEvent(new Event("submit", {cancelable: true}));
+    }
+  });
 }
 
 function closeNewFileModal() {
