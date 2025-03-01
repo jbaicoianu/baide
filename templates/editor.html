@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <title>Project Manager Chat</title>
-    <link rel="stylesheet" href="/editor/editor.css">
+    <link rel="stylesheet" href="/static/editor/editor.css">
     <!-- Load Marked for Markdown parsing -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- Load CodeMirror from CDN -->
@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/python/python.min.js"></script>
-    <script src="/editor/editor.js"></script>
+    <script src="/static/editor/editor.js"></script>
   </head>
   <body>
     <div id="container">
@@ -26,9 +26,11 @@
         <div class="modal-content">
           <span class="close" onclick="closeNewFileModal()">&times;</span>
           <h3>Create New File</h3>
-          <input type="text" id="newFileName" placeholder="Enter file name...">
-          <button onclick="createNewFile()">Create</button>
-          <button class="cancel" onclick="closeNewFileModal()">Cancel</button>
+          <form id="newFileForm">
+            <input type="text" id="newFileName" placeholder="Enter file name...">
+            <input type="submit" value="Create">
+            <button class="cancel" type="button" onclick="closeNewFileModal()">Cancel</button>
+          </form>
         </div>
       </div>
       <!-- Middle Column - Active Coding Contexts, Tabs, Source Code Editor and Chat -->
