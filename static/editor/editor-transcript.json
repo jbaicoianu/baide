@@ -70,5 +70,13 @@
   {
     "role": "Assistant",
     "content": "The submit event listener for the new file form has been moved from the `openNewFileModal` function to the `setupEventListeners` function to ensure it is registered only once. This change prevents multiple invocations of the `create_file` endpoint when the new file modal is shown multiple times."
+  },
+  {
+    "role": "User",
+    "content": "Make the open tab listing responsive. If the number of tabs exceeds the available space, show any additional tabs as a vertical list in a dropdown that's triggered by clicking a double arrow indicator at the end of the tab list"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI've implemented the responsive tab listing functionality as requested. When the number of open tabs exceeds the available space, additional tabs are moved into a dropdown menu, accessible by clicking a double arrow indicator at the end of the tab list. This ensures a cleaner and more organized user interface regardless of the number of open files.\n\nPlease ensure that the corresponding CSS styles are updated to support the new dropdown structure for the tabs."
   }
 ]
