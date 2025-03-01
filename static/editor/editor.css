@@ -113,15 +113,13 @@ body {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;
   white-space: nowrap;
+  transition: background-color 0.3s;
 }
 .tab.active {
   background-color: #3c3c3c;
   border-bottom: 1px solid #1e1e1e;
 }
 .tab:hover {
-  background-color: #2a2a2a;
-}
-.dropdown-content .tab:hover {
   background-color: #2a2a2a;
 }
 .close-btn {
@@ -131,7 +129,9 @@ body {
   cursor: pointer;
 }
 /* More Tabs Dropdown */
-.more-tabs-position: relative;
+.more-tabs-position {
+  position: relative;
+}
 .tab.more-tabs {
   position: relative;
   padding: 10px;
@@ -165,11 +165,11 @@ body {
   width: 100%;
   text-align: left;
   margin: 0;
+  transition: background-color 0.3s;
 }
 .dropdown-content .tab:hover {
   background-color: #2a2a2a;
 }
-/* Removed the double arrow indicator */
 /* Source Code Editor */
 #sourceCodeContainer {
   flex: 1;
