@@ -75,6 +75,8 @@ async function loadProjectStructure() {
       createProjectTree(data, treeContainer);
       projectBrowser.appendChild(treeContainer);
       
+      // Load open directories from localStorage before restoring
+      loadOpenDirectories();
       // Restore open directories from localStorage
       restoreOpenDirectories(treeContainer);
     }
@@ -630,7 +632,7 @@ function adjustTabs() {
     if (usedWidth > availableWidth - moreBtn.offsetWidth) {
       tab.style.display = 'none';
       const dropdownItem = document.createElement('div');
-      dropdownItem.textContent = tab.textContent;
+      dropdownItem.textContent = tab.textContent.slice(0, -1); // Remove close button
       dropdownItem.addEventListener('click', () => {
         switchToTab(tab.textContent.slice(0, -1)); // Remove close button text
         dropdown.classList.remove('show');
