@@ -138,10 +138,12 @@ function createProjectTree(structure, parentElement, currentPath = '') {
 }
 
 // Function to open a file in a new tab
-async function openFileInTab(filename) {
+async function openFileInTab(filename, activate = true) {
   // Check if the tab already exists in the DOM
   if (document.getElementById(`tab-${sanitizeId(filename)}`)) {
-    await switchToTab(filename);
+    if (activate) {
+      await switchToTab(filename);
+    }
     return;
   }
 
@@ -173,27 +175,32 @@ async function openFileInTab(filename) {
       
       tabs.insertBefore(tab, document.getElementById('moreTabs')); // Insert before 'moreTabs'
       
-      // Deactivate other tabs
-      Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
-        t.classList.remove('active');
-      });
-      
-      // Activate the new tab
-      tab.classList.add('active');
-      
-      // Load content into CodeMirror editor
-      document.getElementById('sourceCode').value = data.content;
-      if (editor) {
-        editor.setValue(data.content);
+      if (activate) {
+        // Deactivate other tabs
+        Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
+          t.classList.remove('active');
+        });
+        
+        // Activate the new tab
+        tab.classList.add('active');
+        
+        // Load content into CodeMirror editor
+        document.getElementById('sourceCode').value = data.content;
+        if (editor) {
+          editor.setValue(data.content);
+        }
+        activeFile = filename;
+        openFiles[filename] = true;
+        saveOpenFiles();
+        saveActiveFile();
+        // Load transcript
+        await loadTranscript(filename);
+        
+        adjustTabs(); // Adjust tabs after adding a new tab
+      } else {
+        openFiles[filename] = true;
+        saveOpenFiles();
       }
-      activeFile = filename;
-      openFiles[filename] = true;
-      saveOpenFiles();
-      saveActiveFile();
-      // Load transcript
-      await loadTranscript(filename);
-      
-      adjustTabs(); // Adjust tabs after adding a new tab
     }
   } catch (e) {
     console.error('Error opening file:', e);
@@ -529,7 +536,7 @@ async function loadOpenFiles() {
   if (storedOpenFiles) {
     openFiles = JSON.parse(storedOpenFiles);
     for (const filename of Object.keys(openFiles)) {
-      await openFileInTab(filename);
+      await openFileInTab(filename, false);
     }
   }
 }
