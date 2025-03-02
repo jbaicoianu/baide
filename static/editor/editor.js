@@ -295,7 +295,7 @@ async function addNewBranch() {
     alert('Branch name cannot be empty.');
     return;
   }
-      
+    
   try {
     const response = await fetch('/git_create_branch', {
       method: 'POST',
@@ -711,7 +711,7 @@ function setupEventListeners() {
       defaultOption.textContent = 'Add Context';
       contextSelector.appendChild(defaultOption);
           
-      // Options will be populated based on all coding contexts
+      // Options will be populated based on allCodingContexts
       contextSelector.addEventListener('change', addCodingContext);
       contextsContainer.appendChild(contextSelector);
     }
@@ -723,10 +723,12 @@ function loadFileCodingContexts(filename) {
   const contextsContainer = document.getElementById('activeCodingContexts');
   if (!contextsContainer) return;
 
-  // Clear existing badges
+  // Clear existing badges to ensure the list is empty
   contextsContainer.innerHTML = '';
 
   const contexts = fileCodingContexts[filename] || [];
+  
+  // Only populate the list if there are assigned contexts
   contexts.forEach(ctx => {
     appendCodingContext(ctx);
   });
