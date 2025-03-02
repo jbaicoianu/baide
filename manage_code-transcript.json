@@ -278,5 +278,13 @@
   {
     "role": "Assistant",
     "content": "The `/git_create_branch` endpoint has been updated to return `{ \"success\": true }` on success and `{ \"success\": false, \"error\": \"reason for error\" }` on failure, aligning with the specified response structure. Please verify if similar consistency is required for other Git-related endpoints."
+  },
+  {
+    "role": "User",
+    "content": "Instead of accepting coding contexts on the command line, let's just load the list of all known contexts from the contexts/ directory. The naming convention for the files is is <contextname>.txt - please populate the CODING_CONTEXTS list from this on load."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project to automatically load all coding contexts from the `contexts/` directory on startup, eliminating the need to specify contexts via command-line arguments. The `CODING_CONTEXTS` list is now populated by reading all `.txt` files in the `contexts/` directory following the `<contextname>.txt` naming convention. Additionally, the `--contexts` argument has been removed from the command-line parser since it's no longer necessary."
   }
 ]
