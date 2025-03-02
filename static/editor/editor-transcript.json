@@ -294,5 +294,13 @@
   {
     "role": "Assistant",
     "content": "To implement the ability to specify coding contexts on a file-by-file basis, the code has been updated to include localStorage management for context mappings, UI elements for displaying context badges, and a selector for adding contexts. Additionally, necessary CSS has been added as comments at the top of the file.\n\n**Questions/Suggestions:**\n- Should the list of all existing contexts be predefined, or should it be dynamically fetched from the server?\n- How should conflicts be handled if the same context is assigned multiple times to a file?"
+  },
+  {
+    "role": "User",
+    "content": "The list of all existing contexts can be loaded by fetching /coding_contexts which will return an array of all known contexts, use this instead of the hardcoded list. If the same context is assigned multiple times to a file, we'll want to dedup our list, and only count that context as being applied once."
+  },
+  {
+    "role": "Assistant",
+    "content": "To address your requirements, I have updated the project to dynamically load the list of coding contexts from the `/coding_contexts` endpoint instead of using a hardcoded list. Additionally, the code now ensures that each context is only assigned once per file, effectively deduplicating any duplicate assignments."
   }
 ]
