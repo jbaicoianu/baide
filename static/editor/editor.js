@@ -27,8 +27,7 @@ let openFiles = {};
 let editor = null;
 let openDirectories = new Set();
 let fileCodingContexts = {}; // Mapping of filename to contexts
-
-const ALL_CODING_CONTEXTS = ['Development', 'Testing', 'Production', 'Research']; // Example contexts
+let ALL_CODING_CONTEXTS = []; // Will be populated from /coding_contexts
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -721,6 +720,7 @@ function setupEventListeners() {
       defaultOption.value = '';
       defaultOption.textContent = 'Add Context';
       contextSelector.appendChild(defaultOption);
+      
       ALL_CODING_CONTEXTS.forEach(ctx => {
         const option = document.createElement('option');
         option.value = ctx;
@@ -746,6 +746,9 @@ async function loadCodingContexts() {
         });
         scrollToBottom(activeCodingContexts);
       }
+      // Update the global coding contexts list
+      ALL_CODING_CONTEXTS = data.map(ctx => ctx.name);
+      updateContextSelectorOptions();
     }
   } catch (e) {
     console.error('Error loading coding contexts:', e);
@@ -765,6 +768,24 @@ function loadFileCodingContexts(filename) {
   contexts.forEach(ctx => {
     appendCodingContext(ctx);
   });
+}
+
+// Function to update context selector options after fetching contexts
+function updateContextSelectorOptions() {
+  const contextSelector = document.getElementById('contextSelector');
+  if (contextSelector) {
+    // Remove existing options except the default
+    while (contextSelector.options.length > 1) {
+      contextSelector.remove(1);
+    }
+    // Add fetched contexts
+    ALL_CODING_CONTEXTS.forEach(ctx => {
+      const option = document.createElement('option');
+      option.value = ctx;
+      option.textContent = ctx;
+      contextSelector.appendChild(option);
+    });
+  }
 }
 
 // Function to add a coding context
@@ -1006,6 +1027,10 @@ window.addEventListener('resize', adjustTabs);
 window.onload = async function() {
   initializeCodeMirror();
   loadFileCodingContextsFromStorage();
+  
+  // Fetch and load coding contexts before loading the project structure
+  await loadCodingContexts();
+  
   await loadProjectStructure();
   await loadOpenFiles();
   loadActiveFile();
