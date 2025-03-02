@@ -464,3 +464,6 @@ form {
   cursor: pointer;
   color: #007bff;
 }
+.CodeMirror-selected {
+  background-color: rgba(0,255,0,.5) !important;
+}
