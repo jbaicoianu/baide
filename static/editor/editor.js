@@ -42,9 +42,26 @@ function initializeCodeMirror() {
     extraKeys: {
       "Ctrl-S": function(cm) {
         saveFile();
+      },
+      "Ctrl-F": function(cm) {
+        openFullSearch(cm);
       }
     }
   });
+}
+
+// Function to open full search dialog
+function openFullSearch(cm) {
+  const query = prompt("Enter search query:");
+  if (query) {
+    const cursor = cm.getSearchCursor(query, {line: 0, ch: 0});
+    if (cursor.findNext()) {
+      cm.setSelection(cursor.from(), cursor.to());
+      cm.scrollIntoView({from: cursor.from(), to: cursor.to()});
+    } else {
+      alert("No matches found.");
+    }
+  }
 }
 
 // Save file function triggered by Ctrl+S
