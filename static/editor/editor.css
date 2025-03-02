@@ -408,3 +408,24 @@ form {
   color: #ffffff;
   font-weight: bold;
 }
+/* CSS for Coding Contexts */
+#codingContextsContainer {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+}
+.badge {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin-right: 5px;
+  font-size: 12px;
+}
+#contextSelector {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
