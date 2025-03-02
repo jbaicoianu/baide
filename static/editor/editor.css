@@ -470,8 +470,8 @@ form {
 /* New Style for #searchOverlay.no-results */
 #searchOverlay.no-results {
   box-shadow: 0 0 10px red;
-  animation: shake 0.5s;
-  background-color: rgba(255, 0, 0, 0.1);
+  animation: shake 0.25s;
+  background-color: rgba(50, 0, 0, 1);
 }
 /* Updated shake animation to move left and right without rotation */
 @keyframes shake {
