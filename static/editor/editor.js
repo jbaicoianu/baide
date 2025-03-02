@@ -20,8 +20,42 @@
 //   border-radius: 4px;
 //   border: 1px solid #ccc;
 // }
+// 
+// CSS for Search Overlay:
+// #searchOverlay {
+//   position: absolute;
+//   bottom: 10px;
+//   right: 10px;
+//   background-color: rgba(255, 255, 255, 0.9);
+//   border: 1px solid #ccc;
+//   border-radius: 4px;
+//   padding: 10px;
+//   display: flex;
+//   align-items: center;
+//   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+// }
+// #searchInput {
+//   width: 200px;
+//   padding: 5px;
+//   border: 1px solid #ccc;
+//   border-radius: 4px;
+//   margin-right: 5px;
+// }
+// #searchButton {
+//   padding: 5px 10px;
+//   border: none;
+//   background-color: #007bff;
+//   color: white;
+//   border-radius: 4px;
+//   cursor: pointer;
+// }
+// #closeSearchButton {
+//   margin-left: 10px;
+//   cursor: pointer;
+//   color: #007bff;
+// }
 // */
-    
+
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -44,24 +78,68 @@ function initializeCodeMirror() {
         saveFile();
       },
       "Ctrl-F": function(cm) {
-        openFullSearch(cm);
+        openSearchOverlay(cm);
       }
-    }
+    },
+    // Enable the search addon
+    addons: ["search/searchcursor", "search/search"]
   });
 }
 
-// Function to open full search dialog
-function openFullSearch(cm) {
-  const query = prompt("Enter search query:");
-  if (query) {
-    const cursor = cm.getSearchCursor(query, {line: 0, ch: 0});
+// Function to open search overlay
+function openSearchOverlay(cm) {
+  let overlay = document.getElementById('searchOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'searchOverlay';
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.id = 'searchInput';
+    searchInput.placeholder = 'Search...';
+    
+    const searchButton = document.createElement('button');
+    searchButton.id = 'searchButton';
+    searchButton.textContent = 'Search';
+    searchButton.addEventListener('click', () => {
+      const query = searchInput.value.trim();
+      if (query) {
+        performSearch(cm, query);
+      }
+    });
+    
+    const closeButton = document.createElement('span');
+    closeButton.id = 'closeSearchButton';
+    closeButton.textContent = '✖';
+    closeButton.title = 'Close Search';
+    closeButton.addEventListener('click', () => {
+      overlay.style.display = 'none';
+      searchInput.value = '';
+    });
+    
+    overlay.appendChild(searchInput);
+    overlay.appendChild(searchButton);
+    overlay.appendChild(closeButton);
+    
+    document.getElementById('sourceCodeContainer').appendChild(overlay);
+  }
+  
+  overlay.style.display = 'flex';
+  overlay.querySelector('#searchInput').focus();
+}
+
+// Function to perform search using CodeMirror's search addon
+function performSearch(cm, query) {
+  cm.operation(() => {
+    cm.getDoc().clearHistory();
+    const cursor = cm.getSearchCursor(query, cm.getCursor());
     if (cursor.findNext()) {
       cm.setSelection(cursor.from(), cursor.to());
       cm.scrollIntoView({from: cursor.from(), to: cursor.to()});
     } else {
       alert("No matches found.");
     }
-  }
+  });
 }
 
 // Save file function triggered by Ctrl+S
