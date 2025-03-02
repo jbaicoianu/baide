@@ -24,7 +24,7 @@
 // CSS for Search Overlay:
 // #searchOverlay {
 //   position: absolute;
-////   bottom: 10px;
+// ////   bottom: 10px;
 //   right: 10px;
 //   background-color: rgba(255, 255, 255, 0.9);
 //   border: 1px solid #ccc;
@@ -56,6 +56,9 @@
 // }
 // */
   
+import 'codemirror/addon/search/search.js'; // Added CodeMirror Search Addon
+import 'codemirror/addon/search/searchcursor.js'; // Ensure searchcursor addon is included
+
 let activeFile = null;
 let openFiles = {};
 let editor = null;
