@@ -254,5 +254,13 @@
   {
     "role": "Assistant",
     "content": "Understood. I've removed the \"Current Branch:\" label from the branch selector as requested."
+  },
+  {
+    "role": "User",
+    "content": "Mark the currently-selected branch in the branch selector dropdown with a class, and tell me what class name you used"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the code to mark the currently-selected branch in the branch selector dropdown with the `active-branch` class. This class is applied to the branch item that matches the currently active Git branch, allowing you to style it distinctively."
   }
 ]
