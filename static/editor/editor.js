@@ -156,7 +156,7 @@ function openSearchOverlay(cm) {
 // Function to perform search using CodeMirror's search addon
 function performSearch(cm, query, direction = 'forward') {
   const doc = cm.getDoc();
-  const cursor = doc.getSearchCursor(query, { caseFold: true, multiline: true });
+  const cursor = doc.getSearchCursor(query, doc.getCursor(), true, true);
 
   // Reset counters
   totalSearchResults = 0;
@@ -168,7 +168,7 @@ function performSearch(cm, query, direction = 'forward') {
   }
 
   // Reset cursor for actual navigation
-  searchCursor = doc.getSearchCursor(query, doc.getCursor());
+  searchCursor = doc.getSearchCursor(query, doc.getCursor(), true, true);
 
   let found;
   if (direction === 'forward') {
