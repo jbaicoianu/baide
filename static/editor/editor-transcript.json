@@ -374,5 +374,13 @@
   {
     "role": "Assistant",
     "content": "I've implemented the requested search enhancements: the search now triggers on any input change, pressing Enter with the same search string continues the search to the next result, and pressing Escape closes the search overlay."
+  },
+  {
+    "role": "User",
+    "content": "Pressing shift+enter in the search box should do a reverse search"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've implemented the functionality to allow pressing Shift+Enter in the search box to perform a reverse search. Now, both Enter and Shift+Enter can be used to navigate through search results in forward and reverse directions, respectively."
   }
 ]
