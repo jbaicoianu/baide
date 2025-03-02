@@ -429,3 +429,36 @@ form {
   border-radius: 4px;
   border: 1px solid #ccc;
 }
+/* CSS for Search Overlay */
+#searchOverlay {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+#searchInput {
+  width: 200px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+#searchButton {
+  padding: 5px 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#closeSearchButton {
+  margin-left: 10px;
+  cursor: pointer;
+  color: #007bff;
+}
