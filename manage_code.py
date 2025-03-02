@@ -299,13 +299,13 @@ def git_switch_branch():
 def git_create_branch():
     data = request.get_json()
     if not data or "branch" not in data:
-        return jsonify({"error": "No branch name specified."}), 400
+        return jsonify({"success": False, "error": "No branch name specified."}), 400
     branch = data["branch"]
     try:
         subprocess.run(["git", "checkout", "-b", branch], check=True)
-        return jsonify({"message": f"Branch '{branch}' created and switched to successfully."})
+        return jsonify({"success": True})
     except subprocess.CalledProcessError as e:
-        return jsonify({"error": f"Failed to create branch '{branch}'.", "details": e.stderr.strip()}), 500
+        return jsonify({"success": False, "error": f"Failed to create branch '{branch}'."}), 500
 
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
