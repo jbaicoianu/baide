@@ -471,11 +471,12 @@ form {
 #searchOverlay.no-results {
   box-shadow: 0 0 10px red;
   animation: shake 0.5s;
+  background-color: rgba(255, 0, 0, 0.1);
 }
 @keyframes shake {
-  0% { transform: translate(0); }
-  25% { transform: translate(-5px, 0); }
-  50% { transform: translate(5px, 0); }
-  75% { transform: translate(-5px, 0); }
-  100% { transform: translate(0, 0); }
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+  75% { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
 }
