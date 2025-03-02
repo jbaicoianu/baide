@@ -25,6 +25,7 @@ let searchCursor = null;
 let searchDirection = 'forward'; // New variable to track search direction
 let totalSearchResults = 0;
 let currentSearchIndex = 0;
+let searchResults = []; // Array to store all search match positions
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -67,7 +68,7 @@ function openSearchOverlay(cm) {
       if (query) {
         if (query !== lastSearchQuery) {
           lastSearchQuery = query;
-          totalSearchResults = 0;
+          searchResults = [];
           currentSearchIndex = 0;
           searchCursor = null;
         }
@@ -88,7 +89,7 @@ function openSearchOverlay(cm) {
       lastSearchQuery = '';
       searchCursor = null;
       searchDirection = 'forward';
-      totalSearchResults = 0;
+      searchResults = [];
       currentSearchIndex = 0;
       updateSearchIndicator();
     });
@@ -104,7 +105,7 @@ function openSearchOverlay(cm) {
       if (query) {
         if (query !== lastSearchQuery) {
           lastSearchQuery = query;
-          totalSearchResults = 0;
+          searchResults = [];
           currentSearchIndex = 0;
           searchCursor = null;
         }
@@ -112,7 +113,7 @@ function openSearchOverlay(cm) {
         updateSearchIndicator();
       } else {
         overlay.classList.remove('no-results');
-        totalSearchResults = 0;
+        searchResults = [];
         currentSearchIndex = 0;
         updateSearchIndicator();
       }
@@ -139,7 +140,7 @@ function openSearchOverlay(cm) {
         lastSearchQuery = '';
         searchCursor = null;
         searchDirection = 'forward';
-        totalSearchResults = 0;
+        searchResults = [];
         currentSearchIndex = 0;
         updateSearchIndicator();
       }
@@ -162,49 +163,46 @@ function openSearchOverlay(cm) {
 function performSearch(cm, query, direction = 'forward') {
   const doc = cm.getDoc();
 
-  if (query !== lastSearchQuery || !searchCursor) {
-    // Reinitialize search cursor if query has changed
-    searchCursor = doc.getSearchCursor(query, { line: 0, ch: 0 });
-    totalSearchResults = 0;
+  if (query !== lastSearchQuery || searchResults.length === 0) {
+    // Reset search results
+    searchResults = [];
+    let cursor = doc.getSearchCursor(query, { line: 0, ch: 0 });
+    while (cursor.findNext()) {
+      searchResults.push({ from: cursor.from(), to: cursor.to() });
+    }
+    totalSearchResults = searchResults.length;
     currentSearchIndex = 0;
-
-    // Count total occurrences
-    while (searchCursor.findNext()) {
-      totalSearchResults++;
-    }
-
-    // Reset cursor for actual navigation
-    searchCursor = direction === 'forward' ? doc.getSearchCursor(query, doc.getCursor()) : doc.getSearchCursor(query, doc.getCursor(), false);
-    totalSearchResults = totalSearchResults; // Ensuring it's set correctly
   }
 
-  let found;
-  if (direction === 'forward') {
-    found = searchCursor.findNext();
-    if (found) {
-      currentSearchIndex = searchCursor.pos.from.line + 1;
-    }
-  } else {
-    found = searchCursor.findPrevious();
-    if (found) {
-      currentSearchIndex = searchCursor.pos.from.line + 1;
-    }
-  }
-
-  if (found) {
-    doc.setSelection(searchCursor.from(), searchCursor.to());
-    cm.scrollIntoView({ from: searchCursor.from(), to: searchCursor.to() });
-    const overlay = document.getElementById('searchOverlay');
-    if (overlay) {
-      overlay.classList.remove('no-results');
-    }
-  } else {
+  if (totalSearchResults === 0) {
     const overlay = document.getElementById('searchOverlay');
     if (overlay) {
       overlay.classList.add('no-results');
     }
-    searchCursor = null;
-    currentSearchIndex = 0;
+    updateSearchIndicator();
+    return;
+  }
+
+  if (direction === 'forward') {
+    currentSearchIndex++;
+    if (currentSearchIndex > totalSearchResults) {
+      currentSearchIndex = 1; // Wrap around to first match
+    }
+  } else {
+    currentSearchIndex--;
+    if (currentSearchIndex < 1) {
+      currentSearchIndex = totalSearchResults; // Wrap around to last match
+    }
+  }
+
+  const match = searchResults[currentSearchIndex - 1];
+  if (match) {
+    doc.setSelection(match.from, match.to);
+    cm.scrollIntoView({ from: match.from, to: match.to }, 100);
+    const overlay = document.getElementById('searchOverlay');
+    if (overlay) {
+      overlay.classList.remove('no-results');
+    }
   }
 
   updateSearchIndicator();
