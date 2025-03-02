@@ -278,5 +278,13 @@
   {
     "role": "Assistant",
     "content": "Hello,\n\nI've updated the active branch styling in the branch selector dropdown to make it more subtle by adjusting the background color and font weight. Please review the updated CSS below and let me know if you have any further adjustments or suggestions."
+  },
+  {
+    "role": "User",
+    "content": "set active-branch color to white and font-weight to bold"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `active-branch` class to set the color to white and the font-weight to bold. Please review the updated CSS below and let me know if you have any further changes or suggestions."
   }
 ]
