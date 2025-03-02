@@ -24,7 +24,7 @@
 // CSS for Search Overlay:
 // #searchOverlay {
 //   position: absolute;
-//   bottom: 10px;
+////   bottom: 10px;
 //   right: 10px;
 //   background-color: rgba(255, 255, 255, 0.9);
 //   border: 1px solid #ccc;
@@ -55,7 +55,7 @@
 //   color: #007bff;
 // }
 // */
-
+  
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -80,9 +80,7 @@ function initializeCodeMirror() {
       "Ctrl-F": function(cm) {
         openSearchOverlay(cm);
       }
-    },
-    // Enable the search addon
-    addons: ["search/searchcursor", "search/search"]
+    }
   });
 }
 
@@ -130,16 +128,14 @@ function openSearchOverlay(cm) {
 
 // Function to perform search using CodeMirror's search addon
 function performSearch(cm, query) {
-  cm.operation(() => {
-    cm.getDoc().clearHistory();
-    const cursor = cm.getSearchCursor(query, cm.getCursor());
-    if (cursor.findNext()) {
-      cm.setSelection(cursor.from(), cursor.to());
-      cm.scrollIntoView({from: cursor.from(), to: cursor.to()});
-    } else {
-      alert("No matches found.");
-    }
-  });
+  const doc = cm.getDoc();
+  const cursor = doc.getSearchCursor(query, doc.getCursor("from"));
+  if (cursor.findNext()) {
+    doc.setSelection(cursor.from(), cursor.to());
+    cm.scrollIntoView({from: cursor.from(), to: cursor.to()});
+  } else {
+    alert("No matches found.");
+  }
 }
 
 // Save file function triggered by Ctrl+S
