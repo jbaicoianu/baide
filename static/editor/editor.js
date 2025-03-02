@@ -21,13 +21,13 @@
 //   border: 1px solid #ccc;
 // }
 // */
-
+    
 let activeFile = null;
 let openFiles = {};
 let editor = null;
 let openDirectories = new Set();
 let fileCodingContexts = {}; // Mapping of filename to contexts
-let ALL_CODING_CONTEXTS = []; // Will be populated from /coding_contexts
+// Removed ALL_CODING_CONTEXTS as it is no longer needed
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -46,7 +46,7 @@ function initializeCodeMirror() {
     }
   });
 }
-
+    
 // Save file function triggered by Ctrl+S
 function saveFile() {
   if (!activeFile) return;
@@ -68,7 +68,7 @@ function saveFile() {
     console.error('Error saving file:', error);
   });
 }
-
+    
 // Render Markdown while escaping any raw HTML.
 function renderMarkdown(text) {
   const renderer = new marked.Renderer();
@@ -81,7 +81,7 @@ function renderMarkdown(text) {
     mangle: false
   });
 }
-
+    
 // Function to load project structure and set up event listeners for files
 async function loadProjectStructure() {
   try {
@@ -90,7 +90,7 @@ async function loadProjectStructure() {
       const data = await response.json();
       const projectBrowser = document.getElementById('projectBrowser');
       projectBrowser.innerHTML = '<h2>Project Browser</h2>';
-      
+          
       // Add Git Branch Display
       const gitBranchDiv = document.createElement('div');
       gitBranchDiv.id = 'gitBranchDisplay';
@@ -98,7 +98,7 @@ async function loadProjectStructure() {
       gitBranchDiv.style.cursor = 'pointer';
       gitBranchDiv.addEventListener('click', openBranchPopup);
       projectBrowser.appendChild(gitBranchDiv);
-      
+          
       // /* 
       // CSS for Git Branch Display and Popup:
       // #gitBranchDisplay {
@@ -132,23 +132,23 @@ async function loadProjectStructure() {
       //   background-color: #f0f0f0;
       // }
       // */
-  
+      
       // Add New File Button
       const newFileBtn = document.createElement('button');
       newFileBtn.id = 'newFileBtn';
       newFileBtn.textContent = 'New File';
       newFileBtn.addEventListener('click', openNewFileModal);
       projectBrowser.appendChild(newFileBtn);
-
+    
       const treeContainer = document.createElement('div');
       createProjectTree(data, treeContainer);
       projectBrowser.appendChild(treeContainer);
-      
+          
       // Load open directories from localStorage before restoring
       loadOpenDirectories();
       // Restore open directories from localStorage
       restoreOpenDirectories(treeContainer);
-      
+          
       // Load Git Branch
       loadGitBranch();
     }
@@ -156,7 +156,7 @@ async function loadProjectStructure() {
     console.error('Error loading project structure:', e);
   }
 }
-
+    
 // Function to load and display the current Git branch
 async function loadGitBranch() {
   try {
@@ -172,7 +172,7 @@ async function loadGitBranch() {
     console.error('Error loading Git branch:', e);
   }
 }
-
+    
 // Function to open the branch selection popup
 async function openBranchPopup() {
   // Create popup container
@@ -181,24 +181,24 @@ async function openBranchPopup() {
     popup = document.createElement('div');
     popup.id = 'branchPopup';
     popup.className = 'hidden';
-    
+        
     // Branch list container
     const branchList = document.createElement('div');
     branchList.id = 'branchList';
     popup.appendChild(branchList);
-    
+        
     // Add Branch button
     const addBranchBtn = document.createElement('button');
     addBranchBtn.textContent = 'Add New Branch';
     addBranchBtn.addEventListener('click', showAddBranchInput);
     popup.appendChild(addBranchBtn);
-    
+        
     document.body.appendChild(popup);
   }
-
+    
   // Toggle popup visibility
   popup.classList.toggle('hidden');
-
+    
   if (!popup.classList.contains('hidden')) {
     // Fetch and display branches
     try {
@@ -226,7 +226,7 @@ async function openBranchPopup() {
     }
   }
 }
-
+    
 // Function to switch to a selected branch
 async function switchBranch(branchName) {
   try {
@@ -250,33 +250,33 @@ async function switchBranch(branchName) {
   } catch (e) {
     console.error('Error switching branch:', e);
   }
-  
+      
   // Hide the popup after switching
   const popup = document.getElementById('branchPopup');
   if (popup) {
     popup.classList.add('hidden');
   }
 }
-
+    
 // Function to show input for adding a new branch
 function showAddBranchInput() {
   const branchList = document.getElementById('branchList');
-  
+      
   // Create input field
   const input = document.createElement('input');
   input.type = 'text';
   input.id = 'newBranchName';
   input.placeholder = 'Enter new branch name';
-  
+      
   // Create submit button
   const submitBtn = document.createElement('button');
   submitBtn.textContent = 'Create';
   submitBtn.addEventListener('click', addNewBranch);
-  
+      
   // Append to branch list
   branchList.appendChild(input);
   branchList.appendChild(submitBtn);
-  
+      
   // /* 
   // CSS for Add Branch Input:
   // #newBranchName {
@@ -287,7 +287,7 @@ function showAddBranchInput() {
   // }
   // */
 }
-
+    
 // Function to add a new branch
 async function addNewBranch() {
   const branchName = document.getElementById('newBranchName').value.trim();
@@ -295,7 +295,7 @@ async function addNewBranch() {
     alert('Branch name cannot be empty.');
     return;
   }
-  
+      
   try {
     const response = await fetch('/git_create_branch', {
       method: 'POST',
@@ -319,15 +319,15 @@ async function addNewBranch() {
     console.error('Error creating branch:', e);
   }
 }
-
+    
 // Function to create the project tree
 function createProjectTree(structure, parentElement, currentPath = '') {
   const directories = structure.filter(item => item.type === 'directory');
   const files = structure.filter(item => item.type === 'file');
-
+    
   directories.sort((a, b) => a.name.localeCompare(b.name));
   files.sort((a, b) => a.name.localeCompare(b.name));
-
+    
   directories.forEach(dir => {
     const itemDiv = document.createElement('div');
     const dirSpan = document.createElement('span');
@@ -356,7 +356,7 @@ function createProjectTree(structure, parentElement, currentPath = '') {
     itemDiv.appendChild(childContainer);
     parentElement.appendChild(itemDiv);
   });
-
+    
   files.forEach(file => {
     const itemDiv = document.createElement('div');
     const fileSpan = document.createElement('span');
@@ -373,7 +373,7 @@ function createProjectTree(structure, parentElement, currentPath = '') {
     parentElement.appendChild(itemDiv);
   });
 }
-
+    
 // Function to open a file in a new tab
 async function openFileInTab(filename, activate = true) {
   // Check if the tab already exists in the DOM
@@ -383,19 +383,19 @@ async function openFileInTab(filename, activate = true) {
     }
     return;
   }
-
+    
   try {
     const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
     if (response.ok) {
       const data = await response.json();
       // Create a new tab
       const tabs = document.getElementById('tabs');
-      
+          
       const tab = document.createElement('div');
       tab.className = 'tab';
       tab.id = `tab-${sanitizeId(filename)}`;
       tab.textContent = filename;
-      
+          
       const closeBtn = document.createElement('span');
       closeBtn.className = 'close-btn';
       closeBtn.textContent = '×';
@@ -404,23 +404,23 @@ async function openFileInTab(filename, activate = true) {
         closeTab(filename);
       });
       tab.appendChild(closeBtn);
-      
+          
       // Add event listener to switch tab on click
       tab.addEventListener('click', () => {
         switchToTab(filename);
       });
-      
+          
       tabs.insertBefore(tab, document.getElementById('moreTabs')); // Insert before 'moreTabs'
-      
+          
       if (activate) {
         // Deactivate other tabs
         Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
           t.classList.remove('active');
         });
-        
+            
         // Activate the new tab
         tab.classList.add('active');
-        
+            
         // Load content into CodeMirror editor
         document.getElementById('sourceCode').value = data.content;
         if (editor) {
@@ -433,10 +433,10 @@ async function openFileInTab(filename, activate = true) {
         // Load transcript
         await loadTranscript(filename);
         // Load coding contexts
-        loadFileCodingContexts(filename);
-        
+        await loadFileCodingContexts(filename);
+            
         adjustTabs(); // Adjust tabs after adding a new tab
-
+    
         // Hide the "more tabs" dropdown
         const moreDropdown = document.querySelector('#moreTabs .dropdown-content');
         if (moreDropdown) {
@@ -451,12 +451,12 @@ async function openFileInTab(filename, activate = true) {
     console.error('Error opening file:', e);
   }
 }
-
+    
 // Function to sanitize filename for use in HTML IDs
 function sanitizeId(filename) {
   return filename.replace(/[^a-zA-Z0-9-_]/g, '_');
 }
-
+    
 // Function to switch to an existing tab
 async function switchToTab(filename) {
   activeFile = filename;
@@ -482,19 +482,19 @@ async function switchToTab(filename) {
       // Load transcript
       await loadTranscript(filename);
       // Load coding contexts
-      loadFileCodingContexts(filename);
+      await loadFileCodingContexts(filename);
     }
   } catch (e) {
     console.error('Error switching tabs:', e);
   }
-
+    
   // Hide the "more tabs" dropdown
   const moreDropdown = document.querySelector('#moreTabs .dropdown-content');
   if (moreDropdown) {
     moreDropdown.classList.remove('show');
   }
 }
-
+    
 // Function to close a tab
 function closeTab(filename) {
   const sanitizedId = sanitizeId(filename);
@@ -528,7 +528,7 @@ function closeTab(filename) {
     adjustTabs(); // Adjust tabs after closing a tab
   }
 }
-
+    
 // Append a message to chatBox; content is rendered as Markdown.
 function appendMessage(role, content) {
   const msgDiv = document.createElement('div');
@@ -536,7 +536,7 @@ function appendMessage(role, content) {
   msgDiv.innerHTML = '<strong class="' + role + '">' + role + ':</strong><div>' + renderMarkdown(content) + '</div>';
   chatBox.appendChild(msgDiv);
 }
-
+    
 // Append a commit summary to commitSummaries
 function appendCommitSummary(summary) {
   const summaryDiv = document.createElement('div');
@@ -544,7 +544,7 @@ function appendCommitSummary(summary) {
   summaryDiv.textContent = summary;
   commitSummaries.appendChild(summaryDiv);
 }
-
+    
 // Append a coding context badge to activeCodingContexts
 function appendCodingContext(context) {
   if (!context || !context.name) return;
@@ -556,12 +556,12 @@ function appendCodingContext(context) {
   }
   activeCodingContexts.appendChild(badgeSpan);
 }
-
+    
 // Scroll to the bottom of an element.
 function scrollToBottom(element) {
   element.scrollTop = element.scrollHeight;
 }
-
+    
 // Function to load the existing conversation transcript for a specific file from the server.
 async function loadTranscript(filename) {
   try {
@@ -586,37 +586,28 @@ async function loadTranscript(filename) {
       scrollToBottom(chatBox);
       scrollToBottom(commitSummaries);
     }
-    // Load coding contexts
-    const contextsResponse = await fetch('/coding_contexts');
-    if (contextsResponse.ok) {
-      const contextsData = await contextsResponse.json();
-      activeCodingContexts.innerHTML = ""; // Prevent duplication
-      if (contextsData && contextsData.length > 0) {
-        contextsData.forEach(ctx => {
-          appendCodingContext(ctx);
-        });
-        scrollToBottom(activeCodingContexts);
-      }
-    }
+    // Removed global coding contexts loading
+    // Load coding contexts for the active file
+    await loadFileCodingContexts(filename);
   } catch (e) {
     console.error('Error loading transcript or coding contexts:', e);
   }
 }
-
+    
 // Function to extract commit summary
 function extract_commit_summary(text) {
   const regex = /^Commit Summary:\s*(.+)/m;
   const match = text.match(regex);
   return match ? match[1].trim() : null;
 }
-
+    
 // Function to extract the professional message before the code block.
 function extract_professional_message(content) {
   const regex = /^(.*?)```/s;
   const match = content.match(regex);
   return match ? match[1].trim() : content.trim();
 }
-
+    
 // Listen for Ctrl+Enter to submit the form.
 function setupEventListeners() {
   const promptInput = document.getElementById("promptInput");
@@ -626,14 +617,14 @@ function setupEventListeners() {
   const commitSummaries = document.getElementById("commitSummaries");
   const activeCodingContexts = document.getElementById("activeCodingContexts");
   const sourceCodeContainer = document.getElementById("sourceCodeContainer");
-  
+      
   promptInput.addEventListener("keydown", function(e) {
     if (e.ctrlKey && e.key === "Enter") {
       e.preventDefault();
       chatForm.dispatchEvent(new Event("submit", {cancelable: true}));
     }
   });
-
+    
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!activeFile) return;
@@ -643,7 +634,7 @@ function setupEventListeners() {
     scrollToBottom(chatBox);
     promptInput.value = "";
     throbber.style.display = "block";
-
+    
     try {
       const response = await fetch("/chat", {
         method: "POST",
@@ -672,7 +663,7 @@ function setupEventListeners() {
         // Reload the source code after AI updates
         await loadSourceCode(activeFile);
         // Reload coding contexts
-        await loadCodingContexts();
+        await loadFileCodingContexts(activeFile);
         // Reload project structure
         await loadProjectStructure();
       } else {
@@ -683,14 +674,14 @@ function setupEventListeners() {
     }
     throbber.style.display = "none";
   });
-
+    
   // Add event listener for new file form
   const newFileForm = document.getElementById("newFileForm");
   newFileForm.addEventListener('submit', (e) => {
     e.preventDefault();
     createNewFile();
   });
-
+    
   // Listen for Enter key in the new file name input
   const newFileNameInput = document.getElementById("newFileName");
   newFileNameInput.addEventListener("keydown", function(e) {
@@ -699,7 +690,7 @@ function setupEventListeners() {
       newFileForm.dispatchEvent(new Event("submit", {cancelable: true}));
     }
   });
-
+    
   // Setup coding contexts UI
   if (sourceCodeContainer) {
     // Create container for coding contexts
@@ -710,7 +701,7 @@ function setupEventListeners() {
       sourceCodeContainer.style.position = 'relative'; // Ensure positioning
       sourceCodeContainer.appendChild(contextsContainer);
     }
-
+    
     // Create selector for adding contexts
     let contextSelector = document.getElementById('contextSelector');
     if (!contextSelector) {
@@ -720,56 +711,43 @@ function setupEventListeners() {
       defaultOption.value = '';
       defaultOption.textContent = 'Add Context';
       contextSelector.appendChild(defaultOption);
-      
-      ALL_CODING_CONTEXTS.forEach(ctx => {
-        const option = document.createElement('option');
-        option.value = ctx;
-        option.textContent = ctx;
-        contextSelector.appendChild(option);
-      });
+          
+      // Options will be populated based on file-specific contexts
       contextSelector.addEventListener('change', addCodingContext);
       contextsContainer.appendChild(contextSelector);
     }
   }
 }
-
-// Function to load coding contexts
-async function loadCodingContexts() {
-  try {
-    const response = await fetch('/coding_contexts');
-    if (response.ok) {
-      const data = await response.json();
-      activeCodingContexts.innerHTML = ""; // Prevent duplication
-      if (data && data.length > 0) {
-        data.forEach(ctx => {
-          appendCodingContext(ctx);
-        });
-        scrollToBottom(activeCodingContexts);
-      }
-      // Update the global coding contexts list
-      ALL_CODING_CONTEXTS = data.map(ctx => ctx.name);
-      updateContextSelectorOptions();
-    }
-  } catch (e) {
-    console.error('Error loading coding contexts:', e);
-  }
-}
-
+    
 // Function to load coding contexts for the active file
-function loadFileCodingContexts(filename) {
+async function loadFileCodingContexts(filename) {
   const contextsContainer = document.getElementById('activeCodingContexts');
   if (!contextsContainer) return;
 
   // Clear existing badges
   contextsContainer.innerHTML = '';
 
-  // Get contexts for the active file
-  const contexts = fileCodingContexts[filename] || [];
-  contexts.forEach(ctx => {
-    appendCodingContext(ctx);
-  });
+  try {
+    const response = await fetch(`/coding_contexts?file=${encodeURIComponent(filename)}`);
+    if (response.ok) {
+      const data = await response.json();
+      fileCodingContexts[filename] = data; // Update mapping
+      saveFileCodingContexts();
+      data.forEach(ctx => {
+        appendCodingContext(ctx);
+      });
+      scrollToBottom(contextsContainer);
+      // Update the context selector options based on fetched contexts
+      ALL_CODING_CONTEXTS = data.map(ctx => ctx.name);
+      updateContextSelectorOptions();
+    } else {
+      console.error('Failed to load coding contexts for', filename);
+    }
+  } catch (e) {
+    console.error('Error loading coding contexts:', e);
+  }
 }
-
+    
 // Function to update context selector options after fetching contexts
 function updateContextSelectorOptions() {
   const contextSelector = document.getElementById('contextSelector');
@@ -787,31 +765,32 @@ function updateContextSelectorOptions() {
     });
   }
 }
-
+    
 // Function to add a coding context
 function addCodingContext(event) {
   const selectedContext = event.target.value;
   if (!selectedContext) return;
-
+    
   if (!fileCodingContexts[activeFile]) {
     fileCodingContexts[activeFile] = [];
   }
-
-  if (!fileCodingContexts[activeFile].includes(selectedContext)) {
-    fileCodingContexts[activeFile].push(selectedContext);
-    appendCodingContext({ name: selectedContext });
+    
+  if (!fileCodingContexts[activeFile].some(ctx => ctx.name === selectedContext)) {
+    const newContext = { name: selectedContext };
+    fileCodingContexts[activeFile].push(newContext);
+    appendCodingContext(newContext);
     saveFileCodingContexts();
   }
-
+    
   // Reset selector
   event.target.value = '';
 }
-
+    
 // Save file coding contexts to localStorage
 function saveFileCodingContexts() {
   localStorage.setItem('fileCodingContexts', JSON.stringify(fileCodingContexts));
 }
-
+    
 // Load file coding contexts from localStorage
 function loadFileCodingContextsFromStorage() {
   const storedContexts = localStorage.getItem('fileCodingContexts');
@@ -819,7 +798,7 @@ function loadFileCodingContextsFromStorage() {
     fileCodingContexts = JSON.parse(storedContexts);
   }
 }
-
+    
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
   try {
@@ -835,25 +814,25 @@ async function loadSourceCode(filename) {
     console.error('Error loading source code:', e);
   }
 }
-
+    
 // Modal functionality
 function openNewFileModal() {
   const modal = document.getElementById("newFileModal");
   modal.style.display = "block";
   const newFileNameInput = document.getElementById("newFileName");
   newFileNameInput.focus();
-
+    
   // Removed event listeners from here to prevent multiple registrations
 }
-
+    
 function closeNewFileModal() {
   const modal = document.getElementById("newFileModal");
   modal.style.display = "none";
   document.getElementById("newFileName").value = "";
 }
-
+    
 // Rest of the functions remain unchanged...
-
+    
 async function createNewFile() {
   const fileName = document.getElementById("newFileName").value.trim();
   if (!fileName) {
@@ -873,7 +852,7 @@ async function createNewFile() {
     alert("Error creating file: " + data.error);
   }
 }
-
+    
 // Close modal when clicking outside of it
 window.onclick = function(event) {
   const modal = document.getElementById("newFileModal");
@@ -881,12 +860,12 @@ window.onclick = function(event) {
     closeNewFileModal();
   }
 }
-
+    
 // Save open files to localStorage
 function saveOpenFiles() {
   localStorage.setItem('openFiles', JSON.stringify(openFiles));
 }
-
+    
 // Load open files from localStorage
 async function loadOpenFiles() {
   const storedOpenFiles = localStorage.getItem('openFiles');
@@ -897,12 +876,12 @@ async function loadOpenFiles() {
     }
   }
 }
-
+    
 // Save active file to localStorage
 function saveActiveFile() {
   localStorage.setItem('activeFile', activeFile);
 }
-
+    
 // Load active file from localStorage
 function loadActiveFile() {
   const storedActiveFile = localStorage.getItem('activeFile');
@@ -910,12 +889,12 @@ function loadActiveFile() {
     activeFile = storedActiveFile;
   }
 }
-
+    
 // Save open directories to localStorage
 function saveOpenDirectories() {
   localStorage.setItem('openDirectories', JSON.stringify(Array.from(openDirectories)));
 }
-
+    
 // Load open directories from localStorage
 function loadOpenDirectories() {
   const storedOpenDirs = localStorage.getItem('openDirectories');
@@ -923,7 +902,7 @@ function loadOpenDirectories() {
     openDirectories = new Set(JSON.parse(storedOpenDirs));
   }
 }
-
+    
 // Restore open directories in the project tree
 function restoreOpenDirectories(parentElement, currentPath = '') {
   const directories = parentElement.getElementsByClassName('directory');
@@ -940,7 +919,7 @@ function restoreOpenDirectories(parentElement, currentPath = '') {
     }
   });
 }
-
+    
 // Function to adjust tabs for responsiveness
 function adjustTabs() {
   const tabsContainer = document.getElementById('tabs');
@@ -955,12 +934,12 @@ function adjustTabs() {
     dropdown.className = 'dropdown-content';
     moreBtn.appendChild(dropdown);
     tabsContainer.appendChild(moreBtn);
-
+    
     // Toggle dropdown on click
     moreBtn.addEventListener('click', () => {
       dropdown.classList.toggle('show');
     });
-
+    
     // Close the dropdown if the user clicks outside of it
     window.addEventListener('click', function(event) {
       if (!moreBtn.contains(event.target)) {
@@ -968,20 +947,20 @@ function adjustTabs() {
       }
     });
   }
-
+    
   const availableWidth = tabsContainer.clientWidth;
   let usedWidth = 0;
   const tabs = Array.from(tabsContainer.getElementsByClassName('tab')).filter(tab => tab.id !== 'moreTabs');
   const dropdown = document.querySelector('#moreTabs .dropdown-content');
   dropdown.innerHTML = ''; // Clear previous dropdown items
-
+    
   tabs.forEach(tab => {
     tab.style.display = 'inline-block'; // Reset display
   });
-
+    
   const moreBtn = document.getElementById('moreTabs');
   moreBtn.style.display = 'none';
-
+    
   tabs.forEach(tab => {
     usedWidth += tab.offsetWidth;
     if (usedWidth > availableWidth - moreBtn.offsetWidth) {
@@ -989,11 +968,11 @@ function adjustTabs() {
       // Create dropdown item with close button
       const dropdownItem = document.createElement('div');
       dropdownItem.className = 'dropdown-item';
-
+    
       const tabName = document.createElement('span');
       tabName.textContent = tab.textContent.slice(0, -1); // Remove close button text
       dropdownItem.appendChild(tabName);
-
+    
       const closeX = document.createElement('span');
       closeX.textContent = '×';
       closeX.className = 'close-btn';
@@ -1004,33 +983,33 @@ function adjustTabs() {
         closeTab(tab.textContent.slice(0, -1));
       });
       dropdownItem.appendChild(closeX);
-
+    
       dropdownItem.addEventListener('click', () => {
         switchToTab(tab.textContent.slice(0, -1)); // Remove close button text
         dropdown.classList.remove('show');
       });
-
+    
       dropdown.appendChild(dropdownItem);
       moreBtn.style.display = 'inline-block';
     }
   });
-
+    
   if (dropdown.children.length === 0) {
     moreBtn.style.display = 'none';
   }
 }
-
+    
 // Listen to window resize to adjust tabs
 window.addEventListener('resize', adjustTabs);
-
+    
 // On startup, load the project structure, initialize CodeMirror, set up event listeners, and restore state.
 window.onload = async function() {
   initializeCodeMirror();
   loadFileCodingContextsFromStorage();
-  
-  // Fetch and load coding contexts before loading the project structure
-  await loadCodingContexts();
-  
+      
+  // Removed global coding contexts loading
+  // await loadCodingContexts();
+      
   await loadProjectStructure();
   await loadOpenFiles();
   loadActiveFile();
