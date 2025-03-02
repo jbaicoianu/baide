@@ -1,3 +1,19 @@
+/* 
+New CSS for Search Results Indicator:
+#searchIndicator {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+}
+*/
+
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -7,6 +23,8 @@ let allCodingContexts = []; // All available coding contexts
 let lastSearchQuery = '';
 let searchCursor = null;
 let searchDirection = 'forward'; // New variable to track search direction
+let totalSearchResults = 0;
+let currentSearchIndex = 0;
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -50,6 +68,7 @@ function openSearchOverlay(cm) {
         lastSearchQuery = query;
         searchDirection = 'forward'; // Default search direction
         performSearch(cm, query, searchDirection);
+        updateSearchIndicator();
       }
     });
 
@@ -64,7 +83,15 @@ function openSearchOverlay(cm) {
       lastSearchQuery = '';
       searchCursor = null;
       searchDirection = 'forward';
+      totalSearchResults = 0;
+      currentSearchIndex = 0;
+      updateSearchIndicator();
     });
+
+    // Create search indicator
+    const searchIndicator = document.createElement('span');
+    searchIndicator.id = 'searchIndicator';
+    searchIndicator.textContent = '0 / 0';
 
     // Add event listeners for input change and key presses
     searchInput.addEventListener('input', () => {
@@ -73,8 +100,12 @@ function openSearchOverlay(cm) {
         lastSearchQuery = query;
         searchCursor = null; // Reset cursor for new query
         performSearch(cm, query, searchDirection);
+        updateSearchIndicator();
       } else {
         overlay.classList.remove('no-results');
+        totalSearchResults = 0;
+        currentSearchIndex = 0;
+        updateSearchIndicator();
       }
     });
 
@@ -85,6 +116,7 @@ function openSearchOverlay(cm) {
         if (query) {
           searchDirection = 'forward';
           performSearch(cm, query, searchDirection);
+          updateSearchIndicator();
         }
       } else if (e.key === 'Enter' && e.shiftKey) {
         e.preventDefault();
@@ -92,6 +124,7 @@ function openSearchOverlay(cm) {
         if (query) {
           searchDirection = 'reverse';
           performSearch(cm, query, searchDirection);
+          updateSearchIndicator();
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
@@ -101,12 +134,16 @@ function openSearchOverlay(cm) {
         lastSearchQuery = '';
         searchCursor = null;
         searchDirection = 'forward';
+        totalSearchResults = 0;
+        currentSearchIndex = 0;
+        updateSearchIndicator();
       }
     });
 
     overlay.appendChild(searchInput);
     overlay.appendChild(searchButton);
     overlay.appendChild(closeButton);
+    overlay.appendChild(searchIndicator);
 
     document.getElementById('sourceCodeContainer').appendChild(overlay);
   }
@@ -119,21 +156,36 @@ function openSearchOverlay(cm) {
 // Function to perform search using CodeMirror's search addon
 function performSearch(cm, query, direction = 'forward') {
   const doc = cm.getDoc();
-  const from = doc.getCursor("from");
-  if (!searchCursor || query !== lastSearchQuery || searchDirection !== direction) {
-    searchCursor = doc.getSearchCursor(query, from, { backwards: direction === 'reverse' });
+  const cursor = doc.getSearchCursor(query, { caseFold: true, multiline: true });
+
+  // Reset counters
+  totalSearchResults = 0;
+  currentSearchIndex = 0;
+
+  // Count total occurrences
+  while (cursor.findNext()) {
+    totalSearchResults++;
   }
+
+  // Reset cursor for actual navigation
+  searchCursor = doc.getSearchCursor(query, doc.getCursor());
 
   let found;
   if (direction === 'forward') {
     found = searchCursor.findNext();
+    if (found) {
+      currentSearchIndex++;
+    }
   } else {
     found = searchCursor.findPrevious();
+    if (found) {
+      currentSearchIndex++;
+    }
   }
 
   if (found) {
     doc.setSelection(searchCursor.from(), searchCursor.to());
-    cm.scrollIntoView({from: searchCursor.from(), to: searchCursor.to()});
+    cm.scrollIntoView({ from: searchCursor.from(), to: searchCursor.to() });
     const overlay = document.getElementById('searchOverlay');
     if (overlay) {
       overlay.classList.remove('no-results');
@@ -144,6 +196,16 @@ function performSearch(cm, query, direction = 'forward') {
       overlay.classList.add('no-results');
     }
     searchCursor = null;
+  }
+
+  updateSearchIndicator();
+}
+
+// Function to update the search indicator
+function updateSearchIndicator() {
+  const indicator = document.getElementById('searchIndicator');
+  if (indicator) {
+    indicator.textContent = `${currentSearchIndex} / ${totalSearchResults}`;
   }
 }
 
