@@ -246,5 +246,13 @@
   {
     "role": "Assistant",
     "content": "The `#gitBranchDisplay::before` element has been updated to use a background image instead of the inline SVG. Please verify that the icon displays correctly and adjust the dimensions if necessary."
+  },
+  {
+    "role": "User",
+    "content": "Remove the \"Current Branch:\" label from the branch selector"
+  },
+  {
+    "role": "Assistant",
+    "content": "Understood. I've removed the \"Current Branch:\" label from the branch selector as requested."
   }
 ]
