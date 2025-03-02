@@ -56,8 +56,8 @@
 // }
 // */
   
-import 'codemirror/addon/search/search.js'; // Added CodeMirror Search Addon
-import 'codemirror/addon/search/searchcursor.js'; // Ensure searchcursor addon is included
+//import 'codemirror/addon/search/search.js'; // Added CodeMirror Search Addon
+//import 'codemirror/addon/search/searchcursor.js'; // Ensure searchcursor addon is included
 
 let activeFile = null;
 let openFiles = {};
@@ -65,6 +65,8 @@ let editor = null;
 let openDirectories = new Set();
 let fileCodingContexts = {}; // Mapping of filename to contexts
 let allCodingContexts = []; // All available coding contexts
+let lastSearchQuery = '';
+let searchCursor = null;
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -105,6 +107,7 @@ function openSearchOverlay(cm) {
     searchButton.addEventListener('click', () => {
       const query = searchInput.value.trim();
       if (query) {
+        lastSearchQuery = query;
         performSearch(cm, query);
       }
     });
@@ -116,6 +119,34 @@ function openSearchOverlay(cm) {
     closeButton.addEventListener('click', () => {
       overlay.style.display = 'none';
       searchInput.value = '';
+      lastSearchQuery = '';
+      searchCursor = null;
+    });
+    
+    // Add event listeners for input change and key presses
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim();
+      if (query) {
+        lastSearchQuery = query;
+        searchCursor = null; // Reset cursor for new query
+        performSearch(cm, query);
+      }
+    });
+    
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        if (query) {
+          performSearch(cm, query);
+        }
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        overlay.style.display = 'none';
+        searchInput.value = '';
+        lastSearchQuery = '';
+        searchCursor = null;
+      }
     });
     
     overlay.appendChild(searchInput);
@@ -132,12 +163,16 @@ function openSearchOverlay(cm) {
 // Function to perform search using CodeMirror's search addon
 function performSearch(cm, query) {
   const doc = cm.getDoc();
-  const cursor = doc.getSearchCursor(query, doc.getCursor("from"));
-  if (cursor.findNext()) {
-    doc.setSelection(cursor.from(), cursor.to());
-    cm.scrollIntoView({from: cursor.from(), to: cursor.to()});
+  if (!searchCursor || query !== lastSearchQuery) {
+    searchCursor = doc.getSearchCursor(query, doc.getCursor("from"));
+  }
+  
+  if (searchCursor.findNext()) {
+    doc.setSelection(searchCursor.from(), searchCursor.to());
+    cm.scrollIntoView({from: searchCursor.from(), to: searchCursor.to()});
   } else {
-    alert("No matches found.");
+    alert("No more matches found.");
+    searchCursor = null;
   }
 }
 
