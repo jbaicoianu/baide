@@ -1,61 +1,68 @@
 // /* 
 // CSS for Coding Contexts:
-// #codingContextsContainer {
-//   position: absolute;
-//   top: 10px;
-//   right: 10px;
-//   display: flex;
-//   align-items: center;
-// }
-// .badge {
-//   background-color: #007bff;
-//   color: white;
-//   padding: 5px 10px;
-//   border-radius: 12px;
-//   margin-right: 5px;
-//   font-size: 12px;
-// }
-// #contextSelector {
-//   padding: 5px;
-//   border-radius: 4px;
-//   border: 1px solid #ccc;
-// }
-// 
-// CSS for Search Overlay:
-// #searchOverlay {
-//   position: absolute;
-// ////   bottom: 10px;
-//   right: 10px;
-//   background-color: rgba(255, 255, 255, 0.9);
-//   border: 1px solid #ccc;
-//   border-radius: 4px;
-//   padding: 10px;
-//   display: flex;
-//   align-items: center;
-//   box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-// }
-// #searchInput {
-//   width: 200px;
-//   padding: 5px;
-//   border: 1px solid #ccc;
-//   border-radius: 4px;
-//   margin-right: 5px;
-// }
-// #searchButton {
-//   padding: 5px 10px;
-//   border: none;
-//   background-color: #007bff;
-//   color: white;
-//   border-radius: 4px;
-//   cursor: pointer;
-// }
-// #closeSearchButton {
-//   margin-left: 10px;
-//   cursor: pointer;
-//   color: #007bff;
-// }
-// */
-  
+#codingContextsContainer {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+}
+.badge {
+  background-color: #007bff;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin-right: 5px;
+  font-size: 12px;
+}
+#contextSelector {
+  padding: 5px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+/* CSS for Search Overlay */
+#searchOverlay {
+  position: absolute;
+  /* bottom: 10px; */
+  right: 10px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+#searchOverlay.no-results {
+  border: 2px solid red;
+}
+#searchInput {
+  width: 200px;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 5px;
+}
+#searchButton {
+  padding: 5px 10px;
+  border: none;
+  background-color: #007bff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+#closeSearchButton {
+  margin-left: 10px;
+  cursor: pointer;
+  color: #007bff;
+}
+.marksearch {
+  background-color: yellow !important;
+  color: black !important;
+}
+*/
+
 //import 'codemirror/addon/search/search.js'; // Added CodeMirror Search Addon
 //import 'codemirror/addon/search/searchcursor.js'; // Ensure searchcursor addon is included
 
@@ -96,12 +103,12 @@ function openSearchOverlay(cm) {
   if (!overlay) {
     overlay = document.createElement('div');
     overlay.id = 'searchOverlay';
-    
+
     const searchInput = document.createElement('input');
     searchInput.type = 'text';
     searchInput.id = 'searchInput';
     searchInput.placeholder = 'Search...';
-    
+
     const searchButton = document.createElement('button');
     searchButton.id = 'searchButton';
     searchButton.textContent = 'Search';
@@ -113,19 +120,20 @@ function openSearchOverlay(cm) {
         performSearch(cm, query, searchDirection);
       }
     });
-    
+
     const closeButton = document.createElement('span');
     closeButton.id = 'closeSearchButton';
     closeButton.textContent = '✖';
     closeButton.title = 'Close Search';
     closeButton.addEventListener('click', () => {
       overlay.style.display = 'none';
+      overlay.classList.remove('no-results');
       searchInput.value = '';
       lastSearchQuery = '';
       searchCursor = null;
       searchDirection = 'forward';
     });
-    
+
     // Add event listeners for input change and key presses
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.trim();
@@ -133,18 +141,20 @@ function openSearchOverlay(cm) {
         lastSearchQuery = query;
         searchCursor = null; // Reset cursor for new query
         performSearch(cm, query, searchDirection);
+      } else {
+        overlay.classList.remove('no-results');
       }
     });
-    
+
     searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         const query = searchInput.value.trim();
         if (query) {
           searchDirection = 'forward';
           performSearch(cm, query, searchDirection);
         }
-      } else if (e.key === 'Shift' && e.key === 'Enter') {
+      } else if (e.key === 'Enter' && e.shiftKey) {
         e.preventDefault();
         const query = searchInput.value.trim();
         if (query) {
@@ -154,21 +164,23 @@ function openSearchOverlay(cm) {
       } else if (e.key === 'Escape') {
         e.preventDefault();
         overlay.style.display = 'none';
+        overlay.classList.remove('no-results');
         searchInput.value = '';
         lastSearchQuery = '';
         searchCursor = null;
         searchDirection = 'forward';
       }
     });
-    
+
     overlay.appendChild(searchInput);
     overlay.appendChild(searchButton);
     overlay.appendChild(closeButton);
-    
+
     document.getElementById('sourceCodeContainer').appendChild(overlay);
   }
-  
+
   overlay.style.display = 'flex';
+  overlay.classList.remove('no-results');
   overlay.querySelector('#searchInput').focus();
 }
 
@@ -179,12 +191,19 @@ function performSearch(cm, query, direction = 'forward') {
   if (!searchCursor || query !== lastSearchQuery || searchDirection !== direction) {
     searchCursor = doc.getSearchCursor(query, from, { backwards: direction === 'reverse' });
   }
-  
+
   if (searchCursor.findNext()) {
     doc.setSelection(searchCursor.from(), searchCursor.to());
     cm.scrollIntoView({from: searchCursor.from(), to: searchCursor.to()});
+    const overlay = document.getElementById('searchOverlay');
+    if (overlay) {
+      overlay.classList.remove('no-results');
+    }
   } else {
-    alert("No more matches found.");
+    const overlay = document.getElementById('searchOverlay');
+    if (overlay) {
+      overlay.classList.add('no-results');
+    }
     searchCursor = null;
   }
 }
