@@ -67,6 +67,7 @@ let fileCodingContexts = {}; // Mapping of filename to contexts
 let allCodingContexts = []; // All available coding contexts
 let lastSearchQuery = '';
 let searchCursor = null;
+let searchDirection = 'forward'; // New variable to track search direction
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -108,7 +109,8 @@ function openSearchOverlay(cm) {
       const query = searchInput.value.trim();
       if (query) {
         lastSearchQuery = query;
-        performSearch(cm, query);
+        searchDirection = 'forward'; // Default search direction
+        performSearch(cm, query, searchDirection);
       }
     });
     
@@ -121,6 +123,7 @@ function openSearchOverlay(cm) {
       searchInput.value = '';
       lastSearchQuery = '';
       searchCursor = null;
+      searchDirection = 'forward';
     });
     
     // Add event listeners for input change and key presses
@@ -129,7 +132,7 @@ function openSearchOverlay(cm) {
       if (query) {
         lastSearchQuery = query;
         searchCursor = null; // Reset cursor for new query
-        performSearch(cm, query);
+        performSearch(cm, query, searchDirection);
       }
     });
     
@@ -138,7 +141,15 @@ function openSearchOverlay(cm) {
         e.preventDefault();
         const query = searchInput.value.trim();
         if (query) {
-          performSearch(cm, query);
+          searchDirection = 'forward';
+          performSearch(cm, query, searchDirection);
+        }
+      } else if (e.key === 'Shift' && e.key === 'Enter') {
+        e.preventDefault();
+        const query = searchInput.value.trim();
+        if (query) {
+          searchDirection = 'reverse';
+          performSearch(cm, query, searchDirection);
         }
       } else if (e.key === 'Escape') {
         e.preventDefault();
@@ -146,6 +157,7 @@ function openSearchOverlay(cm) {
         searchInput.value = '';
         lastSearchQuery = '';
         searchCursor = null;
+        searchDirection = 'forward';
       }
     });
     
@@ -161,10 +173,11 @@ function openSearchOverlay(cm) {
 }
 
 // Function to perform search using CodeMirror's search addon
-function performSearch(cm, query) {
+function performSearch(cm, query, direction = 'forward') {
   const doc = cm.getDoc();
-  if (!searchCursor || query !== lastSearchQuery) {
-    searchCursor = doc.getSearchCursor(query, doc.getCursor("from"));
+  const from = direction === 'forward' ? doc.getCursor("from") : doc.getCursor("from");
+  if (!searchCursor || query !== lastSearchQuery || searchDirection !== direction) {
+    searchCursor = doc.getSearchCursor(query, from, { backwards: direction === 'reverse' });
   }
   
   if (searchCursor.findNext()) {
