@@ -65,7 +65,12 @@ function openSearchOverlay(cm) {
     searchButton.addEventListener('click', () => {
       const query = searchInput.value.trim();
       if (query) {
-        lastSearchQuery = query;
+        if (query !== lastSearchQuery) {
+          lastSearchQuery = query;
+          totalSearchResults = 0;
+          currentSearchIndex = 0;
+          searchCursor = null;
+        }
         searchDirection = 'forward'; // Default search direction
         performSearch(cm, query, searchDirection);
         updateSearchIndicator();
@@ -97,8 +102,12 @@ function openSearchOverlay(cm) {
     searchInput.addEventListener('input', () => {
       const query = searchInput.value.trim();
       if (query) {
-        lastSearchQuery = query;
-        searchCursor = null; // Reset cursor for new query
+        if (query !== lastSearchQuery) {
+          lastSearchQuery = query;
+          totalSearchResults = 0;
+          currentSearchIndex = 0;
+          searchCursor = null;
+        }
         performSearch(cm, query, searchDirection);
         updateSearchIndicator();
       } else {
@@ -110,19 +119,15 @@ function openSearchOverlay(cm) {
     });
 
     searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
+      if (e.key === 'Enter') {
         e.preventDefault();
         const query = searchInput.value.trim();
         if (query) {
-          searchDirection = 'forward';
-          performSearch(cm, query, searchDirection);
-          updateSearchIndicator();
-        }
-      } else if (e.key === 'Enter' && e.shiftKey) {
-        e.preventDefault();
-        const query = searchInput.value.trim();
-        if (query) {
-          searchDirection = 'reverse';
+          if (e.shiftKey) {
+            searchDirection = 'reverse';
+          } else {
+            searchDirection = 'forward';
+          }
           performSearch(cm, query, searchDirection);
           updateSearchIndicator();
         }
@@ -156,30 +161,33 @@ function openSearchOverlay(cm) {
 // Function to perform search using CodeMirror's search addon
 function performSearch(cm, query, direction = 'forward') {
   const doc = cm.getDoc();
-  const cursor = doc.getSearchCursor(query, doc.getCursor(), true, true);
 
-  // Reset counters
-  totalSearchResults = 0;
-  currentSearchIndex = 0;
+  if (query !== lastSearchQuery || !searchCursor) {
+    // Reinitialize search cursor if query has changed
+    searchCursor = doc.getSearchCursor(query, { line: 0, ch: 0 });
+    totalSearchResults = 0;
+    currentSearchIndex = 0;
 
-  // Count total occurrences
-  while (cursor.findNext()) {
-    totalSearchResults++;
+    // Count total occurrences
+    while (searchCursor.findNext()) {
+      totalSearchResults++;
+    }
+
+    // Reset cursor for actual navigation
+    searchCursor = direction === 'forward' ? doc.getSearchCursor(query, doc.getCursor()) : doc.getSearchCursor(query, doc.getCursor(), false);
+    totalSearchResults = totalSearchResults; // Ensuring it's set correctly
   }
-
-  // Reset cursor for actual navigation
-  searchCursor = doc.getSearchCursor(query, doc.getCursor(), true, true);
 
   let found;
   if (direction === 'forward') {
     found = searchCursor.findNext();
     if (found) {
-      currentSearchIndex++;
+      currentSearchIndex = searchCursor.pos.from.line + 1;
     }
   } else {
     found = searchCursor.findPrevious();
     if (found) {
-      currentSearchIndex++;
+      currentSearchIndex = searchCursor.pos.from.line + 1;
     }
   }
 
@@ -196,6 +204,7 @@ function performSearch(cm, query, direction = 'forward') {
       overlay.classList.add('no-results');
     }
     searchCursor = null;
+    currentSearchIndex = 0;
   }
 
   updateSearchIndicator();
