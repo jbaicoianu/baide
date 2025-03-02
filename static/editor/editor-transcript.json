@@ -302,5 +302,13 @@
   {
     "role": "Assistant",
     "content": "To address your requirements, I have updated the project to dynamically load the list of coding contexts from the `/coding_contexts` endpoint instead of using a hardcoded list. Additionally, the code now ensures that each context is only assigned once per file, effectively deduplicating any duplicate assignments."
+  },
+  {
+    "role": "User",
+    "content": "Update the displayed coding contexts when a new tab is selected as well"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project to ensure that the displayed coding contexts are refreshed whenever a new tab is selected. The changes include fetching coding contexts specific to the active file and updating the UI accordingly. Additionally, redundant global context loading has been streamlined to prevent conflicts.\n\nPlease review the updated code below:"
   }
 ]
