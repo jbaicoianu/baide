@@ -342,5 +342,13 @@
   {
     "role": "Assistant",
     "content": "I've replaced the modal `prompt()` with a non-modal search overlay positioned at the bottom right of the `sourceCodeContainer`. The search functionality now utilizes CodeMirror's search addon to provide effective searching within the editor. Let me know if you have any questions or further enhancements in mind."
+  },
+  {
+    "role": "User",
+    "content": "Chaneg search overlay styling to dark mode"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the search overlay styling to dark mode by changing the background colors and borders to better fit the dark theme. Let me know if you have any specific preferences or additional adjustments you'd like to make."
   }
 ]
