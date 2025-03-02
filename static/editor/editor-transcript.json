@@ -318,5 +318,13 @@
   {
     "role": "Assistant",
     "content": "I have implemented the requested changes to manage coding contexts more efficiently by fetching all coding contexts on load and utilizing `localStorage` for per-file configurations. This ensures that coding contexts are only fetched once, reducing unnecessary network requests. Additionally, the code now checks `localStorage` for assigned coding contexts when switching tabs."
+  },
+  {
+    "role": "User",
+    "content": "If no contexts are assigned to the active file, the active coding contexts list should be empty. We will populate the active coding contexts list if the user selects a tab which has a coding context assigned to it in our localStorage config."
+  },
+  {
+    "role": "Assistant",
+    "content": "I have implemented the requested changes to ensure that the active coding contexts list is empty when no contexts are assigned to the active file. The list will now only be populated when a user selects a tab with an assigned coding context from the localStorage configuration."
   }
 ]
