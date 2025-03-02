@@ -422,5 +422,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `#searchOverlay.no-results` class to include a subtle red background to indicate when no search results are found."
+  },
+  {
+    "role": "User",
+    "content": "Ugh, switch the shake animation back to a simple left-and-right shake, no rotation"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the shake animation to a simple left-and-right movement without any rotation as you requested."
   }
 ]
