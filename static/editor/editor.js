@@ -816,6 +816,14 @@ function setupEventListeners() {
       contextsContainer.appendChild(contextSelector);
     }
   }
+
+  // Global keydown listener for Ctrl+F
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && (e.key === 'f' || e.key === 'F')) {
+      e.preventDefault();
+      openSearchOverlay(editor);
+    }
+  });
 }
 
 // Function to load coding contexts for the active file from localStorage
