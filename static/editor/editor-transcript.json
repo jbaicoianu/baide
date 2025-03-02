@@ -446,5 +446,13 @@
   {
     "role": "Assistant",
     "content": "I've addressed the error in the search functionality by correcting the arguments passed to the `getSearchCursor` method within the `performSearch` function. Please review the changes and let me know if you have any further questions or need additional adjustments."
+  },
+  {
+    "role": "User",
+    "content": "Searching backwards with shift+enter has stopped working. Also, the counts are wrong - the first parameter before the / should be the current result number, and changes every time we repeat a search. The second number is the total number of matches, and doesn't change unless we change the search query."
+  },
+  {
+    "role": "Assistant",
+    "content": "Certainly! I've addressed the issues you've mentioned regarding the reverse search functionality and the incorrect count displays. The `shift+enter` shortcut for searching backwards has been restored, and the search result counts have been corrected to display the current result number and the total number of matches appropriately. Additionally, I've refactored the `performSearch` function to ensure accurate tracking of search indices and total matches."
   }
 ]
