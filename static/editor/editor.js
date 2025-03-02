@@ -106,7 +106,7 @@ async function loadProjectStructure() {
       //   background-color: #f0f0f0;
       // }
       // */
-
+  
       // Add New File Button
       const newFileBtn = document.createElement('button');
       newFileBtn.id = 'newFileBtn';
@@ -181,9 +181,13 @@ async function openBranchPopup() {
         const data = await response.json();
         const branchList = document.getElementById('branchList');
         branchList.innerHTML = '';
+        const currentBranch = document.getElementById('gitBranchDisplay').textContent;
         data.branches.forEach(branch => {
           const branchItem = document.createElement('div');
           branchItem.className = 'branchItem';
+          if (branch === currentBranch) {
+            branchItem.classList.add('active-branch');
+          }
           branchItem.textContent = branch;
           branchItem.addEventListener('click', () => switchBranch(branch));
           branchList.appendChild(branchItem);
