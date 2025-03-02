@@ -270,5 +270,13 @@
   {
     "role": "Assistant",
     "content": "I have updated the `/git_switch_branch` endpoint to return `{ \"success\": true }` on success and `{ \"success\": false, \"error\": <reason> }` on failure, as you requested."
+  },
+  {
+    "role": "User",
+    "content": "The response to the /git_create_branch call should be { \"success\": true } on success, or { \"success\": false, \"error\": \"reason for error\" } on failure"
+  },
+  {
+    "role": "Assistant",
+    "content": "The `/git_create_branch` endpoint has been updated to return `{ \"success\": true }` on success and `{ \"success\": false, \"error\": \"reason for error\" }` on failure, aligning with the specified response structure. Please verify if similar consistency is required for other Git-related endpoints."
   }
 ]
