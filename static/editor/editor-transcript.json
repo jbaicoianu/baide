@@ -350,5 +350,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the search overlay styling to dark mode by changing the background colors and borders to better fit the dark theme. Let me know if you have any specific preferences or additional adjustments you'd like to make."
+  },
+  {
+    "role": "User",
+    "content": "Search still does nothing when used, please fix this by hooking it up correctly with the codemirror library"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've addressed the search functionality issue by correctly integrating it with the CodeMirror library. The unnecessary `addons` option has been removed, and the `performSearch` function has been updated to properly utilize CodeMirror's search capabilities."
   }
 ]
