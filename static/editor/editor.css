@@ -402,3 +402,9 @@ form {
   background-size: contain;
   background-repeat: no-repeat;
 }
+/* Styling for the active branch in the branch selector dropdown */
+.active-branch {
+  background-color: #4CAF50;
+  color: #fff;
+  font-weight: bold;
+}
