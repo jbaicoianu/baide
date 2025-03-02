@@ -101,21 +101,27 @@ def commit_changes(file_path, commit_message):
     except subprocess.CalledProcessError:
         return False
 
-def load_coding_contexts(context_names):
-    """Load coding contexts from the contexts/ directory based on provided context names."""
+def load_coding_contexts():
+    """Load all coding contexts from the contexts/ directory based on .txt files."""
     contexts = []
-    for name in context_names:
-        context_path = os.path.join("contexts", f"{name}.txt")
-        if os.path.exists(context_path):
-            try:
-                with open(context_path, "r") as f:
-                    content = f.read().strip()
-                    if content:
-                        contexts.append({"name": name, "content": content})
-            except Exception as e:
-                print(f"Error loading context '{name}': {e}")
-        else:
-            print(f"Context file '{context_path}' does not exist.")
+    contexts_dir = "contexts"
+    if not os.path.isdir(contexts_dir):
+        print(f"Contexts directory '{contexts_dir}' does not exist.")
+        return contexts
+    for filename in os.listdir(contexts_dir):
+        if filename.endswith(".txt"):
+            name = os.path.splitext(filename)[0]
+            context_path = os.path.join(contexts_dir, filename)
+            if os.path.exists(context_path):
+                try:
+                    with open(context_path, "r") as f:
+                        content = f.read().strip()
+                        if content:
+                            contexts.append({"name": name, "content": content})
+                except Exception as e:
+                    print(f"Error loading context '{name}': {e}")
+            else:
+                print(f"Context file '{context_path}' does not exist.")
     return contexts
 
 def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts):
@@ -276,7 +282,7 @@ def git_current_branch():
 def git_branches():
     try:
         result = subprocess.run(["git", "branch"], capture_output=True, text=True, check=True)
-        branches = [line.strip().lstrip("* ").strip() for line in result.stdout.strip().split('\n')]
+        branches = [line.strip().lstrip("* ").strip() for line in result.stdout.strip().split('\n') if line.strip()]
         return jsonify({"branches": branches})
     except subprocess.CalledProcessError as e:
         return jsonify({"error": "Failed to list branches.", "details": e.stderr.strip()}), 500
@@ -393,11 +399,10 @@ if __name__ == "__main__":
     parser.add_argument("source_files", nargs='+', help="Paths to the project files to manage.")
     parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
     parser.add_argument("--debug", action="store_true", help="Print full AI prompt on each API call for debugging.")
-    parser.add_argument("--contexts", nargs='*', default=[], help="List of coding contexts to apply.")
     args = parser.parse_args()
 
     DEBUG = args.debug
-    CODING_CONTEXTS = load_coding_contexts(args.contexts) if args.contexts else []
+    CODING_CONTEXTS = load_coding_contexts()
     for source_file in args.source_files:
         if not os.path.exists(source_file):
             open(source_file, "w").close()
