@@ -310,5 +310,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the project to ensure that the displayed coding contexts are refreshed whenever a new tab is selected. The changes include fetching coding contexts specific to the active file and updating the UI accordingly. Additionally, redundant global context loading has been streamlined to prevent conflicts.\n\nPlease review the updated code below:"
+  },
+  {
+    "role": "User",
+    "content": "Remember that the active coding contest for each file is stored in localStorage, we only need to fetch /coding_contexts on load, and then when the user switches tabs we check to see if our localStorage config data for this file has any coding contexts assigned to it"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have implemented the requested changes to manage coding contexts more efficiently by fetching all coding contexts on load and utilizing `localStorage` for per-file configurations. This ensures that coding contexts are only fetched once, reducing unnecessary network requests. Additionally, the code now checks `localStorage` for assigned coding contexts when switching tabs."
   }
 ]
