@@ -1,71 +1,3 @@
-// /* 
-// CSS for Coding Contexts:
-#codingContextsContainer {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  align-items: center;
-}
-.badge {
-  background-color: #007bff;
-  color: white;
-  padding: 5px 10px;
-  border-radius: 12px;
-  margin-right: 5px;
-  font-size: 12px;
-}
-#contextSelector {
-  padding: 5px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-/* CSS for Search Overlay */
-#searchOverlay {
-  position: absolute;
-  /* bottom: 10px; */
-  right: 10px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 10px;
-  display: flex;
-  align-items: center;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-#searchOverlay.no-results {
-  border: 2px solid red;
-}
-#searchInput {
-  width: 200px;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  margin-right: 5px;
-}
-#searchButton {
-  padding: 5px 10px;
-  border: none;
-  background-color: #007bff;
-  color: white;
-  border-radius: 4px;
-  cursor: pointer;
-}
-#closeSearchButton {
-  margin-left: 10px;
-  cursor: pointer;
-  color: #007bff;
-}
-.marksearch {
-  background-color: yellow !important;
-  color: black !important;
-}
-*/
-
-//import 'codemirror/addon/search/search.js'; // Added CodeMirror Search Addon
-//import 'codemirror/addon/search/searchcursor.js'; // Ensure searchcursor addon is included
-
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -187,12 +119,19 @@ function openSearchOverlay(cm) {
 // Function to perform search using CodeMirror's search addon
 function performSearch(cm, query, direction = 'forward') {
   const doc = cm.getDoc();
-  const from = direction === 'forward' ? doc.getCursor("from") : doc.getCursor("from");
+  const from = doc.getCursor("from");
   if (!searchCursor || query !== lastSearchQuery || searchDirection !== direction) {
     searchCursor = doc.getSearchCursor(query, from, { backwards: direction === 'reverse' });
   }
 
-  if (searchCursor.findNext()) {
+  let found;
+  if (direction === 'forward') {
+    found = searchCursor.findNext();
+  } else {
+    found = searchCursor.findPrevious();
+  }
+
+  if (found) {
     doc.setSelection(searchCursor.from(), searchCursor.to());
     cm.scrollIntoView({from: searchCursor.from(), to: searchCursor.to()});
     const overlay = document.getElementById('searchOverlay');
