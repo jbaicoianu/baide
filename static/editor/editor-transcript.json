@@ -406,5 +406,13 @@
   {
     "role": "Assistant",
     "content": "I've implemented the feature to allow `Ctrl+F` to open the code editor's search dialog even when the editor is not focused by adding a global keydown event listener."
+  },
+  {
+    "role": "User",
+    "content": "Add a style for #searchOverlay.no-results which causes the element to glow red and shake slightly"
+  },
+  {
+    "role": "Assistant",
+    "content": "Added a style for `#searchOverlay.no-results` that applies a red glow and a subtle shaking animation to indicate no search results. I've also included the necessary keyframes for the shake animation. Let me know if you'd like any adjustments to the animation duration or intensity."
   }
 ]
