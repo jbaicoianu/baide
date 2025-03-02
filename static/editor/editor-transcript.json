@@ -390,5 +390,13 @@
   {
     "role": "Assistant",
     "content": ""
+  },
+  {
+    "role": "User",
+    "content": "Reverse search still doesn't work. In the performSearch function, use the searchCursor.findNext() and searchCursor.findPrevious() functions based on the direction we're searching."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `performSearch` function to utilize `searchCursor.findNext()` and `searchCursor.findPrevious()` based on the search direction. This should resolve the reverse search issue. Please verify if the reverse search functionality works as expected."
   }
 ]
