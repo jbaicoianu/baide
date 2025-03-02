@@ -270,5 +270,13 @@
   {
     "role": "Assistant",
     "content": "I've added styling for the `.active-branch` class to highlight the currently active branch in the branch selector dropdown. Let me know if you have any specific preferences for the active branch styling or need further adjustments."
+  },
+  {
+    "role": "User",
+    "content": "Change the active branch styling in the branch selector dropdown to be more subtle"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI've updated the active branch styling in the branch selector dropdown to make it more subtle by adjusting the background color and font weight. Please review the updated CSS below and let me know if you have any further adjustments or suggestions."
   }
 ]
