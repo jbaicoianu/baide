@@ -467,3 +467,15 @@ form {
 .CodeMirror-selected {
   background-color: rgba(0,255,0,.5) !important;
 }
+/* New Style for #searchOverlay.no-results */
+#searchOverlay.no-results {
+  box-shadow: 0 0 10px red;
+  animation: shake 0.5s;
+}
+@keyframes shake {
+  0% { transform: translate(0); }
+  25% { transform: translate(-5px, 0); }
+  50% { transform: translate(5px, 0); }
+  75% { transform: translate(-5px, 0); }
+  100% { transform: translate(0, 0); }
+}
