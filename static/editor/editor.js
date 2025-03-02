@@ -1,7 +1,34 @@
+// /* 
+// CSS for Coding Contexts:
+// #codingContextsContainer {
+//   position: absolute;
+//   top: 10px;
+//   right: 10px;
+//   display: flex;
+//   align-items: center;
+// }
+// .badge {
+//   background-color: #007bff;
+//   color: white;
+//   padding: 5px 10px;
+//   border-radius: 12px;
+//   margin-right: 5px;
+//   font-size: 12px;
+// }
+// #contextSelector {
+//   padding: 5px;
+//   border-radius: 4px;
+//   border: 1px solid #ccc;
+// }
+// */
+
 let activeFile = null;
 let openFiles = {};
 let editor = null;
 let openDirectories = new Set();
+let fileCodingContexts = {}; // Mapping of filename to contexts
+
+const ALL_CODING_CONTEXTS = ['Development', 'Testing', 'Production', 'Research']; // Example contexts
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -406,6 +433,8 @@ async function openFileInTab(filename, activate = true) {
         saveActiveFile();
         // Load transcript
         await loadTranscript(filename);
+        // Load coding contexts
+        loadFileCodingContexts(filename);
         
         adjustTabs(); // Adjust tabs after adding a new tab
 
@@ -453,6 +482,8 @@ async function switchToTab(filename) {
       }
       // Load transcript
       await loadTranscript(filename);
+      // Load coding contexts
+      loadFileCodingContexts(filename);
     }
   } catch (e) {
     console.error('Error switching tabs:', e);
@@ -473,6 +504,9 @@ function closeTab(filename) {
     tab.parentNode.removeChild(tab);
     delete openFiles[filename];
     saveOpenFiles();
+    // Remove coding contexts for the closed file
+    delete fileCodingContexts[filename];
+    saveFileCodingContexts();
     // If the closed tab was active, switch to another tab
     if (activeFile === filename) {
       const remainingTabs = document.querySelectorAll('#tabs .tab');
@@ -592,6 +626,7 @@ function setupEventListeners() {
   const chatBox = document.getElementById("chatBox");
   const commitSummaries = document.getElementById("commitSummaries");
   const activeCodingContexts = document.getElementById("activeCodingContexts");
+  const sourceCodeContainer = document.getElementById("sourceCodeContainer");
   
   promptInput.addEventListener("keydown", function(e) {
     if (e.ctrlKey && e.key === "Enter") {
@@ -665,6 +700,37 @@ function setupEventListeners() {
       newFileForm.dispatchEvent(new Event("submit", {cancelable: true}));
     }
   });
+
+  // Setup coding contexts UI
+  if (sourceCodeContainer) {
+    // Create container for coding contexts
+    let contextsContainer = document.getElementById('codingContextsContainer');
+    if (!contextsContainer) {
+      contextsContainer = document.createElement('div');
+      contextsContainer.id = 'codingContextsContainer';
+      sourceCodeContainer.style.position = 'relative'; // Ensure positioning
+      sourceCodeContainer.appendChild(contextsContainer);
+    }
+
+    // Create selector for adding contexts
+    let contextSelector = document.getElementById('contextSelector');
+    if (!contextSelector) {
+      contextSelector = document.createElement('select');
+      contextSelector.id = 'contextSelector';
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Add Context';
+      contextSelector.appendChild(defaultOption);
+      ALL_CODING_CONTEXTS.forEach(ctx => {
+        const option = document.createElement('option');
+        option.value = ctx;
+        option.textContent = ctx;
+        contextSelector.appendChild(option);
+      });
+      contextSelector.addEventListener('change', addCodingContext);
+      contextsContainer.appendChild(contextSelector);
+    }
+  }
 }
 
 // Function to load coding contexts
@@ -683,6 +749,53 @@ async function loadCodingContexts() {
     }
   } catch (e) {
     console.error('Error loading coding contexts:', e);
+  }
+}
+
+// Function to load coding contexts for the active file
+function loadFileCodingContexts(filename) {
+  const contextsContainer = document.getElementById('activeCodingContexts');
+  if (!contextsContainer) return;
+
+  // Clear existing badges
+  contextsContainer.innerHTML = '';
+
+  // Get contexts for the active file
+  const contexts = fileCodingContexts[filename] || [];
+  contexts.forEach(ctx => {
+    appendCodingContext(ctx);
+  });
+}
+
+// Function to add a coding context
+function addCodingContext(event) {
+  const selectedContext = event.target.value;
+  if (!selectedContext) return;
+
+  if (!fileCodingContexts[activeFile]) {
+    fileCodingContexts[activeFile] = [];
+  }
+
+  if (!fileCodingContexts[activeFile].includes(selectedContext)) {
+    fileCodingContexts[activeFile].push(selectedContext);
+    appendCodingContext({ name: selectedContext });
+    saveFileCodingContexts();
+  }
+
+  // Reset selector
+  event.target.value = '';
+}
+
+// Save file coding contexts to localStorage
+function saveFileCodingContexts() {
+  localStorage.setItem('fileCodingContexts', JSON.stringify(fileCodingContexts));
+}
+
+// Load file coding contexts from localStorage
+function loadFileCodingContextsFromStorage() {
+  const storedContexts = localStorage.getItem('fileCodingContexts');
+  if (storedContexts) {
+    fileCodingContexts = JSON.parse(storedContexts);
   }
 }
 
@@ -892,6 +1005,7 @@ window.addEventListener('resize', adjustTabs);
 // On startup, load the project structure, initialize CodeMirror, set up event listeners, and restore state.
 window.onload = async function() {
   initializeCodeMirror();
+  loadFileCodingContextsFromStorage();
   await loadProjectStructure();
   await loadOpenFiles();
   loadActiveFile();
