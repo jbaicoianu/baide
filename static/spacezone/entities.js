@@ -58,6 +58,8 @@ room.registerElement('spacezone-player', {
     this.isRacing = false;
     this.raceTime = 0;
     this.totalRaceTime = 120; // Total race duration in seconds
+    this.zdir = new THREE.Vector3(0, 0, -1); // Initialize zdir
+    this.pos = new THREE.Vector3(0, 0, 0); // Initialize position
   },
   startRace() {
     this.isRacing = true;
@@ -82,10 +84,10 @@ room.registerElement('spacezone-player', {
         
         // Compute direction vector
         const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
-        this.shuttle.zdir = direction; // Update shuttle's zdir
+        this.zdir = direction; // Update zdir
 
-        // Update the shuttle's position
-        this.shuttle.pos = position;
+        // Update the player's position
+        this.pos = position;
       }
 
       if(t >= 1){
