@@ -75,7 +75,7 @@ room.registerElement('spacezone-player', {
       const level = this.parent.getObjectsByTagName('spacezone-level')[0];
       if (level && level.getPositionAtTime) {
         const position = level.getPositionAtTime(t);
-        this.shuttle.pos = position;
+        this.pos = position;
       }
 
       if(t >= 1){
