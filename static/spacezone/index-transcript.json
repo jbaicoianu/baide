@@ -22,5 +22,13 @@
   {
     "role": "Assistant",
     "content": "I've added a `<spacezone-level>` object with 10 `<spacezone-waypoint>` child objects to define the obstacle course route. Please review the waypoint positions to ensure they align with the intended navigation path for the player's ship."
+  },
+  {
+    "role": "User",
+    "content": "Space our waypoints out further, and make them follow more of a winding path"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI have spaced out the waypoints further and adjusted their positions to create a more winding path as requested. Please review the updated waypoint positions to ensure they meet your requirements."
   }
 ]
