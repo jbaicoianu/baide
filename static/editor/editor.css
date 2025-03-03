@@ -494,3 +494,35 @@ form {
   font-size: 12px;
   pointer-events: none;
 }
+/* CSS for Coding Context Removal */
+.badge {
+  position: relative;
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin: 2px;
+  cursor: default;
+}
+
+.badge .remove-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  cursor: pointer;
+  display: none;
+}
+
+.badge:hover .remove-btn {
+  display: block;
+}
