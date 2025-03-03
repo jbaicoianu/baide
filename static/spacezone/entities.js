@@ -167,15 +167,44 @@ room.registerElement('spacezone-asteroidfield', {
       // Create DodecahedronGeometry with random size
       const geometry = new THREE.DodecahedronGeometry(size);
 
-      // Shift vertices slightly to create an irregular look
-      const positionAttribute = geometry.attributes.position;
-      for (let j = 0; j < positionAttribute.count; j++) {
-        positionAttribute.setXYZ(
-          j,
-          positionAttribute.getX(j) + (Math.random() - 0.5),
-          positionAttribute.getY(j) + (Math.random() - 0.5),
-          positionAttribute.getZ(j) + (Math.random() - 0.5)
-        );
+      // Replace vertex modification code with the new snippet
+      const pos = geometry.attributes.position;
+      const vertices = pos.array;
+      const bypass = [];
+      for (let i = 0; i < vertices.length / pos.itemSize; i++) {
+          if (bypass.indexOf(i) > -1) {
+              continue;
+          }
+
+          const currX = pos.getX(i);
+          const currY = pos.getY(i);
+          const currZ = pos.getZ(i);
+          const x = currX + (0 - Math.random() * (1 / 3));
+          const y = currY + (0 - Math.random() * (1 / 3));
+          const z = currZ + (0 - Math.random() * (1 / 3));
+
+          pos.setX(i, x);
+          pos.setY(i, y);
+          pos.setZ(i, z);
+
+          for (let j = 0; j < vertices.length; j += 3) {
+              if (
+                  vertices[j] === currX &&
+                  vertices[j + 1] === currY &&
+                  vertices[j + 2] === currZ
+              ) {
+                  geometry.attributes.position.array[
+                      j
+                  ] = x;
+                  geometry.attributes.position.array[
+                      j + 1
+                  ] = y;
+                  geometry.attributes.position.array[
+                      j + 2
+                  ] = z;
+                  bypass.push(j / 3);
+              }
+          }
       }
       geometry.attributes.position.needsUpdate = true;
 
