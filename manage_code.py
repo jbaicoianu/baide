@@ -100,6 +100,19 @@ def commit_changes(file_path, commit_message):
     except subprocess.CalledProcessError:
         return False
 
+def load_all_contexts():
+    """Load all context names from the contexts/ directory."""
+    contexts = []
+    contexts_dir = "contexts"
+    if not os.path.isdir(contexts_dir):
+        print(f"Contexts directory '{contexts_dir}' does not exist.")
+        return contexts
+    for filename in os.listdir(contexts_dir):
+        if filename.endswith(".txt"):
+            context_name = os.path.splitext(filename)[0]
+            contexts.append(context_name)
+    return contexts
+
 def load_contexts_by_names(context_names):
     """Load specific contexts by their names from the contexts/ directory."""
     contexts = []
@@ -256,8 +269,8 @@ def create_file():
 # Route to get coding contexts as JSON
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
-    contexts = load_contexts_by_names([])
-    return jsonify(contexts)
+    context_names = load_all_contexts()
+    return jsonify(context_names)
 
 # Route to get project structure as JSON
 @app.route("/project_structure", methods=["GET"])
