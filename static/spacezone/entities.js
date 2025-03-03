@@ -141,7 +141,6 @@ room.registerElement('spacezone-asteroidfield', {
   create() {
     // Initialization code for spacezone-asteroidfield
     this.asteroids = [];
-    this.angularVelocities = [];
     const num = this.numasteroids;
     const level = this.parent.getObjectsByTagName('spacezone-level')[0];
     
@@ -162,36 +161,24 @@ room.registerElement('spacezone-asteroidfield', {
       const offsetY = (Math.random() * 40) - 20;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
-      // Create asteroid capsule object
+      // Create asteroid capsule object with angular velocity
       const asteroid = this.createObject('object', {
         id: 'capsule',
         pos: asteroidPos,
         scale: new THREE.Vector3(2, 2, 2),
         col: 'brown',
+        angular: V(
+          (Math.random() * 2 - 1) * 0.5, // Random value between -0.5 and 0.5 for x
+          (Math.random() * 2 - 1) * 0.5, // Random value between -0.5 and 0.5 for y
+          (Math.random() * 2 - 1) * 0.5  // Random value between -0.5 and 0.5 for z
+        )
       });
-
-      // Assign a random angular velocity
-      const angularVelocity = new THREE.Vector3(
-        (Math.random() * 2 - 1) * 0.5, // Random value between -0.5 and 0.5
-        (Math.random() * 2 - 1) * 0.5,
-        (Math.random() * 2 - 1) * 0.5
-      );
-      this.angularVelocities.push(angularVelocity);
 
       this.asteroids.push(asteroid);
     }
   },
   update(dt) {
     // Update logic for spacezone-asteroidfield
-    // Rotate each asteroid based on its angular velocity
-    for (let i = 0; i < this.asteroids.length; i++) {
-      const asteroid = this.asteroids[i];
-      const angularVelocity = this.angularVelocities[i];
-      if (asteroid && angularVelocity) {
-        asteroid.rotation.x += angularVelocity.x * dt;
-        asteroid.rotation.y += angularVelocity.y * dt;
-        asteroid.rotation.z += angularVelocity.z * dt;
-      }
-    }
+    // Rotation is now handled by the physics engine using angular velocity
   }
 });
