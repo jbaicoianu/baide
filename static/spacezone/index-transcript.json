@@ -118,5 +118,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the room configuration to set `showavatar` to `false` as requested."
+  },
+  {
+    "role": "User",
+    "content": "set room pointerlock to false"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the room configuration to disable pointer lock by setting `pointerlock` to `false`. Let me know if you need any additional adjustments or have further requirements."
   }
 ]
