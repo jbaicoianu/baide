@@ -30,5 +30,13 @@
   {
     "role": "Assistant",
     "content": "Hello,\n\nI have spaced out the waypoints further and adjusted their positions to create a more winding path as requested. Please review the updated waypoint positions to ensure they meet your requirements."
+  },
+  {
+    "role": "User",
+    "content": "please use the y axis as well, the waypoints are currently in a single plane and that's boring. And, space them out even more, the total length of our path should be about 1000m to start"
+  },
+  {
+    "role": "Assistant",
+    "content": ""
   }
 ]
