@@ -140,6 +140,8 @@ room.registerElement('spacezone-asteroidfield', {
   numasteroids: 10,
   create() {
     // Initialization code for spacezone-asteroidfield
+    this.asteroids = [];
+    this.angularVelocities = [];
     const num = this.numasteroids;
     const level = this.parent.getObjectsByTagName('spacezone-level')[0];
     
@@ -160,18 +162,37 @@ room.registerElement('spacezone-asteroidfield', {
       const offsetY = (Math.random() * 40) - 20;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
-      // Create asteroid object
-      this.createObject('object', {
+      // Create asteroid capsule object
+      const asteroid = this.createObject('object', {
         id: `asteroid_${i}`,
         pos: asteroidPos,
         scale: new THREE.Vector3(2, 2, 2),
         col: 'brown',
-        // Add additional properties or model references as needed
+        geometry: 'capsule' // Changed to capsule geometry
       });
+
+      // Assign a random angular velocity
+      const angularVelocity = new THREE.Vector3(
+        (Math.random() * 2 - 1) * 0.5, // Random value between -0.5 and 0.5
+        (Math.random() * 2 - 1) * 0.5,
+        (Math.random() * 2 - 1) * 0.5
+      );
+      this.angularVelocities.push(angularVelocity);
+
+      this.asteroids.push(asteroid);
     }
   },
   update(dt) {
     // Update logic for spacezone-asteroidfield
-    // For example, animate asteroids or handle collisions
+    // Rotate each asteroid based on its angular velocity
+    for (let i = 0; i < this.asteroids.length; i++) {
+      const asteroid = this.asteroids[i];
+      const angularVelocity = this.angularVelocities[i];
+      if (asteroid && angularVelocity) {
+        asteroid.rotation.x += angularVelocity.x * dt;
+        asteroid.rotation.y += angularVelocity.y * dt;
+        asteroid.rotation.z += angularVelocity.z * dt;
+      }
+    }
   }
 });
