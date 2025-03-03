@@ -49,7 +49,8 @@ room.registerElement('spacezone-player', {
       pos: new THREE.Vector3(0, 0, 0),
       rotation: new THREE.Vector3(0, 180, 0),
       col: 'blue', // Example color
-      scale: new THREE.Vector3(1, 1, 1)
+      scale: new THREE.Vector3(1, 1, 1),
+      zdir: new THREE.Vector3(0, 0, -1) // Initial direction
     });
 
     // Add click event listener to shuttle
@@ -76,6 +77,21 @@ room.registerElement('spacezone-player', {
       if (level && level.getPositionAtTime) {
         const position = level.getPositionAtTime(t);
         this.pos = position;
+
+        // Calculate look-ahead position
+        const lookAheadT = Math.min(t + 0.001, 1);
+        const lookAheadPos = level.getPositionAtTime(lookAheadT);
+        
+        // Compute direction vector
+        const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
+        this.shuttle.zdir = direction;
+        
+        // Update shuttle rotation based on zdir
+        this.shuttle.rotation.setFromVector3(new THREE.Vector3(
+          Math.atan2(direction.y, direction.z) * (180 / Math.PI),
+          Math.atan2(direction.x, direction.z) * (180 / Math.PI),
+          0
+        ));
       }
 
       if(t >= 1){
