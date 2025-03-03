@@ -78,5 +78,13 @@
   {
     "role": "Assistant",
     "content": "I've added the new `assetobject` named \"shuttle\" to the assets section. Let me know if you need it placed within the room or have any other modifications in mind."
+  },
+  {
+    "role": "User",
+    "content": "Add a <spacezone-player> object to our room"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added a `<spacezone-player>` object to the room as requested. Please let me know if you need any specific configurations or properties for this player."
   }
 ]
