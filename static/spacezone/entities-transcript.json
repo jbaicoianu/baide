@@ -270,5 +270,13 @@
   {
     "role": "Assistant",
     "content": "Hi,\n\nI've updated the tube geometry to use five times as many subdivisions, which should result in a smoother appearance. Please let me know if you notice any performance impacts or if further adjustments are needed."
+  },
+  {
+    "role": "User",
+    "content": "set tubeobject pickable=\"false\""
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `tubeObject` to set `pickable` to `false` as requested. Let me know if there are any additional adjustments or if you have further specifications."
   }
 ]
