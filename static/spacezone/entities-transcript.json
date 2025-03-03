@@ -158,5 +158,13 @@
   {
     "role": "Assistant",
     "content": "I have adjusted the player speed to ensure the entire course takes approximately 2 minutes. Let me know if you need any further modifications."
+  },
+  {
+    "role": "User",
+    "content": "Great. Now, let's make the player's ship face down the pathway. We'll do this by getting a second point from our level, at t+.001. Get the direction vector from our position to this look-ahead position, normalize it, and set this.shuttle.zdir to this value"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-player` element to adjust the player's ship orientation based on a look-ahead position. This ensures the ship faces down the pathway by calculating the direction towards a point slightly ahead on the path."
   }
 ]
