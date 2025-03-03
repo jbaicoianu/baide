@@ -47,7 +47,6 @@ room.registerElement('spacezone-player', {
       id: 'shuttle',
       collision_id: 'shuttle',
       pos: new THREE.Vector3(0, 0, 0),
-      rotation: new THREE.Vector3(0, 180, 0),
       col: 'blue', // Example color
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1) // Initial direction
@@ -82,12 +81,12 @@ room.registerElement('spacezone-player', {
         const lookAheadT = Math.min(t + 0.001, 1);
         const lookAheadPos = level.getPositionAtTime(lookAheadT);
         
-        // Compute direction vector
-        const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
-        this.shuttle.zdir = direction;
+        // Compute direction vector and flip it
+        const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize().negate();
+        this.zdir = direction;
         
-        // Update shuttle rotation based on zdir
-        this.shuttle.rotation.setFromVector3(new THREE.Vector3(
+        // Update player rotation based on zdir
+        this.rotation.setFromVector3(new THREE.Vector3(
           Math.atan2(direction.y, direction.z) * (180 / Math.PI),
           Math.atan2(direction.x, direction.z) * (180 / Math.PI),
           0
