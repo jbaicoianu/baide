@@ -83,8 +83,9 @@ room.registerElement('spacezone-player', {
         // Compute direction vector
         const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
         this.zdir = direction;
-        
-        // Removed rotation setting to prevent weird behavior
+
+        // Update the shuttle's position
+        this.shuttle.pos = position;
       }
 
       if(t >= 1){
