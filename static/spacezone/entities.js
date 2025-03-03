@@ -161,16 +161,34 @@ room.registerElement('spacezone-asteroidfield', {
       const offsetY = (Math.random() * 200) - 100;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
-      // Generate random scale between 5 and 30 for each dimension
-      const randomScaleX = Math.random() * 25 + 5; // 5 to 30
-      const randomScaleY = Math.random() * 25 + 5; // 5 to 30
-      const randomScaleZ = Math.random() * 25 + 5; // 5 to 30
+      // Generate random size between 5 and 30
+      const size = Math.random() * 25 + 5; // 5 to 30
 
-      // Create asteroid capsule object with rotate_deg_per_sec attribute
+      // Create DodecahedronGeometry with random size
+      const geometry = new THREE.DodecahedronGeometry(size);
+
+      // Shift vertices slightly to create an irregular look
+      const positionAttribute = geometry.attributes.position;
+      for (let j = 0; j < positionAttribute.count; j++) {
+        positionAttribute.setXYZ(
+          j,
+          positionAttribute.getX(j) + (Math.random() - 0.5),
+          positionAttribute.getY(j) + (Math.random() - 0.5),
+          positionAttribute.getZ(j) + (Math.random() - 0.5)
+        );
+      }
+      geometry.attributes.position.needsUpdate = true;
+
+      // Create material for the asteroid
+      const material = new THREE.MeshStandardMaterial({ color: 'brown' });
+
+      // Create mesh with geometry and material
+      const asteroidMesh = new THREE.Mesh(geometry, material);
+
+      // Create asteroid object with the mesh
       const asteroid = this.createObject('object', {
-        id: 'capsule',
+        object: asteroidMesh,
         pos: asteroidPos,
-        scale: new THREE.Vector3(randomScaleX, randomScaleY, randomScaleZ),
         col: 'brown',
         rotate_deg_per_sec: V(
           Math.random() * 60 - 30, // Random value between -30 and 30 for x
