@@ -142,6 +142,13 @@ room.registerElement('spacezone-asteroidfield', {
     // Initialization code for spacezone-asteroidfield
     this.asteroids = [];
     const num = this.numasteroids;
+
+    // Set a 100ms timer to initialize asteroids after ensuring the level is initialized
+    setTimeout(() => {
+      this.initAsteroids();
+    }, 100);
+  },
+  initAsteroids() {
     const level = this.parent.getObjectsByTagName('spacezone-level')[0];
     
     if (!level || !level.getPositionAtTime) {
@@ -149,7 +156,7 @@ room.registerElement('spacezone-asteroidfield', {
       return;
     }
 
-    for (let i = 0; i < num; i++) {
+    for (let i = 0; i < this.numasteroids; i++) {
       // Generate a random t value between 0 and 1
       const t = Math.random();
 
