@@ -326,5 +326,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `load_all_contexts` function to return each context as a dictionary with `name` and `content` fields, as specified. Please review the changes and let me know if there are any additional modifications you'd like to make."
+  },
+  {
+    "role": "User",
+    "content": "When composing our prompt, if coding contexts are supplied, make sure we extract only the \"content\" attribute from our list of active contexts"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the code to extract only the \"content\" attribute from the active coding contexts when composing prompts. This ensures that only the necessary context content is included without additional attributes."
   }
 ]
