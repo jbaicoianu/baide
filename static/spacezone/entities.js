@@ -1,6 +1,7 @@
 room.registerElement('spacezone-level', {
   create() {
     // Initialization code for spacezone-level
+    this.waypoints = this.getElementsByTagName('spacezone-waypoint');
   },
   update(dt) {
     // Update logic for spacezone-level
