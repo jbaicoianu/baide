@@ -318,5 +318,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `/coding_contexts` endpoint to provide a comprehensive list of all available contexts within the `contexts/` directory. This enhancement ensures that clients can retrieve and utilize all available contexts effectively. Let me know if you have any additional requirements or suggestions."
+  },
+  {
+    "role": "User",
+    "content": "The format for each context returned by load_all_contexts should be [{\"name\": \"contextname\", \"content\": \"the contents of our coding context\" }, ...]"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `load_all_contexts` function to return each context as a dictionary with `name` and `content` fields, as specified. Please review the changes and let me know if there are any additional modifications you'd like to make."
   }
 ]
