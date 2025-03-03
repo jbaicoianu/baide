@@ -462,5 +462,13 @@
   {
     "role": "Assistant",
     "content": "Understood. I've updated the search functionality so that the search indicator now displays the index of the current search result within the list of matches, starting at 1, instead of the line number. This ensures a more accurate representation of the search progress."
+  },
+  {
+    "role": "User",
+    "content": "When fetching coding contexts from the server, the response is an array of context objects, of this form: \n\n[{\"name\": \"contextname\", \"content\": \"full context content\" }, {\"name\": \"othercontextname\", \"content\": \"other full context content\"}, ...]\n\nUpdate our context loading code to handle this format."
+  },
+  {
+    "role": "Assistant",
+    "content": "To accommodate the new server response format for coding contexts, I've updated the context loading logic to handle an array of context objects containing `name` and `content` properties. This ensures that each context's name and content are appropriately managed within the application. Additionally, I've adjusted the context selector to display context names and store their corresponding content.\n\nPlease review the changes to ensure they align with your project's requirements. Let me know if you have any specific preferences for handling context content or if there are additional functionalities you'd like to incorporate."
   }
 ]
