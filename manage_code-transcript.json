@@ -286,5 +286,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the project to automatically load all coding contexts from the `contexts/` directory on startup, eliminating the need to specify contexts via command-line arguments. The `CODING_CONTEXTS` list is now populated by reading all `.txt` files in the `contexts/` directory following the `<contextname>.txt` naming convention. Additionally, the `--contexts` argument has been removed from the command-line parser since it's no longer necessary."
+  },
+  {
+    "role": "User",
+    "content": "In the /chat endpoint, accept a list of contexts that will be used for this particular code generation request. Include the content from each of the specified contexts in our prompt."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `/chat` endpoint to accept a list of contexts for each request. The endpoint now processes the specified contexts by including their content in the prompt used for code generation. Please review the changes and let me know if you have any further requirements or questions."
   }
 ]
