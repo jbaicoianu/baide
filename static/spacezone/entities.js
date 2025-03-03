@@ -137,12 +137,10 @@ room.registerElement('spacezone-waypoint', {
 });
 
 room.registerElement('spacezone-asteroidfield', {
-  attributes: {
-    numasteroids: { type: 'int', default: 10 }
-  },
+  numasteroids: 10,
   create() {
     // Initialization code for spacezone-asteroidfield
-    const num = this.getAttribute('numasteroids');
+    const num = this.numasteroids;
     const level = this.parent.getObjectsByTagName('spacezone-level')[0];
     
     if (!level || !level.getPositionAtTime) {
