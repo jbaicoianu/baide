@@ -38,5 +38,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-waypoint` element to use `this.createObject('object', { id: 'sphere', ... })` for creating the sphere object. The position attribute has been removed since child objects inherit their parent's position."
+  },
+  {
+    "role": "User",
+    "content": "Don't assign a new vector to our position in the waypoint's create function, it's overriding the position set in the markup"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI have updated the `spacezone-waypoint` element by removing the assignment of a new vector to `this.position` in the `create` function. This ensures that the position set in the markup is preserved. Please review the changes and let me know if you have any further questions or suggestions."
   }
 ]
