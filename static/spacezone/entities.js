@@ -85,12 +85,7 @@ room.registerElement('spacezone-player', {
         const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize().negate();
         this.zdir = direction;
         
-        // Update player rotation based on zdir
-        this.rotation.setFromVector3(new THREE.Vector3(
-          Math.atan2(direction.y, direction.z) * (180 / Math.PI),
-          Math.atan2(direction.x, direction.z) * (180 / Math.PI),
-          0
-        ));
+        // Removed rotation setting to prevent weird behavior
       }
 
       if(t >= 1){
