@@ -390,5 +390,13 @@
   {
     "role": "Assistant",
     "content": "I've replaced the vertex modification code in the `spacezone-asteroidfield` element with the provided snippet. Please review the changes to ensure they align with your intended functionality. Let me know if you have any further modifications or questions."
+  },
+  {
+    "role": "User",
+    "content": "Set the collidable and pickable attributes on the asteroids to false"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-asteroidfield` element to set the `collidable` and `pickable` attributes to `false` for all asteroids. This ensures that the asteroids are neither collidable nor pickable within the 3D environment."
   }
 ]
