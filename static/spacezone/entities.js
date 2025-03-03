@@ -156,7 +156,7 @@ room.registerElement('spacezone-asteroidfield', {
       // Get position along the level's curve
       const basePos = level.getPositionAtTime(t);
 
-      // Add random offset to x and y in the range -20 to 20
+      // Add random offset to x and y in the range -200 to 200
       const offsetX = (Math.random() * 200) - 100;
       const offsetY = (Math.random() * 200) - 100;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
