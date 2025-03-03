@@ -222,5 +222,13 @@
   {
     "role": "Assistant",
     "content": "Understood. I've set `this.shuttle.zdir` back to `0, 0, -1`. Please review the updated code below. Let me know if you have any further adjustments or questions."
+  },
+  {
+    "role": "User",
+    "content": "Damnit, you reverted the position code. In our update function, don't set any values on this.shuttle. Set this.zdir = direction and this.pos = position"
+  },
+  {
+    "role": "Assistant",
+    "content": "Thank you for pointing out the issue with the position updates. I have updated the `spacezone-player` element's `update` function to set `this.zdir` and `this.pos` instead of modifying `this.shuttle`. Please review the changes below:"
   }
 ]
