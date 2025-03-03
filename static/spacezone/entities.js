@@ -226,7 +226,8 @@ room.registerElement('spacezone-asteroidfield', {
         ),
         collidable: false,
         pickable: false
-      });
+      }); 
+      asteroid.pos = asteroidPos;
 
       this.asteroids.push(asteroid);
     }
