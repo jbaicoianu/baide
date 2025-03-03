@@ -86,5 +86,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-level` element to use the `createObject` method for adding the THREE.js mesh, replacing the nonexistent `addObject` function. Let me know if you have any further questions or suggestions."
+  },
+  {
+    "role": "User",
+    "content": "set collidable: false on this.tubeObject"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've set `collidable` to `false` on `this.tubeObject` as requested."
   }
 ]
