@@ -12,9 +12,8 @@ import openai
 API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.Client(api_key=API_KEY)
 
-# Global variables for managing multiple files, coding contexts, and debugging.
+# Global variables for managing multiple files and debugging.
 ACTIVE_FILES = []
-CODING_CONTEXTS = []
 DEBUG = False
 
 # In-memory conversation histories mapped by filename.
@@ -101,27 +100,22 @@ def commit_changes(file_path, commit_message):
     except subprocess.CalledProcessError:
         return False
 
-def load_coding_contexts():
-    """Load all coding contexts from the contexts/ directory based on .txt files."""
+def load_contexts_by_names(context_names):
+    """Load specific contexts by their names from the contexts/ directory."""
     contexts = []
     contexts_dir = "contexts"
-    if not os.path.isdir(contexts_dir):
-        print(f"Contexts directory '{contexts_dir}' does not exist.")
-        return contexts
-    for filename in os.listdir(contexts_dir):
-        if filename.endswith(".txt"):
-            name = os.path.splitext(filename)[0]
-            context_path = os.path.join(contexts_dir, filename)
-            if os.path.exists(context_path):
-                try:
-                    with open(context_path, "r") as f:
-                        content = f.read().strip()
-                        if content:
-                            contexts.append({"name": name, "content": content})
-                except Exception as e:
-                    print(f"Error loading context '{name}': {e}")
-            else:
-                print(f"Context file '{context_path}' does not exist.")
+    for name in context_names:
+        context_path = os.path.join(contexts_dir, f"{name}.txt")
+        if os.path.exists(context_path):
+            try:
+                with open(context_path, "r") as f:
+                    content = f.read().strip()
+                    if content:
+                        contexts.append({"name": name, "content": content})
+            except Exception as e:
+                print(f"Error loading context '{name}': {e}")
+        else:
+            print(f"Context file '{context_path}' does not exist.")
     return contexts
 
 def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts):
@@ -134,7 +128,7 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
     """
     messages = []
     if coding_contexts:
-        combined_context = "\n".join([f"Context: {ctx['name']}" for ctx in coding_contexts])
+        combined_context = "\n".join([f"Context: {ctx['name']}\n{ctx['content']}" for ctx in coding_contexts])
         system_prompt = f"{combined_context}\n\n{system_prompt}"
     if model == "o1-mini":
         messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
@@ -255,7 +249,8 @@ def create_file():
 # Route to get coding contexts as JSON
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
-    return jsonify(CODING_CONTEXTS)
+    contexts = load_coding_contexts()
+    return jsonify(contexts)
 
 # Route to get project structure as JSON
 @app.route("/project_structure", methods=["GET"])
@@ -316,15 +311,20 @@ def git_create_branch():
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
 def chat():
-    global chat_histories, CODING_CONTEXTS, DEBUG
+    global chat_histories, DEBUG
     data = request.get_json()
     if not data or "prompt" not in data or "file" not in data:
         return jsonify({"error": "No prompt or file specified."}), 400
     user_input = data["prompt"]
     file_name = data["file"]
+    context_names = data.get("contexts", [])  # List of context names
+
     if file_name not in chat_histories:
         load_transcript_from_disk(file_name)
     chat_histories[file_name].append({"role": "User", "content": user_input})
+
+    # Load specified contexts
+    coding_contexts = load_contexts_by_names(context_names)
 
     if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
         system_prompt = (
@@ -336,7 +336,7 @@ def chat():
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
-    messages = build_prompt_messages(system_prompt, user_input, file_name, "o1-mini", CODING_CONTEXTS)
+    messages = build_prompt_messages(system_prompt, user_input, file_name, "o1-mini", coding_contexts)
 
     if DEBUG:
         print("DEBUG: AI prompt messages:")
@@ -402,7 +402,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     DEBUG = args.debug
-    CODING_CONTEXTS = load_coding_contexts()
     for source_file in args.source_files:
         if not os.path.exists(source_file):
             open(source_file, "w").close()
