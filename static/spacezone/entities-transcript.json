@@ -166,5 +166,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-player` element to adjust the player's ship orientation based on a look-ahead position. This ensures the ship faces down the pathway by calculating the direction towards a point slightly ahead on the path."
+  },
+  {
+    "role": "User",
+    "content": "Oops, shuttle's facing backwards - flip the vector so it's facing the other direction. Also, apply it to the player object itself, not this.shuttle."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've flipped the shuttle's direction vector and updated the player object accordingly. The direction is now applied to the player itself rather than the shuttle. Let me know if you need any further adjustments."
   }
 ]
