@@ -65,6 +65,7 @@ room.registerElement('spacezone-player', {
     this.isRacing = true;
     this.raceTime = 0;
     this.appendChild(player);
+    player.pos = V(0, 10, -20);
     console.log('Race started!');
   },
   update(dt) {
