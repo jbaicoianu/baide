@@ -146,7 +146,7 @@ room.registerElement('spacezone-asteroidfield', {
     // Set a 100ms timer to initialize asteroids after ensuring the level is initialized
     setTimeout(() => {
       this.initAsteroids();
-    }, 100);
+    }, 1000);
   },
   initAsteroids() {
     const level = this.parent.getObjectsByTagName('spacezone-level')[0];
