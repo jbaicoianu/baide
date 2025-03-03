@@ -224,7 +224,7 @@ room.registerElement('spacezone-asteroidfield', {
       // Create asteroid object with the mesh
       const asteroid = this.createObject('object', {
         object: asteroidMesh,
-        pos: asteroidPos,
+        //pos: asteroidPos,
         col: 'brown',
         rotate_deg_per_sec: V(
           Math.random() * 60 - 30, // Random value between -30 and 30 for x
