@@ -27,15 +27,56 @@ room.registerElement('spacezone-level', {
   update(dt) {
     // Update logic for spacezone-level
     // For example, animate the tube or handle dynamic changes to waypoints
+  },
+  getPositionAtTime(t) {
+    if (this.curve) {
+      // Ensure t is within [0, 1]
+      const clampedT = Math.max(0, Math.min(t, 1));
+      return this.curve.getPoint(clampedT);
+    }
+    return new THREE.Vector3(0, 0, 0);
   }
 });
 
 room.registerElement('spacezone-player', {
   create() {
     // Initialization code for spacezone-player
+
+    // Add child object 'shuttle'
+    this.shuttle = this.createObject('object', {
+      id: 'shuttle',
+      pos: new THREE.Vector3(0, 0, 0),
+      col: 'blue', // Example color
+      scale: new THREE.Vector3(1, 1, 1)
+    });
+
+    this.isRacing = false;
+    this.raceTime = 0;
+    this.totalRaceTime = 10; // Total race duration in seconds
+  },
+  startRace() {
+    this.isRacing = true;
+    this.raceTime = 0;
+    console.log('Race started!');
   },
   update(dt) {
-    // Update logic for spacezone-player
+    if (this.isRacing) {
+      this.raceTime += dt;
+      let t = this.raceTime / this.totalRaceTime;
+      if (t > 1) t = 1;
+
+      // Assuming 'spacezone-level' is a sibling element
+      const level = this.parent.getElementsByTagName('spacezone-level')[0];
+      if (level && level.getPositionAtTime) {
+        const position = level.getPositionAtTime(t);
+        this.shuttle.pos = position;
+      }
+
+      if(t >= 1){
+        this.isRacing = false;
+        console.log('Race completed!');
+      }
+    }
   }
 });
 
