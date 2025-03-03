@@ -48,8 +48,8 @@ room.registerElement('spacezone-player', {
       collision_id: 'shuttle',
       pos: new THREE.Vector3(0, 0, 0),
       col: 'blue', // Example color
-      scale: new THREE.Vector3(1, 1, 1)
-      // Removed zdir attribute
+      scale: new THREE.Vector3(1, 1, 1),
+      zdir: new THREE.Vector3(0, 0, -1) // Set zdir to 0, 0, -1
     });
 
     // Add click event listener to shuttle
@@ -82,10 +82,10 @@ room.registerElement('spacezone-player', {
         
         // Compute direction vector
         const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
-        this.zdir = direction;
+        this.shuttle.zdir = direction; // Update shuttle's zdir
 
         // Update the shuttle's position
-        this.pos = position;
+        this.shuttle.pos = position;
       }
 
       if(t >= 1){
