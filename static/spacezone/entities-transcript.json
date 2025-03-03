@@ -70,5 +70,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-level` element to create a `THREE.CatmullRomCurve3` using the positions of the waypoints and generated a `THREE.TubeBufferGeometry` based on this curve. Let me know if you have any specific material preferences for the tube or additional features you'd like to include."
+  },
+  {
+    "role": "User",
+    "content": "Don't use waypoint.getAttribute, just access waypoint.pos - it will give you a THREE.Vector3 object."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-level` element to access waypoint positions directly using `waypoint.pos` instead of `getAttribute('pos')`. This change leverages the `THREE.Vector3` objects for improved performance and cleaner code. Let me know if you have any further adjustments or questions."
   }
 ]
