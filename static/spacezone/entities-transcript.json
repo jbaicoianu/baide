@@ -1,0 +1,10 @@
+[
+  {
+    "role": "User",
+    "content": "Define three janus custom elements for a space-based obstacle course game. Make them empty stubs for now, we'll fill in the details as we go.\n\n- spacezone-level\n- spacezone-player\n- spacezone-obstacle"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nIt seems the code you intended to share wasn't included. Could you please provide the existing code so I can assist you further?\n\nMeanwhile, here are the empty stubs for the three custom elements you requested:"
+  }
+]
