@@ -158,5 +158,13 @@
   {
     "role": "Assistant",
     "content": "Added the `js_id` attribute to the torus object as requested. Please verify that the `js_id` value `\"torus\"` is unique within the room to prevent any conflicts with other objects."
+  },
+  {
+    "role": "User",
+    "content": "Remember that rotation is in degrees, not radians, update our torus' rotation speed accordingly"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the torus' rotation speed to use degrees per second instead of radians, ensuring consistency with the project's rotation handling. Let me know if you have any further adjustments or questions."
   }
 ]
