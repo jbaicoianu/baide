@@ -48,8 +48,8 @@ room.registerElement('spacezone-player', {
       collision_id: 'shuttle',
       pos: new THREE.Vector3(0, 0, 0),
       col: 'blue', // Example color
-      scale: new THREE.Vector3(1, 1, 1),
-      zdir: new THREE.Vector3(0, 0, -1) // Initial direction
+      scale: new THREE.Vector3(1, 1, 1)
+      // Removed zdir attribute
     });
 
     // Add click event listener to shuttle
