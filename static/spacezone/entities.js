@@ -85,7 +85,7 @@ room.registerElement('spacezone-player', {
         this.zdir = direction;
 
         // Update the shuttle's position
-        this.shuttle.pos = position;
+        this.pos = position;
       }
 
       if(t >= 1){
