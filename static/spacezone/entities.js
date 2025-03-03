@@ -31,8 +31,12 @@ room.registerElement('spacezone-waypoint', {
     // Initialization code for spacezone-waypoint
     this.placeholderSphere = this.createObject('object', {
       id: 'sphere',
-      scale: new THREE.Vector3(0.5, 0.5, 0.5),
-      col: 'green'
+      scale: new THREE.Vector3(5, 5, 5),
+      col: 'green',
+      material: {
+        opacity: 0.5,
+        transparent: true
+      }
     });
   },
   update(dt) {
