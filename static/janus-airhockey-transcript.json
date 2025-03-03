@@ -174,5 +174,13 @@
   {
     "role": "Assistant",
     "content": "I have updated the torus's position to be 2 meters to the left of the air hockey table's outer edge. Assuming the table has a half-width of 5 meters (based on its scale), the torus is now positioned at -7 meters on the X-axis. Please review the updated code below and let me know if any further adjustments are needed."
+  },
+  {
+    "role": "User",
+    "content": "Move our active coding context badges into the codingContextsContainer"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have moved the active coding context badges into the `codingContextsContainer` as requested. Please review the updated structure and let me know if there are any specific configurations or adjustments needed for the container or the badges."
   }
 ]
