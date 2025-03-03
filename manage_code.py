@@ -101,7 +101,7 @@ def commit_changes(file_path, commit_message):
         return False
 
 def load_all_contexts():
-    """Load all context names from the contexts/ directory."""
+    """Load all contexts from the contexts/ directory as dictionaries with name and content."""
     contexts = []
     contexts_dir = "contexts"
     if not os.path.isdir(contexts_dir):
@@ -110,7 +110,13 @@ def load_all_contexts():
     for filename in os.listdir(contexts_dir):
         if filename.endswith(".txt"):
             context_name = os.path.splitext(filename)[0]
-            contexts.append(context_name)
+            context_path = os.path.join(contexts_dir, filename)
+            try:
+                with open(context_path, "r") as f:
+                    content = f.read().strip()
+                contexts.append({"name": context_name, "content": content})
+            except Exception as e:
+                print(f"Error loading context '{context_name}': {e}")
     return contexts
 
 def load_contexts_by_names(context_names):
@@ -146,7 +152,7 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
 
     # Combine system prompt and coding contexts
     if coding_contexts:
-        combined_context = "\n\n".join(coding_contexts)
+        combined_context = "\n\n".join([f"{ctx['name']}: {ctx['content']}" for ctx in coding_contexts])
         full_system_prompt = f"{system_prompt}\n\n{combined_context}"
     else:
         full_system_prompt = system_prompt
