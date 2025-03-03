@@ -21,7 +21,7 @@ room.registerElement('spacezone-level', {
       
       // Create the mesh and add it to the room using createObject
       this.tubeMesh = new THREE.Mesh(this.tubeGeometry, this.tubeMaterial);
-      this.tubeObject = this.createObject('object', { object: this.tubeMesh, collidable: false });
+      this.tubeObject = this.createObject('object', { object: this.tubeMesh, collidable: false, pickable: false });
     }
   },
   update(dt) {
