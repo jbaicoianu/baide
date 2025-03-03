@@ -45,11 +45,15 @@ room.registerElement('spacezone-player', {
     // Add child object 'shuttle'
     this.shuttle = this.createObject('object', {
       id: 'shuttle',
+      collision_id: 'shuttle',
       pos: new THREE.Vector3(0, 0, 0),
       rotation: new THREE.Vector3(0, 180, 0),
       col: 'blue', // Example color
       scale: new THREE.Vector3(1, 1, 1)
     });
+
+    // Add click event listener to shuttle
+    this.shuttle.addEventListener('click', ev => this.startRace());
 
     this.isRacing = false;
     this.raceTime = 0;
