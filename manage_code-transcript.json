@@ -302,5 +302,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the context handling to position the contexts after the built-in system prompt and removed any labels, ensuring only the context content is included."
+  },
+  {
+    "role": "User",
+    "content": "Clean up the logic in build_prompt_messages(). The prompt should follow this order:\n\nsystem prompt\nall coding context prompts (if provided)\nuser prompt\ncurrent code\n\nIf using o1-mini, send the system and context prompts with role=\"user\", otherwise send them with role=\"system\"."
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI've updated the `build_prompt_messages()` function to adhere to the specified prompt order: system prompt, all coding context prompts (if provided), user prompt, and the current code. Additionally, the function now correctly assigns roles based on whether the model is \"o1-mini.\""
   }
 ]
