@@ -121,30 +121,30 @@ def load_contexts_by_names(context_names):
 def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts):
     """
     Build a list of messages for the API:
-      - Include the coding contexts after the system prompt.
-      - Include the system prompt. If the model is "o1-mini" (which doesn't support 'system'),
-        include it as a user message prefixed with "SYSTEM:".
+      - Include the system prompt.
+      - Include all coding context prompts (if provided).
+      - Append the user prompt.
       - Append a final user message with the current on-disk file contents.
+    Roles are assigned based on the model:
+      - If model is "o1-mini", system and context prompts use role="user".
+      - Otherwise, they use role="system".
     """
     messages = []
-    if model != "o1-mini":
-        if coding_contexts:
-            combined_context = "\n".join(coding_contexts)
-            system_prompt = f"{system_prompt}\n\n{combined_context}"
-    else:
-        if coding_contexts:
-            combined_context = "\n".join(coding_contexts)
-            system_prompt = f"{system_prompt}\n\n{combined_context}"
-        system_prompt = "SYSTEM: " + system_prompt
 
-    if model == "o1-mini":
-        messages.append({"role": "user", "content": system_prompt})
+    # Combine system prompt and coding contexts
+    if coding_contexts:
+        combined_context = "\n\n".join(coding_contexts)
+        full_system_prompt = f"{system_prompt}\n\n{combined_context}"
     else:
-        messages.append({"role": "system", "content": system_prompt})
-    
-    # Add the most recent user prompt
+        full_system_prompt = system_prompt
+
+    # Assign role based on model
+    role = "user" if model == "o1-mini" else "system"
+    messages.append({"role": role, "content": full_system_prompt})
+
+    # Add the user prompt
     messages.append({"role": "user", "content": user_prompt})
-    
+
     # Append a final user message with the current on-disk file contents.
     try:
         with open(file_name, "r") as f:
@@ -256,7 +256,7 @@ def create_file():
 # Route to get coding contexts as JSON
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
-    contexts = load_coding_contexts()
+    contexts = load_contexts_by_names([])
     return jsonify(contexts)
 
 # Route to get project structure as JSON
