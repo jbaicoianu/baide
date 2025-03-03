@@ -75,14 +75,13 @@ room.registerElement('spacezone-player', {
       const level = this.parent.getObjectsByTagName('spacezone-level')[0];
       if (level && level.getPositionAtTime) {
         const position = level.getPositionAtTime(t);
-        this.pos = position;
 
         // Calculate look-ahead position
         const lookAheadT = Math.min(t + 0.001, 1);
         const lookAheadPos = level.getPositionAtTime(lookAheadT);
         
-        // Compute direction vector and flip it
-        const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize().negate();
+        // Compute direction vector
+        const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
         this.zdir = direction;
         
         // Removed rotation setting to prevent weird behavior
