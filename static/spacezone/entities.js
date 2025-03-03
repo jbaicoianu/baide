@@ -161,13 +161,13 @@ room.registerElement('spacezone-asteroidfield', {
       const offsetY = (Math.random() * 40) - 20;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
-      // Create asteroid capsule object with updated angular velocity
+      // Create asteroid capsule object with rotate_deg_per_sec attribute
       const asteroid = this.createObject('object', {
         id: 'capsule',
         pos: asteroidPos,
         scale: new THREE.Vector3(2, 2, 2),
         col: 'brown',
-        angular: V(
+        rotate_deg_per_sec: V(
           Math.random() * 60 - 30, // Random value between -30 and 30 for x
           Math.random() * 60 - 30, // Random value between -30 and 30 for y
           Math.random() * 60 - 30  // Random value between -30 and 30 for z
@@ -179,6 +179,6 @@ room.registerElement('spacezone-asteroidfield', {
   },
   update(dt) {
     // Update logic for spacezone-asteroidfield
-    // Rotation is now handled by the physics engine using angular velocity
+    // Rotation is now handled by the physics engine using rotate_deg_per_sec
   }
 });
