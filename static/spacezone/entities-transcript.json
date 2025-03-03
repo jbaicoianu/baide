@@ -126,5 +126,13 @@
   {
     "role": "Assistant",
     "content": ""
+  },
+  {
+    "role": "User",
+    "content": "ok, switch back to using getElementsByTagName() when fetching our waypoints, but keep getObjectsByTagName() in our player, since it seems there's an engine bug with the room object"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-level` element to use `getElementsByTagName()` for fetching waypoints, while retaining `getObjectsByTagName()` in the `spacezone-player` element as per your instructions. Please review the changes and let me know if there are any additional adjustments needed."
   }
 ]
