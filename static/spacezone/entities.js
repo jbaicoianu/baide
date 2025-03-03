@@ -215,8 +215,12 @@ room.registerElement('spacezone-asteroidfield', {
       }
       geometry.attributes.position.needsUpdate = true;
 
-      // Create material for the asteroid
-      const material = new THREE.MeshStandardMaterial({ color: 'brown' });
+      // Generate a random shade of gray
+      const grayValue = Math.floor(Math.random() * 256);
+      const grayHex = `#${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}`;
+
+      // Create material for the asteroid with random gray color
+      const material = new THREE.MeshStandardMaterial({ color: grayHex });
 
       // Create mesh with geometry and material
       const asteroidMesh = new THREE.Mesh(geometry, material);
@@ -225,7 +229,7 @@ room.registerElement('spacezone-asteroidfield', {
       const asteroid = this.createObject('object', {
         object: asteroidMesh,
         //pos: asteroidPos,
-        col: 'brown',
+        col: grayHex,
         rotate_deg_per_sec: V(
           Math.random() * 60 - 30, // Random value between -30 and 30 for x
           Math.random() * 60 - 30, // Random value between -30 and 30 for y
