@@ -70,5 +70,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the z positions of all `spacezone-waypoint` elements by multiplying them by 10 as requested. Please review the changes below and let me know if there are any further adjustments you'd like to make."
+  },
+  {
+    "role": "User",
+    "content": "Add a new assetobject named \"shuttle\" pointing to https://raw.githubusercontent.com/jbaicoianu/elation-component-space/refs/heads/master/media/models/shuttle2.obj"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added the new `assetobject` named \"shuttle\" to the assets section. Let me know if you need it placed within the room or have any other modifications in mind."
   }
 ]
