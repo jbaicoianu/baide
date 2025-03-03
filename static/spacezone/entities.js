@@ -135,3 +135,45 @@ room.registerElement('spacezone-waypoint', {
     // You can add interactions or animations for the placeholder sphere here
   }
 });
+
+room.registerElement('spacezone-asteroidfield', {
+  attributes: {
+    numasteroids: { type: 'int', default: 10 }
+  },
+  create() {
+    // Initialization code for spacezone-asteroidfield
+    const num = this.getAttribute('numasteroids');
+    const level = this.parent.getObjectsByTagName('spacezone-level')[0];
+    
+    if (!level || !level.getPositionAtTime) {
+      console.warn('spacezone-level element with getPositionAtTime method not found.');
+      return;
+    }
+
+    for (let i = 0; i < num; i++) {
+      // Generate a random t value between 0 and 1
+      const t = Math.random();
+
+      // Get position along the level's curve
+      const basePos = level.getPositionAtTime(t);
+
+      // Add random offset to x and y in the range -20 to 20
+      const offsetX = (Math.random() * 40) - 20;
+      const offsetY = (Math.random() * 40) - 20;
+      const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
+
+      // Create asteroid object
+      this.createObject('object', {
+        id: `asteroid_${i}`,
+        pos: asteroidPos,
+        scale: new THREE.Vector3(2, 2, 2),
+        col: 'brown',
+        // Add additional properties or model references as needed
+      });
+    }
+  },
+  update(dt) {
+    // Update logic for spacezone-asteroidfield
+    // For example, animate asteroids or handle collisions
+  }
+});
