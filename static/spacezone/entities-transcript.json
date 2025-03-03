@@ -398,5 +398,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-asteroidfield` element to set the `collidable` and `pickable` attributes to `false` for all asteroids. This ensures that the asteroids are neither collidable nor pickable within the 3D environment."
+  },
+  {
+    "role": "User",
+    "content": "Let's move our asteroid creation logic into a member function of the spacezone-asteroidfield object, and call it on a 100ms timer to make sure the level has time to initialize before it's called"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have moved the asteroid creation logic into an `initAsteroids` member function within the `spacezone-asteroidfield` element. Additionally, a 100ms timer has been set up in the `create` method to call `initAsteroids` after initialization. This ensures that the level is properly initialized before asteroid creation begins. Please review the changes and let me know if you have any further suggestions or questions."
   }
 ]
