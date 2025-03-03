@@ -57,7 +57,7 @@ room.registerElement('spacezone-player', {
 
     this.isRacing = false;
     this.raceTime = 0;
-    this.totalRaceTime = 10; // Total race duration in seconds
+    this.totalRaceTime = 120; // Total race duration in seconds
   },
   startRace() {
     this.isRacing = true;
