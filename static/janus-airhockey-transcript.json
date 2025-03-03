@@ -166,5 +166,13 @@
   {
     "role": "Assistant",
     "content": "I have updated the torus' rotation speed to use degrees per second instead of radians, ensuring consistency with the project's rotation handling. Let me know if you have any further adjustments or questions."
+  },
+  {
+    "role": "User",
+    "content": "Move our torus to be 2 meters to the left of the outside edge of our table, not just 2 meters to the left of our origin"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the torus's position to be 2 meters to the left of the air hockey table's outer edge. Assuming the table has a half-width of 5 meters (based on its scale), the torus is now positioned at -7 meters on the X-axis. Please review the updated code below and let me know if any further adjustments are needed."
   }
 ]
