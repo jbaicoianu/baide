@@ -334,5 +334,13 @@
   {
     "role": "Assistant",
     "content": "Understood. I've updated the `spacezone-asteroidfield` element to use capsule objects for the asteroids and assigned each a random angular velocity to enhance their movement dynamics. Let me know if you have any specific preferences for the angular velocity ranges or additional behaviors you'd like to implement."
+  },
+  {
+    "role": "User",
+    "content": "angular velocity can be specified when creating an object by passing angular: V(x, y, z), please use this syntax while creating our asteroid objects"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `spacezone-asteroidfield` element to utilize the `angular: V(x, y, z)` syntax for specifying angular velocity when creating asteroid objects. This streamlines the rotation handling by leveraging the physics engine instead of managing it manually. Please review the changes and let me know if there are any additional adjustments you'd like to make."
   }
 ]
