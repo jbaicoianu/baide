@@ -334,5 +334,17 @@
   {
     "role": "Assistant",
     "content": "I have updated the code to extract only the \"content\" attribute from the active coding contexts when composing prompts. This ensures that only the necessary context content is included without additional attributes."
+  },
+  {
+    "role": "User",
+    "content": "If the file we're working on is empty, do not include the \"here is the code so far\" prompt in our AI conversation, instead prompt the AI to start generating the contents of the file."
+  },
+  {
+    "role": "Assistant",
+    "content": "Project file has been initialized with the provided code."
+  },
+  {
+    "role": "Assistant",
+    "content": "No changes detected."
   }
 ]
