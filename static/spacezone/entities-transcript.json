@@ -366,5 +366,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-asteroidfield` element to assign each asteroid a random scale between 1 and 10 for each dimension. Let me know if you have any preferences regarding maintaining aspect ratios or other adjustments."
+  },
+  {
+    "role": "User",
+    "content": "Set asteroids to a random scale between 5 and 30 in each dimension"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-asteroidfield` element to set each asteroid's scale randomly between 5 and 30 in each dimension as requested. Let me know if you need any further adjustments or have additional requirements."
   }
 ]
