@@ -816,11 +816,14 @@ function setupEventListeners() {
     promptInput.value = "";
     throbber.style.display = "block";
     
+    // Gather active context names
+    const contexts = fileCodingContexts[activeFile] ? fileCodingContexts[activeFile].map(ctx => ctx.name) : [];
+    
     try {
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt, file: activeFile })
+        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts })
       });
       if (response.ok) {
         const data = await response.json();
