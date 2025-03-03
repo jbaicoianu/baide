@@ -19,9 +19,9 @@ room.registerElement('spacezone-level', {
       // Create a material for the tube
       this.tubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
       
-      // Create the mesh and add it to the room
+      // Create the mesh and add it to the room using createObject
       this.tubeMesh = new THREE.Mesh(this.tubeGeometry, this.tubeMaterial);
-      this.addObject(this.tubeMesh);
+      this.tubeObject = this.createObject('object', { object: this.tubeMesh });
     }
   },
   update(dt) {
