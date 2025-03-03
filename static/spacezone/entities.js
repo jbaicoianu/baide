@@ -6,7 +6,7 @@ room.registerElement('spacezone-level', {
     // Extract positions from waypoints
     const points = [];
     for (let waypoint of this.waypoints) {
-      points.push(new THREE.Vector3(...waypoint.getAttribute('pos').split(' ').map(Number)));
+      points.push(waypoint.pos);
     }
 
     if (points.length > 1) {
