@@ -2,9 +2,31 @@ room.registerElement('spacezone-level', {
   create() {
     // Initialization code for spacezone-level
     this.waypoints = this.getElementsByTagName('spacezone-waypoint');
+    
+    // Extract positions from waypoints
+    const points = [];
+    for (let waypoint of this.waypoints) {
+      points.push(new THREE.Vector3(...waypoint.getAttribute('pos').split(' ').map(Number)));
+    }
+
+    if (points.length > 1) {
+      // Create a CatmullRomCurve3 from waypoints
+      this.curve = new THREE.CatmullRomCurve3(points);
+      
+      // Generate TubeBufferGeometry based on the curve
+      this.tubeGeometry = new THREE.TubeBufferGeometry(this.curve, 100, 0.5, 8, false);
+      
+      // Create a material for the tube
+      this.tubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+      
+      // Create the mesh and add it to the room
+      this.tubeMesh = new THREE.Mesh(this.tubeGeometry, this.tubeMaterial);
+      this.addObject(this.tubeMesh);
+    }
   },
   update(dt) {
     // Update logic for spacezone-level
+    // For example, animate the tube or handle dynamic changes to waypoints
   }
 });
 
