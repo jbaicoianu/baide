@@ -486,5 +486,13 @@
   {
     "role": "Assistant",
     "content": "I have updated the code to call `updateContextSelectorOptions` when creating the `contextSelector` if `allCodingContexts` is not null. Please review the changes below."
+  },
+  {
+    "role": "User",
+    "content": "Send list of names of contexts that are active for this file when we call out to the /chat endpoint"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the code to include the list of active context names for the current file when making requests to the `/chat` endpoint. This ensures that the backend receives all relevant contexts associated with the active file."
   }
 ]
