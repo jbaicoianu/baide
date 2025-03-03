@@ -182,5 +182,13 @@
   {
     "role": "Assistant",
     "content": "I've removed the `zdir` attribute from the `shuttle` object in the `spacezone-player` element. Please review the changes and let me know if there are any additional modifications you'd like to make."
+  },
+  {
+    "role": "User",
+    "content": "wait, we're setting zdir and also setting rotation, I think this is causing weird behavior. Remove the code which sets our rotation, only set zdir."
+  },
+  {
+    "role": "Assistant",
+    "content": "The rotation setting code has been removed from the `spacezone-player` update function, ensuring that only the `zdir` property is set to prevent unexpected behavior."
   }
 ]
