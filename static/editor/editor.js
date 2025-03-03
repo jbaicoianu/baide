@@ -923,8 +923,8 @@ function updateContextSelectorOptions() {
     // Add fetched contexts
     allCodingContexts.forEach(ctx => {
       const option = document.createElement('option');
-      option.value = ctx;
-      option.textContent = ctx;
+      option.value = ctx.name;
+      option.textContent = ctx.name;
       contextSelector.appendChild(option);
     });
   }
@@ -932,15 +932,18 @@ function updateContextSelectorOptions() {
 
 // Function to add a coding context
 function addCodingContext(event) {
-  const selectedContext = event.target.value;
+  const selectedContextName = event.target.value;
+  if (!selectedContextName) return;
+    
+  const selectedContext = allCodingContexts.find(ctx => ctx.name === selectedContextName);
   if (!selectedContext) return;
     
   if (!fileCodingContexts[activeFile]) {
     fileCodingContexts[activeFile] = [];
   }
     
-  if (!fileCodingContexts[activeFile].some(ctx => ctx.name === selectedContext)) {
-    const newContext = { name: selectedContext };
+  if (!fileCodingContexts[activeFile].some(ctx => ctx.name === selectedContextName)) {
+    const newContext = { name: selectedContext.name, content: selectedContext.content };
     fileCodingContexts[activeFile].push(newContext);
     appendCodingContext(newContext);
     saveFileCodingContexts();
@@ -1176,7 +1179,7 @@ window.onload = async function() {
     const response = await fetch('/coding_contexts');
     if (response.ok) {
       const data = await response.json();
-      allCodingContexts = data.contexts; // Assuming the response has a 'contexts' array
+      allCodingContexts = data; // Updated to handle array of context objects
       updateContextSelectorOptions();
     } else {
       console.error('Failed to fetch coding contexts.');
