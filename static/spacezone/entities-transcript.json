@@ -382,5 +382,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-asteroidfield` element to use `THREE.DodecahedronGeometry` with random sizes between 5 and 30. The geometry vertices are slightly shifted to create an irregular appearance for each asteroid. Let me know if you need any further adjustments or have additional requirements."
+  },
+  {
+    "role": "User",
+    "content": "Replace the vertex modification code with this:\n\n        for (let i = 0; i < vertices.length / pos.itemSize; i++) {\n            if (bypass.indexOf(i) > -1) {\n                continue;\n            }\n\n            const currX = pos.getX(i);\n            const currY = pos.getY(i);\n            const currZ = pos.getZ(i);\n            const x = currX + (0 - Math.random() * (1 / 3));\n            const y = currY + (0 - Math.random() * (1 / 3));\n            const z = currZ + (0 - Math.random() * (1 / 3));\n\n            pos.setX(i, x);\n            pos.setY(i, y);\n            pos.setZ(i, z);\n\n            for (let j = 0; j < vertices.length; j += 3) {\n                if (\n                    vertices[j] === currX &&\n                    vertices[j + 1] === currY &&\n                    vertices[j + 2] === currZ\n                ) {\n                    meshRef.current.geometry.attributes.position.array[\n                        j\n                    ] = x;\n                    meshRef.current.geometry.attributes.position.array[\n                        j + 1\n                    ] = y;\n                    meshRef.current.geometry.attributes.position.array[\n                        j + 2\n                    ] = z;\n                    bypass.push(j / 3);\n                }\n            }\n        }"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've replaced the vertex modification code in the `spacezone-asteroidfield` element with the provided snippet. Please review the changes to ensure they align with your intended functionality. Let me know if you have any further modifications or questions."
   }
 ]
