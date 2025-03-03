@@ -350,5 +350,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the angular velocity range for the asteroids to be between -30 and 30 as requested. Please review the changes below to ensure they meet your requirements."
+  },
+  {
+    "role": "User",
+    "content": "Use the rotate_deg_per_sec attribute instead of angular when creating asteroids"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the asteroid creation in the `spacezone-asteroidfield` element to use the `rotate_deg_per_sec` attribute instead of `angular`. This change ensures that the asteroids rotate at the specified degrees per second."
   }
 ]
