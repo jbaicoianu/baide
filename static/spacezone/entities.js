@@ -164,11 +164,10 @@ room.registerElement('spacezone-asteroidfield', {
 
       // Create asteroid capsule object
       const asteroid = this.createObject('object', {
-        id: `asteroid_${i}`,
+        id: 'capsule',
         pos: asteroidPos,
         scale: new THREE.Vector3(2, 2, 2),
         col: 'brown',
-        geometry: 'capsule' // Changed to capsule geometry
       });
 
       // Assign a random angular velocity
