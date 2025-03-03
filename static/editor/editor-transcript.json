@@ -470,5 +470,13 @@
   {
     "role": "Assistant",
     "content": "To accommodate the new server response format for coding contexts, I've updated the context loading logic to handle an array of context objects containing `name` and `content` properties. This ensures that each context's name and content are appropriately managed within the application. Additionally, I've adjusted the context selector to display context names and store their corresponding content.\n\nPlease review the changes to ensure they align with your project's requirements. Let me know if you have any specific preferences for handling context content or if there are additional functionalities you'd like to incorporate."
+  },
+  {
+    "role": "User",
+    "content": "Add the ability to remove coding contexts from a file, when moused over an x should become visible, and clicking it will remove this coding context from the file. Add any necessary CSS to the top of the file."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've implemented the requested feature to allow users to remove coding contexts from a file. When a user hovers over a coding context badge, an \"\u00d7\" button becomes visible, enabling the removal of that context upon clicking. Additionally, the necessary CSS has been added to style the badges and the remove button appropriately.\n\n**Do you have any specific animations or transitions in mind for the \"\u00d7\" button appearance, or should it simply appear without any effects?**"
   }
 ]
