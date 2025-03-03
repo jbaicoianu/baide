@@ -102,5 +102,13 @@
   {
     "role": "Assistant",
     "content": "Room position has been updated to (25, 0, 0). Let me know if you require any further adjustments or have questions."
+  },
+  {
+    "role": "User",
+    "content": "set room dir to 0 0 1"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the room's direction to `0 0 1` as requested. Please review the changes below."
   }
 ]
