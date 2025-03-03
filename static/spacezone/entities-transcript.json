@@ -78,5 +78,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-level` element to access waypoint positions directly using `waypoint.pos` instead of `getAttribute('pos')`. This change leverages the `THREE.Vector3` objects for improved performance and cleaner code. Let me know if you have any further adjustments or questions."
+  },
+  {
+    "role": "User",
+    "content": "There is no addObject() function, to use a THREE.js object in JanusXR you can use this syntax:\n\n      this.tubeObject = this.createObject('object', {\n        object: tubeMesh\n      });"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-level` element to use the `createObject` method for adding the THREE.js mesh, replacing the nonexistent `addObject` function. Let me know if you have any further questions or suggestions."
   }
 ]
