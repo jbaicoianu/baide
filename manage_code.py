@@ -152,7 +152,7 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
 
     # Combine system prompt and coding contexts
     if coding_contexts:
-        combined_context = "\n\n".join([f"{ctx['name']}: {ctx['content']}" for ctx in coding_contexts])
+        combined_context = "\n\n".join(coding_contexts)
         full_system_prompt = f"{system_prompt}\n\n{combined_context}"
     else:
         full_system_prompt = system_prompt
