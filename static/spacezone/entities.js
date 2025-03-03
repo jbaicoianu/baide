@@ -23,6 +23,15 @@ room.registerElement('spacezone-level', {
       this.tubeMesh = new THREE.Mesh(this.tubeGeometry, this.tubeMaterial);
       this.tubeObject = this.createObject('object', { object: this.tubeMesh, collidable: false, pickable: false });
     }
+
+    // Add the text object above the start point
+    this.textObject = this.createObject('object', {
+      id: 'startText',
+      text: 'Click ship to start',
+      pos: new THREE.Vector3(0, 5, 0),
+      rotation: '0 90 0',
+      col: 'white' // Optional: set text color
+    });
   },
   update(dt) {
     // Update logic for spacezone-level
