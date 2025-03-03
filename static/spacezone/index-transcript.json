@@ -94,5 +94,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-player` element to set its initial `zdir` attribute to `0 0 -1`. Let me know if you need any further adjustments or have additional specifications."
+  },
+  {
+    "role": "User",
+    "content": "set room pos to 25 0 0"
+  },
+  {
+    "role": "Assistant",
+    "content": "Room position has been updated to (25, 0, 0). Let me know if you require any further adjustments or have questions."
   }
 ]
