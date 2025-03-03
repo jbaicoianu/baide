@@ -29,7 +29,8 @@ room.registerElement('spacezone-level', {
       text: 'Click ship to start',
       pos: new THREE.Vector3(0, 5, 0),
       rotation: '0 90 0',
-      col: 'white' // Optional: set text color
+      col: 'white', // Optional: set text color
+      font_scale: false
     });
   },
   update(dt) {
