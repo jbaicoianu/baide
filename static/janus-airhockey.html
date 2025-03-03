@@ -85,6 +85,23 @@ function defineCustomElements() {
             // Goal collision detection logic
         }
     });
+
+    // Add spinning and bobbing behavior to the torus
+    const torus = room.getObjectById('torus');
+    if (torus) {
+        let time = 0;
+        const rotationSpeed = Math.PI / 2; // 90 degrees per second
+        const bobbingAmplitude = 0.5; // Meters
+        const bobbingFrequency = 0.5; // Hz
+
+        torus.update = function(dt) {
+            time += dt;
+            // Rotate around Y-axis
+            this.rotation.y += rotationSpeed * dt;
+            // Bob up and down using sine wave
+            this.pos.y = bobbingAmplitude * Math.sin(2 * Math.PI * bobbingFrequency * time);
+        };
+    }
 }
 </script>
 </body>
