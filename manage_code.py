@@ -111,7 +111,7 @@ def load_contexts_by_names(context_names):
                 with open(context_path, "r") as f:
                     content = f.read().strip()
                     if content:
-                        contexts.append({"name": name, "content": content})
+                        contexts.append(content)
             except Exception as e:
                 print(f"Error loading context '{name}': {e}")
         else:
@@ -121,17 +121,24 @@ def load_contexts_by_names(context_names):
 def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts):
     """
     Build a list of messages for the API:
-      - Include the coding contexts at the beginning of the system prompt.
+      - Include the coding contexts after the system prompt.
       - Include the system prompt. If the model is "o1-mini" (which doesn't support 'system'),
         include it as a user message prefixed with "SYSTEM:".
       - Append a final user message with the current on-disk file contents.
     """
     messages = []
-    if coding_contexts:
-        combined_context = "\n".join([f"Context: {ctx['name']}\n{ctx['content']}" for ctx in coding_contexts])
-        system_prompt = f"{combined_context}\n\n{system_prompt}"
+    if model != "o1-mini":
+        if coding_contexts:
+            combined_context = "\n".join(coding_contexts)
+            system_prompt = f"{system_prompt}\n\n{combined_context}"
+    else:
+        if coding_contexts:
+            combined_context = "\n".join(coding_contexts)
+            system_prompt = f"{system_prompt}\n\n{combined_context}"
+        system_prompt = "SYSTEM: " + system_prompt
+
     if model == "o1-mini":
-        messages.append({"role": "user", "content": "SYSTEM: " + system_prompt})
+        messages.append({"role": "user", "content": system_prompt})
     else:
         messages.append({"role": "system", "content": system_prompt})
     
