@@ -25,8 +25,7 @@ room.registerElement('spacezone-level', {
     }
 
     // Add the text object above the start point
-    this.textObject = this.createObject('object', {
-      id: 'startText',
+    this.textObject = this.createObject('text', {
       text: 'Click ship to start',
       pos: new THREE.Vector3(0, 5, 0),
       rotation: '0 90 0',
