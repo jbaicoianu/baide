@@ -326,5 +326,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-asteroidfield` element to define `numasteroids` as a direct property and referenced it using `this.numasteroids`. If you have other attributes that could benefit from this approach, consider applying the same pattern for consistency."
+  },
+  {
+    "role": "User",
+    "content": "Switch asteroids to use a capsule object for the time being, and give it a random angular velocity"
+  },
+  {
+    "role": "Assistant",
+    "content": "Understood. I've updated the `spacezone-asteroidfield` element to use capsule objects for the asteroids and assigned each a random angular velocity to enhance their movement dynamics. Let me know if you have any specific preferences for the angular velocity ranges or additional behaviors you'd like to implement."
   }
 ]
