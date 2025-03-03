@@ -164,15 +164,19 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
     # Add the user prompt
     messages.append({"role": "user", "content": user_prompt})
 
-    # Append a final user message with the current on-disk file contents.
+    # Append a final user message with the current on-disk file contents or prompt to start
     try:
         with open(file_name, "r") as f:
             file_contents = f.read()
     except Exception:
         file_contents = ""
+    if file_contents:
+        final_content = "The following is the code which has been generated so far:\n" + file_contents
+    else:
+        final_content = "Please start generating code for this file."
     final_msg = {
         "role": "user",
-        "content": "The following is the code which has been generated so far:\n" + file_contents
+        "content": final_content
     }
     messages.append(final_msg)
     return messages
