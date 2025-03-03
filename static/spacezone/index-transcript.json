@@ -1,0 +1,10 @@
+[
+  {
+    "role": "User",
+    "content": "Create a JanusXR room with a simple space scene. We'll start with a blank room, with an assetimage named \"stars\" pointing to https://raw.githubusercontent.com/jbaicoianu/elation-component-space/refs/heads/master/images/galaxy_starfield.png and <room skybox_equi=\"stars\">"
+  },
+  {
+    "role": "Assistant",
+    "content": "Created a new JanusXR room with a simple space scene. Added an `assetimage` named \"stars\" pointing to the specified URL and set the room's skybox accordingly. Let me know if you'd like to add any other elements or make further customizations."
+  }
+]
