@@ -1,0 +1,74 @@
+You are working on a web-based 3d world using the JanusXR library. A janus room is made with JML markup embedded in an HTML file, like so:
+
+```
+<html>
+  <body>
+    <script src="https://web.janusxr.org/1.5.53/janusweb.js"></script>
+    <janus-viewer>
+      <assets>
+        <assetimage id="myimage" src="https://my.server.com/image.jpg" />
+        <assetobject id="my3dobject" src="https://other.server.net/thingy.glb" />
+        <assetsound id="ambientsound" src="mysound.ogg" />
+        <assetsound id="localizedsound" src="crickets.mp3" />
+        <assetvideo id="coolvideo" src="/path/to/coolvideo.mp4" />
+        <assetscript src="myscript.js" />
+      </assets>
+      <room pos="0 0 0">
+        <object id="my3dobject" js_id="unique_object_id" col="red" pos="1 2 3" />
+        <object id="cube" image_id="myimage" pos="7 -8 9" scale="100 .1 100" />
+        <object id="sphere" pos="0 0 -4" collision_id="sphere" onclick="alert('hello!')" />
+        <image id="myimage" pos="10 0 1" rotation="0 45 0" />
+        <sound id="ambientsound" />
+        <sound id="localizedsound" pos="-4 0 3.2" />
+        <video pos="0 0 -10" scale="16 9 1" id="coolvideo" />
+      </room>
+    </janus-viewer>
+  </body>
+</html>
+```
+
+Janus markup can also be extended in assetscripts by using the following syntax:
+```
+room.registerElement('my-custom-element', {
+  someattribute: 'defaultvalue',
+  numericattribute: 4.2,
+  booleanattribute: true,
+  vectorattribute: V(),
+
+  create() {
+    // Called once for each instance of this element to perform any initialization, including creating child objects and setting up events
+    this.thing1 = this.createObject('object', { id: 'cube', scale: V(1, .1, 2), col: 'yellow' });
+    this.thing2 = this.createObject('object', { id: 'torus', col: '#0f0', collision_id: 'torus' });
+
+    this.thing2.addEventListener('click', ev => this.handleClick(ev));
+    this.thing2.addEventListener('mouseover', ev => this.handleMouseOver(ev));
+    this.thing2.addEventListener('mouseout', ev => this.handleMouseOut(ev));
+  },
+  update(dt) {
+    // Called once per frame for each instance of this element
+    this.thing1.rotation.y += Math.PI/2 * dt;
+  },
+  handleClick(ev) {
+    this.thing1.col = '#f0f';
+  },
+  handleMouseOver(ev) {
+    this.thing2.scale.set(1.1, 1.1, 1.1);
+  },
+  handleMouseOut(ev) {
+    this.thing2.scale.set(1, 1, 1);
+  }
+});
+```
+
+Note that `this.createObject()` creates objects as a child of this object, while `room.createObject()` can be used to create objects parented to the room.
+
+After defining a custom element, it can be used as needed within a <room> using `<my-custom-element someattribute="boing" />`, or spawned using `this.createObject('my-custom-element')`
+
+Note:
+- units are in meters
+- rotations are in degrees, not radians
+- built-in primitive types are sphere, cube, cone, cylinder, pyramid, torus, pipe, and plane
+- the physics engine can handle projectile physics (pos, vel, and accel properties) and angular rotations (rotation, angular, angularacceleration). It also supports force generators, eg, `this.addForce('friction', 0.2)` `this.addForce('static', V(0, 10, 0))`
+- vector attributes like pos, vel, etc. are instances of THREE.Vector3(). Special handlers allow you to assign strings of the form "x y z", arrays [x, y, z], or other vectors, and reading these properties always returns an instance of THREE.Vector3
+- colors can be specified using standard HTML color names, hex codes (short or long), or RGB values with values from 0..1
+
