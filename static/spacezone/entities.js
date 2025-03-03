@@ -157,8 +157,8 @@ room.registerElement('spacezone-asteroidfield', {
       const basePos = level.getPositionAtTime(t);
 
       // Add random offset to x and y in the range -20 to 20
-      const offsetX = (Math.random() * 40) - 20;
-      const offsetY = (Math.random() * 40) - 20;
+      const offsetX = (Math.random() * 200) - 100;
+      const offsetY = (Math.random() * 200) - 100;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
       // Create asteroid capsule object with rotate_deg_per_sec attribute
