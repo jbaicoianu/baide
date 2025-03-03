@@ -1,7 +1,7 @@
 room.registerElement('spacezone-level', {
   create() {
     // Initialization code for spacezone-level
-    this.waypoints = this.getObjectsByTagName('spacezone-waypoint');
+    this.waypoints = this.getElementsByTagName('spacezone-waypoint');
     
     // Extract positions from waypoints
     const points = [];
