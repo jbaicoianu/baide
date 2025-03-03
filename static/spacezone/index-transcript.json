@@ -110,5 +110,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the room's direction to `0 0 1` as requested. Please review the changes below."
+  },
+  {
+    "role": "User",
+    "content": "set room showavatar to false"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the room configuration to set `showavatar` to `false` as requested."
   }
 ]
