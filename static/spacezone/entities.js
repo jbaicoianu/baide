@@ -13,8 +13,8 @@ room.registerElement('spacezone-level', {
       // Create a CatmullRomCurve3 from waypoints
       this.curve = new THREE.CatmullRomCurve3(points);
       
-      // Generate TubeBufferGeometry based on the curve
-      this.tubeGeometry = new THREE.TubeBufferGeometry(this.curve, 100, 0.5, 8, false);
+      // Generate TubeBufferGeometry based on the curve with increased subdivisions
+      this.tubeGeometry = new THREE.TubeBufferGeometry(this.curve, 500, 0.5, 8, false);
       
       // Create a material for the tube
       this.tubeMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
