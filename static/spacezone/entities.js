@@ -223,7 +223,9 @@ room.registerElement('spacezone-asteroidfield', {
           Math.random() * 60 - 30, // Random value between -30 and 30 for x
           Math.random() * 60 - 30, // Random value between -30 and 30 for y
           Math.random() * 60 - 30  // Random value between -30 and 30 for z
-        )
+        ),
+        collidable: false,
+        pickable: false
       });
 
       this.asteroids.push(asteroid);
