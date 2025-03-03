@@ -118,5 +118,13 @@
   {
     "role": "Assistant",
     "content": "I have added the `collision_id=\"shuttle\"` to the shuttle object and implemented a click event listener that triggers the `startRace` function. Please review the changes and let me know if you have any further adjustments or suggestions."
+  },
+  {
+    "role": "User",
+    "content": "Switch to using getObjectsByTagName instead of getElementsByTagName"
+  },
+  {
+    "role": "Assistant",
+    "content": ""
   }
 ]
