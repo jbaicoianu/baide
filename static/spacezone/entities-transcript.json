@@ -278,5 +278,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `tubeObject` to set `pickable` to `false` as requested. Let me know if there are any additional adjustments or if you have further specifications."
+  },
+  {
+    "role": "User",
+    "content": "Add a text object to our level, positioned 5m above the start point, with text \"Click ship to start\". Rotate it 90 degrees on the y axis."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added a text object to the level, positioned 5 meters above the start point with the text \"Click ship to start\" and rotated 90 degrees on the Y-axis. Please review the changes and let me know if any adjustments are needed."
   }
 ]
