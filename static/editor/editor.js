@@ -896,6 +896,11 @@ function setupEventListeners() {
       // Options will be populated based on allCodingContexts
       contextSelector.addEventListener('change', addCodingContext);
       contextsContainer.appendChild(contextSelector);
+      
+      // Call updateContextSelectorOptions if allCodingContexts is not null
+      if (allCodingContexts != null) {
+        updateContextSelectorOptions();
+      }
     }
   }
 
