@@ -346,5 +346,13 @@
   {
     "role": "Assistant",
     "content": "No changes detected."
+  },
+  {
+    "role": "User",
+    "content": "In build_prompt_messages, if file_contents is empty don't say \"the following is the code which has been generated so far\", say \"Please start generating code for this file\""
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `build_prompt_messages` function to handle cases where `file_contents` is empty. Now, it prompts \"Please start generating code for this file\" instead of displaying existing code. Let me know if you have any further questions or suggestions."
   }
 ]
