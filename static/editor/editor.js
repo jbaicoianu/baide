@@ -12,6 +12,39 @@ New CSS for Search Results Indicator:
   font-size: 12px;
   pointer-events: none;
 }
+
+/* CSS for Coding Context Removal */
+.badge {
+  position: relative;
+  display: inline-block;
+  background-color: #007bff;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 12px;
+  margin: 2px;
+  cursor: default;
+}
+
+.badge .remove-btn {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4d4d;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 16px;
+  height: 16px;
+  font-size: 12px;
+  line-height: 14px;
+  text-align: center;
+  cursor: pointer;
+  display: none;
+}
+
+.badge:hover .remove-btn {
+  display: block;
+}
 */
 
 let activeFile = null;
@@ -723,7 +756,36 @@ function appendCodingContext(context) {
   if (context.content) {
     badgeSpan.title = context.content; // Tooltip with full content
   }
+
+  // Create remove button
+  const removeBtn = document.createElement('button');
+  removeBtn.className = 'remove-btn';
+  removeBtn.textContent = '×';
+  removeBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    removeCodingContext(context.name);
+  });
+
+  badgeSpan.appendChild(removeBtn);
   activeCodingContexts.appendChild(badgeSpan);
+}
+
+// Function to remove a coding context
+function removeCodingContext(contextName) {
+  if (!activeFile || !fileCodingContexts[activeFile]) return;
+  // Remove from fileCodingContexts
+  fileCodingContexts[activeFile] = fileCodingContexts[activeFile].filter(ctx => ctx.name !== contextName);
+  if (fileCodingContexts[activeFile].length === 0) {
+    delete fileCodingContexts[activeFile];
+  }
+  saveFileCodingContexts();
+  // Remove from UI
+  const badges = document.querySelectorAll('#activeCodingContexts .badge');
+  badges.forEach(badge => {
+    if (badge.firstChild.textContent === contextName) {
+      badge.parentNode.removeChild(badge);
+    }
+  });
 }
 
 // Scroll to the bottom of an element.
