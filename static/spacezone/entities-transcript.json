@@ -54,5 +54,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the waypoint sizes to `(5, 5, 5)` and set their opacity to `0.5`. Please ensure that the rendering supports transparency to visualize the changes correctly. Let me know if there are any additional modifications you'd like to make."
+  },
+  {
+    "role": "User",
+    "content": "no need for a material object argument, just pass opacity: .5. the transparent attribute is implied automatically."
+  },
+  {
+    "role": "Assistant",
+    "content": "Thank you for the update. I have removed the unnecessary `material` object and directly applied the `opacity` attribute, as the `transparent` property is now implied."
   }
 ]
