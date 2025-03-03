@@ -14,5 +14,13 @@
   {
     "role": "Assistant",
     "content": "I've added an `assetscript` referencing `entities.js` as you requested. Let me know if you need any further modifications or have any questions."
+  },
+  {
+    "role": "User",
+    "content": "Add a <spacezone-level> object to our room, with 10 <spacezone-waypoint> child objects. These waypoints should define the basic route of an obstacle course through which the player will need to navigate their ship, so place them accordingly, in order."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added a `<spacezone-level>` object with 10 `<spacezone-waypoint>` child objects to define the obstacle course route. Please review the waypoint positions to ensure they align with the intended navigation path for the player's ship."
   }
 ]
