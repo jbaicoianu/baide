@@ -46,6 +46,7 @@ room.registerElement('spacezone-player', {
     this.shuttle = this.createObject('object', {
       id: 'shuttle',
       pos: new THREE.Vector3(0, 0, 0),
+      rotation: new THREE.Vector3(0, 180, 0),
       col: 'blue', // Example color
       scale: new THREE.Vector3(1, 1, 1)
     });
