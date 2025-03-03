@@ -33,10 +33,7 @@ room.registerElement('spacezone-waypoint', {
       id: 'sphere',
       scale: new THREE.Vector3(5, 5, 5),
       col: 'green',
-      material: {
-        opacity: 0.5,
-        transparent: true
-      }
+      opacity: 0.5
     });
   },
   update(dt) {
