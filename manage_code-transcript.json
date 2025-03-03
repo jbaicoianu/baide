@@ -310,5 +310,13 @@
   {
     "role": "Assistant",
     "content": "Hello,\n\nI've updated the `build_prompt_messages()` function to adhere to the specified prompt order: system prompt, all coding context prompts (if provided), user prompt, and the current code. Additionally, the function now correctly assigns roles based on whether the model is \"o1-mini.\""
+  },
+  {
+    "role": "User",
+    "content": "The /coding_contexts should provide a list of all available contexts in the contexts/ directory"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `/coding_contexts` endpoint to provide a comprehensive list of all available contexts within the `contexts/` directory. This enhancement ensures that clients can retrieve and utilize all available contexts effectively. Let me know if you have any additional requirements or suggestions."
   }
 ]
