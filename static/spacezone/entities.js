@@ -1,7 +1,7 @@
 room.registerElement('spacezone-level', {
   create() {
     // Initialization code for spacezone-level
-    this.waypoints = this.getElementsByTagName('spacezone-waypoint');
+    this.waypoints = this.getObjectsByTagName('spacezone-waypoint');
     
     // Extract positions from waypoints
     const points = [];
@@ -71,7 +71,7 @@ room.registerElement('spacezone-player', {
       if (t > 1) t = 1;
 
       // Assuming 'spacezone-level' is a sibling element
-      const level = this.parent.getElementsByTagName('spacezone-level')[0];
+      const level = this.parent.getObjectsByTagName('spacezone-level')[0];
       if (level && level.getPositionAtTime) {
         const position = level.getPositionAtTime(t);
         this.shuttle.pos = position;
