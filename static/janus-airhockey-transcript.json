@@ -142,5 +142,13 @@
   {
     "role": "Assistant",
     "content": "Added a torus positioned 2 meters to the left of the airhockey table. Please let me know if you would like to customize its appearance or behavior further."
+  },
+  {
+    "role": "User",
+    "content": "Make our torus spin and bob up and down slowly"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project to make the torus spin and gently bob up and down. This adds an engaging dynamic to your scene. Please review the changes and let me know if you have any further adjustments or questions."
   }
 ]
