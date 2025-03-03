@@ -302,5 +302,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `textObject` by setting `font_scale` to `false` as requested. Please review the changes and let me know if any additional modifications are needed."
+  },
+  {
+    "role": "User",
+    "content": "Set the following properties on our shuttle:\n- col: 'gray'\n- metalness: 1\n- roughness: .5"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the shuttle's properties as requested, changing its color to gray and adding metalness and roughness attributes to enhance its material properties. Please review the changes and let me know if any further adjustments are needed."
   }
 ]
