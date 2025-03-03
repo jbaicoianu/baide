@@ -294,5 +294,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `/chat` endpoint to accept a list of contexts for each request. The endpoint now processes the specified contexts by including their content in the prompt used for code generation. Please review the changes and let me know if you have any further requirements or questions."
+  },
+  {
+    "role": "User",
+    "content": "Adjust our context code so that the contexts appear after our built-in system prompt, but before the user's conversation and the code content. Also, only include the content from each context, do not include the context name or any other lavel like \"Context:\"."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the context handling to position the contexts after the built-in system prompt and removed any labels, ensuring only the context content is included."
   }
 ]
