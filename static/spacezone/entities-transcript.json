@@ -30,5 +30,13 @@
   {
     "role": "Assistant",
     "content": "Added a placeholder sphere for the `spacezone-waypoint` object. Let me know if you need any specific attributes or behaviors for the sphere."
+  },
+  {
+    "role": "User",
+    "content": "Use this.createObject('object', { id: 'sphere', ... }) to create our sphere object. Also note that child objects inherit their parent object's position, so no need to specify a position unless it's relative to our parent."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-waypoint` element to use `this.createObject('object', { id: 'sphere', ... })` for creating the sphere object. The position attribute has been removed since child objects inherit their parent's position."
   }
 ]
