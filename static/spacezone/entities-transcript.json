@@ -318,5 +318,13 @@
   {
     "role": "Assistant",
     "content": "Added the `spacezone-asteroidfield` element as requested. This element generates a specified number of asteroids along the level's route with random offsets. Let me know if you have any specific preferences for asteroid models or additional behaviors."
+  },
+  {
+    "role": "User",
+    "content": "Attributes on custom elements are just defined as object properties, eg:\n\nroom.registerElement('spacezone-asteroidfield', { numasteroids: 10, ... })\n\nand can be referenced as this.numasteroids, please make this change to the spacezone-asteroidfield element"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-asteroidfield` element to define `numasteroids` as a direct property and referenced it using `this.numasteroids`. If you have other attributes that could benefit from this approach, consider applying the same pattern for consistency."
   }
 ]
