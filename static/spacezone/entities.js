@@ -86,8 +86,8 @@ room.registerElement('spacezone-player', {
     this.reticle = this.createObject('object', {
       id: 'sphere',
       col: 'red',
-      scale: V(.1),
-      pos: new THREE.Vector3(0, 0, -2) // Positioned 1 meter in front
+      scale: V(1),
+      pos: new THREE.Vector3(0, 0, 20) // Positioned at (0, 0, 20)
     });
   },
   startRace() {
