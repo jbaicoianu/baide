@@ -266,16 +266,6 @@ room.registerElement('spacezone-planet', {
       id: 'sphere',
       image_id: this.surfacetexture
     });
-
-    // Set position if provided
-    const posAttr = this.getAttribute('pos');
-    if (posAttr) {
-      const pos = parseVector3(posAttr);
-      this.planetObject.pos = pos;
-    }
-
-    // Append to the room
-    this.appendChild(this.planetObject);
   },
   update(dt) {
     // Update logic for spacezone-planet if needed
