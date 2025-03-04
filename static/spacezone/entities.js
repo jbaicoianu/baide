@@ -79,6 +79,13 @@ room.registerElement('spacezone-player', {
     player.pos = V(0, 5, -20);
     player.orientation.set(0, 1, 0, 0);
     console.log('Race started!');
+    
+    // Emit 'level_start' event
+    if(this.parent) {
+      this.parent.dispatchEvent({type: 'level_start'});
+    } else {
+      console.warn('Parent not found. Cannot dispatch level_start event.');
+    }
   },
   update(dt) {
     if (this.isRacing) {
@@ -86,8 +93,8 @@ room.registerElement('spacezone-player', {
       let t = this.raceTime / this.totalRaceTime;
       if (t > 1) t = 1;
 
-      // Assuming 'spacezone-level' is a sibling element
-      const level = this.parent.getObjectsByTagName('spacezone-level')[0];
+      // Assuming 'spacezone-level' is the parent element
+      const level = this.parent;
       if (level && level.getPositionAtTime) {
         const position = level.getPositionAtTime(t);
 
@@ -141,20 +148,25 @@ room.registerElement('spacezone-asteroidfield', {
   create() {
     // Initialization code for spacezone-asteroidfield
     this.asteroids = [];
-    const num = this.numasteroids;
-
-    // Set a 100ms timer to initialize asteroids after ensuring the level is initialized
-    setTimeout(() => {
+    
+    // Listen for 'level_start' event to initialize asteroids
+    this.addEventListener('level_start', () => {
       this.initAsteroids();
-    }, 1000);
+    });
   },
   initAsteroids() {
-    const level = this.parent.getObjectsByTagName('spacezone-level')[0];
-    
+    const level = this.parent;
+
     if (!level || !level.getPositionAtTime) {
       console.warn('spacezone-level element with getPositionAtTime method not found.');
       return;
     }
+
+    // Clear existing asteroids if any
+    for (let asteroid of this.asteroids) {
+      this.removeChild(asteroid);
+    }
+    this.asteroids = [];
 
     for (let i = 0; i < this.numasteroids; i++) {
       // Generate a random t value between 0 and 1
@@ -163,7 +175,7 @@ room.registerElement('spacezone-asteroidfield', {
       // Get position along the level's curve
       const basePos = level.getPositionAtTime(t);
 
-      // Add random offset to x and y in the range -200 to 200
+      // Add random offset to x and y in the range -100 to 100
       const offsetX = (Math.random() * 200) - 100;
       const offsetY = (Math.random() * 200) - 100;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
@@ -186,9 +198,9 @@ room.registerElement('spacezone-asteroidfield', {
           const currX = pos.getX(i);
           const currY = pos.getY(i);
           const currZ = pos.getZ(i);
-          const x = currX + (0 - Math.random() * (10));
-          const y = currY + (0 - Math.random() * (10));
-          const z = currZ + (0 - Math.random() * (10));
+          const x = currX + (0 - Math.random() * 10);
+          const y = currY + (0 - Math.random() * 10);
+          const z = currZ + (0 - Math.random() * 10);
 
           pos.setX(i, x);
           pos.setY(i, y);
@@ -228,7 +240,6 @@ room.registerElement('spacezone-asteroidfield', {
       // Create asteroid object with the mesh
       const asteroid = this.createObject('object', {
         object: asteroidMesh,
-        //pos: asteroidPos,
         col: grayHex,
         rotate_deg_per_sec: V(
           Math.random() * 60 - 30, // Random value between -30 and 30 for x
@@ -242,6 +253,7 @@ room.registerElement('spacezone-asteroidfield', {
         console.log(asteroidPos);
 
       this.asteroids.push(asteroid);
+      this.appendChild(asteroid);
     }
   },
   update(dt) {
