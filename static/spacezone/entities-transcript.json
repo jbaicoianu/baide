@@ -534,5 +534,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-planet` element to set the planet sphere's `normal_scale` parameter to 10. Please review the changes below and let me know if you need any further adjustments."
+  },
+  {
+    "role": "User",
+    "content": "Ok, let's start working on controls. We'll start by adding a control context to our spacezone-player object's create function, which for now only uses the mouse_delta control:\n\nthis.controlstate = this.addControlContext('spacezone-player', {\n  'targeting': { defaultbinding: 'mouse_delta' }\n});\n\nAlso add a simple targeting reticle, for now represented by a red sphere with a scale of .1 positioned 1 meter in front of us\n\nNow in our update function, we can look at this.controlstate.targeting and get the x,y delta values for any mousemovement that occurred since the last frame, which we can use to move out targeting reticle object on the x and y axis."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added a control context for targeting using mouse movement and introduced a targeting reticle represented by a red sphere. The update function now handles mouse movement deltas to move the reticle on the x and y axes."
   }
 ]
