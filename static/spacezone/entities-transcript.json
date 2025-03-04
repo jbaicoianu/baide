@@ -454,5 +454,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-planet` element to define its attributes directly within the element definition, as per the latest guidelines. Please review the changes and let me know if there are any additional adjustments or if you'd like to apply similar updates to other elements."
+  },
+  {
+    "role": "User",
+    "content": "In our spacezone-planet element, don't use three.js syntax to create our sphere, use JanusXR syntax. It should just be a couple of lines to create the object with id=\"sphere\" and image_id=this.surfacetexture"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-planet` element to use JanusXR syntax for creating the sphere, replacing the three.js implementation. Let me know if you have any further modifications or questions."
   }
 ]
