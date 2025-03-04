@@ -264,7 +264,8 @@ room.registerElement('spacezone-planet', {
     // Create the sphere object using JanusXR syntax
     this.planetObject = this.createObject('object', {
       id: 'sphere',
-      image_id: this.surfacetexture
+      image_id: this.surfacetexture,
+      scale: V(this.radius * 2),
     });
   },
   update(dt) {
