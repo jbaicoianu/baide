@@ -271,9 +271,3 @@ room.registerElement('spacezone-planet', {
     // Update logic for spacezone-planet if needed
   }
 });
-
-// Helper function to parse vector3 strings
-function parseVector3(str) {
-  const parts = str.split(' ').map(Number);
-  return new THREE.Vector3(parts[0] || 0, parts[1] || 0, parts[2] || 0);
-}
