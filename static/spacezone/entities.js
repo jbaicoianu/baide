@@ -94,7 +94,6 @@ room.registerElement('spacezone-player', {
 
       // Assuming 'spacezone-level' is the parent element
       const level = this.parent;
-          console.log(level, level.getPositionAtTime);
       if (level && level.getPositionAtTime) {
         const position = level.getPositionAtTime(t);
 
