@@ -430,6 +430,9 @@ function showAddBranchInput() {
   branchList.appendChild(input);
   branchList.appendChild(submitBtn);
       
+  // Automatically focus on the new branch name input box
+  input.focus();
+      
   // /* 
   // CSS for Add Branch Input:
   // #newBranchName {
