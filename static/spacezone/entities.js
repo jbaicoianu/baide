@@ -145,10 +145,10 @@ room.registerElement('spacezone-player', {
 
     // Handle targeting reticle movement based on mouse delta
     const targetingDelta = this.controlstate.targeting;
-    if (targetingDelta) {
-      // Assuming targetingDelta has x and y properties
-      this.reticle.pos.x += targetingDelta.x;
-      this.reticle.pos.y += targetingDelta.y;
+    if (targetingDelta && Array.isArray(targetingDelta) && targetingDelta.length >= 2) {
+      // Assuming targetingDelta is an array with [x, y]
+      this.reticle.pos.x += targetingDelta[0];
+      this.reticle.pos.y += targetingDelta[1];
       
       // Optional: Clamp reticle position within certain bounds
       const maxOffset = 5; // Example maximum offset
