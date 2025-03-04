@@ -302,5 +302,13 @@
   {
     "role": "Assistant",
     "content": "Added the `normaltexture=\"mars-normal\"` attribute to the `spacezone-planet` element. Please review the changes and let me know if any further adjustments are needed."
+  },
+  {
+    "role": "User",
+    "content": "Add a new object asset named taufighter, https://github.com/jbaicoianu/elation-component-space/raw/refs/heads/master/media/models/tau.obj"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have added the new asset object 'taufighter' as requested. Please verify that the URL is correct and the object loads properly within the project."
   }
 ]
