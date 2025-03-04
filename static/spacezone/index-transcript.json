@@ -174,5 +174,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `<room>` element to disable default lighting and set the ambient lighting as specified. Let me know if you have any further adjustments or questions."
+  },
+  {
+    "role": "User",
+    "content": "Add a new assetimage named nebula, which points to https://images.blockadelabs.com/skybox-starters/76_74268d539f6e2f2f74ef2e7aab07a03f_file.jpg and set out skybox_equi to use this"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have added the new `nebula` asset image and updated the `skybox_equi` attribute to use this new image. Please review the changes to ensure the new skybox integrates correctly with your scene. Let me know if you need any further adjustments or have additional assets to include."
   }
 ]
