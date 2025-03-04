@@ -48,7 +48,7 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
-  turnspeed: 180, // Increased maximum degrees per second the ship can turn
+  turnspeed: 90, // Reset maximum degrees per second the ship can turn
 
   create() {
     // Initialization code for spacezone-player
@@ -191,8 +191,8 @@ room.registerElement('spacezone-player', {
 
     // Update the taufighter's orientation
     this.taufighter.rotation.set(
-      THREE.MathUtils.degToRad(this.currentPitch),
-      THREE.MathUtils.degToRad(this.currentYaw),
+      this.currentPitch,
+      this.currentYaw,
       0
     );
   }
