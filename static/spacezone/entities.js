@@ -91,6 +91,9 @@ room.registerElement('spacezone-player', {
     });
   },
   startRace() {
+    player.disable();
+    this.activateControlContext('spacezone-player');
+    
     this.isRacing = true;
     this.raceTime = 0;
     this.appendChild(player);
