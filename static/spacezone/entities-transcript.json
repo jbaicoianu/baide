@@ -566,5 +566,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the targeting reticle in the `spacezone-player` element to use a sphere as a placeholder. This enhancement will provide a clearer visual indicator for targeting interactions. Please review the changes and let me know if you have any further adjustments or suggestions."
+  },
+  {
+    "role": "User",
+    "content": "Assume targetingDelta will be an array with two elements representing x and y mouse deltas"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-player` element to handle `targetingDelta` as an array containing `[x, y]` mouse deltas instead of an object with `x` and `y` properties. Please review the changes and let me know if there are any additional adjustments needed."
   }
 ]
