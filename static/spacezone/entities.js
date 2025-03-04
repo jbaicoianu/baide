@@ -266,7 +266,7 @@ room.registerElement('spacezone-planet', {
       id: 'sphere',
       image_id: this.surfacetexture,
       scale: V(this.radius * 2),
-      rotate_deg_per_sec: -2,
+      rotate_deg_per_sec: 2,
     });
   },
   update(dt) {
