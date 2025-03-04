@@ -190,5 +190,13 @@
   {
     "role": "Assistant",
     "content": "The requested changes have been implemented. A new `assetimage` named `mars-surface` has been added, and a `<spacezone-planet>` element with `surfacetexture` set to `\"mars-surface\"` has been included within the `spacezone-level`. Please let me know if you require any additional configurations for the `<spacezone-planet>` element."
+  },
+  {
+    "role": "User",
+    "content": "Set our far dist to something huge, like 3 million"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `far_dist` parameter in the room settings to `3000000` as requested. Please review the changes below and let me know if you need any further adjustments."
   }
 ]
