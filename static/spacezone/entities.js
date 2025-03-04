@@ -48,7 +48,7 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
-  turnspeed: 90, // Reset maximum degrees per second the ship can turn
+  rollspeed: 120, // Updated turnrate to 120 degrees per second
 
   create() {
     // Initialization code for spacezone-player
@@ -93,7 +93,7 @@ room.registerElement('spacezone-player', {
     });
 
     // Initialize current orientation
-    this.currentYaw = 180;
+    this.currentRoll = 180;
     this.currentPitch = 0;
   },
   startRace() {
@@ -166,34 +166,34 @@ room.registerElement('spacezone-player', {
     const reticlePos = this.reticle.pos.clone();
     const directionToReticle = reticlePos.sub(this.taufighter.pos).normalize();
 
-    // Calculate desired yaw and pitch
-    const desiredYaw = Math.atan2(directionToReticle.x, directionToReticle.z) * (180 / Math.PI);
+    // Calculate desired roll and pitch
+    const desiredRoll = Math.atan2(directionToReticle.x, directionToReticle.z) * (180 / Math.PI);
     const desiredPitch = Math.atan2(directionToReticle.y, Math.sqrt(directionToReticle.x ** 2 + directionToReticle.z ** 2)) * (180 / Math.PI);
 
     // Calculate the difference between current and desired angles
-    let yawDifference = desiredYaw - this.currentYaw;
+    let rollDifference = desiredRoll - this.currentRoll;
     let pitchDifference = desiredPitch - this.currentPitch;
 
     // Normalize the angles to the range [-180, 180]
-    yawDifference = ((yawDifference + 180) % 360) - 180;
+    rollDifference = ((rollDifference + 180) % 360) - 180;
     pitchDifference = ((pitchDifference + 180) % 360) - 180;
 
-    // Calculate the maximum turn based on turnspeed and delta time
-    const maxTurn = this.turnspeed * dt;
+    // Calculate the maximum turn based on rollspeed and delta time
+    const maxTurn = this.rollspeed * dt;
 
     // Apply limited turn
-    const yawTurn = Math.min(Math.abs(yawDifference), maxTurn) * Math.sign(yawDifference);
+    const rollTurn = Math.min(Math.abs(rollDifference), maxTurn) * Math.sign(rollDifference);
     const pitchTurn = Math.min(Math.abs(pitchDifference), maxTurn) * Math.sign(pitchDifference);
 
     // Update current orientation
-    this.currentYaw += yawTurn;
+    this.currentRoll += rollTurn;
     this.currentPitch += pitchTurn;
 
     // Update the taufighter's orientation
     this.taufighter.rotation.set(
       -this.currentPitch,
       180,
-      this.currentYaw
+      this.currentRoll
     );
   }
 });
