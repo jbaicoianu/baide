@@ -630,5 +630,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the `spacezone-player` element by setting the `turnspeed` back to `90` and removed the conversion from degrees to radians when assigning rotation values in the player's update function. Please review the changes to ensure they align with your project's requirements."
+  },
+  {
+    "role": "User",
+    "content": "Our ship is now facing backwards, can we add 180 degrees to our yaw to fix this?"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have added 180 degrees to the ship's yaw in the `spacezone-player` element to correct its initial orientation. Please review the changes and let me know if any additional adjustments are needed."
   }
 ]
