@@ -275,7 +275,6 @@ room.registerElement('spacezone-asteroidfield', {
 room.registerElement('spacezone-planet', {
   surfacetexture: 'black',
   normaltexture: 'default-normal', // Added normaltexture attribute
-  normal_scale: 10, // Set normal_scale parameter to 10
   radius: 6.38e6,
   create() {
     // Create the sphere object using JanusXR syntax
