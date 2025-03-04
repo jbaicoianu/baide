@@ -283,7 +283,7 @@ room.registerElement('spacezone-planet', {
       id: 'sphere',
       image_id: this.surfacetexture,
       normalmap_id: this.normaltexture, // Passed normaltexture as normalmap_id
-      normal_scale: this.normal_scale, // Set normal_scale parameter
+      normal_scale: 10, // Set normal_scale parameter
       scale: V(this.radius * 2),
       rotate_deg_per_sec: 2,
     });
