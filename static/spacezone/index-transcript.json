@@ -238,5 +238,13 @@
   {
     "role": "Assistant",
     "content": "I have added a `spacezone-star` element with a radius of `50000` and an intensity of `10000` at the position `10000 0 0`. Please let me know if you need any further adjustments or additional elements."
+  },
+  {
+    "role": "User",
+    "content": "set ambient to 0 0 0"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the ambient light settings as requested. Please review the changes below and let me know if you have any further adjustments or suggestions."
   }
 ]
