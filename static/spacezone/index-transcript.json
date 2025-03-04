@@ -286,5 +286,13 @@
   {
     "role": "Assistant",
     "content": "I've switched the skybox back to nebula as requested. Let me know if you need any further adjustments or have additional suggestions."
+  },
+  {
+    "role": "User",
+    "content": "Add a new image called mars-normal https://raw.githubusercontent.com/jbaicoianu/elation-component-space/refs/heads/master/images/mars_2k_normal.png"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added the new image asset `mars-normal` to the project's assets. Please let me know if this asset should be integrated with any specific objects or if there are additional configurations needed."
   }
 ]
