@@ -590,5 +590,13 @@
   {
     "role": "Assistant",
     "content": "The requested changes to reverse the x and y directions for mouse movement and increase the movement limit to 20 have been applied. Please review the updated code below."
+  },
+  {
+    "role": "User",
+    "content": "Sorry, no, flip the x and y mouse delta values back how they were initially, but negate their values"
+  },
+  {
+    "role": "Assistant",
+    "content": "Understood. I've updated the mouse delta handling to flip the x and y values back to their original assignments and negated their values as requested. Please review the changes and let me know if further adjustments are needed."
   }
 ]
