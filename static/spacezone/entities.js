@@ -247,7 +247,6 @@ room.registerElement('spacezone-asteroidfield', {
         pickable: false
       }); 
       asteroid.pos = asteroidPos;
-        console.log(asteroidPos);
 
       this.asteroids.push(asteroid);
       this.appendChild(asteroid);
