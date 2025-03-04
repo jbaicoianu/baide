@@ -262,5 +262,13 @@
   {
     "role": "Assistant",
     "content": "I have added the requested sound assets to the project file. Please review and let me know if any further adjustments or configurations are needed."
+  },
+  {
+    "role": "User",
+    "content": "Add a new image asset called milkyway https://cdn.eso.org/images/wallpaper5/eso0932a.jpg"
+  },
+  {
+    "role": "Assistant",
+    "content": "Added the new image asset `milkyway` with the provided URL to the assets section. Please verify the URL to ensure it is accessible and consider where in the application this asset will be utilized."
   }
 ]
