@@ -258,8 +258,8 @@ room.registerElement('spacezone-asteroidfield', {
 });
 
 room.registerElement('spacezone-planet', {
-  surfacetexture: 'string',
-  radius: 'number',
+  surfacetexture: 'black',
+  radius: 6.38e6,
   create() {
     const textureId = this.surfacetexture;
     const radius = parseFloat(this.radius) || 5;
