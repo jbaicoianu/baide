@@ -478,5 +478,13 @@
   {
     "role": "Assistant",
     "content": "Removed the `parseVector3` helper function as requested. The current code does not rely on this function, ensuring smooth functionality after its removal."
+  },
+  {
+    "role": "User",
+    "content": "Add rotate_deg_per_sec of 5 to the sphere in our planet element"
+  },
+  {
+    "role": "Assistant",
+    "content": "Added a `rotate_deg_per_sec` property to the sphere in the `spacezone-planet` element to enable rotation. Let me know if you'd like the rotation applied to specific axes or uniformly across all axes."
   }
 ]
