@@ -48,6 +48,8 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
+  turnspeed: 90, // Maximum degrees per second the ship can turn
+
   create() {
     // Initialization code for spacezone-player
 
@@ -89,6 +91,10 @@ room.registerElement('spacezone-player', {
       scale: V(1),
       pos: new THREE.Vector3(0, 0, 20) // Positioned at (0, 0, 20)
     });
+
+    // Initialize current orientation
+    this.currentYaw = 0;
+    this.currentPitch = 0;
   },
   startRace() {
     player.disable();
@@ -155,6 +161,40 @@ room.registerElement('spacezone-player', {
       this.reticle.pos.x = Math.max(-maxOffset, Math.min(maxOffset, this.reticle.pos.x));
       this.reticle.pos.y = Math.max(-maxOffset, Math.min(maxOffset, this.reticle.pos.y));
     }
+
+    // Steering logic towards the reticle
+    const reticlePos = this.reticle.pos.clone();
+    const directionToReticle = reticlePos.sub(this.taufighter.pos).normalize();
+
+    // Calculate desired yaw and pitch
+    const desiredYaw = Math.atan2(directionToReticle.x, directionToReticle.z) * (180 / Math.PI);
+    const desiredPitch = Math.atan2(directionToReticle.y, Math.sqrt(directionToReticle.x ** 2 + directionToReticle.z ** 2)) * (180 / Math.PI);
+
+    // Calculate the difference between current and desired angles
+    let yawDifference = desiredYaw - this.currentYaw;
+    let pitchDifference = desiredPitch - this.currentPitch;
+
+    // Normalize the angles to the range [-180, 180]
+    yawDifference = ((yawDifference + 180) % 360) - 180;
+    pitchDifference = ((pitchDifference + 180) % 360) - 180;
+
+    // Calculate the maximum turn based on turnspeed and delta time
+    const maxTurn = this.turnspeed * dt;
+
+    // Apply limited turn
+    const yawTurn = Math.min(Math.abs(yawDifference), maxTurn) * Math.sign(yawDifference);
+    const pitchTurn = Math.min(Math.abs(pitchDifference), maxTurn) * Math.sign(pitchDifference);
+
+    // Update current orientation
+    this.currentYaw += yawTurn;
+    this.currentPitch += pitchTurn;
+
+    // Update the taufighter's orientation
+    this.taufighter.rotation.set(
+      THREE.MathUtils.degToRad(this.currentPitch),
+      THREE.MathUtils.degToRad(this.currentYaw),
+      0
+    );
   }
 });
 
