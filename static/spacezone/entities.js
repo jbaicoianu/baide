@@ -79,7 +79,7 @@ room.registerElement('spacezone-player', {
 
     // Add control context for targeting
     this.controlstate = this.addControlContext('spacezone-player', {
-      'targeting': { defaultbinding: 'mouse_delta' }
+      'targeting': { defaultbindings: 'mouse_delta' }
     });
 
     // Add targeting reticle
