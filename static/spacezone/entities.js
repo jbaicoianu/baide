@@ -192,8 +192,8 @@ room.registerElement('spacezone-player', {
     // Update the taufighter's orientation
     this.taufighter.rotation.set(
       -this.currentPitch,
-      this.currentYaw + 180,
-      0
+      180,
+      this.currentYaw
     );
   }
 });
