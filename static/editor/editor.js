@@ -212,12 +212,13 @@ function saveFile() {
   .then(response => response.json())
   .then(data => {
     if (data.message) {
-      console.log(data.message);
+      showToast(data.message, 'success');
     } else if (data.error) {
-      console.error(data.error);
+      showToast(data.error, 'error');
     }
   })
   .catch(error => {
+    showToast('Error saving file.', 'error');
     console.error('Error saving file:', error);
   });
 }
@@ -391,11 +392,11 @@ async function switchBranch(branchName) {
     if (response.ok) {
       const data = await response.json();
       if (data.success) {
-        alert(`Switched to branch ${branchName}`);
+        showToast(`Switched to branch ${branchName}`, 'success');
         loadGitBranch();
         await loadProjectStructure();
       } else {
-        alert(`Error switching branch: ${data.error}`);
+        showToast(`Error switching branch: ${data.error}`, 'error');
       }
     } else {
       console.error('Failed to switch branch.');
@@ -448,7 +449,7 @@ function showAddBranchInput() {
 async function addNewBranch() {
   const branchName = document.getElementById('newBranchName').value.trim();
   if (!branchName) {
-    alert('Branch name cannot be empty.');
+    showToast('Branch name cannot be empty.', 'error');
     return;
   }
     
@@ -461,12 +462,12 @@ async function addNewBranch() {
     if (response.ok) {
       const data = await response.json();
       if (data.success) {
-        alert(`Branch ${branchName} created successfully.`);
+        showToast(`Branch ${branchName} created successfully.`, 'success');
         loadGitBranch();
         // Refresh branch list
         openBranchPopup();
       } else {
-        alert(`Error creating branch: ${data.error}`);
+        showToast(`Error creating branch: ${data.error}`, 'error');
       }
     } else {
       console.error('Failed to create branch.');
@@ -1027,7 +1028,7 @@ function closeNewFileModal() {
 async function createNewFile() {
   const fileName = document.getElementById("newFileName").value.trim();
   if (!fileName) {
-    alert("File name cannot be empty.");
+    showToast("File name cannot be empty.", "error");
     return;
   }
   const response = await fetch("/create_file", {
@@ -1039,8 +1040,9 @@ async function createNewFile() {
   if (data.success) {
     closeNewFileModal();
     await loadProjectStructure();
+    showToast(`File ${fileName} created successfully.`, "success");
   } else {
-    alert("Error creating file: " + data.error);
+    showToast("Error creating file: " + data.error, "error");
   }
 }
 
@@ -1192,6 +1194,64 @@ function adjustTabs() {
 
 // Listen to window resize to adjust tabs
 window.addEventListener('resize', adjustTabs);
+
+// Function to show toast notifications
+function showToast(message, type = 'info') {
+  // Create toast container if it doesn't exist
+  let toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.style.position = 'fixed';
+    toastContainer.style.bottom = '20px';
+    toastContainer.style.right = '20px';
+    toastContainer.style.zIndex = '10000';
+    toastContainer.style.display = 'flex';
+    toastContainer.style.flexDirection = 'column';
+    toastContainer.style.gap = '10px';
+    document.body.appendChild(toastContainer);
+  }
+
+  // Create toast element
+  const toast = document.createElement('div');
+  toast.className = `toast ${type}`;
+  toast.textContent = message;
+
+  // Style the toast
+  toast.style.minWidth = '200px';
+  toast.style.padding = '10px 20px';
+  toast.style.backgroundColor = type === 'error' ? '#f44336' : type === 'success' ? '#4CAF50' : '#333';
+  toast.style.color = 'white';
+  toast.style.borderRadius = '5px';
+  toast.style.boxShadow = '0 2px 6px rgba(0,0,0,0.2)';
+  toast.style.opacity = '0';
+  toast.style.transition = 'opacity 0.5s';
+  toast.style.cursor = 'pointer';
+
+  // Append toast to container
+  toastContainer.appendChild(toast);
+
+  // Show the toast
+  setTimeout(() => {
+    toast.style.opacity = '1';
+  }, 100);
+
+  // Remove the toast after 5 seconds
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    setTimeout(() => {
+      toast.remove();
+    }, 500);
+  }, 5000);
+
+  // Allow manual removal on click
+  toast.addEventListener('click', () => {
+    toast.style.opacity = '0';
+    setTimeout(() => {
+      toast.remove();
+    }, 500);
+  });
+}
 
 // On startup, load the project structure, initialize CodeMirror, set up event listeners, and restore state.
 window.onload = async function() {
