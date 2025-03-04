@@ -146,12 +146,12 @@ room.registerElement('spacezone-player', {
     // Handle targeting reticle movement based on mouse delta
     const targetingDelta = this.controlstate.targeting;
     if (targetingDelta && Array.isArray(targetingDelta) && targetingDelta.length >= 2) {
-      // Assuming targetingDelta is an array with [x, y]
-      this.reticle.pos.x += targetingDelta[0];
-      this.reticle.pos.y += targetingDelta[1];
+      // Reverse x and y directions for mouse movement
+      this.reticle.pos.x += targetingDelta[1];
+      this.reticle.pos.y += targetingDelta[0];
       
       // Optional: Clamp reticle position within certain bounds
-      const maxOffset = 5; // Example maximum offset
+      const maxOffset = 20; // Increased movement limit to 20
       this.reticle.pos.x = Math.max(-maxOffset, Math.min(maxOffset, this.reticle.pos.x));
       this.reticle.pos.y = Math.max(-maxOffset, Math.min(maxOffset, this.reticle.pos.y));
     }
