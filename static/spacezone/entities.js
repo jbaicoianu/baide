@@ -77,14 +77,12 @@ room.registerElement('spacezone-player', {
     player.pos = V(0, 5, -20);
     player.orientation.set(0, 1, 0, 0);
     console.log('Race started!');
-    /*
     // Emit 'level_start' event
     if(this.parent) {
       this.parent.dispatchEvent({type: 'level_start'});
     } else {
       console.warn('Parent not found. Cannot dispatch level_start event.');
     }
-    */
   },
   update(dt) {
     if (this.isRacing) {
@@ -149,7 +147,7 @@ room.registerElement('spacezone-asteroidfield', {
     this.asteroids = [];
     
     // Listen for 'level_start' event to initialize asteroids
-    this.addEventListener('level_start', () => {
+    this.parent.addEventListener('level_start', () => {
       this.initAsteroids();
     });
   },
