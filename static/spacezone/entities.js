@@ -68,6 +68,13 @@ room.registerElement('spacezone-player', {
     this.isRacing = false;
     this.raceTime = 0;
     this.totalRaceTime = 120; // Total race duration in seconds
+
+    // Add background music sound object
+    this.music = this.createObject('sound', {
+      id: 'music-lastparsec',
+      loop: true,
+      volume: 1.0
+    });
   },
   startRace() {
     this.isRacing = true;
@@ -76,6 +83,13 @@ room.registerElement('spacezone-player', {
     player.pos = V(0, 5, -20);
     player.orientation.set(0, 1, 0, 0);
     console.log('Race started!');
+    // Switch background music to 'music-darkgateway'
+    if (this.music) {
+      this.music.id = 'music-darkgateway';
+      console.log('Background music changed to music-darkgateway.');
+    } else {
+      console.warn('Music object not found.');
+    }
     // Emit 'level_start' event
     if(this.parent) {
       this.parent.dispatchEvent({type: 'level_start'});
