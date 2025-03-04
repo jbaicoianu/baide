@@ -69,8 +69,6 @@ room.registerElement('spacezone-player', {
     this.isRacing = false;
     this.raceTime = 0;
     this.totalRaceTime = 120; // Total race duration in seconds
-    this.zdir = new THREE.Vector3(0, 0, -1); // Initialize zdir
-    this.pos = new THREE.Vector3(0, 0, 0); // Initialize position
   },
   startRace() {
     this.isRacing = true;
