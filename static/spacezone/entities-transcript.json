@@ -550,5 +550,13 @@
   {
     "role": "Assistant",
     "content": "I've updated the code by changing `defaultbinding` to `defaultbindings` as you indicated."
+  },
+  {
+    "role": "User",
+    "content": "In startRace(), call player.disable() and this.activateControlContext('spacezone-player')"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `startRace()` method in the `spacezone-player` element to include calls to `player.disable()` and `this.activateControlContext('spacezone-player')`. Please ensure that the `player` object is properly defined and accessible within this context."
   }
 ]
