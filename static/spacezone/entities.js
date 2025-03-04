@@ -258,13 +258,11 @@ room.registerElement('spacezone-asteroidfield', {
 });
 
 room.registerElement('spacezone-planet', {
-  attributes: {
-    surfacetexture: 'string',
-    radius: 'number'
-  },
+  surfacetexture: 'string',
+  radius: 'number',
   create() {
-    const textureId = this.getAttribute('surfacetexture');
-    const radius = parseFloat(this.getAttribute('radius')) || 5;
+    const textureId = this.surfacetexture;
+    const radius = parseFloat(this.radius) || 5;
 
     // Retrieve the texture from assets
     const textureAsset = this.findParent('janus-viewer').querySelector(`assetimage[id="${textureId}"]`);
