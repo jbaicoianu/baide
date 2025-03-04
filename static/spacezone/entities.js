@@ -56,9 +56,6 @@ room.registerElement('spacezone-player', {
       id: 'shuttle',
       collision_id: 'shuttle',
       pos: new THREE.Vector3(0, 0, 0),
-      col: 'gray', // Updated color
-      metalness: 1, // Added metalness
-      roughness: 0.5, // Added roughness
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1) // Set zdir to 0, 0, -1
     });
