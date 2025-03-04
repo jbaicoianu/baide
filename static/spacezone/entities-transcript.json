@@ -598,5 +598,13 @@
   {
     "role": "Assistant",
     "content": "Understood. I've updated the mouse delta handling to flip the x and y values back to their original assignments and negated their values as requested. Please review the changes and let me know if further adjustments are needed."
+  },
+  {
+    "role": "User",
+    "content": "Switch the player from using the shuttle mesh to the taufighter mesh"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `spacezone-player` element to use the `taufighter` mesh instead of the `shuttle` mesh. Please ensure that the `taufighter` asset is defined in your assets section. If you need assistance with updating the assets or have any other questions, feel free to ask."
   }
 ]
