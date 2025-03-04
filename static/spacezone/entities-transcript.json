@@ -638,5 +638,13 @@
   {
     "role": "Assistant",
     "content": "I have added 180 degrees to the ship's yaw in the `spacezone-player` element to correct its initial orientation. Please review the changes and let me know if any additional adjustments are needed."
+  },
+  {
+    "role": "User",
+    "content": "Rename our yaw controls to roll, and increase the turnrate to 120"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've renamed all instances of 'yaw' to 'roll' and increased the turnrate to 120 as requested. Please review the changes to ensure they align with your project requirements."
   }
 ]
