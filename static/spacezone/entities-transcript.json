@@ -614,5 +614,13 @@
   {
     "role": "Assistant",
     "content": "I've implemented the requested changes to allow the shuttle (`taufighter`) to steer towards the targeting reticle. A new attribute `turnspeed` has been added to the player to limit the maximum degrees per second the ship can turn based on mouse movement. This ensures smooth and controlled steering in response to user input."
+  },
+  {
+    "role": "User",
+    "content": "the amount of turn we're getting from this is too low. Keep in mind that our rotation values are in degrees, not in radians."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've increased the `turnspeed` in the `spacezone-player` element to allow for faster rotations, ensuring that rotation values are consistently handled in degrees. Let me know if further adjustments are needed."
   }
 ]
