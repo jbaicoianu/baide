@@ -166,5 +166,13 @@
   {
     "role": "Assistant",
     "content": "The `spacezone-player` has been moved to be a child of the `spacezone-level` to better organize the hierarchy within the level."
+  },
+  {
+    "role": "User",
+    "content": "Set room usedefaultlights=\"false\" ambient=\".1 .1 .1\""
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `<room>` element to disable default lighting and set the ambient lighting as specified. Let me know if you have any further adjustments or questions."
   }
 ]
