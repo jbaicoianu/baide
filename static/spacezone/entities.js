@@ -51,10 +51,10 @@ room.registerElement('spacezone-player', {
   create() {
     // Initialization code for spacezone-player
 
-    // Add child object 'shuttle' with specified metalness and roughness
-    this.shuttle = this.createObject('object', {
-      id: 'shuttle',
-      collision_id: 'shuttle',
+    // Add child object 'taufighter' with specified metalness and roughness
+    this.taufighter = this.createObject('object', {
+      id: 'taufighter',
+      collision_id: 'taufighter',
       pos: new THREE.Vector3(0, 0, 0),
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1), // Set zdir to 0, 0, -1
@@ -62,8 +62,8 @@ room.registerElement('spacezone-player', {
       roughness: 0.4
     });
 
-    // Add click event listener to shuttle
-    this.shuttle.addEventListener('click', ev => this.startRace());
+    // Add click event listener to taufighter
+    this.taufighter.addEventListener('click', ev => this.startRace());
 
     this.isRacing = false;
     this.raceTime = 0;
@@ -71,7 +71,7 @@ room.registerElement('spacezone-player', {
 
     // Add background music sound object
     this.music = this.createObject('sound', {
-      id: 'music-lastparsec',
+      id: 'music-darkgateway', // Updated music ID if necessary
       loop: true,
       volume: 1.0,
       auto_play: true
