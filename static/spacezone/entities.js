@@ -48,7 +48,7 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
-  turnspeed: 90, // Maximum degrees per second the ship can turn
+  turnspeed: 180, // Increased maximum degrees per second the ship can turn
 
   create() {
     // Initialization code for spacezone-player
