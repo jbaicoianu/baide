@@ -446,5 +446,13 @@
   {
     "role": "Assistant",
     "content": "I've added the `spacezone-planet` element, which accepts `surfacetexture` and `radius` parameters. This element creates a sphere with the specified radius and applies the provided texture as its surface."
+  },
+  {
+    "role": "User",
+    "content": "Remember that custom element attributes don't need to be in a special attributes object, just specify them directly in our element definition, eg,\n\nroom.registerElement('spacezone-planet', {\n  attrname: \"default string value\",\n  otherattrname: 1.2,\n  ...\n})\n\nThen we can access them directly as this.attrname"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-planet` element to define its attributes directly within the element definition, as per the latest guidelines. Please review the changes and let me know if there are any additional adjustments or if you'd like to apply similar updates to other elements."
   }
 ]
