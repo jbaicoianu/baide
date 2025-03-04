@@ -494,5 +494,13 @@
   {
     "role": "Assistant",
     "content": "I've added the `spacezone-star` element as requested. This new element creates a sphere without a texture and includes a light source with configurable intensity. Let me know if you have any additional requirements or suggestions."
+  },
+  {
+    "role": "User",
+    "content": "Set lighting: false on our star's sphere object"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-star` element to set `lighting: false` on the star's sphere object as requested. This change ensures that the star's sphere does not receive lighting from the scene, maintaining its consistent appearance."
   }
 ]
