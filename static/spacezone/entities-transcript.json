@@ -430,5 +430,13 @@
   {
     "role": "Assistant",
     "content": "I have updated the `spacezone-player` element to set the shuttle's material metalness to `0.2` and roughness to `0.4`. Additionally, I noticed that the `spacezone-asteroidfield` element contains duplicate `update` methods, which might cause unexpected behavior. It would be advisable to consolidate them into a single `update` method."
+  },
+  {
+    "role": "User",
+    "content": "metalness and roughness params should be passed directly as parameters, not as part of a materials subobject"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-player` element to pass `metalness` and `roughness` directly as parameters instead of within a `material` subobject. This change aligns with the project's requirements for parameter handling. Please review the updated code to ensure it integrates smoothly with the rest of the project."
   }
 ]
