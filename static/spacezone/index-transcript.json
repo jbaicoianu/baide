@@ -270,5 +270,13 @@
   {
     "role": "Assistant",
     "content": "Added the new image asset `milkyway` with the provided URL to the assets section. Please verify the URL to ensure it is accessible and consider where in the application this asset will be utilized."
+  },
+  {
+    "role": "User",
+    "content": "switch our skybox to milkyway"
+  },
+  {
+    "role": "Assistant",
+    "content": "Sure, I have updated the skybox to \"milkyway\". Let me know if you have any further changes or suggestions."
   }
 ]
