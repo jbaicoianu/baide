@@ -82,11 +82,13 @@ room.registerElement('spacezone-player', {
       'targeting': { defaultbindings: 'mouse_delta' }
     });
 
-    // Add targeting reticle
+    // Add targeting reticle as a sphere placeholder
     this.reticle = this.createObject('object', {
       id: 'targeting-reticle',
-      col: 'red',
-      scale: new THREE.Vector3(0.1, 0.1, 0.1),
+      object: new THREE.Mesh(
+        new THREE.SphereGeometry(0.1, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 'red' })
+      ),
       pos: new THREE.Vector3(0, 0, -1) // Positioned 1 meter in front
     });
   },
