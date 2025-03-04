@@ -295,9 +295,6 @@ room.registerElement('spacezone-star', {
       distance: 100, // Adjust distance as needed
       decay: 2, // Light decay rate
     });
-
-    // Optional: Parent the light to the star for unified transformations
-    this.starObject.appendChild(this.lightObject);
   },
   update(dt) {
     // Update logic for spacezone-star if needed
