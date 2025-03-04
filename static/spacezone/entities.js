@@ -256,3 +256,67 @@ room.registerElement('spacezone-asteroidfield', {
     // Rotation is now handled by the physics engine using rotate_deg_per_sec
   }
 });
+
+room.registerElement('spacezone-planet', {
+  attributes: {
+    surfacetexture: 'string',
+    radius: 'number'
+  },
+  create() {
+    const textureId = this.getAttribute('surfacetexture');
+    const radius = parseFloat(this.getAttribute('radius')) || 5;
+
+    // Retrieve the texture from assets
+    const textureAsset = this.findParent('janus-viewer').querySelector(`assetimage[id="${textureId}"]`);
+    if (!textureAsset) {
+      console.error(`Texture with id "${textureId}" not found in assets.`);
+      return;
+    }
+    const textureUrl = textureAsset.getAttribute('src');
+
+    // Load the texture
+    const loader = new THREE.TextureLoader();
+    loader.load(textureUrl, (texture) => {
+      // Create sphere geometry
+      const geometry = new THREE.SphereGeometry(radius, 32, 32);
+
+      // Create material with the loaded texture
+      const material = new THREE.MeshStandardMaterial({
+        map: texture,
+        metalness: 0.0,
+        roughness: 1.0
+      });
+
+      // Create mesh
+      this.sphereMesh = new THREE.Mesh(geometry, material);
+
+      // Create the object with the mesh
+      this.planetObject = this.createObject('object', {
+        object: this.sphereMesh,
+        collidable: false,
+        pickable: false
+      });
+
+      // Set position if provided
+      const posAttr = this.getAttribute('pos');
+      if (posAttr) {
+        const pos = parseVector3(posAttr);
+        this.planetObject.pos = pos;
+      }
+
+      // Append to the room
+      this.appendChild(this.planetObject);
+    }, undefined, (err) => {
+      console.error(`Error loading texture from "${textureUrl}":`, err);
+    });
+  },
+  update(dt) {
+    // Update logic for spacezone-planet if needed
+  }
+});
+
+// Helper function to parse vector3 strings
+function parseVector3(str) {
+  const parts = str.split(' ').map(Number);
+  return new THREE.Vector3(parts[0] || 0, parts[1] || 0, parts[2] || 0);
+}
