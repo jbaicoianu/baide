@@ -93,7 +93,7 @@ room.registerElement('spacezone-player', {
     });
 
     // Initialize current orientation
-    this.currentYaw = 0;
+    this.currentYaw = 180;
     this.currentPitch = 0;
   },
   startRace() {
