@@ -73,7 +73,8 @@ room.registerElement('spacezone-player', {
     this.music = this.createObject('sound', {
       id: 'music-lastparsec',
       loop: true,
-      volume: 1.0
+      volume: 1.0,
+      auto_play: true
     });
   },
   startRace() {
