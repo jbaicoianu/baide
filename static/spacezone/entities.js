@@ -261,52 +261,21 @@ room.registerElement('spacezone-planet', {
   surfacetexture: 'black',
   radius: 6.38e6,
   create() {
-    const textureId = this.surfacetexture;
-    const radius = parseFloat(this.radius) || 5;
-
-    // Retrieve the texture from assets
-    const textureAsset = this.findParent('janus-viewer').querySelector(`assetimage[id="${textureId}"]`);
-    if (!textureAsset) {
-      console.error(`Texture with id "${textureId}" not found in assets.`);
-      return;
-    }
-    const textureUrl = textureAsset.getAttribute('src');
-
-    // Load the texture
-    const loader = new THREE.TextureLoader();
-    loader.load(textureUrl, (texture) => {
-      // Create sphere geometry
-      const geometry = new THREE.SphereGeometry(radius, 32, 32);
-
-      // Create material with the loaded texture
-      const material = new THREE.MeshStandardMaterial({
-        map: texture,
-        metalness: 0.0,
-        roughness: 1.0
-      });
-
-      // Create mesh
-      this.sphereMesh = new THREE.Mesh(geometry, material);
-
-      // Create the object with the mesh
-      this.planetObject = this.createObject('object', {
-        object: this.sphereMesh,
-        collidable: false,
-        pickable: false
-      });
-
-      // Set position if provided
-      const posAttr = this.getAttribute('pos');
-      if (posAttr) {
-        const pos = parseVector3(posAttr);
-        this.planetObject.pos = pos;
-      }
-
-      // Append to the room
-      this.appendChild(this.planetObject);
-    }, undefined, (err) => {
-      console.error(`Error loading texture from "${textureUrl}":`, err);
+    // Create the sphere object using JanusXR syntax
+    this.planetObject = this.createObject('object', {
+      id: 'sphere',
+      image_id: this.surfacetexture
     });
+
+    // Set position if provided
+    const posAttr = this.getAttribute('pos');
+    if (posAttr) {
+      const pos = parseVector3(posAttr);
+      this.planetObject.pos = pos;
+    }
+
+    // Append to the room
+    this.appendChild(this.planetObject);
   },
   update(dt) {
     // Update logic for spacezone-planet if needed
