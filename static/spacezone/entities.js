@@ -273,3 +273,33 @@ room.registerElement('spacezone-planet', {
     // Update logic for spacezone-planet if needed
   }
 });
+
+room.registerElement('spacezone-star', {
+  intensity: 1.0,
+  radius: 5,
+  create() {
+    // Create the star sphere without a texture
+    this.starObject = this.createObject('object', {
+      id: 'sphere',
+      scale: V(this.radius * 2),
+      col: 'yellow', // Optional: set a color for visibility
+      rotate_deg_per_sec: 0, // Stars typically don't rotate
+    });
+
+    // Create a light source associated with the star
+    this.lightObject = this.createObject('light', {
+      type: 'point', // Assuming a point light; adjust as necessary
+      intensity: this.intensity,
+      pos: this.starObject.pos, // Position the light at the star's location
+      col: 'white', // Light color
+      distance: 100, // Adjust distance as needed
+      decay: 2, // Light decay rate
+    });
+
+    // Optional: Parent the light to the star for unified transformations
+    this.starObject.appendChild(this.lightObject);
+  },
+  update(dt) {
+    // Update logic for spacezone-star if needed
+  }
+});
