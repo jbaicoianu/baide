@@ -76,6 +76,19 @@ room.registerElement('spacezone-player', {
       volume: 1.0,
       auto_play: true
     });
+
+    // Add control context for targeting
+    this.controlstate = this.addControlContext('spacezone-player', {
+      'targeting': { defaultbinding: 'mouse_delta' }
+    });
+
+    // Add targeting reticle
+    this.reticle = this.createObject('object', {
+      id: 'targeting-reticle',
+      col: 'red',
+      scale: new THREE.Vector3(0.1, 0.1, 0.1),
+      pos: new THREE.Vector3(0, 0, -1) // Positioned 1 meter in front
+    });
   },
   startRace() {
     this.isRacing = true;
@@ -125,6 +138,19 @@ room.registerElement('spacezone-player', {
         this.isRacing = false;
         console.log('Race completed!');
       }
+    }
+
+    // Handle targeting reticle movement based on mouse delta
+    const targetingDelta = this.controlstate.targeting;
+    if (targetingDelta) {
+      // Assuming targetingDelta has x and y properties
+      this.reticle.pos.x += targetingDelta.x;
+      this.reticle.pos.y += targetingDelta.y;
+      
+      // Optional: Clamp reticle position within certain bounds
+      const maxOffset = 5; // Example maximum offset
+      this.reticle.pos.x = Math.max(-maxOffset, Math.min(maxOffset, this.reticle.pos.x));
+      this.reticle.pos.y = Math.max(-maxOffset, Math.min(maxOffset, this.reticle.pos.y));
     }
   }
 });
