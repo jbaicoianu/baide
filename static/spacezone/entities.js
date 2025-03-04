@@ -84,11 +84,8 @@ room.registerElement('spacezone-player', {
 
     // Add targeting reticle as a sphere placeholder
     this.reticle = this.createObject('object', {
-      id: 'targeting-reticle',
-      object: new THREE.Mesh(
-        new THREE.SphereGeometry(0.1, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 'red' })
-      ),
+      id: 'sphere',
+      col: 'red',
       pos: new THREE.Vector3(0, 0, -1) // Positioned 1 meter in front
     });
   },
