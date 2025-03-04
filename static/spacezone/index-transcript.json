@@ -182,5 +182,13 @@
   {
     "role": "Assistant",
     "content": "I have added the new `nebula` asset image and updated the `skybox_equi` attribute to use this new image. Please review the changes to ensure the new skybox integrates correctly with your scene. Let me know if you need any further adjustments or have additional assets to include."
+  },
+  {
+    "role": "User",
+    "content": "Add a new assetimage called mars-surface pointing to https://raw.githubusercontent.com/jbaicoianu/elation-component-space/refs/heads/master/images/mars_2k_color.png. Then add a <spacezone-planet> element with surfacetexture \"mars-surface\""
+  },
+  {
+    "role": "Assistant",
+    "content": "The requested changes have been implemented. A new `assetimage` named `mars-surface` has been added, and a `<spacezone-planet>` element with `surfacetexture` set to `\"mars-surface\"` has been included within the `spacezone-level`. Please let me know if you require any additional configurations for the `<spacezone-planet>` element."
   }
 ]
