@@ -87,7 +87,7 @@ room.registerElement('spacezone-player', {
       id: 'sphere',
       col: 'red',
       scale: V(.1),
-      pos: new THREE.Vector3(0, 0, -1) // Positioned 1 meter in front
+      pos: new THREE.Vector3(0, 0, -2) // Positioned 1 meter in front
     });
   },
   startRace() {
