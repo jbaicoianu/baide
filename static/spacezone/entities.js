@@ -284,6 +284,7 @@ room.registerElement('spacezone-star', {
       scale: V(this.radius * 2),
       col: 'yellow', // Optional: set a color for visibility
       rotate_deg_per_sec: 0, // Stars typically don't rotate
+      lighting: false
     });
 
     // Create a light source associated with the star
