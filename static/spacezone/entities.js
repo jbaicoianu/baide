@@ -49,6 +49,7 @@ room.registerElement('spacezone-level', {
 
 room.registerElement('spacezone-player', {
   rollspeed: 120, // Updated turnrate to 120 degrees per second
+  offsetRange: 20, // Configurable range for x and y offsets
 
   create() {
     // Initialization code for spacezone-player
@@ -141,6 +142,20 @@ room.registerElement('spacezone-player', {
 
         // Update the player's position
         this.pos = position;
+
+        // Apply x and y offsets based on shuttle's rotation
+        const rollRad = THREE.MathUtils.degToRad(this.currentRoll);
+        const pitchRad = THREE.MathUtils.degToRad(this.currentPitch);
+
+        let offsetX = Math.sin(rollRad) * this.offsetRange;
+        let offsetY = Math.sin(pitchRad) * this.offsetRange;
+
+        // Clamp offsets within the configured range
+        offsetX = Math.max(-this.offsetRange, Math.min(this.offsetRange, offsetX));
+        offsetY = Math.max(-this.offsetRange, Math.min(this.offsetRange, offsetY));
+
+        // Apply the offset to the shuttle object
+        this.taufighter.pos.set(offsetX, offsetY, 0);
       }
 
       if(t >= 1){
