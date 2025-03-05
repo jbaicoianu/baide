@@ -646,5 +646,13 @@
   {
     "role": "Assistant",
     "content": "I've renamed all instances of 'yaw' to 'roll' and increased the turnrate to 120 as requested. Please review the changes to ensure they align with your project requirements."
+  },
+  {
+    "role": "User",
+    "content": "Ok great. Now, we want to use the direction our shuttle is facing to allow our ship some x and y offset from the path it is following, constrained within a configurable range, defaulting to 20 units to start. Make sure to apply this offset to the shuttle object and use the shuttle's rotation, not to our spacezone-player object - and do not change the logic for pitch and roll, as this is working perfectly."
+  },
+  {
+    "role": "Assistant",
+    "content": "I have implemented the requested functionality to apply x and y offsets to the shuttle based on its facing direction, constrained within a configurable range of 20 units by default. The offsets are applied to the `taufighter` object using its rotation, without altering the existing pitch and roll logic. Please review the changes and let me know if you have any questions or further adjustments."
   }
 ]
