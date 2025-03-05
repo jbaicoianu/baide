@@ -654,5 +654,13 @@
   {
     "role": "Assistant",
     "content": "I have implemented the requested functionality to apply x and y offsets to the shuttle based on its facing direction, constrained within a configurable range of 20 units by default. The offsets are applied to the `taufighter` object using its rotation, without altering the existing pitch and roll logic. Please review the changes and let me know if you have any questions or further adjustments."
+  },
+  {
+    "role": "User",
+    "content": "The ship movement isn't quite right. It feels like we're just using mouse x and y position to change our offset - but what we want is something that feels more like a proper inertial flight model. Our mouse movement changes the orientation of the ship - this is working well - but then we want the ship to feel like it's \"thrusting forwards\", eg, if the ship is facing down and to the left, our offset moves down and to the left, while out z position moves along the rail at our fixed speed."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `spacezone-player` element to implement a more realistic inertial flight model. The ship now maintains a velocity that updates based on its orientation, providing a thrusting effect in the direction it's facing. This should create a more immersive and responsive movement experience."
   }
 ]
