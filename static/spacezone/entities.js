@@ -50,6 +50,8 @@ room.registerElement('spacezone-level', {
 room.registerElement('spacezone-player', {
   rollspeed: 120, // Updated turnrate to 120 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
+  thrust: 10, // Thrust force applied when moving forward
+  velocity: new THREE.Vector3(0, 0, 0), // Initialize velocity vector
 
   create() {
     // Initialization code for spacezone-player
@@ -210,6 +212,28 @@ room.registerElement('spacezone-player', {
       180,
       this.currentRoll
     );
+
+    // Inertial Flight Model
+    if (this.isRacing) {
+      // Calculate forward direction based on current orientation
+      const forward = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(
+        THREE.MathUtils.degToRad(this.currentPitch),
+        THREE.MathUtils.degToRad(this.currentRoll),
+        0,
+        'XYZ'
+      )).normalize();
+
+      // Apply thrust in the forward direction
+      const thrustVector = forward.multiplyScalar(this.thrust * dt);
+      this.velocity.add(thrustVector);
+
+      // Update position based on velocity
+      this.taufighter.pos.add(this.velocity.clone().multiplyScalar(dt));
+
+      // Apply damping to simulate friction/space resistance
+      const damping = 0.98;
+      this.velocity.multiplyScalar(damping);
+    }
   }
 });
 
