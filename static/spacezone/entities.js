@@ -21,7 +21,7 @@ room.registerElement('spacezone-level', {
       
       // Create the mesh and add it to the room using createObject
       this.tubeMesh = new THREE.Mesh(this.tubeGeometry, this.tubeMaterial);
-      this.tubeObject = this.createObject('object', { object: this.tubeMesh, collidable: false, pickable: false });
+      this.tubeObject = this.createObject('object', { object: this.tubeMesh, collidable: false, pickable: false, visible: false });
     }
 
     // Add the text object above the start point
@@ -48,7 +48,7 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
-  rollspeed: 120, // Updated turnrate to 120 degrees per second
+  rollspeed: 20, // Updated turnrate to 120 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 10, // Thrust force applied when moving forward
   velocity: new THREE.Vector3(0, 0, 0), // Initialize velocity vector
@@ -106,7 +106,7 @@ room.registerElement('spacezone-player', {
     this.isRacing = true;
     this.raceTime = 0;
     this.appendChild(player);
-    player.pos = V(0, 5, -20);
+    player.pos = V(0, 0, -20);
     player.orientation.set(0, 1, 0, 0);
     console.log('Race started!');
     // Switch background music to 'music-darkgateway'
@@ -208,9 +208,9 @@ room.registerElement('spacezone-player', {
 
     // Update the taufighter's orientation
     this.taufighter.rotation.set(
-      -this.currentPitch,
+      this.currentPitch,
       180,
-      this.currentRoll
+      -this.currentRoll
     );
 
     // Inertial Flight Model
