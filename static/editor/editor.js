@@ -87,6 +87,12 @@ function createSummarizeDialog() {
   }
 }
 
+// Function to populate Summarize Project dialog
+function populateSummarizeDialog() {
+  const summarizeContent = document.getElementById('summarizeContent');
+  summarizeContent.innerHTML = '<p>Project summary will be displayed here.</p>';
+}
+
 // Function to open search overlay
 function openSearchOverlay(cm) {
   let overlay = document.getElementById('searchOverlay');
