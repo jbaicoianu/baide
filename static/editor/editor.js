@@ -433,6 +433,14 @@ function showAddBranchInput() {
       
   // Automatically focus on the new branch name input box
   input.focus();
+  
+  // Add event listener for Enter key to submit the branch
+  input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addNewBranch();
+    }
+  });
       
   // /* 
   // CSS for Add Branch Input:
