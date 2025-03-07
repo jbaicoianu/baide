@@ -1,3 +1,13 @@
+// New CSS for active file indication
+const style = document.createElement('style');
+style.innerHTML = `
+  .active-file {
+    background-color: #d3d3d3;
+    font-weight: bold;
+  }
+`;
+document.head.appendChild(style);
+
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -647,6 +657,9 @@ async function openFileInTab(filename, activate = true) {
             
         adjustTabs(); // Adjust tabs after adding a new tab
     
+        // Mark the selected file in the tree view
+        markActiveFileInTree(filename);
+    
         // Hide the "more tabs" dropdown
         const moreDropdown = document.querySelector('#moreTabs .dropdown-content');
         if (moreDropdown) {
@@ -698,6 +711,9 @@ async function switchToTab(filename) {
     console.error('Error switching tabs:', e);
   }
     
+  // Mark the selected file in the tree view
+  markActiveFileInTree(filename);
+    
   // Hide the "more tabs" dropdown
   const moreDropdown = document.querySelector('#moreTabs .dropdown-content');
   if (moreDropdown) {
@@ -733,10 +749,36 @@ function closeTab(filename) {
         document.getElementById('chatBox').innerHTML = '';
         document.getElementById('commitSummaries').innerHTML = '';
         document.getElementById('activeCodingContexts').innerHTML = '';
+        // Remove active file indication from tree
+        removeActiveFileFromTree();
       }
     }
     adjustTabs(); // Adjust tabs after closing a tab
   }
+}
+
+// Function to mark the active file in the tree view
+function markActiveFileInTree(filename) {
+  // Remove previous active file markings
+  removeActiveFileFromTree();
+
+  // Find the file span in the tree and add the active class
+  const projectBrowser = document.getElementById('projectBrowser');
+  const fileSpans = projectBrowser.getElementsByClassName('file');
+  Array.from(fileSpans).forEach(span => {
+    if (span.textContent === filename) {
+      span.classList.add('active-file');
+    }
+  });
+}
+
+// Function to remove active file indication from the tree view
+function removeActiveFileFromTree() {
+  const projectBrowser = document.getElementById('projectBrowser');
+  const activeSpans = projectBrowser.getElementsByClassName('active-file');
+  Array.from(activeSpans).forEach(span => {
+    span.classList.remove('active-file');
+  });
 }
 
 // Append a message to chatBox; content is rendered as Markdown.
