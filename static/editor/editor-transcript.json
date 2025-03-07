@@ -510,5 +510,13 @@
   {
     "role": "Assistant",
     "content": ""
+  },
+  {
+    "role": "User",
+    "content": "Pressing enter in the \"add new branch\" dialog's input box should submit the request"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the \"add new branch\" dialog's input box to submit the request when the Enter key is pressed. This enhancement improves the user experience by allowing quicker branch creation without needing to click the \"Create\" button manually."
   }
 ]
