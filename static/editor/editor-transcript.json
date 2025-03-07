@@ -542,5 +542,13 @@
   {
     "role": "Assistant",
     "content": "Noted that the `populateSummarizeDialog` function was missing. I have added the `populateSummarizeDialog` function to initialize and populate the Summarize Project dialog."
+  },
+  {
+    "role": "User",
+    "content": "Let's modify the project browser so that the currently selected file is indicated in the tree view. If any new CSS is needed, at it to the top of this file."
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project browser to highlight the currently selected file in the tree view. Added necessary CSS at the top of the file to style the active file indicator. Let me know if you have any preferences for the active file styling or if further adjustments are needed."
   }
 ]
