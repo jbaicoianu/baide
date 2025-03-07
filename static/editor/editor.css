@@ -621,3 +621,7 @@ form {
 #overlay.active {
   display: block;
 }
+  .active-file {
+    background-color: #d3d3d3;
+    font-weight: bold;
+  }
