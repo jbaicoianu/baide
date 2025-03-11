@@ -1,9 +1,36 @@
+// /* 
+// CSS for AI Model Dropdown:
+// .ai-model-dropdown {
+//   position: absolute;
+//   top: 10px;
+//   right: 10px;
+//   padding: 5px;
+//   background-color: #2d2d2d;
+//   color: white;
+//   border: 1px solid #444;
+//   border-radius: 4px;
+// }
+// .ai-model-dropdown select {
+//   background-color: #2d2d2d;
+//   color: white;
+//   border: none;
+//   outline: none;
+//   font-size: 14px;
+// }
+// .ai-model-dropdown select:focus {
+//   border: 1px solid #555;
+// }
+// */
+
 let activeFile = null;
 let openFiles = {};
 let editor = null;
 let openDirectories = new Set();
 let fileCodingContexts = {}; // Mapping of filename to contexts
 let allCodingContexts = []; // All available coding contexts
+let fileActiveModels = {}; // Mapping of filename to active model
+let availableModels = []; // List of available AI models
+let defaultModel = ''; // Default AI model
 let lastSearchQuery = '';
 let searchCursor = null;
 let searchDirection = 'forward'; // New variable to track search direction
@@ -599,7 +626,9 @@ async function openFileInTab(filename, activate = true) {
         await loadTranscript(filename);
         // Load coding contexts
         loadFileCodingContexts(filename);
-            
+        // Load active AI model
+        loadFileActiveModel(filename);
+        // Adjust tabs
         adjustTabs(); // Adjust tabs after adding a new tab
     
         // Hide the "more tabs" dropdown
@@ -648,6 +677,8 @@ async function switchToTab(filename) {
       await loadTranscript(filename);
       // Load coding contexts
       loadFileCodingContexts(filename);
+      // Load active AI model
+      loadFileActiveModel(filename);
     }
   } catch (e) {
     console.error('Error switching tabs:', e);
@@ -671,6 +702,9 @@ function closeTab(filename) {
     // Remove coding contexts for the closed file
     delete fileCodingContexts[filename];
     saveFileCodingContexts();
+    // Remove active model for the closed file
+    delete fileActiveModels[filename];
+    saveFileActiveModels();
     // If the closed tab was active, switch to another tab
     if (activeFile === filename) {
       const remainingTabs = document.querySelectorAll('#tabs .tab');
@@ -688,6 +722,8 @@ function closeTab(filename) {
         document.getElementById('chatBox').innerHTML = '';
         document.getElementById('commitSummaries').innerHTML = '';
         document.getElementById('activeCodingContexts').innerHTML = '';
+        // Reset AI model dropdown
+        resetAIDropdown();
       }
     }
     adjustTabs(); // Adjust tabs after closing a tab
@@ -831,11 +867,14 @@ function setupEventListeners() {
     // Gather active context names
     const contexts = fileCodingContexts[activeFile] ? fileCodingContexts[activeFile].map(ctx => ctx.name) : [];
     
+    // Get active AI model for the current file
+    const activeModel = fileActiveModels[activeFile] || defaultModel;
+    
     try {
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts })
+        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts, model: activeModel })
       });
       if (response.ok) {
         const data = await response.json();
@@ -919,6 +958,9 @@ function setupEventListeners() {
     }
   }
 
+  // Create AI Model Dropdown in chat container
+  createAIDropdown();
+
   // Global keydown listener for Ctrl+F
   document.addEventListener('keydown', function(e) {
     if (e.ctrlKey && (e.key === 'f' || e.key === 'F')) {
@@ -928,62 +970,102 @@ function setupEventListeners() {
   });
 }
 
-// Function to load coding contexts for the active file from localStorage
-function loadFileCodingContexts(filename) {
-  const contextsContainer = document.getElementById('activeCodingContexts');
-  if (!contextsContainer) return;
+// Function to create AI Model Dropdown
+function createAIDropdown() {
+  const chatBox = document.getElementById('chatBox');
+  if (!chatBox) return;
 
-  // Clear existing badges to ensure the list is empty
-  contextsContainer.innerHTML = '';
+  // Create container for dropdown
+  let aiDropdownContainer = document.getElementById('aiModelDropdownContainer');
+  if (!aiDropdownContainer) {
+    aiDropdownContainer = document.createElement('div');
+    aiDropdownContainer.id = 'aiModelDropdownContainer';
+    aiDropdownContainer.className = 'ai-model-dropdown';
 
-  const contexts = fileCodingContexts[filename] || [];
-  
-  // Only populate the list if there are assigned contexts
-  contexts.forEach(ctx => {
-    appendCodingContext(ctx);
-  });
-  scrollToBottom(contextsContainer);
-}
+    const modelSelect = document.createElement('select');
+    modelSelect.id = 'aiModelSelect';
 
-// Function to update context selector options based on allCodingContexts
-function updateContextSelectorOptions() {
-  const contextSelector = document.getElementById('contextSelector');
-  if (contextSelector) {
-    // Remove existing options except the default
-    while (contextSelector.options.length > 1) {
-      contextSelector.remove(1);
-    }
-    // Add fetched contexts
-    allCodingContexts.forEach(ctx => {
-      const option = document.createElement('option');
-      option.value = ctx.name;
-      option.textContent = ctx.name;
-      contextSelector.appendChild(option);
+    // Add default option
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'Loading models...';
+    modelSelect.appendChild(defaultOption);
+
+    // Add event listener for model change
+    modelSelect.addEventListener('change', (e) => {
+      const selectedModel = e.target.value;
+      if (activeFile) {
+        fileActiveModels[activeFile] = selectedModel;
+        saveFileActiveModels();
+      }
     });
+
+    aiDropdownContainer.appendChild(modelSelect);
+    chatBox.parentElement.style.position = 'relative'; // Ensure positioning
+    chatBox.parentElement.appendChild(aiDropdownContainer);
   }
 }
 
-// Function to add a coding context
-function addCodingContext(event) {
-  const selectedContextName = event.target.value;
-  if (!selectedContextName) return;
-    
-  const selectedContext = allCodingContexts.find(ctx => ctx.name === selectedContextName);
-  if (!selectedContext) return;
-    
-  if (!fileCodingContexts[activeFile]) {
-    fileCodingContexts[activeFile] = [];
+// Function to reset AI Model Dropdown
+function resetAIDropdown() {
+  const modelSelect = document.getElementById('aiModelSelect');
+  if (modelSelect) {
+    modelSelect.innerHTML = '';
+    const defaultOption = document.createElement('option');
+    defaultOption.value = '';
+    defaultOption.textContent = 'No file selected';
+    modelSelect.appendChild(defaultOption);
   }
-    
-  if (!fileCodingContexts[activeFile].some(ctx => ctx.name === selectedContextName)) {
-    const newContext = { name: selectedContext.name, content: selectedContext.content };
-    fileCodingContexts[activeFile].push(newContext);
-    appendCodingContext(newContext);
-    saveFileCodingContexts();
+}
+
+// Function to load and populate AI models
+async function loadAIModals() {
+  try {
+    const response = await fetch('/models');
+    if (response.ok) {
+      const data = await response.json();
+      availableModels = data.models;
+      defaultModel = data.defaultmodel;
+
+      const modelSelect = document.getElementById('aiModelSelect');
+      if (modelSelect) {
+        // Clear existing options
+        modelSelect.innerHTML = '';
+
+        // Populate with models
+        availableModels.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model;
+          option.textContent = model;
+          modelSelect.appendChild(option);
+        });
+
+        // Set default selected model
+        // This will be handled in loadFileActiveModel
+      }
+    } else {
+      console.error('Failed to fetch AI models.');
+    }
+  } catch (e) {
+    console.error('Error fetching AI models:', e);
   }
-    
-  // Reset selector
-  event.target.value = '';
+}
+
+// Function to load active AI model for a file
+function loadFileActiveModel(filename) {
+  const modelSelect = document.getElementById('aiModelSelect');
+  if (!modelSelect) return;
+
+  const activeModel = fileActiveModels[filename] || defaultModel;
+  const modelExists = availableModels.includes(activeModel);
+
+  if (modelExists) {
+    modelSelect.value = activeModel;
+  } else {
+    modelSelect.value = defaultModel;
+    fileActiveModels[filename] = defaultModel;
+    saveFileActiveModels();
+  }
 }
 
 // Save file coding contexts to localStorage
@@ -996,6 +1078,19 @@ function loadFileCodingContextsFromStorage() {
   const storedContexts = localStorage.getItem('fileCodingContexts');
   if (storedContexts) {
     fileCodingContexts = JSON.parse(storedContexts);
+  }
+}
+
+// Save file active models to localStorage
+function saveFileActiveModels() {
+  localStorage.setItem('fileActiveModels', JSON.stringify(fileActiveModels));
+}
+
+// Load file active models from localStorage
+function loadFileActiveModelsFromStorage() {
+  const storedModels = localStorage.getItem('fileActiveModels');
+  if (storedModels) {
+    fileActiveModels = JSON.parse(storedModels);
   }
 }
 
@@ -1265,6 +1360,7 @@ function showToast(message, type = 'info') {
 window.onload = async function() {
   initializeCodeMirror();
   loadFileCodingContextsFromStorage();
+  loadFileActiveModelsFromStorage();
   
   // Fetch all coding contexts on load
   try {
@@ -1279,6 +1375,9 @@ window.onload = async function() {
   } catch (e) {
     console.error('Error fetching coding contexts:', e);
   }
+
+  // Load AI Models
+  await loadAIModals();
   
   await loadProjectStructure();
   await loadOpenFiles();
@@ -1289,3 +1388,107 @@ window.onload = async function() {
   setupEventListeners();
   adjustTabs(); // Initial adjustment
 };
+
+// Function to add a coding context
+function addCodingContext(event) {
+  const selectedContextName = event.target.value;
+  if (!selectedContextName) return;
+    
+  const selectedContext = allCodingContexts.find(ctx => ctx.name === selectedContextName);
+  if (!selectedContext) return;
+    
+  if (!fileCodingContexts[activeFile]) {
+    fileCodingContexts[activeFile] = [];
+  }
+    
+  if (!fileCodingContexts[activeFile].some(ctx => ctx.name === selectedContextName)) {
+    const newContext = { name: selectedContext.name, content: selectedContext.content };
+    fileCodingContexts[activeFile].push(newContext);
+    appendCodingContext(newContext);
+    saveFileCodingContexts();
+  }
+    
+  // Reset selector
+  event.target.value = '';
+}
+
+// Function to load coding contexts for the active file from localStorage
+function loadFileCodingContexts(filename) {
+  const contextsContainer = document.getElementById('activeCodingContexts');
+  if (!contextsContainer) return;
+
+  // Clear existing badges to ensure the list is empty
+  contextsContainer.innerHTML = '';
+
+  const contexts = fileCodingContexts[filename] || [];
+  
+  // Only populate the list if there are assigned contexts
+  contexts.forEach(ctx => {
+    appendCodingContext(ctx);
+  });
+  scrollToBottom(contextsContainer);
+}
+
+// Function to update context selector options based on allCodingContexts
+function updateContextSelectorOptions() {
+  const contextSelector = document.getElementById('contextSelector');
+  if (contextSelector) {
+    // Remove existing options except the default
+    while (contextSelector.options.length > 1) {
+      contextSelector.remove(1);
+    }
+    // Add fetched contexts
+    allCodingContexts.forEach(ctx => {
+      const option = document.createElement('option');
+      option.value = ctx.name;
+      option.textContent = ctx.name;
+      contextSelector.appendChild(option);
+    });
+  }
+}
+
+// Function to load active AI models for all files from localStorage
+function loadFileActiveModelsFromStorage() {
+  const storedModels = localStorage.getItem('fileActiveModels');
+  if (storedModels) {
+    fileActiveModels = JSON.parse(storedModels);
+  }
+}
+
+// Function to save active AI models for all files to localStorage
+function saveFileActiveModels() {
+  localStorage.setItem('fileActiveModels', JSON.stringify(fileActiveModels));
+}
+
+// Function to load and populate AI models on startup
+async function loadAIModals() {
+  try {
+    const response = await fetch('/models');
+    if (response.ok) {
+      const data = await response.json();
+      availableModels = data.models;
+      defaultModel = data.defaultmodel;
+
+      const modelSelect = document.getElementById('aiModelSelect');
+      if (modelSelect) {
+        // Clear existing options
+        modelSelect.innerHTML = '';
+
+        // Populate with models
+        availableModels.forEach(model => {
+          const option = document.createElement('option');
+          option.value = model;
+          option.textContent = model;
+          modelSelect.appendChild(option);
+        });
+
+        // Set default selected model
+        // This will be handled in loadFileActiveModel
+      }
+    } else {
+      console.error('Failed to fetch AI models.');
+    }
+  } catch (e) {
+    console.error('Error fetching AI models:', e);
+  }
+}
