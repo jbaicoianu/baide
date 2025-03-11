@@ -410,7 +410,8 @@ def chat():
         "role": "User",
         "content": user_input,
         "timestamp": timestamp,
-        "branch": current_branch
+        "branch": current_branch,
+        "model": model
     })
 
     # Load specified contexts
@@ -440,7 +441,7 @@ def chat():
         )
     except Exception as e:
         error_msg = f"Error calling OpenAI API: {str(e)}"
-        chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch})
+        chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
         update_transcript(file_name)
         return jsonify(chat_histories[file_name]), 500
 
@@ -450,7 +451,8 @@ def chat():
         "role": "Assistant",
         "content": professional_message,
         "timestamp": datetime.utcnow().isoformat() + "Z",
-        "branch": current_branch
+        "branch": current_branch,
+        "model": model
     })
 
     new_file_content = extract_code(reply)
@@ -471,9 +473,9 @@ def chat():
                 f.write(new_file_content)
             commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
             if not commit_changes(file_name, commit_msg):
-                chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch})
+                chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
         else:
-            chat_histories[file_name].append({"role": "Assistant", "content": "No changes detected.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch})
+            chat_histories[file_name].append({"role": "Assistant", "content": "No changes detected.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
 
     update_transcript(file_name)
     return jsonify(chat_histories[file_name])
