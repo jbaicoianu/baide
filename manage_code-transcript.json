@@ -412,5 +412,19 @@
     "content": "I've updated the project to include the active model's name in each entry of the chat history. This enhancement will help in tracking which model was used for each interaction. Let me know if you have any additional requirements or suggestions.",
     "timestamp": "2025-03-11T20:35:00.551546Z",
     "branch": "main"
+  },
+  {
+    "role": "User",
+    "content": "Instead of hardcoding the list of models, call the openai.models.list() function",
+    "timestamp": "2025-03-11T23:25:06.736962Z",
+    "branch": "main",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the code to dynamically retrieve the list of available OpenAI models using the `openai.models.list()` function instead of the previously hardcoded list. This ensures that the application always uses the most current set of models provided by OpenAI. Additionally, I added error handling to maintain functionality even if the API call fails.",
+    "timestamp": "2025-03-11T23:25:53.021157Z",
+    "branch": "main",
+    "model": "o1-mini"
   }
 ]
