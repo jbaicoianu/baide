@@ -530,5 +530,17 @@
     "content": "To implement the requested feature, I've added a dropdown for selecting AI models in the top right of the chat container. The dropdown fetches available models from the `/models` endpoint, selects the default model or the previously active model for each file, and stores the active model per file in `localStorage`. This ensures the selected model persists across sessions and tab switches.",
     "timestamp": "2025-03-11T07:16:40.546821Z",
     "branch": "main"
+  },
+  {
+    "role": "User",
+    "content": "Our model selector is being created after loadAIModals() is called. Don't load the models until after the select is created.",
+    "timestamp": "2025-03-11T07:35:54.402644Z",
+    "branch": "main"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've adjusted the initialization sequence to ensure the AI model selector is created before loading the models. Additionally, I removed a duplicate `loadAIModals()` function to prevent potential conflicts.",
+    "timestamp": "2025-03-11T07:37:46.268336Z",
+    "branch": "main"
   }
 ]
