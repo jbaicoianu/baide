@@ -54,6 +54,12 @@ function initializeCodeMirror() {
       },
       "Ctrl-F": function(cm) {
         openSearchOverlay(cm);
+      },
+      "Ctrl-G": function(cm) { // Added Ctrl+G shortcut
+        if (lastSearchQuery) {
+          performSearch(cm, lastSearchQuery, 'forward');
+          updateSearchIndicator();
+        }
       }
     }
   });
