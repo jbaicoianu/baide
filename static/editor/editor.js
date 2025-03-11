@@ -1051,23 +1051,6 @@ async function loadAIModals() {
   }
 }
 
-// Function to load active AI model for a file
-function loadFileActiveModel(filename) {
-  const modelSelect = document.getElementById('aiModelSelect');
-  if (!modelSelect) return;
-
-  const activeModel = fileActiveModels[filename] || defaultModel;
-  const modelExists = availableModels.includes(activeModel);
-
-  if (modelExists) {
-    modelSelect.value = activeModel;
-  } else {
-    modelSelect.value = defaultModel;
-    fileActiveModels[filename] = defaultModel;
-    saveFileActiveModels();
-  }
-}
-
 // Save file coding contexts to localStorage
 function saveFileCodingContexts() {
   localStorage.setItem('fileCodingContexts', JSON.stringify(fileCodingContexts));
@@ -1084,14 +1067,6 @@ function loadFileCodingContextsFromStorage() {
 // Save file active models to localStorage
 function saveFileActiveModels() {
   localStorage.setItem('fileActiveModels', JSON.stringify(fileActiveModels));
-}
-
-// Load file active models from localStorage
-function loadFileActiveModelsFromStorage() {
-  const storedModels = localStorage.getItem('fileActiveModels');
-  if (storedModels) {
-    fileActiveModels = JSON.parse(storedModels);
-  }
 }
 
 // Function to load the existing source code content for a specific file into CodeMirror
@@ -1376,7 +1351,9 @@ window.onload = async function() {
     console.error('Error fetching coding contexts:', e);
   }
 
-  // Load AI Models
+  setupEventListeners();
+  
+  // Load AI Models after creating the dropdown
   await loadAIModals();
   
   await loadProjectStructure();
@@ -1385,7 +1362,6 @@ window.onload = async function() {
   if (activeFile) {
     await switchToTab(activeFile);
   }
-  setupEventListeners();
   adjustTabs(); // Initial adjustment
 };
 
