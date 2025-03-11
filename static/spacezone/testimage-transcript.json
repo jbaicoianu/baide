@@ -1,0 +1,16 @@
+[
+  {
+    "role": "User",
+    "content": "Create an image of the text \"spacezone\" in a futuristic font, zooming through space",
+    "timestamp": "2025-03-11T23:31:57.073484Z",
+    "branch": "main",
+    "model": "dall-e-3"
+  },
+  {
+    "role": "Assistant",
+    "content": "Error calling OpenAI API: Error code: 403 - {'error': {'message': 'You are not allowed to sample from this model', 'type': 'invalid_request_error', 'param': None, 'code': None}}",
+    "timestamp": "2025-03-11T23:31:57.264932Z",
+    "branch": "main",
+    "model": "dall-e-3"
+  }
+]
