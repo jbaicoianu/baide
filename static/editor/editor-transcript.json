@@ -560,5 +560,17 @@
     "content": "I have added the `Ctrl+G` shortcut to allow users to continue searching to the next match. This enhancement improves the search functionality by providing a convenient keyboard shortcut for navigating through search results.",
     "timestamp": "2025-03-11T07:41:44.284970Z",
     "branch": "main"
+  },
+  {
+    "role": "User",
+    "content": "Make search case insensitive, and also add support for ctrl+shift+g to search backwards",
+    "timestamp": "2025-03-11T07:45:01.595780Z",
+    "branch": "main"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the search functionality to be case insensitive and added support for `Ctrl+Shift+G` to search backwards. Please find the updated code below:",
+    "timestamp": "2025-03-11T07:46:43.282036Z",
+    "branch": "main"
   }
 ]
