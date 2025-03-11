@@ -400,5 +400,17 @@
     "content": "I've updated the `/models` endpoint to include a `defaultmodel` attribute set to `\"o1-mini\"`. Please review the changes below and let me know if there are any additional modifications you'd like.",
     "timestamp": "2025-03-11T07:19:31.557815Z",
     "branch": "main"
+  },
+  {
+    "role": "User",
+    "content": "Please include the name of the active model in the chat history",
+    "timestamp": "2025-03-11T20:34:12.961486Z",
+    "branch": "main"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the project to include the active model's name in each entry of the chat history. This enhancement will help in tracking which model was used for each interaction. Let me know if you have any additional requirements or suggestions.",
+    "timestamp": "2025-03-11T20:35:00.551546Z",
+    "branch": "main"
   }
 ]
