@@ -13,16 +13,26 @@ from datetime import datetime  # Added for timestamping
 API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.Client(api_key=API_KEY)
 
-# Define available OpenAI models
-AVAILABLE_MODELS = [
-    "o1-mini",
-    "gpt-3.5-turbo",
-    "gpt-4",
-    "text-davinci-003",
-    "text-curie-001",
-    "text-babbage-001",
-    "text-ada-001"
-]
+def get_available_models():
+    """Retrieve the list of available OpenAI models dynamically."""
+    try:
+        response = client.models.list()
+        return [model.id for model in response['data']]
+    except Exception as e:
+        print(f"Error fetching available models: {e}")
+        # Fallback to default models if API call fails
+        return [
+            "o1-mini",
+            "gpt-3.5-turbo",
+            "gpt-4",
+            "text-davinci-003",
+            "text-curie-001",
+            "text-babbage-001",
+            "text-ada-001"
+        ]
+
+# Define available OpenAI models dynamically
+AVAILABLE_MODELS = get_available_models()
 
 # Global variables for managing multiple files and debugging.
 ACTIVE_FILES = []
