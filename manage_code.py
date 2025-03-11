@@ -13,6 +13,17 @@ from datetime import datetime  # Added for timestamping
 API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.Client(api_key=API_KEY)
 
+# Define available OpenAI models
+AVAILABLE_MODELS = [
+    "o1-mini",
+    "gpt-3.5-turbo",
+    "gpt-4",
+    "text-davinci-003",
+    "text-curie-001",
+    "text-babbage-001",
+    "text-ada-001"
+]
+
 # Global variables for managing multiple files and debugging.
 ACTIVE_FILES = []
 DEBUG = False
@@ -315,6 +326,11 @@ def project_structure():
     structure = get_directory_structure(project_dir)
     return jsonify(structure)
 
+# New Endpoint: Get Available AI Models
+@app.route("/models", methods=["GET"])
+def get_models():
+    return jsonify({"models": AVAILABLE_MODELS})
+
 def get_current_git_branch():
     """Helper function to get the current Git branch."""
     try:
@@ -381,6 +397,11 @@ def chat():
     file_name = data["file"]
     context_names = data.get("contexts", [])  # List of context names
 
+    # Retrieve the selected model, default to 'o1-mini' if not provided
+    model = data.get("model", "o1-mini")
+    if model not in AVAILABLE_MODELS:
+        return jsonify({"error": f"Model '{model}' is not supported."}), 400
+
     if file_name not in chat_histories:
         load_transcript_from_disk(file_name)
     timestamp = datetime.utcnow().isoformat() + "Z"
@@ -405,7 +426,7 @@ def chat():
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
-    messages = build_prompt_messages(system_prompt, user_input, file_name, "o1-mini", coding_contexts)
+    messages = build_prompt_messages(system_prompt, user_input, file_name, model, coding_contexts)
 
     if DEBUG:
         print("DEBUG: AI prompt messages:")
@@ -413,7 +434,7 @@ def chat():
 
     try:
         response = client.chat.completions.create(
-            model="o1-mini",
+            model=model,
             messages=messages,
             temperature=1
         )
