@@ -7,6 +7,7 @@ import subprocess
 import difflib
 from flask import Flask, request, render_template, send_from_directory, jsonify
 import openai
+from datetime import datetime  # Added for timestamping
 
 # Instantiate an OpenAI client with your API key.
 API_KEY = os.getenv("OPENAI_API_KEY")
@@ -247,6 +248,17 @@ def update_source():
             f.write(new_content)
         commit_msg = "Manually updated source code via web UI."
         if commit_changes(file_name, commit_msg):
+            # Add timestamp and branch to transcript
+            current_branch = get_current_git_branch()
+            timestamp = datetime.utcnow().isoformat() + "Z"
+            transcript_entry = {
+                "role": "User",
+                "content": "Manually updated source code via web UI.",
+                "timestamp": timestamp,
+                "branch": current_branch
+            }
+            chat_histories[file_name].append(transcript_entry)
+            update_transcript(file_name)
             return jsonify({"message": "Source code updated successfully."})
         else:
             return jsonify({"error": "Failed to commit changes to git."}), 500
@@ -270,6 +282,17 @@ def create_file():
             f.write("")  # Create an empty file
         commit_msg = f"Create new file {file_name}"
         if commit_changes(file_name, commit_msg):
+            # Add timestamp and branch to transcript
+            current_branch = get_current_git_branch()
+            timestamp = datetime.utcnow().isoformat() + "Z"
+            transcript_entry = {
+                "role": "System",
+                "content": f"Created new file {file_name}.",
+                "timestamp": timestamp,
+                "branch": current_branch
+            }
+            chat_histories[file_name].append(transcript_entry)
+            update_transcript(file_name)
             return jsonify({"success": True})
         else:
             return jsonify({"error": "Failed to commit new file to git."}), 500
@@ -292,12 +315,20 @@ def project_structure():
     structure = get_directory_structure(project_dir)
     return jsonify(structure)
 
+def get_current_git_branch():
+    """Helper function to get the current Git branch."""
+    try:
+        result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True)
+        current_branch = result.stdout.strip()
+        return current_branch
+    except subprocess.CalledProcessError:
+        return "unknown"
+
 # New Endpoint: Get Current Git Branch
 @app.route("/git_current_branch", methods=["GET"])
 def git_current_branch():
     try:
-        result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True)
-        current_branch = result.stdout.strip()
+        current_branch = get_current_git_branch()
         return jsonify({"current_branch": current_branch})
     except subprocess.CalledProcessError as e:
         return jsonify({"error": "Failed to get current branch.", "details": e.stderr.strip()}), 500
@@ -321,6 +352,7 @@ def git_switch_branch():
     branch = data["branch"]
     try:
         subprocess.run(["git", "checkout", branch], check=True)
+        # Optionally, update the branch name in active transcripts
         return jsonify({"success": True})
     except subprocess.CalledProcessError as e:
         return jsonify({"success": False, "error": f"Failed to switch to branch '{branch}'."}), 500
@@ -351,7 +383,14 @@ def chat():
 
     if file_name not in chat_histories:
         load_transcript_from_disk(file_name)
-    chat_histories[file_name].append({"role": "User", "content": user_input})
+    timestamp = datetime.utcnow().isoformat() + "Z"
+    current_branch = get_current_git_branch()
+    chat_histories[file_name].append({
+        "role": "User",
+        "content": user_input,
+        "timestamp": timestamp,
+        "branch": current_branch
+    })
 
     # Load specified contexts
     coding_contexts = load_contexts_by_names(context_names)
@@ -380,13 +419,18 @@ def chat():
         )
     except Exception as e:
         error_msg = f"Error calling OpenAI API: {str(e)}"
-        chat_histories[file_name].append({"role": "Assistant", "content": error_msg})
+        chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch})
         update_transcript(file_name)
         return jsonify(chat_histories[file_name]), 500
 
     reply = response.choices[0].message.content
     professional_message = extract_professional_message(reply)
-    chat_histories[file_name].append({"role": "Assistant", "content": professional_message})
+    chat_histories[file_name].append({
+        "role": "Assistant",
+        "content": professional_message,
+        "timestamp": datetime.utcnow().isoformat() + "Z",
+        "branch": current_branch
+    })
 
     new_file_content = extract_code(reply)
     commit_summary = extract_commit_summary(reply)
@@ -406,9 +450,9 @@ def chat():
                 f.write(new_file_content)
             commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
             if not commit_changes(file_name, commit_msg):
-                chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git."})
+                chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch})
         else:
-            chat_histories[file_name].append({"role": "Assistant", "content": "No changes detected."})
+            chat_histories[file_name].append({"role": "Assistant", "content": "No changes detected.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch})
 
     update_transcript(file_name)
     return jsonify(chat_histories[file_name])
