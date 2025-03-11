@@ -1,27 +1,3 @@
-// /* 
-// CSS for AI Model Dropdown:
-// .ai-model-dropdown {
-//   position: absolute;
-//   top: 10px;
-//   right: 10px;
-//   padding: 5px;
-//   background-color: #2d2d2d;
-//   color: white;
-//   border: 1px solid #444;
-//   border-radius: 4px;
-// }
-// .ai-model-dropdown select {
-//   background-color: #2d2d2d;
-//   color: white;
-//   border: none;
-//   outline: none;
-//   font-size: 14px;
-// }
-// .ai-model-dropdown select:focus {
-//   border: 1px solid #555;
-// }
-// */
-
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -55,9 +31,15 @@ function initializeCodeMirror() {
       "Ctrl-F": function(cm) {
         openSearchOverlay(cm);
       },
-      "Ctrl-G": function(cm) { // Added Ctrl+G shortcut
+      "Ctrl-G": function(cm) { // Added Ctrl+G shortcut for forward search
         if (lastSearchQuery) {
           performSearch(cm, lastSearchQuery, 'forward');
+          updateSearchIndicator();
+        }
+      },
+      "Ctrl-Shift-G": function(cm) { // Added Ctrl+Shift+G shortcut for backward search
+        if (lastSearchQuery) {
+          performSearch(cm, lastSearchQuery, 'reverse');
           updateSearchIndicator();
         }
       }
@@ -179,13 +161,21 @@ function openSearchOverlay(cm) {
 // Function to perform search using CodeMirror's search addon
 function performSearch(cm, query, direction = 'forward') {
   const doc = cm.getDoc();
+  const caseInsensitive = true; // Enable case insensitive search
 
   if (query !== lastSearchQuery || searchResults.length === 0) {
     // Reset search results
     searchResults = [];
-    let cursor = doc.getSearchCursor(query, { line: 0, ch: 0 });
+    const searchOptions = { line: 0, ch: 0 };
+    let cursor = doc.getSearchCursor(query, searchOptions);
     while (cursor.findNext()) {
-      searchResults.push({ from: cursor.from(), to: cursor.to() });
+      const from = cursor.from();
+      const to = cursor.to();
+      // Adjust for case insensitivity
+      const matchedText = doc.getRange(from, to).toLowerCase();
+      if (matchedText === query.toLowerCase()) {
+        searchResults.push({ from, to });
+      }
     }
     totalSearchResults = searchResults.length;
     currentSearchIndex = 0;
