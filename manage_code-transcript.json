@@ -388,5 +388,17 @@
     "content": "No changes detected.",
     "timestamp": "2025-03-11T07:07:13.877419Z",
     "branch": "main"
+  },
+  {
+    "role": "User",
+    "content": "Extend the output of our /models endpoint to include a defaultmodel attribute specifying the default model to use. Set our default to o1-mini.",
+    "timestamp": "2025-03-11T07:18:54.528028Z",
+    "branch": "main"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `/models` endpoint to include a `defaultmodel` attribute set to `\"o1-mini\"`. Please review the changes below and let me know if there are any additional modifications you'd like.",
+    "timestamp": "2025-03-11T07:19:31.557815Z",
+    "branch": "main"
   }
 ]
