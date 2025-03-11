@@ -518,5 +518,17 @@
   {
     "role": "Assistant",
     "content": "I've updated the \"add new branch\" dialog's input box to submit the request when the Enter key is pressed. This enhancement improves the user experience by allowing quicker branch creation without needing to click the \"Create\" button manually."
+  },
+  {
+    "role": "User",
+    "content": "Add a dropdown to the top right of our chat container which displays the available AI models as a dropdown. Get the list by calling the /models endpoint, which will return a json of this format:\n{\n  \"models\": [...],\n  \"defaultmodel\": \"o1-mini\"\n}\nIf the defaultmodel parameter is specified, make sure this item is selected, unless the active model has been changed for this file. Store the active model on a per-file basis in localStorage, and restore the active model whenever we change tabs.\n\nIf any additional CSS is required, add it as a comment at the top of this file.",
+    "timestamp": "2025-03-11T07:14:58.353918Z",
+    "branch": "main"
+  },
+  {
+    "role": "Assistant",
+    "content": "To implement the requested feature, I've added a dropdown for selecting AI models in the top right of the chat container. The dropdown fetches available models from the `/models` endpoint, selects the default model or the previously active model for each file, and stores the active model per file in `localStorage`. This ensures the selected model persists across sessions and tab switches.",
+    "timestamp": "2025-03-11T07:16:40.546821Z",
+    "branch": "main"
   }
 ]
