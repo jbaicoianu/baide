@@ -1018,39 +1018,6 @@ function resetAIDropdown() {
   }
 }
 
-// Function to load and populate AI models
-async function loadAIModals() {
-  try {
-    const response = await fetch('/models');
-    if (response.ok) {
-      const data = await response.json();
-      availableModels = data.models;
-      defaultModel = data.defaultmodel;
-
-      const modelSelect = document.getElementById('aiModelSelect');
-      if (modelSelect) {
-        // Clear existing options
-        modelSelect.innerHTML = '';
-
-        // Populate with models
-        availableModels.forEach(model => {
-          const option = document.createElement('option');
-          option.value = model;
-          option.textContent = model;
-          modelSelect.appendChild(option);
-        });
-
-        // Set default selected model
-        // This will be handled in loadFileActiveModel
-      }
-    } else {
-      console.error('Failed to fetch AI models.');
-    }
-  } catch (e) {
-    console.error('Error fetching AI models:', e);
-  }
-}
-
 // Save file coding contexts to localStorage
 function saveFileCodingContexts() {
   localStorage.setItem('fileCodingContexts', JSON.stringify(fileCodingContexts));
