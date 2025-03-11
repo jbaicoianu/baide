@@ -329,7 +329,7 @@ def project_structure():
 # New Endpoint: Get Available AI Models
 @app.route("/models", methods=["GET"])
 def get_models():
-    return jsonify({"models": AVAILABLE_MODELS})
+    return jsonify({"models": AVAILABLE_MODELS, "defaultmodel": "o1-mini"})
 
 def get_current_git_branch():
     """Helper function to get the current Git branch."""
