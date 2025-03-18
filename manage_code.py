@@ -68,13 +68,15 @@ def load_transcript_from_disk(file_name):
     chat_histories[file_name] = []
     return chat_histories[file_name]
 
-def update_transcript(file_name):
+def update_transcript(file_name, commit_hash=None):
     """Write the current chat_history for the given file to the transcript file and commit it to git."""
     fname = transcript_filename(file_name)
     with open(fname, "w") as f:
         json.dump(chat_histories[file_name], f, indent=2)
     transcript_commit_msg = f"Update transcript for {os.path.basename(file_name)}"
-    commit_changes(fname, transcript_commit_msg)
+    commit_hash = commit_changes(fname, transcript_commit_msg)
+    # Optionally, you can store the commit_hash if needed
+    return commit_hash
 
 def extract_commit_summary(text):
     """Search for a line starting with 'Commit Summary:' at the beginning of a line and return its content."""
@@ -115,13 +117,16 @@ def compute_diff(old_content, new_content):
     return "".join(diff_lines)
 
 def commit_changes(file_path, commit_message):
-    """Stage the given file and commit changes to git with the provided commit message."""
+    """Stage the given file and commit changes to git with the provided commit message. Returns commit hash."""
     try:
         subprocess.run(["git", "add", file_path], check=True)
         subprocess.run(["git", "commit", "-m", commit_message], check=True)
-        return True
+        # Get the latest commit hash
+        result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True)
+        commit_hash = result.stdout.strip()
+        return commit_hash
     except subprocess.CalledProcessError:
-        return False
+        return None
 
 def load_all_contexts():
     """Load all contexts from the contexts/ directory as dictionaries with name and content."""
@@ -269,19 +274,21 @@ def update_source():
     try:
         with open(file_name, "w") as f:
             f.write(new_content)
-        if commit_changes(file_name, commit_message):
-            # Add timestamp and branch to transcript
+        commit_hash = commit_changes(file_name, commit_message)
+        if commit_hash:
+            # Add timestamp, branch, and commit hash to transcript
             current_branch = get_current_git_branch()
             timestamp = datetime.utcnow().isoformat() + "Z"
             transcript_entry = {
                 "role": "User",
                 "content": f"{commit_message} [Manual edit]",
                 "timestamp": timestamp,
-                "branch": current_branch
+                "branch": current_branch,
+                "commit_hash": commit_hash
             }
             chat_histories[file_name].append(transcript_entry)
-            update_transcript(file_name)
-            return jsonify({"message": "Source code updated successfully."})
+            update_transcript(file_name, commit_hash)
+            return jsonify({"message": "Source code updated successfully.", "commit_hash": commit_hash})
         else:
             return jsonify({"error": "Failed to commit changes to git."}), 500
     except Exception as e:
@@ -303,19 +310,21 @@ def create_file():
         with open(file_name, "w") as f:
             f.write("")  # Create an empty file
         commit_msg = f"Create new file {file_name}"
-        if commit_changes(file_name, commit_msg):
-            # Add timestamp and branch to transcript
+        commit_hash = commit_changes(file_name, commit_msg)
+        if commit_hash:
+            # Add timestamp, branch, and commit hash to transcript
             current_branch = get_current_git_branch()
             timestamp = datetime.utcnow().isoformat() + "Z"
             transcript_entry = {
                 "role": "System",
                 "content": f"Created new file {file_name}.",
                 "timestamp": timestamp,
-                "branch": current_branch
+                "branch": current_branch,
+                "commit_hash": commit_hash
             }
             chat_histories[file_name].append(transcript_entry)
-            update_transcript(file_name)
-            return jsonify({"success": True})
+            update_transcript(file_name, commit_hash)
+            return jsonify({"success": True, "commit_hash": commit_hash})
         else:
             return jsonify({"error": "Failed to commit new file to git."}), 500
     except Exception as e:
@@ -472,6 +481,19 @@ def chat():
     if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
         with open(file_name, "w") as f:
             f.write(new_file_content)
+        commit_msg = commit_summary if commit_summary else f"Initial commit based on prompt: {user_input}"
+        commit_hash = commit_changes(file_name, commit_msg)
+        if commit_hash:
+            chat_histories[file_name].append({
+                "role": "Assistant",
+                "content": f"Changes applied. Commit hash: {commit_hash}",
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "branch": current_branch,
+                "commit_hash": commit_hash,
+                "model": model
+            })
+        else:
+            chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
     else:
         try:
             with open(file_name, "r") as f:
@@ -483,12 +505,22 @@ def chat():
             with open(file_name, "w") as f:
                 f.write(new_file_content)
             commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
-            if not commit_changes(file_name, commit_msg):
+            commit_hash = commit_changes(file_name, commit_msg)
+            if commit_hash:
+                chat_histories[file_name].append({
+                    "role": "Assistant",
+                    "content": f"Changes applied. Commit hash: {commit_hash}",
+                    "timestamp": datetime.utcnow().isoformat() + "Z",
+                    "branch": current_branch,
+                    "commit_hash": commit_hash,
+                    "model": model
+                })
+            else:
                 chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
         else:
             chat_histories[file_name].append({"role": "Assistant", "content": "No changes detected.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
 
-    update_transcript(file_name)
+    update_transcript(file_name, commit_hash if 'commit_hash' in locals() else None)
     return jsonify(chat_histories[file_name])
 
 # Main page: serves the HTML page with template reloading logic.
