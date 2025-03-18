@@ -37,7 +37,7 @@ function initializeCodeMirror() {
           updateSearchIndicator();
         }
       },
-      "Ctrl-Shift-G": function(cm) { // Added Ctrl+Shift+G shortcut for backward search
+      "Ctrl-Shift-G": function(cm) { // Added Ctrl+Shift-G shortcut for backward search
         if (lastSearchQuery) {
           performSearch(cm, lastSearchQuery, 'reverse');
           updateSearchIndicator();
@@ -129,6 +129,9 @@ function saveFile(commitMessage) {
       showToast(data.message, 'success');
     } else if (data.error) {
       showToast(data.error, 'error');
+    }
+    if (data.chat_histories) {
+      updateChatHistoryViewer(data.chat_histories);
     }
   })
   .catch(error => {
@@ -328,6 +331,9 @@ function saveFile(commitMessage) {
       showToast(data.message, 'success');
     } else if (data.error) {
       showToast(data.error, 'error');
+    }
+    if (data.chat_histories) {
+      updateChatHistoryViewer(data.chat_histories);
     }
   })
   .catch(error => {
@@ -811,8 +817,8 @@ function closeTab(filename) {
         // Reset AI model dropdown
         resetAIDropdown();
       }
+      adjustTabs(); // Adjust tabs after closing a tab
     }
-    adjustTabs(); // Adjust tabs after closing a tab
   }
 }
 
@@ -1520,4 +1526,34 @@ async function loadAIModals() {
   } catch (e) {
     console.error('Error fetching AI models:', e);
   }
+}
+
+// Function to update the chat history viewer with new chat_histories
+function updateChatHistoryViewer(chatHistories) {
+  const chatBox = document.getElementById('chatBox');
+  const commitSummaries = document.getElementById('commitSummaries');
+  const activeCodingContexts = document.getElementById('activeCodingContexts');
+
+  // Clear existing content
+  chatBox.innerHTML = '';
+  commitSummaries.innerHTML = '';
+  activeCodingContexts.innerHTML = '';
+
+  // Iterate over chatHistories and append messages and summaries
+  chatHistories.forEach(msg => {
+    if (msg.role.toLowerCase() === 'assistant') {
+      const professionalMessage = extract_professional_message(msg.content);
+      appendMessage(msg.role, professionalMessage);
+      const commit = extract_commit_summary(msg.content);
+      if (commit) {
+        appendCommitSummary(commit);
+      }
+    } else {
+      appendMessage(msg.role, msg.content);
+    }
+  });
+
+  // Optionally, scroll to bottom
+  scrollToBottom(chatBox);
+  scrollToBottom(commitSummaries);
 }
