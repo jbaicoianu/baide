@@ -644,5 +644,20 @@
     "timestamp": "2025-03-18T23:22:20.992242Z",
     "branch": "main",
     "commit_hash": "f4e291a11bbde119729746578a9acc85d966ae97"
+  },
+  {
+    "role": "User",
+    "content": "When calling the /update_source endpoint, the backend will give us an updated chat_histories attribute - update our chat history viewer with these new values",
+    "timestamp": "2025-03-18T23:38:38.005987Z",
+    "branch": "main",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the code to handle the `chat_histories` attribute returned by the `/update_source` endpoint. The chat history viewer will now refresh with the new values received from the backend.",
+    "timestamp": "2025-03-18T23:39:46.732643Z",
+    "branch": "main",
+    "commit_hash": "ef7fb8a1ad0532b667811d763853f2ecb0e32f90",
+    "model": "o1-mini"
   }
 ]
