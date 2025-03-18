@@ -288,7 +288,11 @@ def update_source():
             }
             chat_histories[file_name].append(transcript_entry)
             update_transcript(file_name, commit_hash)
-            return jsonify({"message": "Source code updated successfully.", "commit_hash": commit_hash})
+            return jsonify({
+                "message": "Source code updated successfully.",
+                "commit_hash": commit_hash,
+                "chat_history": chat_histories[file_name]
+            })
         else:
             return jsonify({"error": "Failed to commit changes to git."}), 500
     except Exception as e:
