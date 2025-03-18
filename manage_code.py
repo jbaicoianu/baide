@@ -17,8 +17,8 @@ def get_available_models():
     """Retrieve the list of available OpenAI models dynamically."""
     try:
         response = client.models.list()
-        print(response)
-        return [model.id for model in response['data']]
+        print(response.data)
+        return [model.id for model in response.data]
     except Exception as e:
         print(f"Error fetching available models: {e}")
         # Fallback to default models if API call fails
@@ -265,11 +265,11 @@ def update_source():
         return jsonify({"error": "No content or file specified."}), 400
     new_content = data["content"]
     file_name = data["file"]
+    commit_message = data.get("commit_message", "Manually updated source code via web UI.")
     try:
         with open(file_name, "w") as f:
             f.write(new_content)
-        commit_msg = "Manually updated source code via web UI."
-        if commit_changes(file_name, commit_msg):
+        if commit_changes(file_name, commit_message):
             # Add timestamp and branch to transcript
             current_branch = get_current_git_branch()
             timestamp = datetime.utcnow().isoformat() + "Z"
