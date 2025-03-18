@@ -132,8 +132,8 @@ function saveFile(commitMessage) {
     } else if (data.error) {
       showToast(data.error, 'error');
     }
-    if (data.chat_histories) {
-      updateChatHistoryViewer(data.chat_histories);
+    if (data.chat_history) {
+      updateChatHistoryViewer(data.chat_history);
     }
   })
   .catch(error => {
@@ -334,8 +334,8 @@ function saveFile(commitMessage) {
     } else if (data.error) {
       showToast(data.error, 'error');
     }
-    if (data.chat_histories) {
-      updateChatHistoryViewer(data.chat_histories);
+    if (data.chat_history) {
+      updateChatHistoryViewer(data.chat_history);
     }
   })
   .catch(error => {
