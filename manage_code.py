@@ -275,7 +275,7 @@ def update_source():
             timestamp = datetime.utcnow().isoformat() + "Z"
             transcript_entry = {
                 "role": "User",
-                "content": "Manually updated source code via web UI.",
+                "content": f"{commit_message} [Manual edit]",
                 "timestamp": timestamp,
                 "branch": current_branch
             }
