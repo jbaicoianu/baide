@@ -1,3 +1,64 @@
+/*
+/* 
+CSS for Commit Message Popup:
+#commitMessageOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(5px);
+  background-color: rgba(0, 0, 0, 0.5);
+  display: none; /* Hidden by default */
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+#commitMessageBox {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 300px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#commitMessageBox h2 {
+  margin-top: 0;
+  font-size: 18px;
+}
+
+#commitMessageBox textarea {
+  width: 100%;
+  height: 100px;
+  resize: none;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+#commitMessageBox .buttons {
+  text-align: right;
+}
+
+#commitMessageBox .buttons button {
+  padding: 6px 12px;
+  margin-left: 5px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+#commitMessageBox .buttons .save-btn {
+  background-color: #4CAF50;
+  color: white;
+}
+
+#commitMessageBox .buttons .cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+*/
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -26,7 +87,7 @@ function initializeCodeMirror() {
     indentUnit: 4,
     extraKeys: {
       "Ctrl-S": function(cm) {
-        saveFile();
+        promptCommitMessage();
       },
       "Ctrl-F": function(cm) {
         openSearchOverlay(cm);
@@ -44,6 +105,85 @@ function initializeCodeMirror() {
         }
       }
     }
+  });
+}
+
+// Function to prompt for commit message
+function promptCommitMessage() {
+  // Create overlay if it doesn't exist
+  let overlay = document.getElementById('commitMessageOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'commitMessageOverlay';
+
+    const box = document.createElement('div');
+    box.id = 'commitMessageBox';
+
+    const title = document.createElement('h2');
+    title.textContent = 'Commit Message';
+    box.appendChild(title);
+
+    const textarea = document.createElement('textarea');
+    textarea.id = 'commitMessageInput';
+    textarea.placeholder = 'Enter commit message...';
+    box.appendChild(textarea);
+
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'buttons';
+
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'save-btn';
+    saveBtn.textContent = 'Save';
+    saveBtn.addEventListener('click', () => {
+      const message = textarea.value.trim();
+      if (message) {
+        overlay.style.display = 'none';
+        saveFile(message);
+      } else {
+        showToast('Commit message cannot be empty.', 'error');
+      }
+    });
+
+    const cancelBtn = document.createElement('button');
+    cancelBtn.className = 'cancel-btn';
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+
+    buttonsDiv.appendChild(cancelBtn);
+    buttonsDiv.appendChild(saveBtn);
+    box.appendChild(buttonsDiv);
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  }
+
+  // Show the overlay
+  overlay.style.display = 'flex';
+  document.getElementById('commitMessageInput').focus();
+}
+
+// Save file function triggered by Ctrl+S with commit message
+function saveFile(commitMessage) {
+  if (!activeFile) return;
+  const updatedContent = editor.getValue();
+  fetch('/update_source', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.message) {
+      showToast(data.message, 'success');
+    } else if (data.error) {
+      showToast(data.error, 'error');
+    }
+  })
+  .catch(error => {
+    showToast('Error saving file.', 'error');
+    console.error('Error saving file:', error);
   });
 }
 
@@ -223,14 +363,14 @@ function updateSearchIndicator() {
   }
 }
 
-// Save file function triggered by Ctrl+S
-function saveFile() {
+// Save file function triggered by Ctrl+S with commit message
+function saveFile(commitMessage) {
   if (!activeFile) return;
   const updatedContent = editor.getValue();
   fetch('/update_source', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent })
+    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage })
   })
   .then(response => response.json())
   .then(data => {
