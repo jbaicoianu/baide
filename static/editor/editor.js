@@ -69,6 +69,17 @@ function promptCommitMessage() {
     textarea.placeholder = 'Enter commit message...';
     box.appendChild(textarea);
 
+    // Add keydown event listener for Ctrl+Enter and Esc
+    textarea.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        saveBtn.click();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelBtn.click();
+      }
+    });
+
     const buttonsDiv = document.createElement('div');
     buttonsDiv.className = 'buttons';
 
