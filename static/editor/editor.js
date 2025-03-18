@@ -14,8 +14,6 @@ let totalSearchResults = 0;
 let currentSearchIndex = 0;
 let searchResults = []; // Array to store all search match positions
 
-// test message
-
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
   const textarea = document.getElementById('sourceCode');
