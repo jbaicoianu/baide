@@ -471,60 +471,52 @@ def chat():
 
     reply = response.choices[0].message.content
     professional_message = extract_professional_message(reply)
+    new_file_content = extract_code(reply)
+    commit_summary = extract_commit_summary(reply)
+
+    commit_hash = None  # Initialize commit_hash
+
+    if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
+        try:
+            with open(file_name, "w") as f:
+                f.write(new_file_content)
+            commit_msg = commit_summary if commit_summary else f"Initial commit based on prompt: {user_input}"
+            commit_hash = commit_changes(file_name, commit_msg)
+            if not commit_hash:
+                raise Exception("Failed to commit changes to git.")
+        except Exception as e:
+            error_msg = f"Error applying changes: {str(e)}"
+            chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+            update_transcript(file_name)
+            return jsonify(chat_histories[file_name]), 500
+    else:
+        try:
+            with open(file_name, "r") as f:
+                old_content = f.read()
+            if old_content != new_file_content:
+                with open(file_name, "w") as f:
+                    f.write(new_file_content)
+                commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
+                commit_hash = commit_changes(file_name, commit_msg)
+                if not commit_hash:
+                    raise Exception("Failed to commit changes to git.")
+        except Exception as e:
+            error_msg = f"Error applying changes: {str(e)}"
+            chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+            update_transcript(file_name)
+            return jsonify(chat_histories[file_name]), 500
+
+    # Append only the professional message with commit_hash
     chat_histories[file_name].append({
         "role": "Assistant",
         "content": professional_message,
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "branch": current_branch,
+        "commit_hash": commit_hash,
         "model": model
     })
 
-    new_file_content = extract_code(reply)
-    commit_summary = extract_commit_summary(reply)
-
-    if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
-        with open(file_name, "w") as f:
-            f.write(new_file_content)
-        commit_msg = commit_summary if commit_summary else f"Initial commit based on prompt: {user_input}"
-        commit_hash = commit_changes(file_name, commit_msg)
-        if commit_hash:
-            chat_histories[file_name].append({
-                "role": "Assistant",
-                "content": f"Changes applied. Commit hash: {commit_hash}",
-                "timestamp": datetime.utcnow().isoformat() + "Z",
-                "branch": current_branch,
-                "commit_hash": commit_hash,
-                "model": model
-            })
-        else:
-            chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
-    else:
-        try:
-            with open(file_name, "r") as f:
-                old_content = f.read()
-        except Exception:
-            old_content = ""
-        diff_text = compute_diff(old_content, new_file_content)
-        if diff_text:
-            with open(file_name, "w") as f:
-                f.write(new_file_content)
-            commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
-            commit_hash = commit_changes(file_name, commit_msg)
-            if commit_hash:
-                chat_histories[file_name].append({
-                    "role": "Assistant",
-                    "content": f"Changes applied. Commit hash: {commit_hash}",
-                    "timestamp": datetime.utcnow().isoformat() + "Z",
-                    "branch": current_branch,
-                    "commit_hash": commit_hash,
-                    "model": model
-                })
-            else:
-                chat_histories[file_name].append({"role": "Assistant", "content": "Error committing changes to git.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
-        else:
-            chat_histories[file_name].append({"role": "Assistant", "content": "No changes detected.", "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
-
-    update_transcript(file_name, commit_hash if 'commit_hash' in locals() else None)
+    update_transcript(file_name, commit_hash)
     return jsonify(chat_histories[file_name])
 
 # Main page: serves the HTML page with template reloading logic.
