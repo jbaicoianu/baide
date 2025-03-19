@@ -364,19 +364,36 @@ async function loadProjectStructure() {
       newFileBtn.addEventListener('click', openNewFileModal);
       projectBrowser.appendChild(newFileBtn);
     
-      const treeContainer = document.createElement('div');
-      createProjectTree(data, treeContainer);
-      projectBrowser.appendChild(treeContainer);
+      // Since the new response format does not include the project structure,
+      // fetch the project structure separately if needed
+      // For demonstration, assuming another endpoint '/projects/structure'
+      const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(currentProject)}`);
+      if (structureResponse.ok) {
+        const structureData = await structureResponse.json();
+        const treeContainer = document.createElement('div');
+        createProjectTree(structureData, treeContainer);
+        projectBrowser.appendChild(treeContainer);
+      } else {
+        showToast('Failed to load project structure.', 'error');
+        console.error('Failed to load project structure.');
+      }
           
       // Load open directories from localStorage before restoring
       loadOpenDirectories();
       // Restore open directories from localStorage
-      restoreOpenDirectories(treeContainer);
+      const treeContainer = projectBrowser.querySelector('div');
+      if (treeContainer) {
+        restoreOpenDirectories(treeContainer);
+      }
           
       // Load Git Branch
       loadGitBranch();
+    } else {
+      showToast('Failed to fetch project details.', 'error');
+      console.error('Failed to fetch project details.');
     }
   } catch (e) {
+    showToast('Error loading project structure.', 'error');
     console.error('Error loading project structure:', e);
   }
 }
