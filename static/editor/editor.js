@@ -387,6 +387,7 @@ async function loadProjectStructure() {
       if (structureResponse.ok) {
         const structureData = await structureResponse.json();
         const treeContainer = document.createElement('div');
+        treeContainer.id = 'projectTreeContainer'; // Added ID
         createProjectTree(structureData, treeContainer);
         projectBrowser.appendChild(treeContainer);
       } else {
@@ -397,7 +398,7 @@ async function loadProjectStructure() {
       // Load open directories from localStorage before restoring
       loadOpenDirectories();
       // Restore open directories from localStorage
-      const treeContainer = projectBrowser.querySelector('div');
+      const treeContainer = document.getElementById('projectTreeContainer'); // Updated to use ID
       if (treeContainer) {
         restoreOpenDirectories(treeContainer);
       }
@@ -1374,7 +1375,7 @@ async function createNewFile() {
     showToast("Error creating file: " + data.error, "error");
   }
 }
-                                                      
+                                                        
 // Function to open new project modal
 function openNewProjectModal() {
   let overlay = document.getElementById('newProjectOverlay');
