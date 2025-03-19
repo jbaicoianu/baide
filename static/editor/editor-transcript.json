@@ -733,5 +733,20 @@
     "branch": "multiproject",
     "commit_hash": "fb6a4fde4d1e97f042b0a000c962f910aaa9fa35",
     "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "When calling the /source and /transcript endpoints, pass the project name as the \"project_name\" URL attribute, not \"project\"",
+    "timestamp": "2025-03-19T16:01:05.705456Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "",
+    "timestamp": "2025-03-19T16:03:13.909688Z",
+    "branch": "multiproject",
+    "commit_hash": "d7597200418e88ec52273e22df950fa3b1d8a95b",
+    "model": "o1-mini"
   }
 ]
