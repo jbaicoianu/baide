@@ -1,7 +1,7 @@
-let activeFile = null;
-let openFiles = {};
+let activeFile = {}; // Mapping of project name to active file
+let openFiles = {}; // Mapping of project name to open files
 let editor = null;
-let openDirectories = new Set();
+let openDirectories = new Map(); // Mapping of project name to open directories
 let fileCodingContexts = {}; // Mapping of filename to contexts
 let allCodingContexts = []; // All available coding contexts
 let fileActiveModels = {}; // Mapping of filename to active model
@@ -13,6 +13,7 @@ let searchDirection = 'forward'; // New variable to track search direction
 let totalSearchResults = 0;
 let currentSearchIndex = 0;
 let searchResults = []; // Array to store all search match positions
+let currentProject = ''; // Variable to track the current project
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -45,6 +46,21 @@ function initializeCodeMirror() {
       }
     }
   });
+}
+
+// Function to set editor value and refresh
+function setEditorValue(value) {
+  if (editor) {
+    editor.setValue(value);
+    setTimeout(() => {
+      editor.refresh();
+    }, 10); // Adjust the timeout as needed
+  }
+}
+
+// Function to clear the editor content
+function clearEditor() {
+  setEditorValue('');
 }
 
 // Function to prompt for commit message
@@ -116,12 +132,13 @@ function promptCommitMessage() {
 
 // Save file function triggered by Ctrl+S with commit message
 function saveFile(commitMessage) {
-  if (!activeFile) return;
+  if (!currentProject || !activeFile[currentProject]) return;
+  const filename = activeFile[currentProject];
   const updatedContent = editor.getValue();
   fetch('/update_source', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage })
+    body: JSON.stringify({ file: filename, content: updatedContent, commit_message: commitMessage, project_name: currentProject })
   })
   .then(response => response.json())
   .then(data => {
@@ -316,32 +333,6 @@ function updateSearchIndicator() {
   }
 }
 
-// Save file function triggered by Ctrl+S with commit message
-function saveFile(commitMessage) {
-  if (!activeFile) return;
-  const updatedContent = editor.getValue();
-  fetch('/update_source', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.message) {
-      showToast(data.message, 'success');
-    } else if (data.error) {
-      showToast(data.error, 'error');
-    }
-    if (data.chat_history) {
-      updateChatHistoryViewer(data.chat_history);
-    }
-  })
-  .catch(error => {
-    showToast('Error saving file.', 'error');
-    console.error('Error saving file:', error);
-  });
-}
-
 // Render Markdown while escaping any raw HTML.
 function renderMarkdown(text) {
   const renderer = new marked.Renderer();
@@ -358,12 +349,22 @@ function renderMarkdown(text) {
 // Function to load project structure and set up event listeners for files
 async function loadProjectStructure() {
   try {
-    const response = await fetch('/project_structure');
+    const response = await fetch(`/projects/details?project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       const projectBrowser = document.getElementById('projectBrowser');
       projectBrowser.innerHTML = '<h2>Project Browser</h2>';
           
+      // Add Project Selector
+      addProjectSelector(projectBrowser);
+      
+      // Add New Project Button
+      const newProjectBtn = document.createElement('button');
+      newProjectBtn.id = 'newProjectBtn';
+      newProjectBtn.textContent = 'New Project';
+      newProjectBtn.addEventListener('click', openNewProjectModal);
+      projectBrowser.appendChild(newProjectBtn);
+      
       // Add Git Branch Display
       const gitBranchDiv = document.createElement('div');
       gitBranchDiv.id = 'gitBranchDisplay';
@@ -372,40 +373,6 @@ async function loadProjectStructure() {
       gitBranchDiv.addEventListener('click', openBranchPopup);
       projectBrowser.appendChild(gitBranchDiv);
           
-      // /* 
-      // CSS for Git Branch Display and Popup:
-      // #gitBranchDisplay {
-      //   padding: 10px;
-      //   background-color: #f5f5f5;
-      //   border-bottom: 1px solid #ddd;
-      //   font-weight: bold;
-      // }
-      // #branchPopup {
-      //   position: absolute;
-      //   top: 50px;
-      //   left: 10px;
-      //   background-color: white;
-      //   border: 1px solid #ccc;
-      //   padding: 20px;
-      //   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      //   z-index: 1000;
-      // }
-      // #branchPopup.hidden {
-      //   display: none;
-      // }
-      // #branchList {
-      //   max-height: 200px;
-      //   overflow-y: auto;
-      // }
-      // .branchItem {
-      //   padding: 5px 0;
-      //   cursor: pointer;
-      // }
-      // .branchItem:hover {
-      //   background-color: #f0f0f0;
-      // }
-      // */
-      
       // Add New File Button
       const newFileBtn = document.createElement('button');
       newFileBtn.id = 'newFileBtn';
@@ -413,27 +380,209 @@ async function loadProjectStructure() {
       newFileBtn.addEventListener('click', openNewFileModal);
       projectBrowser.appendChild(newFileBtn);
     
-      const treeContainer = document.createElement('div');
-      createProjectTree(data, treeContainer);
-      projectBrowser.appendChild(treeContainer);
+      // Since the new response format does not include the project structure,
+      // fetch the project structure separately if needed
+      // For demonstration, assuming another endpoint '/projects/structure'
+      const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(currentProject)}`);
+      if (structureResponse.ok) {
+        const structureData = await structureResponse.json();
+        const treeContainer = document.createElement('div');
+        treeContainer.id = 'projectTreeContainer'; // Added ID
+        createProjectTree(structureData, treeContainer);
+        projectBrowser.appendChild(treeContainer);
+      } else {
+        showToast('Failed to load project structure.', 'error');
+        console.error('Failed to load project structure.');
+      }
           
       // Load open directories from localStorage before restoring
       loadOpenDirectories();
       // Restore open directories from localStorage
-      restoreOpenDirectories(treeContainer);
+      const treeContainer = document.getElementById('projectTreeContainer'); // Updated to use ID
+      if (treeContainer) {
+        restoreOpenDirectories(treeContainer);
+      }
           
       // Load Git Branch
       loadGitBranch();
+
+      // Check if there are no open files and show placeholder if necessary
+      if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+        showPlaceholderPage();
+      } else {
+        hidePlaceholderPage();
+      }
+    } else {
+      showToast('Failed to fetch project details.', 'error');
+      console.error('Failed to fetch project details.');
     }
   } catch (e) {
+    showToast('Error loading project structure.', 'error');
     console.error('Error loading project structure:', e);
+  }
+}
+
+// Function to add Project Selector to the Project Browser
+function addProjectSelector(parentElement) {
+  const selector = document.createElement('select');
+  selector.id = 'projectSelector';
+  
+  // Fetch all projects
+  fetch('/projects/list')
+    .then(response => response.json())
+    .then(data => {
+      const projects = data.projects; // Adjusted to access the 'projects' array
+      
+      // Add a default option
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Select Project';
+      selector.appendChild(defaultOption);
+      
+      projects.forEach(project => {
+        const option = document.createElement('option');
+        option.value = project;
+        option.textContent = project;
+        selector.appendChild(option);
+      });
+      
+      // Set the current project as selected
+      selector.value = currentProject;
+    })
+    .catch(error => {
+      console.error('Error fetching project list:', error);
+    });
+  
+  // Add event listener for project change
+  selector.addEventListener('change', (e) => {
+    const selectedProject = e.target.value;
+    if (selectedProject) {
+      switchProject(selectedProject);
+    }
+  });
+  
+  parentElement.insertBefore(selector, parentElement.firstChild);
+}
+
+// Function to switch projects
+async function switchProject(projectName) {
+  // Save current project state
+  if (currentProject) {
+    saveProjectState(currentProject);
+  }
+
+  // Clear the editor to prevent residual code
+  clearEditor();
+
+  try {
+    const response = await fetch(`/projects/details?project_name=${encodeURIComponent(projectName)}`);
+    if (response.ok) {
+      currentProject = projectName;
+      // Save current project to localStorage
+      localStorage.setItem('currentProject', currentProject);
+      // Reload project structure
+      await loadProjectStructure();
+      // Restore new project state
+      await restoreProjectState(currentProject);
+
+      // Check if there are no open files and show placeholder if necessary
+      if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+        showPlaceholderPage();
+      } else {
+        hidePlaceholderPage();
+      }
+    } else {
+      showToast('Failed to switch project.', 'error');
+      console.error('Failed to switch project.');
+    }
+  } catch (e) {
+    showToast('Error switching project.', 'error');
+    console.error('Error switching project:', e);
+  }
+}
+
+// Function to save the state of a project
+function saveProjectState(projectName) {
+  // Save open files
+  localStorage.setItem(`openFiles_${projectName}`, JSON.stringify(openFiles[projectName] || {}));
+  // Save active file
+  localStorage.setItem(`activeFile_${projectName}`, activeFile[projectName] || '');
+  // Save open directories
+  localStorage.setItem(`openDirectories_${projectName}`, JSON.stringify(Array.from(openDirectories.get(projectName) || [])));
+}
+
+// Function to restore the state of a project
+async function restoreProjectState(projectName) {
+  // Load open files
+  const storedOpenFiles = localStorage.getItem(`openFiles_${projectName}`);
+  openFiles[projectName] = storedOpenFiles ? JSON.parse(storedOpenFiles) : {};
+
+  // Load active file
+  activeFile[projectName] = localStorage.getItem(`activeFile_${projectName}`) || '';
+
+  // Load open directories
+  const storedOpenDirs = localStorage.getItem(`openDirectories_${projectName}`);
+  openDirectories.set(projectName, storedOpenDirs ? new Set(JSON.parse(storedOpenDirs)) : new Set());
+
+  // Close all current tabs
+  closeAllTabs();
+
+  // Open files for the new project
+  for (const filename of Object.keys(openFiles[projectName])) {
+    await openFileInTab(filename, false);
+  }
+
+  // Switch to active file
+  if (activeFile[projectName]) {
+    await switchToTab(activeFile[projectName]);
+  } else {
+    // If no active file, clear the editor and show placeholder
+    clearEditor();
+    showPlaceholderPage();
+  }
+
+  adjustTabs(); // Adjust tabs after restoring
+}
+
+// Function to close all open tabs
+function closeAllTabs() {
+  const tabs = document.getElementById('tabs');
+  if (tabs) {
+    Array.from(tabs.getElementsByClassName('tab')).forEach(tab => {
+      const filename = tab.textContent.slice(0, -1); // Remove close button
+      closeTab(filename);
+    });
+  }
+}
+
+// Function to load current project from localStorage
+function loadCurrentProject() {
+  const storedProject = localStorage.getItem('currentProject');
+  if (storedProject) {
+    currentProject = storedProject;
+  } else {
+    // If no project is selected, you might want to select a default or prompt the user
+    fetch('/projects/list')
+      .then(response => response.json())
+      .then(data => {
+        const projects = data.projects;
+        if (projects.length > 0) {
+          switchProject(projects[0]);
+        } else {
+          // No projects available, show placeholder
+          showPlaceholderPage();
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching project list:', error);
+      });
   }
 }
 
 // Function to load and display the current Git branch
 async function loadGitBranch() {
   try {
-    const response = await fetch('/git_current_branch');
+    const response = await fetch('/git_current_branch?project_name=' + currentProject);
     if (response.ok) {
       const data = await response.json();
       const gitBranchDiv = document.getElementById('gitBranchDisplay');
@@ -454,18 +603,18 @@ async function openBranchPopup() {
     popup = document.createElement('div');
     popup.id = 'branchPopup';
     popup.className = 'hidden';
-        
+    
     // Branch list container
     const branchList = document.createElement('div');
     branchList.id = 'branchList';
     popup.appendChild(branchList);
-        
+    
     // Add Branch button
     const addBranchBtn = document.createElement('button');
     addBranchBtn.textContent = 'Add New Branch';
     addBranchBtn.addEventListener('click', showAddBranchInput);
     popup.appendChild(addBranchBtn);
-        
+    
     document.body.appendChild(popup);
   }
     
@@ -475,7 +624,7 @@ async function openBranchPopup() {
   if (!popup.classList.contains('hidden')) {
     // Fetch and display branches
     try {
-      const response = await fetch('/git_branches');
+      const response = await fetch('/git_branches?project_name=' + currentProject);
       if (response.ok) {
         const data = await response.json();
         const branchList = document.getElementById('branchList');
@@ -505,8 +654,10 @@ async function switchBranch(branchName) {
   try {
     const response = await fetch('/git_switch_branch', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ branch: branchName })
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ branch: branchName, project_name: currentProject })
     });
     if (response.ok) {
       const data = await response.json();
@@ -560,16 +711,16 @@ function showAddBranchInput() {
       addNewBranch();
     }
   });
-      
-  // /* 
-  // CSS for Add Branch Input:
-  // #newBranchName {
-  //   width: 100%;
-  //   padding: 8px;
-  //   margin-top: 10px;
-  //   box-sizing: border-box;
-  // }
-  // */
+    
+  /*
+  CSS for Add Branch Input:
+  #newBranchName {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    box-sizing: border-box;
+  }
+  */
 }
 
 // Function to add a new branch
@@ -583,8 +734,10 @@ async function addNewBranch() {
   try {
     const response = await fetch('/git_create_branch', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ branch: branchName })
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ branch: branchName, project_name: currentProject })
     });
     if (response.ok) {
       const data = await response.json();
@@ -624,11 +777,11 @@ function createProjectTree(structure, parentElement, currentPath = '') {
       dirSpan.classList.toggle('open');
       const fullPath = currentPath + dir.name + '/';
       if (childContainer.classList.contains('hidden')) {
-        openDirectories.delete(fullPath);
+        openDirectories.get(currentProject).delete(fullPath);
       } else {
-        openDirectories.add(fullPath);
+        openDirectories.get(currentProject).add(fullPath);
       }
-      saveOpenDirectories();
+      saveOpenDirectories(currentProject);
       adjustTabs(); // Adjust tabs when directories are toggled
     });
     itemDiv.className = 'directory';
@@ -660,6 +813,13 @@ function createProjectTree(structure, parentElement, currentPath = '') {
 
 // Function to open a file in a new tab
 async function openFileInTab(filename, activate = true) {
+  if (!currentProject) return;
+
+  // Initialize openFiles for the project if not present
+  if (!openFiles[currentProject]) {
+    openFiles[currentProject] = {};
+  }
+
   // Check if the tab already exists in the DOM
   if (document.getElementById(`tab-${sanitizeId(filename)}`)) {
     if (activate) {
@@ -669,7 +829,7 @@ async function openFileInTab(filename, activate = true) {
   }
     
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       // Create a new tab
@@ -706,14 +866,11 @@ async function openFileInTab(filename, activate = true) {
         tab.classList.add('active');
             
         // Load content into CodeMirror editor
-        document.getElementById('sourceCode').value = data.content;
-        if (editor) {
-          editor.setValue(data.content);
-        }
-        activeFile = filename;
-        openFiles[filename] = true;
-        saveOpenFiles();
-        saveActiveFile();
+        setEditorValue(data.content);
+        activeFile[currentProject] = filename;
+        openFiles[currentProject][filename] = true;
+        saveOpenFiles(currentProject);
+        saveActiveFile(currentProject);
         // Load transcript
         await loadTranscript(filename);
         // Load coding contexts
@@ -728,9 +885,12 @@ async function openFileInTab(filename, activate = true) {
         if (moreDropdown) {
           moreDropdown.classList.remove('show');
         }
+        
+        // Hide the placeholder if it's visible
+        hidePlaceholderPage();
       } else {
-        openFiles[filename] = true;
-        saveOpenFiles();
+        openFiles[currentProject][filename] = true;
+        saveOpenFiles(currentProject);
       }
     }
   } catch (e) {
@@ -745,7 +905,12 @@ function sanitizeId(filename) {
 
 // Function to switch to an existing tab
 async function switchToTab(filename) {
-  activeFile = filename;
+  if (!currentProject) return;
+
+  activeFile[currentProject] = filename;
+  // Save active file
+  saveActiveFile(currentProject);
+
   // Activate the selected tab
   const tabs = document.getElementById('tabs');
   Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
@@ -755,16 +920,16 @@ async function switchToTab(filename) {
       t.classList.remove('active');
     }
   });
-  saveActiveFile();
+
+  // Clear the editor before loading new content
+  clearEditor();
+
   // Load source code
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
-      document.getElementById('sourceCode').value = data.content;
-      if (editor) {
-        editor.setValue(data.content);
-      }
+      setEditorValue(data.content);
       // Load transcript
       await loadTranscript(filename);
       // Load coding contexts
@@ -781,16 +946,21 @@ async function switchToTab(filename) {
   if (moreDropdown) {
     moreDropdown.classList.remove('show');
   }
+
+  // Hide the placeholder if it's visible
+  hidePlaceholderPage();
 }
 
 // Function to close a tab
 function closeTab(filename) {
+  if (!currentProject) return;
+
   const sanitizedId = sanitizeId(filename);
   const tab = document.getElementById(`tab-${sanitizedId}`);
   if (tab) {
     tab.parentNode.removeChild(tab);
-    delete openFiles[filename];
-    saveOpenFiles();
+    delete openFiles[currentProject][filename];
+    saveOpenFiles(currentProject);
     // Remove coding contexts for the closed file
     delete fileCodingContexts[filename];
     saveFileCodingContexts();
@@ -798,16 +968,16 @@ function closeTab(filename) {
     delete fileActiveModels[filename];
     saveFileActiveModels();
     // If the closed tab was active, switch to another tab
-    if (activeFile === filename) {
-      const remainingTabs = document.querySelectorAll('#tabs .tab');
+    if (activeFile[currentProject] === filename) {
+      const remainingTabs = document.querySelectorAll(`#tabs .tab`);
       if (remainingTabs.length > 0) {
         const newActiveTab = remainingTabs[remainingTabs.length - 1];
         const newActiveFilename = newActiveTab.textContent.slice(0, -1); // Remove close button
         switchToTab(newActiveFilename);
       } else {
-        activeFile = null;
-        saveActiveFile();
-        document.getElementById('sourceCode').value = '';
+        activeFile[currentProject] = undefined;
+        saveActiveFile(currentProject);
+        setEditorValue('');
         if (editor) {
           editor.setValue('');
         }
@@ -816,6 +986,8 @@ function closeTab(filename) {
         document.getElementById('activeCodingContexts').innerHTML = '';
         // Reset AI model dropdown
         resetAIDropdown();
+        // Show the placeholder page since there are no open files
+        showPlaceholderPage();
       }
       adjustTabs(); // Adjust tabs after closing a tab
     }
@@ -863,11 +1035,12 @@ function appendCodingContext(context) {
 
 // Function to remove a coding context
 function removeCodingContext(contextName) {
-  if (!activeFile || !fileCodingContexts[activeFile]) return;
+  if (!currentProject || !activeFile[currentProject] || !fileCodingContexts[activeFile[currentProject]]) return;
+  const filename = activeFile[currentProject];
   // Remove from fileCodingContexts
-  fileCodingContexts[activeFile] = fileCodingContexts[activeFile].filter(ctx => ctx.name !== contextName);
-  if (fileCodingContexts[activeFile].length === 0) {
-    delete fileCodingContexts[activeFile];
+  fileCodingContexts[filename] = fileCodingContexts[filename].filter(ctx => ctx.name !== contextName);
+  if (fileCodingContexts[filename].length === 0) {
+    delete fileCodingContexts[filename];
   }
   saveFileCodingContexts();
   // Remove from UI
@@ -887,7 +1060,7 @@ function scrollToBottom(element) {
 // Function to load the existing conversation transcript for a specific file from the server.
 async function loadTranscript(filename) {
   try {
-    const response = await fetch(`/transcript?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/transcript?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       document.getElementById('chatBox').innerHTML = '';
@@ -948,7 +1121,8 @@ function setupEventListeners() {
     
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!activeFile) return;
+    if (!currentProject || !activeFile[currentProject]) return;
+    const filename = activeFile[currentProject];
     const prompt = promptInput.value.trim();
     if (!prompt) return;
     appendMessage("User", prompt);
@@ -957,16 +1131,16 @@ function setupEventListeners() {
     throbber.style.display = "block";
     
     // Gather active context names
-    const contexts = fileCodingContexts[activeFile] ? fileCodingContexts[activeFile].map(ctx => ctx.name) : [];
+    const contexts = fileCodingContexts[filename] ? fileCodingContexts[filename].map(ctx => ctx.name) : [];
     
     // Get active AI model for the current file
-    const activeModel = fileActiveModels[activeFile] || defaultModel;
+    const activeModel = fileActiveModels[filename] || defaultModel;
     
     try {
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts, model: activeModel })
+        body: JSON.stringify({ prompt: prompt, file: filename, contexts: contexts, model: activeModel, project_name: currentProject })
       });
       if (response.ok) {
         const data = await response.json();
@@ -988,9 +1162,9 @@ function setupEventListeners() {
         scrollToBottom(chatBox);
         scrollToBottom(commitSummaries);
         // Reload the source code after AI updates
-        await loadSourceCode(activeFile);
+        await loadSourceCode(filename);
         // Reload coding contexts
-        loadFileCodingContexts(activeFile);
+        loadFileCodingContexts(filename);
         // Reload project structure
         await loadProjectStructure();
       } else {
@@ -1086,8 +1260,8 @@ function createAIDropdown() {
     // Add event listener for model change
     modelSelect.addEventListener('change', (e) => {
       const selectedModel = e.target.value;
-      if (activeFile) {
-        fileActiveModels[activeFile] = selectedModel;
+      if (currentProject && activeFile[currentProject]) {
+        fileActiveModels[activeFile[currentProject]] = selectedModel;
         saveFileActiveModels();
       }
     });
@@ -1131,13 +1305,10 @@ function saveFileActiveModels() {
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
-      document.getElementById('sourceCode').value = data.content;
-      if (editor) {
-        editor.setValue(data.content);
-      }
+      setEditorValue(data.content);
     }
   } catch (e) {
     console.error('Error loading source code:', e);
@@ -1154,14 +1325,25 @@ function openNewFileModal() {
   // Removed event listeners from here to prevent multiple registrations
 }
 
+// Function to get directory path from filename
+function getDirectoryPath(filename) {
+  const parts = filename.split('/');
+  if (parts.length > 1) {
+    parts.pop();
+    return parts.join('/') + '/';
+  } else {
+    return '';
+  }
+}
+
+// Function to close new file modal
 function closeNewFileModal() {
   const modal = document.getElementById("newFileModal");
   modal.style.display = "none";
   document.getElementById("newFileName").value = "";
 }
 
-// Rest of the functions remain unchanged...
-
+// Function to create a new file
 async function createNewFile() {
   const fileName = document.getElementById("newFileName").value.trim();
   if (!fileName) {
@@ -1170,16 +1352,133 @@ async function createNewFile() {
   }
   const response = await fetch("/create_file", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ file: fileName })
+    headers: { 
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ file: fileName, project_name: currentProject })
   });
   const data = await response.json();
   if (data.success) {
     closeNewFileModal();
+    
+    // Extract directory path from fileName
+    const dirPath = getDirectoryPath(fileName);
+    if (dirPath) {
+      openDirectories.get(currentProject).add(dirPath);
+      saveOpenDirectories(currentProject);
+    }
+
     await loadProjectStructure();
+    await openFileInTab(fileName, true); // Open the new file in a new tab
     showToast(`File ${fileName} created successfully.`, "success");
   } else {
     showToast("Error creating file: " + data.error, "error");
+  }
+}
+                                                        
+// Function to open new project modal
+function openNewProjectModal() {
+  let overlay = document.getElementById('newProjectOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'newProjectOverlay';
+
+    const box = document.createElement('div');
+    box.id = 'newProjectBox';
+
+    const title = document.createElement('h2');
+    title.textContent = 'Create New Project';
+    box.appendChild(title);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'newProjectName';
+    input.placeholder = 'Enter project name...';
+    box.appendChild(input);
+
+    // Add keydown event listener for Ctrl+Enter and Esc
+    input.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        createProjectBtn.click();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelProjectBtn.click();
+      }
+    });
+
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'buttons';
+
+    const createProjectBtn = document.createElement('button');
+    createProjectBtn.className = 'create-btn';
+    createProjectBtn.textContent = 'Create';
+    createProjectBtn.addEventListener('click', () => {
+      const projectName = input.value.trim();
+      if (projectName) {
+        overlay.style.display = 'none';
+        createNewProject(projectName);
+      } else {
+        showToast('Project name cannot be empty.', 'error');
+      }
+    });
+
+    const cancelProjectBtn = document.createElement('button');
+    cancelProjectBtn.className = 'cancel-btn';
+    cancelProjectBtn.textContent = 'Cancel';
+    cancelProjectBtn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+
+    buttonsDiv.appendChild(cancelProjectBtn);
+    buttonsDiv.appendChild(createProjectBtn);
+    box.appendChild(buttonsDiv);
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
+  }
+
+  // Show the overlay
+  overlay.style.display = 'flex';
+  document.getElementById('newProjectName').focus();
+}
+
+// Function to close new project modal
+function closeNewProjectModal() {
+  const overlay = document.getElementById('newProjectOverlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+    document.getElementById('newProjectName').value = '';
+  }
+}
+
+// Function to create a new project
+async function createNewProject(projectName) {
+  try {
+    const response = await fetch('/projects/add', { // Updated endpoint
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ project_name: projectName }) // Updated parameter
+    });
+    const data = await response.json();
+    if (data.success) {
+      showToast(`Project ${data.project} created successfully.`, 'success'); // Use data.project
+      // Initialize storage for the new project
+      openFiles[data.project] = {};
+      activeFile[data.project] = '';
+      openDirectories.set(data.project, new Set());
+      // Save initial state
+      saveProjectState(data.project);
+      // Optionally switch to the new project
+      switchProject(data.project); // Use data.project
+    } else {
+      showToast(`Error creating project: ${data.error}`, 'error');
+    }
+  } catch (e) {
+    showToast('Error creating project.', 'error');
+    console.error('Error creating project:', e);
   }
 }
 
@@ -1189,47 +1488,37 @@ window.onclick = function(event) {
   if (event.target == modal) {
     closeNewFileModal();
   }
+  
+  const projectModal = document.getElementById('newProjectOverlay');
+  if (projectModal && event.target == projectModal) {
+    closeNewProjectModal();
+  }
 }
 
 // Save open files to localStorage
-function saveOpenFiles() {
-  localStorage.setItem('openFiles', JSON.stringify(openFiles));
-}
-
-// Load open files from localStorage
-async function loadOpenFiles() {
-  const storedOpenFiles = localStorage.getItem('openFiles');
-  if (storedOpenFiles) {
-    openFiles = JSON.parse(storedOpenFiles);
-    for (const filename of Object.keys(openFiles)) {
-      await openFileInTab(filename, false);
-    }
-  }
+function saveOpenFiles(projectName) {
+  localStorage.setItem(`openFiles_${projectName}`, JSON.stringify(openFiles[projectName]));
 }
 
 // Save active file to localStorage
-function saveActiveFile() {
-  localStorage.setItem('activeFile', activeFile);
-}
-
-// Load active file from localStorage
-function loadActiveFile() {
-  const storedActiveFile = localStorage.getItem('activeFile');
-  if (storedActiveFile) {
-    activeFile = storedActiveFile;
-  }
+function saveActiveFile(projectName) {
+  localStorage.setItem(`activeFile_${projectName}`, activeFile[projectName] || '');
 }
 
 // Save open directories to localStorage
-function saveOpenDirectories() {
-  localStorage.setItem('openDirectories', JSON.stringify(Array.from(openDirectories)));
+function saveOpenDirectories(projectName) {
+  localStorage.setItem(`openDirectories_${projectName}`, JSON.stringify(Array.from(openDirectories.get(projectName) || [])));
 }
 
 // Load open directories from localStorage
 function loadOpenDirectories() {
-  const storedOpenDirs = localStorage.getItem('openDirectories');
+  if (!currentProject) return;
+  const storedOpenDirs = localStorage.getItem(`openDirectories_${currentProject}`);
   if (storedOpenDirs) {
-    openDirectories = new Set(JSON.parse(storedOpenDirs));
+    const dirs = new Set(JSON.parse(storedOpenDirs));
+    openDirectories.set(currentProject, dirs);
+  } else {
+    openDirectories.set(currentProject, new Set());
   }
 }
 
@@ -1239,7 +1528,7 @@ function restoreOpenDirectories(parentElement, currentPath = '') {
   Array.from(directories).forEach(dir => {
     const dirName = dir.firstChild.textContent;
     const fullPath = currentPath + dirName + '/';
-    if (openDirectories.has(fullPath)) {
+    if (openDirectories.get(currentProject).has(fullPath)) {
       const childContainer = dir.querySelector('.directory-children');
       if (childContainer) {
         childContainer.classList.remove('hidden');
@@ -1294,7 +1583,7 @@ function adjustTabs() {
   tabs.forEach(tab => {
     usedWidth += tab.offsetWidth;
     if (usedWidth > availableWidth - moreBtn.offsetWidth) {
-      tab.style.display = 'none';
+      tab.classList.add('hidden'); // Add 'hidden' class instead of display 'none'
       // Create dropdown item with close button
       const dropdownItem = document.createElement('div');
       dropdownItem.className = 'dropdown-item';
@@ -1415,30 +1704,37 @@ window.onload = async function() {
   // Load AI Models after creating the dropdown
   await loadAIModals();
   
+  loadCurrentProject();
   await loadProjectStructure();
-  await loadOpenFiles();
-  loadActiveFile();
-  if (activeFile) {
-    await switchToTab(activeFile);
-  }
+  await restoreProjectState(currentProject);
   adjustTabs(); // Initial adjustment
+
+  // Check if there are no open files and show placeholder if necessary
+  if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+    showPlaceholderPage();
+  } else {
+    hidePlaceholderPage();
+  }
 };
 
 // Function to add a coding context
 function addCodingContext(event) {
+  if (!currentProject || !activeFile[currentProject]) return;
+  
   const selectedContextName = event.target.value;
   if (!selectedContextName) return;
     
   const selectedContext = allCodingContexts.find(ctx => ctx.name === selectedContextName);
   if (!selectedContext) return;
     
-  if (!fileCodingContexts[activeFile]) {
-    fileCodingContexts[activeFile] = [];
+  const filename = activeFile[currentProject];
+  if (!fileCodingContexts[filename]) {
+    fileCodingContexts[filename] = [];
   }
     
-  if (!fileCodingContexts[activeFile].some(ctx => ctx.name === selectedContextName)) {
+  if (!fileCodingContexts[filename].some(ctx => ctx.name === selectedContextName)) {
     const newContext = { name: selectedContext.name, content: selectedContext.content };
-    fileCodingContexts[activeFile].push(newContext);
+    fileCodingContexts[filename].push(newContext);
     appendCodingContext(newContext);
     saveFileCodingContexts();
   }
@@ -1490,11 +1786,6 @@ function loadFileActiveModelsFromStorage() {
   }
 }
 
-// Function to save active AI models for all files to localStorage
-function saveFileActiveModels() {
-  localStorage.setItem('fileActiveModels', JSON.stringify(fileActiveModels));
-}
-
 // Function to load and populate AI models on startup
 async function loadAIModals() {
   try {
@@ -1518,7 +1809,9 @@ async function loadAIModals() {
         });
 
         // Set default selected model
-        // This will be handled in loadFileActiveModel
+        if (defaultModel) {
+          modelSelect.value = defaultModel;
+        }
       }
     } else {
       console.error('Failed to fetch AI models.');
@@ -1557,3 +1850,75 @@ function updateChatHistoryViewer(chatHistories) {
   scrollToBottom(chatBox);
   scrollToBottom(commitSummaries);
 }
+
+// Function to show the "new project" placeholder page
+function showPlaceholderPage() {
+  const sourceCodeContainer = document.getElementById('sourceCodeContainer');
+  const chatBox = document.getElementById('chatBox');
+  const commitSummaries = document.getElementById('commitSummaries');
+  const activeCodingContexts = document.getElementById('activeCodingContexts');
+
+  if (sourceCodeContainer) sourceCodeContainer.classList.add('hidden');
+  if (document.getElementById('chatContainer')) document.getElementById('chatContainer').classList.add('hidden');
+  if (commitSummaries) commitSummaries.classList.add('hidden');
+  if (activeCodingContexts) activeCodingContexts.classList.add('hidden');
+
+  let placeholder = document.getElementById('newProjectPlaceholder');
+  if (!placeholder) {
+    placeholder = document.createElement('div');
+    placeholder.id = 'newProjectPlaceholder';
+    placeholder.innerHTML = `
+      <h2>Welcome to Your New Project</h2>
+      <p>Please create or open files using the project browser pane on the left.</p>
+      <p>Getting started:</p>
+      <ul>
+        <li>Click the "New File" button to create a new file.</li>
+        <li>Select an existing file from the project browser to open it.</li>
+      </ul>
+    `;
+    // Remove inline styles, add 'hidden' class to hide initially
+    placeholder.classList.add('hidden');
+    // Insert before sourceCodeContainer
+    sourceCodeContainer.parentNode.insertBefore(placeholder, sourceCodeContainer);
+  }
+  // Show placeholder
+  placeholder.classList.remove('hidden');
+}
+
+// Function to hide the "new project" placeholder page
+function hidePlaceholderPage() {
+  const sourceCodeContainer = document.getElementById('sourceCodeContainer');
+  const chatBox = document.getElementById('chatBox');
+  const commitSummaries = document.getElementById('commitSummaries');
+  const activeCodingContexts = document.getElementById('activeCodingContexts');
+
+  if (sourceCodeContainer) sourceCodeContainer.classList.remove('hidden');
+  if (document.getElementById('chatContainer')) document.getElementById('chatContainer').classList.remove('hidden');
+  if (chatBox) chatBox.classList.remove('hidden');
+  if (commitSummaries) commitSummaries.classList.remove('hidden');
+  if (activeCodingContexts) activeCodingContexts.classList.remove('hidden');
+
+  const placeholder = document.getElementById('newProjectPlaceholder');
+  if (placeholder) {
+    placeholder.classList.add('hidden');
+  }
+}
+
+// Function to load and display the current Git branch
+async function loadGitBranch() {
+  try {
+    const response = await fetch('/git_current_branch?project_name=' + currentProject);
+    if (response.ok) {
+      const data = await response.json();
+      const gitBranchDiv = document.getElementById('gitBranchDisplay');
+      gitBranchDiv.textContent = `${data.current_branch}`;
+    } else {
+      console.error('Failed to load current Git branch.');
+    }
+  } catch (e) {
+    console.error('Error loading Git branch:', e);
+  }
+}
+
+// Continue with the rest of your existing functions as they are...
+// (Functions like createNewFile, extract_commit_summary, etc., remain unchanged)

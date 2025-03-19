@@ -565,17 +565,121 @@
   },
   {
     "role": "User",
-    "content": "In our /git_branches endpoint, we strip leading \"* \" to remove the active branch marker. We also need to strip \"+ \" to match any branches that are checked out with git worktree",
-    "timestamp": "2025-03-19T12:47:52.219109Z",
-    "branch": "main",
+    "content": "Let's add support for multiple projects. For now we'll keep our projects in the $HOME/projects directory, with each one as a subdirectory. We'll need a few new endpoints, to perform the following actions:\n\n- add project\n- list projects\n- get project details\n\nWhen creating a project, we'll automatically create any directories needed, eg, if $HOME/projects doesn't exist we'll create that, then we'll create $HOME/projects/projectname and initialize an empty git repository as needed. Let's also create a simple README.md template with the project name and some text encouraging the user to fill in the standard sections most README files have.",
+    "timestamp": "2025-03-19T11:46:01.431372Z",
+    "branch": "multiproject",
     "model": "o1-mini"
   },
   {
     "role": "Assistant",
-    "content": "The `/git_branches` endpoint has been updated to also strip the \"+ \" prefix, ensuring compatibility with branches checked out using `git worktree`. Let me know if there are any additional modifications or enhancements you'd like to consider.",
-    "timestamp": "2025-03-19T12:48:34.208990Z",
-    "branch": "main",
-    "commit_hash": "abee2cc736f55442ae38a00b631cf0be8790cb77",
+    "content": "The project has been updated to support multiple projects stored in the `$HOME/projects` directory. New endpoints have been added to add a project, list all projects, and retrieve project details. When creating a project, the necessary directories are automatically created, an empty Git repository is initialized, and a `README.md` template is generated. \n\nPlease review the new endpoints to ensure they meet your requirements and let me know if you need additional features or modifications.",
+    "timestamp": "2025-03-19T11:46:41.803010Z",
+    "branch": "multiproject",
+    "commit_hash": "73d2ba9c119154b14a0f57566cfd81fb8986d1bd",
+    "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Ok. Now modify our chat, update_source, and any other functions which work with git or directories to take a project_name argument, and restrict all file operations for that call to our project's directory",
+    "timestamp": "2025-03-19T11:50:24.859743Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `chat`, `update_source`, and other relevant functions to include a `project_name` argument. All file and Git operations are now restricted to the specified project's directory to ensure proper project isolation. Additionally, I have added necessary validations to ensure the `project_name` is valid and exists before performing any operations.",
+    "timestamp": "2025-03-19T11:51:17.579564Z",
+    "branch": "multiproject",
+    "commit_hash": "ab85f1393b56c4c30a0b7c14cd5ef0214b7437e5",
+    "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "For all functions that take a project_name argument, if none is specified we should default to working on this project (ie, our current cwd)",
+    "timestamp": "2025-03-19T12:03:34.397475Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "Certainly! I've updated all functions that take a `project_name` argument to default to the current working directory's project if none is specified. This ensures smoother operation by assuming the active project context when the project name isn't explicitly provided. \n\nPlease review the changes to ensure they align with your project's structure and requirements.",
+    "timestamp": "2025-03-19T12:04:27.240480Z",
+    "branch": "multiproject",
+    "commit_hash": "af3000dc186b5637d4fad8728bb9cc0d08040d81",
+    "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Our /coding_contexts endpoint doesn't need to take a project_name argument, it should read the contexts from our current working directory. In addition, our /projects/details endpoint should default to the current working directory if no project_name is specified.",
+    "timestamp": "2025-03-19T13:37:03.784805Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `/coding_contexts` endpoint to no longer require the `project_name` argument, allowing it to automatically read contexts from the current working directory. Additionally, the `/projects/details` endpoint now defaults to the current working directory when no `project_name` is specified. These changes streamline the API usage by reducing the need to specify the project name explicitly.",
+    "timestamp": "2025-03-19T13:38:04.963242Z",
+    "branch": "multiproject",
+    "commit_hash": "6fe1737289ec7b347e9eefcd735904a2deee74ab",
+    "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Remap our /project_structure endpoint to /projects/structure and remove the logic which checks for the ACTIVE_FILES variable",
+    "timestamp": "2025-03-19T13:59:12.752575Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI've remapped the `/project_structure` endpoint to `/projects/structure` and removed the logic that checks for the `ACTIVE_FILES` variable. Additionally, since `ACTIVE_FILES` is no longer utilized, you might consider removing its declaration and related append operations to clean up the codebase.",
+    "timestamp": "2025-03-19T14:00:29.088453Z",
+    "branch": "multiproject",
+    "commit_hash": "b7fc4ac97ef804b7ded9e72a18e82b48dec8abb8",
+    "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Include file path in our prompt as a hint for the AI to guess what language to use [Manual edit]",
+    "timestamp": "2025-03-19T20:07:23.903229Z",
+    "branch": "multiproject",
+    "commit_hash": "04b824f4db2786c820d9fbf8f4124ee6025c86c9"
+  },
+  {
+    "role": "User",
+    "content": "Ommit project directory from the file name in our prompt [Manual edit]",
+    "timestamp": "2025-03-19T20:09:56.688719Z",
+    "branch": "multiproject",
+    "commit_hash": "5ffcd11103eabac83f679795fc5075039e13fb2c"
+  },
+  {
+    "role": "User",
+    "content": "The load_contexts_by_names function should not load files from the current active project, but should instead load them from the current working directory's contexts/ directory",
+    "timestamp": "2025-03-19T21:28:41.865441Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `load_contexts_by_names` function to load context files from the `contexts/` directory in the current working directory instead of the active project. Please review the changes and let me know if any additional modifications are required.",
+    "timestamp": "2025-03-19T21:29:38.851528Z",
+    "branch": "multiproject",
+    "commit_hash": "75127601ba13064a0367b6dc726ec03b3ce4ed55",
+    "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Update our default prompt to specify that we should never delete or change code unless it's part of the requested changes. Do not summarize or omit any existing unchanged functions.",
+    "timestamp": "2025-03-19T22:01:44.929374Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the default system prompt to ensure that code is never deleted or changed unless it is part of the requested changes. Additionally, the prompt now specifies that existing unchanged functions should not be summarized or omitted.",
+    "timestamp": "2025-03-19T22:02:48.089352Z",
+    "branch": "multiproject",
+    "commit_hash": "602ef0eacae8ac35ef7cc1c1b37e1f6ea9eda928",
     "model": "o1-mini"
   }
 ]
