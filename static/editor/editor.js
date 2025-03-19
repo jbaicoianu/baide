@@ -1807,7 +1807,7 @@ function showPlaceholderPage() {
   const activeCodingContexts = document.getElementById('activeCodingContexts');
 
   if (sourceCodeContainer) sourceCodeContainer.classList.add('hidden');
-  if (chatBox) chatBox.classList.add('hidden');
+  if (document.getElementById('chatContainer')) document.getElementById('chatContainer').classList.add('hidden');
   if (commitSummaries) commitSummaries.classList.add('hidden');
   if (activeCodingContexts) activeCodingContexts.classList.add('hidden');
 
@@ -1841,6 +1841,7 @@ function hidePlaceholderPage() {
   const activeCodingContexts = document.getElementById('activeCodingContexts');
 
   if (sourceCodeContainer) sourceCodeContainer.classList.remove('hidden');
+  if (document.getElementById('chatContainer')) document.getElementById('chatContainer').classList.remove('hidden');
   if (chatBox) chatBox.classList.remove('hidden');
   if (commitSummaries) commitSummaries.classList.remove('hidden');
   if (activeCodingContexts) activeCodingContexts.classList.remove('hidden');
