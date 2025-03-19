@@ -13,6 +13,159 @@ from datetime import datetime  # Added for timestamping
 API_KEY = os.getenv("OPENAI_API_KEY")
 client = openai.Client(api_key=API_KEY)
 
+# Define the projects directory
+PROJECTS_DIR = os.path.join(os.path.expanduser("~"), "projects")
+
+def get_current_project_name():
+    """Retrieve the current project name based on the current working directory."""
+    return os.path.basename(os.getcwd())
+
+def get_project_path(project_name=None):
+    """Get the absolute path of the project directory. Defaults to current project."""
+    if not project_name:
+        project_name = get_current_project_name()
+    return os.path.join(PROJECTS_DIR, project_name)
+
+def validate_project(project_name=None):
+    """Validate the project name and ensure its directory exists. Defaults to current project."""
+    if not project_name:
+        project_name = get_current_project_name()
+    if not re.match(r"^[\w\-]+$", project_name):
+        return False, "Invalid project name. Use only letters, numbers, underscores, and hyphens."
+    project_path = get_project_path(project_name)
+    if not os.path.isdir(project_path):
+        return False, "Project does not exist."
+    return True, project_path
+
+def transcript_filename(project_name=None, file_name=None):
+    """Return the transcript filename based on the project and file name's basename."""
+    if not project_name:
+        project_name = get_current_project_name()
+    base, _ = os.path.splitext(file_name)
+    return os.path.join(get_project_path(project_name), f"{base}-transcript.json")
+
+def load_transcript_from_disk(project_name=None, file_name=None):
+    """Load transcript from disk into chat_histories for the given project and file (if it exists)."""
+    if not project_name:
+        project_name = get_current_project_name()
+    fname = transcript_filename(project_name, file_name)
+    key = f"{project_name}/{file_name}"
+    if os.path.exists(fname):
+        try:
+            with open(fname, "r") as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    chat_histories[key] = data
+                    return data
+        except Exception:
+            pass
+    chat_histories[key] = []
+    return chat_histories[key]
+
+def update_transcript(project_name=None, file_name=None, commit_hash=None):
+    """Write the current chat_history for the given project and file to the transcript file and commit it to git."""
+    if not project_name:
+        project_name = get_current_project_name()
+    fname = transcript_filename(project_name, file_name)
+    key = f"{project_name}/{file_name}"
+    with open(fname, "w") as f:
+        json.dump(chat_histories[key], f, indent=2)
+    transcript_commit_msg = f"Update transcript for {os.path.basename(file_name)}"
+    commit_hash = commit_changes(project_name, fname, transcript_commit_msg)
+    # Optionally, you can store the commit_hash if needed
+    return commit_hash
+
+def load_all_contexts(project_name=None):
+    """Load all contexts from the contexts/ directory within the project as dictionaries with name and content."""
+    if not project_name:
+        project_name = get_current_project_name()
+    contexts = []
+    contexts_dir = os.path.join(get_project_path(project_name), "contexts")
+    if not os.path.isdir(contexts_dir):
+        print(f"Contexts directory '{contexts_dir}' does not exist.")
+        return contexts
+    for filename in os.listdir(contexts_dir):
+        if filename.endswith(".txt"):
+            context_name = os.path.splitext(filename)[0]
+            context_path = os.path.join(contexts_dir, filename)
+            try:
+                with open(context_path, "r") as f:
+                    content = f.read().strip()
+                contexts.append({"name": context_name, "content": content})
+            except Exception as e:
+                print(f"Error loading context '{context_name}': {e}")
+    return contexts
+
+def load_contexts_by_names(project_name=None, context_names=None):
+    """Load specific contexts by their names from the contexts/ directory within the project."""
+    if not project_name:
+        project_name = get_current_project_name()
+    contexts = []
+    if not context_names:
+        return contexts
+    contexts_dir = os.path.join(get_project_path(project_name), "contexts")
+    for name in context_names:
+        context_path = os.path.join(contexts_dir, f"{name}.txt")
+        if os.path.exists(context_path):
+            try:
+                with open(context_path, "r") as f:
+                    content = f.read().strip()
+                    if content:
+                        contexts.append(content)
+            except Exception as e:
+                print(f"Error loading context '{name}': {e}")
+        else:
+            print(f"Context file '{context_path}' does not exist.")
+    return contexts
+
+def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts, project_name=None):
+    """
+    Build a list of messages for the API:
+      - Include the system prompt.
+      - Include all coding context prompts (if provided).
+      - Append the user prompt.
+      - Append a final user message with the current on-disk file contents.
+    Roles are assigned based on the model:
+      - If model is "o1-mini", system and context prompts use role="user".
+      - Otherwise, they use role="system".
+    """
+    if not project_name:
+        project_name = get_current_project_name()
+    messages = []
+
+    # Combine system prompt and coding contexts
+    if coding_contexts:
+        combined_context = "\n\n".join(coding_contexts)
+        full_system_prompt = f"{system_prompt}\n\n{combined_context}"
+    else:
+        full_system_prompt = system_prompt
+
+    # Assign role based on model
+    role = "user" if model == "o1-mini" else "system"
+    messages.append({"role": role, "content": full_system_prompt})
+
+    # Add the user prompt
+    messages.append({"role": "user", "content": user_prompt})
+
+    # Append a final user message with the current on-disk file contents or prompt to start
+    project_path = get_project_path(project_name)
+    file_path = os.path.join(project_path, file_name)
+    try:
+        with open(file_path, "r") as f:
+            file_contents = f.read()
+    except Exception:
+        file_contents = ""
+    if file_contents:
+        final_content = "The following is the code which has been generated so far:\n" + file_contents
+    else:
+        final_content = "Please start generating code for this file."
+    final_msg = {
+        "role": "user",
+        "content": final_content
+    }
+    messages.append(final_msg)
+    return messages
+
 def get_available_models():
     """Retrieve the list of available OpenAI models dynamically."""
     try:
@@ -47,54 +200,6 @@ editor_template_mtime = None
 editor_template_path = os.path.join("templates", "editor.html")
 if os.path.exists(editor_template_path):
     editor_template_mtime = os.path.getmtime(editor_template_path)
-
-# Define the projects directory
-PROJECTS_DIR = os.path.join(os.path.expanduser("~"), "projects")
-
-def get_project_path(project_name):
-    """Get the absolute path of the project directory."""
-    return os.path.join(PROJECTS_DIR, project_name)
-
-def validate_project(project_name):
-    """Validate the project name and ensure its directory exists."""
-    if not re.match(r"^[\w\-]+$", project_name):
-        return False, "Invalid project name. Use only letters, numbers, underscores, and hyphens."
-    project_path = get_project_path(project_name)
-    if not os.path.isdir(project_path):
-        return False, "Project does not exist."
-    return True, project_path
-
-def transcript_filename(project_name, file_name):
-    """Return the transcript filename based on the project and file name's basename."""
-    base, _ = os.path.splitext(file_name)
-    return os.path.join(get_project_path(project_name), f"{base}-transcript.json")
-
-def load_transcript_from_disk(project_name, file_name):
-    """Load transcript from disk into chat_histories for the given project and file (if it exists)."""
-    fname = transcript_filename(project_name, file_name)
-    key = f"{project_name}/{file_name}"
-    if os.path.exists(fname):
-        try:
-            with open(fname, "r") as f:
-                data = json.load(f)
-                if isinstance(data, list):
-                    chat_histories[key] = data
-                    return data
-        except Exception:
-            pass
-    chat_histories[key] = []
-    return chat_histories[key]
-
-def update_transcript(project_name, file_name, commit_hash=None):
-    """Write the current chat_history for the given project and file to the transcript file and commit it to git."""
-    fname = transcript_filename(project_name, file_name)
-    key = f"{project_name}/{file_name}"
-    with open(fname, "w") as f:
-        json.dump(chat_histories[key], f, indent=2)
-    transcript_commit_msg = f"Update transcript for {os.path.basename(file_name)}"
-    commit_hash = commit_changes(project_name, fname, transcript_commit_msg)
-    # Optionally, you can store the commit_hash if needed
-    return commit_hash
 
 def extract_commit_summary(text):
     """Search for a line starting with 'Commit Summary:' at the beginning of a line and return its content."""
@@ -134,8 +239,10 @@ def compute_diff(old_content, new_content):
     diff_lines = difflib.unified_diff(old_lines, new_lines, fromfile="Before", tofile="After")
     return "".join(diff_lines)
 
-def commit_changes(project_name, file_path, commit_message):
+def commit_changes(project_name=None, file_path=None, commit_message=None):
     """Stage the given file and commit changes to git with the provided commit message. Returns commit hash."""
+    if not project_name:
+        project_name = get_current_project_name()
     project_path = get_project_path(project_name)
     try:
         subprocess.run(["git", "add", file_path], cwd=project_path, check=True)
@@ -147,88 +254,14 @@ def commit_changes(project_name, file_path, commit_message):
     except subprocess.CalledProcessError:
         return None
 
-def load_all_contexts(project_name):
-    """Load all contexts from the contexts/ directory within the project as dictionaries with name and content."""
-    contexts = []
-    contexts_dir = os.path.join(get_project_path(project_name), "contexts")
-    if not os.path.isdir(contexts_dir):
-        print(f"Contexts directory '{contexts_dir}' does not exist.")
-        return contexts
-    for filename in os.listdir(contexts_dir):
-        if filename.endswith(".txt"):
-            context_name = os.path.splitext(filename)[0]
-            context_path = os.path.join(contexts_dir, filename)
-            try:
-                with open(context_path, "r") as f:
-                    content = f.read().strip()
-                contexts.append({"name": context_name, "content": content})
-            except Exception as e:
-                print(f"Error loading context '{context_name}': {e}")
-    return contexts
-
-def load_contexts_by_names(project_name, context_names):
-    """Load specific contexts by their names from the contexts/ directory within the project."""
-    contexts = []
-    contexts_dir = os.path.join(get_project_path(project_name), "contexts")
-    for name in context_names:
-        context_path = os.path.join(contexts_dir, f"{name}.txt")
-        if os.path.exists(context_path):
-            try:
-                with open(context_path, "r") as f:
-                    content = f.read().strip()
-                    if content:
-                        contexts.append(content)
-            except Exception as e:
-                print(f"Error loading context '{name}': {e}")
-        else:
-            print(f"Context file '{context_path}' does not exist.")
-    return contexts
-
-def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts, project_name):
-    """
-    Build a list of messages for the API:
-      - Include the system prompt.
-      - Include all coding context prompts (if provided).
-      - Append the user prompt.
-      - Append a final user message with the current on-disk file contents.
-    Roles are assigned based on the model:
-      - If model is "o1-mini", system and context prompts use role="user".
-      - Otherwise, they use role="system".
-    """
-    messages = []
-
-    # Combine system prompt and coding contexts
-    if coding_contexts:
-        combined_context = "\n\n".join(coding_contexts)
-        full_system_prompt = f"{system_prompt}\n\n{combined_context}"
-    else:
-        full_system_prompt = system_prompt
-
-    # Assign role based on model
-    role = "user" if model == "o1-mini" else "system"
-    messages.append({"role": role, "content": full_system_prompt})
-
-    # Add the user prompt
-    messages.append({"role": "user", "content": user_prompt})
-
-    # Append a final user message with the current on-disk file contents or prompt to start
-    project_path = get_project_path(project_name)
-    file_path = os.path.join(project_path, file_name)
+def get_current_git_branch(project_path):
+    """Helper function to get the current Git branch."""
     try:
-        with open(file_path, "r") as f:
-            file_contents = f.read()
-    except Exception:
-        file_contents = ""
-    if file_contents:
-        final_content = "The following is the code which has been generated so far:\n" + file_contents
-    else:
-        final_content = "Please start generating code for this file."
-    final_msg = {
-        "role": "user",
-        "content": final_content
-    }
-    messages.append(final_msg)
-    return messages
+        result = subprocess.run(["git", "branch", "--show-current"], cwd=project_path, capture_output=True, text=True, check=True)
+        current_branch = result.stdout.strip()
+        return current_branch
+    except subprocess.CalledProcessError:
+        return "unknown"
 
 def get_directory_structure(path):
     """Recursively build a directory structure as a list of dictionaries."""
@@ -264,8 +297,8 @@ def serve_static(filename):
 def get_transcript():
     project_name = request.args.get('project_name')
     file_name = request.args.get('file')
-    if not project_name or not file_name:
-        return jsonify({"error": "No project name or file specified."}), 400
+    if not file_name:
+        return jsonify({"error": "No file specified."}), 400
     is_valid, result = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": result}), 400
@@ -277,7 +310,7 @@ def get_transcript():
 def get_source():
     project_name = request.args.get('project_name')
     file_name = request.args.get('file')
-    if not project_name or not file_name:
+    if not file_name:
         return jsonify({"content": ""})
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
@@ -296,11 +329,11 @@ def get_source():
 @app.route("/update_source", methods=["POST"])
 def update_source():
     data = request.get_json()
-    if not data or "content" not in data or "file" not in data or "project_name" not in data:
-        return jsonify({"error": "No content, file, or project name specified."}), 400
+    if not data or "content" not in data or "file" not in data:
+        return jsonify({"error": "No content or file specified."}), 400
     new_content = data["content"]
     file_name = data["file"]
-    project_name = data["project_name"]
+    project_name = data.get("project_name")
     commit_message = data.get("commit_message", "Manually updated source code via web UI.")
     
     is_valid, project_path = validate_project(project_name)
@@ -342,10 +375,10 @@ def update_source():
 @app.route("/create_file", methods=["POST"])
 def create_file():
     data = request.get_json()
-    if not data or "file" not in data or "project_name" not in data:
-        return jsonify({"error": "No file name or project name specified."}), 400
+    if not data or "file" not in data:
+        return jsonify({"error": "No file name specified."}), 400
     file_name = data["file"]
-    project_name = data["project_name"]
+    project_name = data.get("project_name")
     
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
@@ -364,8 +397,7 @@ def create_file():
         commit_hash = commit_changes(project_name, file_path, commit_msg)
         if commit_hash:
             # Add timestamp, branch, and commit hash to transcript
-            project_dir = get_project_path(project_name)
-            current_branch = get_current_git_branch(project_dir)
+            current_branch = get_current_git_branch(project_path)
             timestamp = datetime.utcnow().isoformat() + "Z"
             key = f"{project_name}/{file_name}"
             if key not in chat_histories:
@@ -389,8 +421,6 @@ def create_file():
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
     project_name = request.args.get('project_name')
-    if not project_name:
-        return jsonify({"error": "No project name specified."}), 400
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -401,8 +431,6 @@ def get_coding_contexts():
 @app.route("/project_structure", methods=["GET"])
 def project_structure():
     project_name = request.args.get('project_name')
-    if not project_name:
-        return jsonify({"error": "No project name specified."}), 400
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -416,21 +444,10 @@ def project_structure():
 def get_models():
     return jsonify({"models": AVAILABLE_MODELS, "defaultmodel": "o1-mini"})
 
-def get_current_git_branch(project_path):
-    """Helper function to get the current Git branch."""
-    try:
-        result = subprocess.run(["git", "branch", "--show-current"], cwd=project_path, capture_output=True, text=True, check=True)
-        current_branch = result.stdout.strip()
-        return current_branch
-    except subprocess.CalledProcessError:
-        return "unknown"
-
 # New Endpoint: Get Current Git Branch
 @app.route("/git_current_branch", methods=["GET"])
 def git_current_branch():
     project_name = request.args.get('project_name')
-    if not project_name:
-        return jsonify({"error": "No project name specified."}), 400
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -444,8 +461,6 @@ def git_current_branch():
 @app.route("/git_branches", methods=["GET"])
 def git_branches():
     project_name = request.args.get('project_name')
-    if not project_name:
-        return jsonify({"error": "No project name specified."}), 400
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -460,10 +475,10 @@ def git_branches():
 @app.route("/git_switch_branch", methods=["POST"])
 def git_switch_branch():
     data = request.get_json()
-    if not data or "branch" not in data or "project_name" not in data:
-        return jsonify({"success": False, "error": "No branch or project name specified."}), 400
+    if not data or "branch" not in data:
+        return jsonify({"success": False, "error": "No branch specified."}), 400
     branch = data["branch"]
-    project_name = data["project_name"]
+    project_name = data.get("project_name")
     
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
@@ -480,10 +495,10 @@ def git_switch_branch():
 @app.route("/git_create_branch", methods=["POST"])
 def git_create_branch():
     data = request.get_json()
-    if not data or "branch" not in data or "project_name" not in data:
-        return jsonify({"success": False, "error": "No branch name or project name specified."}), 400
+    if not data or "branch" not in data:
+        return jsonify({"success": False, "error": "No branch name specified."}), 400
     branch = data["branch"]
-    project_name = data["project_name"]
+    project_name = data.get("project_name")
     
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
@@ -583,11 +598,11 @@ def get_project_details():
 def chat():
     global chat_histories, DEBUG
     data = request.get_json()
-    if not data or "prompt" not in data or "file" not in data or "project_name" not in data:
-        return jsonify({"error": "No prompt, file, or project name specified."}), 400
+    if not data or "prompt" not in data or "file" not in data:
+        return jsonify({"error": "No prompt or file specified."}), 400
     user_input = data["prompt"]
     file_name = data["file"]
-    project_name = data["project_name"]
+    project_name = data.get("project_name")
     context_names = data.get("contexts", [])  # List of context names
 
     # Retrieve the selected model, default to 'o1-mini' if not provided
@@ -709,14 +724,14 @@ def index():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
-    parser.add_argument("project_name", help="Name of the project to manage.")
-    parser.add_argument("source_files", nargs='+', help="Paths to the project files to manage.")
+    parser.add_argument("project_name", nargs='?', help="Name of the project to manage.")
+    parser.add_argument("source_files", nargs='*', help="Paths to the project files to manage.")
     parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
     parser.add_argument("--debug", action="store_true", help="Print full AI prompt on each API call for debugging.")
     args = parser.parse_args()
 
     DEBUG = args.debug
-    project_name = args.project_name
+    project_name = args.project_name if args.project_name else get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         print(f"Error: {project_path}")
