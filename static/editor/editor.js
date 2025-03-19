@@ -1346,6 +1346,7 @@ async function createNewFile() {
   if (data.success) {
     closeNewFileModal();
     await loadProjectStructure();
+    await openFileInTab(fileName, true); // Added this line to open the new file in a new tab
     showToast(`File ${fileName} created successfully.`, "success");
   } else {
     showToast("Error creating file: " + data.error, "error");
