@@ -1531,7 +1531,7 @@ function adjustTabs() {
   tabs.forEach(tab => {
     usedWidth += tab.offsetWidth;
     if (usedWidth > availableWidth - moreBtn.offsetWidth) {
-      tab.style.display = 'none';
+      tab.classList.add('hidden'); // Add 'hidden' class instead of display 'none'
       // Create dropdown item with close button
       const dropdownItem = document.createElement('div');
       dropdownItem.className = 'dropdown-item';
@@ -1807,9 +1807,9 @@ function showPlaceholderPage() {
   const activeCodingContexts = document.getElementById('activeCodingContexts');
 
   if (sourceCodeContainer) sourceCodeContainer.classList.add('hidden');
-  if (chatBox) chatBox.style.display = 'none';
-  if (commitSummaries) commitSummaries.style.display = 'none';
-  if (activeCodingContexts) activeCodingContexts.style.display = 'none';
+  if (chatBox) chatBox.classList.add('hidden');
+  if (commitSummaries) commitSummaries.classList.add('hidden');
+  if (activeCodingContexts) activeCodingContexts.classList.add('hidden');
 
   let placeholder = document.getElementById('newProjectPlaceholder');
   if (!placeholder) {
@@ -1841,9 +1841,9 @@ function hidePlaceholderPage() {
   const activeCodingContexts = document.getElementById('activeCodingContexts');
 
   if (sourceCodeContainer) sourceCodeContainer.classList.remove('hidden');
-  if (chatBox) chatBox.style.display = 'block';
-  if (commitSummaries) commitSummaries.style.display = 'block';
-  if (activeCodingContexts) activeCodingContexts.style.display = 'block';
+  if (chatBox) chatBox.classList.remove('hidden');
+  if (commitSummaries) commitSummaries.classList.remove('hidden');
+  if (activeCodingContexts) activeCodingContexts.classList.remove('hidden');
 
   const placeholder = document.getElementById('newProjectPlaceholder');
   if (placeholder) {
