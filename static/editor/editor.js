@@ -1,3 +1,22 @@
+/*
+CSS Styles:
+
+.hidden {
+  display: none;
+}
+
+#sourceCodeContainer {
+  display: flex;
+}
+
+#newProjectPlaceholder {
+  padding: 20px;
+  text-align: center;
+  font-size: 1.2em;
+  color: #555;
+}
+*/
+
 let activeFile = {}; // Mapping of project name to active file
 let openFiles = {}; // Mapping of project name to open files
 let editor = null;
@@ -1806,7 +1825,7 @@ function showPlaceholderPage() {
   const commitSummaries = document.getElementById('commitSummaries');
   const activeCodingContexts = document.getElementById('activeCodingContexts');
 
-  if (sourceCodeContainer) sourceCodeContainer.style.display = 'none';
+  if (sourceCodeContainer) sourceCodeContainer.classList.add('hidden');
   if (chatBox) chatBox.style.display = 'none';
   if (commitSummaries) commitSummaries.style.display = 'none';
   if (activeCodingContexts) activeCodingContexts.style.display = 'none';
@@ -1824,13 +1843,13 @@ function showPlaceholderPage() {
         <li>Select an existing file from the project browser to open it.</li>
       </ul>
     `;
-    placeholder.style.padding = '20px';
-    placeholder.style.textAlign = 'center';
-    placeholder.style.fontSize = '1.2em';
-    placeholder.style.color = '#555';
-    document.body.appendChild(placeholder);
+    // Remove inline styles, add 'hidden' class to hide initially
+    placeholder.classList.add('hidden');
+    // Insert before sourceCodeContainer
+    sourceCodeContainer.parentNode.insertBefore(placeholder, sourceCodeContainer);
   }
-  placeholder.style.display = 'block';
+  // Show placeholder
+  placeholder.classList.remove('hidden');
 }
 
 // Function to hide the "new project" placeholder page
@@ -1840,14 +1859,14 @@ function hidePlaceholderPage() {
   const commitSummaries = document.getElementById('commitSummaries');
   const activeCodingContexts = document.getElementById('activeCodingContexts');
 
-  if (sourceCodeContainer) sourceCodeContainer.style.display = 'block';
+  if (sourceCodeContainer) sourceCodeContainer.classList.remove('hidden');
   if (chatBox) chatBox.style.display = 'block';
   if (commitSummaries) commitSummaries.style.display = 'block';
   if (activeCodingContexts) activeCodingContexts.style.display = 'block';
 
   const placeholder = document.getElementById('newProjectPlaceholder');
   if (placeholder) {
-    placeholder.style.display = 'none';
+    placeholder.classList.add('hidden');
   }
 }
 
