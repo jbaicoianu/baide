@@ -581,11 +581,7 @@ function loadCurrentProject() {
 // Function to load and display the current Git branch
 async function loadGitBranch() {
   try {
-    const response = await fetch('/git_current_branch', {
-      headers: {
-        'Project-Name': currentProject
-      }
-    });
+    const response = await fetch('/git_current_branch?project_name=' + currentProject);
     if (response.ok) {
       const data = await response.json();
       const gitBranchDiv = document.getElementById('gitBranchDisplay');
@@ -627,11 +623,7 @@ async function openBranchPopup() {
   if (!popup.classList.contains('hidden')) {
     // Fetch and display branches
     try {
-      const response = await fetch('/git_branches', {
-        headers: {
-          'Project-Name': currentProject
-        }
-      });
+      const response = await fetch('/git_branches?project_name=' + currentProject);
       if (response.ok) {
         const data = await response.json();
         const branchList = document.getElementById('branchList');
@@ -662,10 +654,9 @@ async function switchBranch(branchName) {
     const response = await fetch('/git_switch_branch', {
       method: 'POST',
       headers: { 
-        'Content-Type': 'application/json',
-        'Project-Name': currentProject
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ branch: branchName })
+      body: JSON.stringify({ branch: branchName, project_name: currentProject })
     });
     if (response.ok) {
       const data = await response.json();
@@ -743,10 +734,9 @@ async function addNewBranch() {
     const response = await fetch('/git_create_branch', {
       method: 'POST',
       headers: { 
-        'Content-Type': 'application/json',
-        'Project-Name': currentProject
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ branch: branchName })
+      body: JSON.stringify({ branch: branchName, project_name: currentProject })
     });
     if (response.ok) {
       const data = await response.json();
@@ -1148,7 +1138,7 @@ function setupEventListeners() {
     try {
       const response = await fetch("/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json", 'Project-Name': currentProject },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt: prompt, file: filename, contexts: contexts, model: activeModel, project_name: currentProject })
       });
       if (response.ok) {
@@ -1349,9 +1339,8 @@ async function createNewFile() {
     method: "POST",
     headers: { 
       "Content-Type": "application/json",
-      'Project-Name': currentProject
     },
-    body: JSON.stringify({ file: fileName, project: currentProject })
+    body: JSON.stringify({ file: fileName, project_name: currentProject })
   });
   const data = await response.json();
   if (data.success) {
@@ -1894,11 +1883,7 @@ function hidePlaceholderPage() {
 // Function to load and display the current Git branch
 async function loadGitBranch() {
   try {
-    const response = await fetch('/git_current_branch', {
-      headers: {
-        'Project-Name': currentProject
-      }
-    });
+    const response = await fetch('/git_current_branch?project_name=' + currentProject);
     if (response.ok) {
       const data = await response.json();
       const gitBranchDiv = document.getElementById('gitBranchDisplay');
