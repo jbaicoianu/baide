@@ -1,3 +1,14 @@
+/* 
+CSS for Project Selector:
+#projectSelector {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+*/
+
 let activeFile = null;
 let openFiles = {};
 let editor = null;
@@ -13,6 +24,7 @@ let searchDirection = 'forward'; // New variable to track search direction
 let totalSearchResults = 0;
 let currentSearchIndex = 0;
 let searchResults = []; // Array to store all search match positions
+let currentProject = ''; // Variable to track the current project
 
 // Initialize CodeMirror editor
 function initializeCodeMirror() {
@@ -121,7 +133,7 @@ function saveFile(commitMessage) {
   fetch('/update_source', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage })
+    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage, project: currentProject })
   })
   .then(response => response.json())
   .then(data => {
@@ -323,7 +335,7 @@ function saveFile(commitMessage) {
   fetch('/update_source', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage })
+    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage, project: currentProject })
   })
   .then(response => response.json())
   .then(data => {
@@ -358,12 +370,15 @@ function renderMarkdown(text) {
 // Function to load project structure and set up event listeners for files
 async function loadProjectStructure() {
   try {
-    const response = await fetch('/project_structure');
+    const response = await fetch(`/projects/details?project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       const projectBrowser = document.getElementById('projectBrowser');
       projectBrowser.innerHTML = '<h2>Project Browser</h2>';
           
+      // Add Project Selector
+      addProjectSelector(projectBrowser);
+      
       // Add Git Branch Display
       const gitBranchDiv = document.createElement('div');
       gitBranchDiv.id = 'gitBranchDisplay';
@@ -372,40 +387,6 @@ async function loadProjectStructure() {
       gitBranchDiv.addEventListener('click', openBranchPopup);
       projectBrowser.appendChild(gitBranchDiv);
           
-      // /* 
-      // CSS for Git Branch Display and Popup:
-      // #gitBranchDisplay {
-      //   padding: 10px;
-      //   background-color: #f5f5f5;
-      //   border-bottom: 1px solid #ddd;
-      //   font-weight: bold;
-      // }
-      // #branchPopup {
-      //   position: absolute;
-      //   top: 50px;
-      //   left: 10px;
-      //   background-color: white;
-      //   border: 1px solid #ccc;
-      //   padding: 20px;
-      //   box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      //   z-index: 1000;
-      // }
-      // #branchPopup.hidden {
-      //   display: none;
-      // }
-      // #branchList {
-      //   max-height: 200px;
-      //   overflow-y: auto;
-      // }
-      // .branchItem {
-      //   padding: 5px 0;
-      //   cursor: pointer;
-      // }
-      // .branchItem:hover {
-      //   background-color: #f0f0f0;
-      // }
-      // */
-      
       // Add New File Button
       const newFileBtn = document.createElement('button');
       newFileBtn.id = 'newFileBtn';
@@ -430,10 +411,108 @@ async function loadProjectStructure() {
   }
 }
 
+// Function to add Project Selector to the Project Browser
+function addProjectSelector(parentElement) {
+  const selector = document.createElement('select');
+  selector.id = 'projectSelector';
+  
+  // Fetch all projects
+  fetch('/projects/list')
+    .then(response => response.json())
+    .then(projects => {
+      // Add a default option
+      const defaultOption = document.createElement('option');
+      defaultOption.value = '';
+      defaultOption.textContent = 'Select Project';
+      selector.appendChild(defaultOption);
+      
+      projects.forEach(project => {
+        const option = document.createElement('option');
+        option.value = project;
+        option.textContent = project;
+        selector.appendChild(option);
+      });
+      
+      // Set the current project as selected
+      selector.value = currentProject;
+    })
+    .catch(error => {
+      console.error('Error fetching project list:', error);
+    });
+  
+  // Add event listener for project change
+  selector.addEventListener('change', (e) => {
+    const selectedProject = e.target.value;
+    if (selectedProject) {
+      switchProject(selectedProject);
+    }
+  });
+  
+  parentElement.insertBefore(selector, parentElement.firstChild);
+}
+
+// Function to switch projects
+async function switchProject(projectName) {
+  try {
+    const response = await fetch(`/projects/details?project_name=${encodeURIComponent(projectName)}`);
+    if (response.ok) {
+      currentProject = projectName;
+      // Save current project to localStorage
+      localStorage.setItem('currentProject', currentProject);
+      // Reload project structure
+      await loadProjectStructure();
+      // Close all open tabs
+      closeAllTabs();
+      // Optionally, you might want to load the last active file for the new project
+    } else {
+      showToast('Failed to switch project.', 'error');
+      console.error('Failed to switch project.');
+    }
+  } catch (e) {
+    showToast('Error switching project.', 'error');
+    console.error('Error switching project:', e);
+  }
+}
+
+// Function to close all open tabs
+function closeAllTabs() {
+  const tabs = document.getElementById('tabs');
+  if (tabs) {
+    Array.from(tabs.getElementsByClassName('tab')).forEach(tab => {
+      const filename = tab.textContent.slice(0, -1); // Remove close button
+      closeTab(filename);
+    });
+  }
+}
+
+// Function to load current project from localStorage
+function loadCurrentProject() {
+  const storedProject = localStorage.getItem('currentProject');
+  if (storedProject) {
+    currentProject = storedProject;
+  } else {
+    // If no project is selected, you might want to select a default or prompt the user
+    fetch('/projects/list')
+      .then(response => response.json())
+      .then(projects => {
+        if (projects.length > 0) {
+          switchProject(projects[0]);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching project list:', error);
+      });
+  }
+}
+
 // Function to load and display the current Git branch
 async function loadGitBranch() {
   try {
-    const response = await fetch('/git_current_branch');
+    const response = await fetch('/git_current_branch', {
+      headers: {
+        'Project-Name': currentProject
+      }
+    });
     if (response.ok) {
       const data = await response.json();
       const gitBranchDiv = document.getElementById('gitBranchDisplay');
@@ -475,7 +554,11 @@ async function openBranchPopup() {
   if (!popup.classList.contains('hidden')) {
     // Fetch and display branches
     try {
-      const response = await fetch('/git_branches');
+      const response = await fetch('/git_branches', {
+        headers: {
+          'Project-Name': currentProject
+        }
+      });
       if (response.ok) {
         const data = await response.json();
         const branchList = document.getElementById('branchList');
@@ -505,7 +588,10 @@ async function switchBranch(branchName) {
   try {
     const response = await fetch('/git_switch_branch', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Project-Name': currentProject
+      },
       body: JSON.stringify({ branch: branchName })
     });
     if (response.ok) {
@@ -583,7 +669,10 @@ async function addNewBranch() {
   try {
     const response = await fetch('/git_create_branch', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'Project-Name': currentProject
+      },
       body: JSON.stringify({ branch: branchName })
     });
     if (response.ok) {
@@ -669,7 +758,7 @@ async function openFileInTab(filename, activate = true) {
   }
     
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       // Create a new tab
@@ -758,7 +847,7 @@ async function switchToTab(filename) {
   saveActiveFile();
   // Load source code
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       document.getElementById('sourceCode').value = data.content;
@@ -887,7 +976,7 @@ function scrollToBottom(element) {
 // Function to load the existing conversation transcript for a specific file from the server.
 async function loadTranscript(filename) {
   try {
-    const response = await fetch(`/transcript?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/transcript?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       document.getElementById('chatBox').innerHTML = '';
@@ -965,8 +1054,8 @@ function setupEventListeners() {
     try {
       const response = await fetch("/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts, model: activeModel })
+        headers: { "Content-Type": "application/json", 'Project-Name': currentProject },
+        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts, model: activeModel, project: currentProject })
       });
       if (response.ok) {
         const data = await response.json();
@@ -1131,7 +1220,7 @@ function saveFileActiveModels() {
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       document.getElementById('sourceCode').value = data.content;
@@ -1170,8 +1259,11 @@ async function createNewFile() {
   }
   const response = await fetch("/create_file", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ file: fileName })
+    headers: { 
+      "Content-Type": "application/json",
+      'Project-Name': currentProject
+    },
+    body: JSON.stringify({ file: fileName, project: currentProject })
   });
   const data = await response.json();
   if (data.success) {
@@ -1415,6 +1507,7 @@ window.onload = async function() {
   // Load AI Models after creating the dropdown
   await loadAIModals();
   
+  loadCurrentProject();
   await loadProjectStructure();
   await loadOpenFiles();
   loadActiveFile();
@@ -1488,11 +1581,6 @@ function loadFileActiveModelsFromStorage() {
   if (storedModels) {
     fileActiveModels = JSON.parse(storedModels);
   }
-}
-
-// Function to save active AI models for all files to localStorage
-function saveFileActiveModels() {
-  localStorage.setItem('fileActiveModels', JSON.stringify(fileActiveModels));
 }
 
 // Function to load and populate AI models on startup
