@@ -189,7 +189,7 @@ def get_available_models():
 AVAILABLE_MODELS = get_available_models()
 
 # Global variables for managing multiple files and debugging.
-ACTIVE_FILES = []
+# ACTIVE_FILES = []  # Consider removing if not used elsewhere
 DEBUG = False
 
 # In-memory conversation histories mapped by project and filename.
@@ -427,17 +427,15 @@ def get_coding_contexts():
     context_names = load_all_contexts(project_name)
     return jsonify(context_names)
 
-# Route to get project structure as JSON
-@app.route("/project_structure", methods=["GET"])
-def project_structure():
+# Route to return the project structure as JSON.
+@app.route("/projects/structure", methods=["GET"])
+def projects_structure():
     project_name = request.args.get('project_name')
     if not project_name:
         project_name = get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
-    if not ACTIVE_FILES:
-        return jsonify([])
     structure = get_directory_structure(project_path)
     return jsonify(structure)
 
@@ -750,7 +748,7 @@ if __name__ == "__main__":
         if not os.path.exists(file_path):
             open(file_path, "w").close()
         load_transcript_from_disk(project_name, source_file)
-        ACTIVE_FILES.append(file_path)
+        # ACTIVE_FILES.append(file_path)  # Consider removing if not used elsewhere
 
     # Ensure the projects directory exists
     os.makedirs(PROJECTS_DIR, exist_ok=True)
