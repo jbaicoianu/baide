@@ -39,7 +39,7 @@ AVAILABLE_MODELS = get_available_models()
 ACTIVE_FILES = []
 DEBUG = False
 
-# In-memory conversation histories mapped by filename.
+# In-memory conversation histories mapped by project and filename.
 chat_histories = {}
 
 # Global variable to track the last modification time of editor.html
@@ -51,33 +51,48 @@ if os.path.exists(editor_template_path):
 # Define the projects directory
 PROJECTS_DIR = os.path.join(os.path.expanduser("~"), "projects")
 
-def transcript_filename(file_name):
-    """Return the transcript filename based on the provided filename's basename."""
-    base, _ = os.path.splitext(file_name)
-    return f"{base}-transcript.json"
+def get_project_path(project_name):
+    """Get the absolute path of the project directory."""
+    return os.path.join(PROJECTS_DIR, project_name)
 
-def load_transcript_from_disk(file_name):
-    """Load transcript from disk into chat_histories for the given file (if it exists)."""
-    fname = transcript_filename(file_name)
+def validate_project(project_name):
+    """Validate the project name and ensure its directory exists."""
+    if not re.match(r"^[\w\-]+$", project_name):
+        return False, "Invalid project name. Use only letters, numbers, underscores, and hyphens."
+    project_path = get_project_path(project_name)
+    if not os.path.isdir(project_path):
+        return False, "Project does not exist."
+    return True, project_path
+
+def transcript_filename(project_name, file_name):
+    """Return the transcript filename based on the project and file name's basename."""
+    base, _ = os.path.splitext(file_name)
+    return os.path.join(get_project_path(project_name), f"{base}-transcript.json")
+
+def load_transcript_from_disk(project_name, file_name):
+    """Load transcript from disk into chat_histories for the given project and file (if it exists)."""
+    fname = transcript_filename(project_name, file_name)
+    key = f"{project_name}/{file_name}"
     if os.path.exists(fname):
         try:
             with open(fname, "r") as f:
                 data = json.load(f)
                 if isinstance(data, list):
-                    chat_histories[file_name] = data
+                    chat_histories[key] = data
                     return data
         except Exception:
             pass
-    chat_histories[file_name] = []
-    return chat_histories[file_name]
+    chat_histories[key] = []
+    return chat_histories[key]
 
-def update_transcript(file_name, commit_hash=None):
-    """Write the current chat_history for the given file to the transcript file and commit it to git."""
-    fname = transcript_filename(file_name)
+def update_transcript(project_name, file_name, commit_hash=None):
+    """Write the current chat_history for the given project and file to the transcript file and commit it to git."""
+    fname = transcript_filename(project_name, file_name)
+    key = f"{project_name}/{file_name}"
     with open(fname, "w") as f:
-        json.dump(chat_histories[file_name], f, indent=2)
+        json.dump(chat_histories[key], f, indent=2)
     transcript_commit_msg = f"Update transcript for {os.path.basename(file_name)}"
-    commit_hash = commit_changes(fname, transcript_commit_msg)
+    commit_hash = commit_changes(project_name, fname, transcript_commit_msg)
     # Optionally, you can store the commit_hash if needed
     return commit_hash
 
@@ -119,22 +134,23 @@ def compute_diff(old_content, new_content):
     diff_lines = difflib.unified_diff(old_lines, new_lines, fromfile="Before", tofile="After")
     return "".join(diff_lines)
 
-def commit_changes(file_path, commit_message):
+def commit_changes(project_name, file_path, commit_message):
     """Stage the given file and commit changes to git with the provided commit message. Returns commit hash."""
+    project_path = get_project_path(project_name)
     try:
-        subprocess.run(["git", "add", file_path], check=True)
-        subprocess.run(["git", "commit", "-m", commit_message], check=True)
+        subprocess.run(["git", "add", file_path], cwd=project_path, check=True)
+        subprocess.run(["git", "commit", "-m", commit_message], cwd=project_path, check=True)
         # Get the latest commit hash
-        result = subprocess.run(["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True)
+        result = subprocess.run(["git", "rev-parse", "HEAD"], cwd=project_path, capture_output=True, text=True, check=True)
         commit_hash = result.stdout.strip()
         return commit_hash
     except subprocess.CalledProcessError:
         return None
 
-def load_all_contexts():
-    """Load all contexts from the contexts/ directory as dictionaries with name and content."""
+def load_all_contexts(project_name):
+    """Load all contexts from the contexts/ directory within the project as dictionaries with name and content."""
     contexts = []
-    contexts_dir = "contexts"
+    contexts_dir = os.path.join(get_project_path(project_name), "contexts")
     if not os.path.isdir(contexts_dir):
         print(f"Contexts directory '{contexts_dir}' does not exist.")
         return contexts
@@ -150,10 +166,10 @@ def load_all_contexts():
                 print(f"Error loading context '{context_name}': {e}")
     return contexts
 
-def load_contexts_by_names(context_names):
-    """Load specific contexts by their names from the contexts/ directory."""
+def load_contexts_by_names(project_name, context_names):
+    """Load specific contexts by their names from the contexts/ directory within the project."""
     contexts = []
-    contexts_dir = "contexts"
+    contexts_dir = os.path.join(get_project_path(project_name), "contexts")
     for name in context_names:
         context_path = os.path.join(contexts_dir, f"{name}.txt")
         if os.path.exists(context_path):
@@ -168,7 +184,7 @@ def load_contexts_by_names(context_names):
             print(f"Context file '{context_path}' does not exist.")
     return contexts
 
-def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts):
+def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_contexts, project_name):
     """
     Build a list of messages for the API:
       - Include the system prompt.
@@ -196,8 +212,10 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
     messages.append({"role": "user", "content": user_prompt})
 
     # Append a final user message with the current on-disk file contents or prompt to start
+    project_path = get_project_path(project_name)
+    file_path = os.path.join(project_path, file_name)
     try:
-        with open(file_name, "r") as f:
+        with open(file_path, "r") as f:
             file_contents = f.read()
     except Exception:
         file_contents = ""
@@ -244,22 +262,31 @@ def serve_static(filename):
 # Route to return the current transcript as JSON for a specific file.
 @app.route("/transcript", methods=["GET"])
 def get_transcript():
+    project_name = request.args.get('project_name')
     file_name = request.args.get('file')
-    if not file_name:
-        return jsonify({"error": "No file specified."}), 400
-    transcript = load_transcript_from_disk(file_name)
+    if not project_name or not file_name:
+        return jsonify({"error": "No project name or file specified."}), 400
+    is_valid, result = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": result}), 400
+    transcript = load_transcript_from_disk(project_name, file_name)
     return jsonify(transcript)
 
 # Route to return the current source code content for a specific file.
 @app.route("/source", methods=["GET"])
 def get_source():
+    project_name = request.args.get('project_name')
     file_name = request.args.get('file')
-    if not file_name:
+    if not project_name or not file_name:
         return jsonify({"content": ""})
-    if not os.path.exists(file_name):
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
+    file_path = os.path.join(project_path, file_name)
+    if not os.path.exists(file_path):
         return jsonify({"content": ""})
     try:
-        with open(file_name, "r") as f:
+        with open(file_path, "r") as f:
             content = f.read()
         return jsonify({"content": content})
     except Exception as e:
@@ -269,19 +296,29 @@ def get_source():
 @app.route("/update_source", methods=["POST"])
 def update_source():
     data = request.get_json()
-    if not data or "content" not in data or "file" not in data:
-        return jsonify({"error": "No content or file specified."}), 400
+    if not data or "content" not in data or "file" not in data or "project_name" not in data:
+        return jsonify({"error": "No content, file, or project name specified."}), 400
     new_content = data["content"]
     file_name = data["file"]
+    project_name = data["project_name"]
     commit_message = data.get("commit_message", "Manually updated source code via web UI.")
+    
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
+
+    file_path = os.path.join(project_path, file_name)
     try:
-        with open(file_name, "w") as f:
+        with open(file_path, "w") as f:
             f.write(new_content)
-        commit_hash = commit_changes(file_name, commit_message)
+        commit_hash = commit_changes(project_name, file_path, commit_message)
         if commit_hash:
             # Add timestamp, branch, and commit hash to transcript
-            current_branch = get_current_git_branch()
+            current_branch = get_current_git_branch(project_path)
             timestamp = datetime.utcnow().isoformat() + "Z"
+            key = f"{project_name}/{file_name}"
+            if key not in chat_histories:
+                load_transcript_from_disk(project_name, file_name)
             transcript_entry = {
                 "role": "User",
                 "content": f"{commit_message} [Manual edit]",
@@ -289,12 +326,12 @@ def update_source():
                 "branch": current_branch,
                 "commit_hash": commit_hash
             }
-            chat_histories[file_name].append(transcript_entry)
-            update_transcript(file_name, commit_hash)
+            chat_histories[key].append(transcript_entry)
+            update_transcript(project_name, file_name, commit_hash)
             return jsonify({
                 "message": "Source code updated successfully.",
                 "commit_hash": commit_hash,
-                "chat_history": chat_histories[file_name]
+                "chat_history": chat_histories[key]
             })
         else:
             return jsonify({"error": "Failed to commit changes to git."}), 500
@@ -305,23 +342,34 @@ def update_source():
 @app.route("/create_file", methods=["POST"])
 def create_file():
     data = request.get_json()
-    if not data or "file" not in data:
-        return jsonify({"error": "No file name specified."}), 400
+    if not data or "file" not in data or "project_name" not in data:
+        return jsonify({"error": "No file name or project name specified."}), 400
     file_name = data["file"]
-    if os.path.exists(file_name):
+    project_name = data["project_name"]
+    
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
+
+    file_path = os.path.join(project_path, file_name)
+    if os.path.exists(file_path):
         return jsonify({"error": "File already exists."}), 400
     try:
-        directory = os.path.dirname(file_name)
+        directory = os.path.dirname(file_path)
         if directory:  # Check if a directory path is provided
             os.makedirs(directory, exist_ok=True)  # Create directories as needed
-        with open(file_name, "w") as f:
+        with open(file_path, "w") as f:
             f.write("")  # Create an empty file
         commit_msg = f"Create new file {file_name}"
-        commit_hash = commit_changes(file_name, commit_msg)
+        commit_hash = commit_changes(project_name, file_path, commit_msg)
         if commit_hash:
             # Add timestamp, branch, and commit hash to transcript
-            current_branch = get_current_git_branch()
+            project_dir = get_project_path(project_name)
+            current_branch = get_current_git_branch(project_dir)
             timestamp = datetime.utcnow().isoformat() + "Z"
+            key = f"{project_name}/{file_name}"
+            if key not in chat_histories:
+                load_transcript_from_disk(project_name, file_name)
             transcript_entry = {
                 "role": "System",
                 "content": f"Created new file {file_name}.",
@@ -329,8 +377,8 @@ def create_file():
                 "branch": current_branch,
                 "commit_hash": commit_hash
             }
-            chat_histories[file_name].append(transcript_entry)
-            update_transcript(file_name, commit_hash)
+            chat_histories[key].append(transcript_entry)
+            update_transcript(project_name, file_name, commit_hash)
             return jsonify({"success": True, "commit_hash": commit_hash})
         else:
             return jsonify({"error": "Failed to commit new file to git."}), 500
@@ -340,17 +388,27 @@ def create_file():
 # Route to get coding contexts as JSON
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
-    context_names = load_all_contexts()
+    project_name = request.args.get('project_name')
+    if not project_name:
+        return jsonify({"error": "No project name specified."}), 400
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
+    context_names = load_all_contexts(project_name)
     return jsonify(context_names)
 
 # Route to get project structure as JSON
 @app.route("/project_structure", methods=["GET"])
 def project_structure():
+    project_name = request.args.get('project_name')
+    if not project_name:
+        return jsonify({"error": "No project name specified."}), 400
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
     if not ACTIVE_FILES:
         return jsonify([])
-    # Assuming all active files are in the same directory
-    project_dir = os.path.dirname(os.path.abspath(ACTIVE_FILES[0]))
-    structure = get_directory_structure(project_dir)
+    structure = get_directory_structure(project_path)
     return jsonify(structure)
 
 # New Endpoint: Get Available AI Models
@@ -358,10 +416,10 @@ def project_structure():
 def get_models():
     return jsonify({"models": AVAILABLE_MODELS, "defaultmodel": "o1-mini"})
 
-def get_current_git_branch():
+def get_current_git_branch(project_path):
     """Helper function to get the current Git branch."""
     try:
-        result = subprocess.run(["git", "branch", "--show-current"], capture_output=True, text=True, check=True)
+        result = subprocess.run(["git", "branch", "--show-current"], cwd=project_path, capture_output=True, text=True, check=True)
         current_branch = result.stdout.strip()
         return current_branch
     except subprocess.CalledProcessError:
@@ -370,8 +428,14 @@ def get_current_git_branch():
 # New Endpoint: Get Current Git Branch
 @app.route("/git_current_branch", methods=["GET"])
 def git_current_branch():
+    project_name = request.args.get('project_name')
+    if not project_name:
+        return jsonify({"error": "No project name specified."}), 400
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
     try:
-        current_branch = get_current_git_branch()
+        current_branch = get_current_git_branch(project_path)
         return jsonify({"current_branch": current_branch})
     except subprocess.CalledProcessError as e:
         return jsonify({"error": "Failed to get current branch.", "details": e.stderr.strip()}), 500
@@ -379,8 +443,14 @@ def git_current_branch():
 # New Endpoint: List All Git Branches
 @app.route("/git_branches", methods=["GET"])
 def git_branches():
+    project_name = request.args.get('project_name')
+    if not project_name:
+        return jsonify({"error": "No project name specified."}), 400
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
     try:
-        result = subprocess.run(["git", "branch"], capture_output=True, text=True, check=True)
+        result = subprocess.run(["git", "branch"], cwd=project_path, capture_output=True, text=True, check=True)
         branches = [line.strip().lstrip("* ").strip() for line in result.stdout.strip().split('\n') if line.strip()]
         return jsonify({"branches": branches})
     except subprocess.CalledProcessError as e:
@@ -390,11 +460,17 @@ def git_branches():
 @app.route("/git_switch_branch", methods=["POST"])
 def git_switch_branch():
     data = request.get_json()
-    if not data or "branch" not in data:
-        return jsonify({"success": False, "error": "No branch specified."}), 400
+    if not data or "branch" not in data or "project_name" not in data:
+        return jsonify({"success": False, "error": "No branch or project name specified."}), 400
     branch = data["branch"]
+    project_name = data["project_name"]
+    
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"success": False, "error": project_path}), 400
+
     try:
-        subprocess.run(["git", "checkout", branch], check=True)
+        subprocess.run(["git", "checkout", branch], cwd=project_path, check=True)
         # Optionally, update the branch name in active transcripts
         return jsonify({"success": True})
     except subprocess.CalledProcessError as e:
@@ -404,11 +480,17 @@ def git_switch_branch():
 @app.route("/git_create_branch", methods=["POST"])
 def git_create_branch():
     data = request.get_json()
-    if not data or "branch" not in data:
-        return jsonify({"success": False, "error": "No branch name specified."}), 400
+    if not data or "branch" not in data or "project_name" not in data:
+        return jsonify({"success": False, "error": "No branch name or project name specified."}), 400
     branch = data["branch"]
+    project_name = data["project_name"]
+    
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"success": False, "error": project_path}), 400
+
     try:
-        subprocess.run(["git", "checkout", "-b", branch], check=True)
+        subprocess.run(["git", "checkout", "-b", branch], cwd=project_path, check=True)
         return jsonify({"success": True})
     except subprocess.CalledProcessError as e:
         return jsonify({"success": False, "error": f"Failed to create branch '{branch}'."}), 500
@@ -422,7 +504,7 @@ def add_project():
     project_name = data["project_name"]
     if not re.match(r"^[\w\-]+$", project_name):
         return jsonify({"success": False, "error": "Invalid project name. Use only letters, numbers, underscores, and hyphens."}), 400
-    project_path = os.path.join(PROJECTS_DIR, project_name)
+    project_path = get_project_path(project_name)
     if os.path.exists(project_path):
         return jsonify({"success": False, "error": "Project already exists."}), 400
     try:
@@ -474,7 +556,7 @@ def get_project_details():
         return jsonify({"error": "No project name specified."}), 400
     if not re.match(r"^[\w\-]+$", project_name):
         return jsonify({"error": "Invalid project name."}), 400
-    project_path = os.path.join(PROJECTS_DIR, project_name)
+    project_path = get_project_path(project_name)
     if not os.path.isdir(project_path):
         return jsonify({"error": "Project does not exist."}), 404
     try:
@@ -501,10 +583,11 @@ def get_project_details():
 def chat():
     global chat_histories, DEBUG
     data = request.get_json()
-    if not data or "prompt" not in data or "file" not in data:
-        return jsonify({"error": "No prompt or file specified."}), 400
+    if not data or "prompt" not in data or "file" not in data or "project_name" not in data:
+        return jsonify({"error": "No prompt, file, or project name specified."}), 400
     user_input = data["prompt"]
     file_name = data["file"]
+    project_name = data["project_name"]
     context_names = data.get("contexts", [])  # List of context names
 
     # Retrieve the selected model, default to 'o1-mini' if not provided
@@ -512,11 +595,17 @@ def chat():
     if model not in AVAILABLE_MODELS:
         return jsonify({"error": f"Model '{model}' is not supported."}), 400
 
-    if file_name not in chat_histories:
-        load_transcript_from_disk(file_name)
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
+
+    key = f"{project_name}/{file_name}"
+    if key not in chat_histories:
+        load_transcript_from_disk(project_name, file_name)
+
     timestamp = datetime.utcnow().isoformat() + "Z"
-    current_branch = get_current_git_branch()
-    chat_histories[file_name].append({
+    current_branch = get_current_git_branch(project_path)
+    chat_histories[key].append({
         "role": "User",
         "content": user_input,
         "timestamp": timestamp,
@@ -525,9 +614,9 @@ def chat():
     })
 
     # Load specified contexts
-    coding_contexts = load_contexts_by_names(context_names)
+    coding_contexts = load_contexts_by_names(project_name, context_names)
 
-    if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
+    if not os.path.exists(os.path.join(project_path, file_name)) or os.path.getsize(os.path.join(project_path, file_name)) == 0:
         system_prompt = (
             "You are an assistant managing a software project. When given a prompt, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete contents for the project file. Output only the code in a single code block (using triple backticks) without additional commentary."
         )
@@ -537,7 +626,7 @@ def chat():
             "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
         )
 
-    messages = build_prompt_messages(system_prompt, user_input, file_name, model, coding_contexts)
+    messages = build_prompt_messages(system_prompt, user_input, file_name, model, coding_contexts, project_name)
 
     if DEBUG:
         print("DEBUG: AI prompt messages:")
@@ -551,9 +640,9 @@ def chat():
         )
     except Exception as e:
         error_msg = f"Error calling OpenAI API: {str(e)}"
-        chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
-        update_transcript(file_name)
-        return jsonify(chat_histories[file_name]), 500
+        chat_histories[key].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+        update_transcript(project_name, file_name)
+        return jsonify(chat_histories[key]), 500
 
     reply = response.choices[0].message.content
     professional_message = extract_professional_message(reply)
@@ -562,38 +651,40 @@ def chat():
 
     commit_hash = None  # Initialize commit_hash
 
-    if not os.path.exists(file_name) or os.path.getsize(file_name) == 0:
+    file_path = os.path.join(project_path, file_name)
+
+    if not os.path.exists(file_path) or os.path.getsize(file_path) == 0:
         try:
-            with open(file_name, "w") as f:
+            with open(file_path, "w") as f:
                 f.write(new_file_content)
             commit_msg = commit_summary if commit_summary else f"Initial commit based on prompt: {user_input}"
-            commit_hash = commit_changes(file_name, commit_msg)
+            commit_hash = commit_changes(project_name, file_path, commit_msg)
             if not commit_hash:
                 raise Exception("Failed to commit changes to git.")
         except Exception as e:
             error_msg = f"Error applying changes: {str(e)}"
-            chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
-            update_transcript(file_name)
-            return jsonify(chat_histories[file_name]), 500
+            chat_histories[key].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+            update_transcript(project_name, file_name)
+            return jsonify(chat_histories[key]), 500
     else:
         try:
-            with open(file_name, "r") as f:
+            with open(file_path, "r") as f:
                 old_content = f.read()
             if old_content != new_file_content:
-                with open(file_name, "w") as f:
+                with open(file_path, "w") as f:
                     f.write(new_file_content)
                 commit_msg = commit_summary if commit_summary else f"Applied changes: {user_input}"
-                commit_hash = commit_changes(file_name, commit_msg)
+                commit_hash = commit_changes(project_name, file_path, commit_msg)
                 if not commit_hash:
                     raise Exception("Failed to commit changes to git.")
         except Exception as e:
             error_msg = f"Error applying changes: {str(e)}"
-            chat_histories[file_name].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
-            update_transcript(file_name)
-            return jsonify(chat_histories[file_name]), 500
+            chat_histories[key].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+            update_transcript(project_name, file_name)
+            return jsonify(chat_histories[key]), 500
 
     # Append only the professional message with commit_hash
-    chat_histories[file_name].append({
+    chat_histories[key].append({
         "role": "Assistant",
         "content": professional_message,
         "timestamp": datetime.utcnow().isoformat() + "Z",
@@ -602,8 +693,8 @@ def chat():
         "model": model
     })
 
-    update_transcript(file_name, commit_hash)
-    return jsonify(chat_histories[file_name])
+    update_transcript(project_name, file_name, commit_hash)
+    return jsonify(chat_histories[key])
 
 # Main page: serves the HTML page with template reloading logic.
 @app.route("/", methods=["GET"])
@@ -618,17 +709,25 @@ def index():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
+    parser.add_argument("project_name", help="Name of the project to manage.")
     parser.add_argument("source_files", nargs='+', help="Paths to the project files to manage.")
     parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
     parser.add_argument("--debug", action="store_true", help="Print full AI prompt on each API call for debugging.")
     args = parser.parse_args()
 
     DEBUG = args.debug
+    project_name = args.project_name
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        print(f"Error: {project_path}")
+        exit(1)
+
     for source_file in args.source_files:
-        if not os.path.exists(source_file):
-            open(source_file, "w").close()
-        load_transcript_from_disk(source_file)
-        ACTIVE_FILES.append(source_file)
+        file_path = os.path.join(project_path, source_file)
+        if not os.path.exists(file_path):
+            open(file_path, "w").close()
+        load_transcript_from_disk(project_name, source_file)
+        ACTIVE_FILES.append(file_path)
 
     # Ensure the projects directory exists
     os.makedirs(PROJECTS_DIR, exist_ok=True)
