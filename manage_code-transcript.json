@@ -607,5 +607,20 @@
     "branch": "multiproject",
     "commit_hash": "af3000dc186b5637d4fad8728bb9cc0d08040d81",
     "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Our /coding_contexts endpoint doesn't need to take a project_name argument, it should read the contexts from our current working directory. In addition, our /projects/details endpoint should default to the current working directory if no project_name is specified.",
+    "timestamp": "2025-03-19T13:37:03.784805Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `/coding_contexts` endpoint to no longer require the `project_name` argument, allowing it to automatically read contexts from the current working directory. Additionally, the `/projects/details` endpoint now defaults to the current working directory when no `project_name` is specified. These changes streamline the API usage by reducing the need to specify the project name explicitly.",
+    "timestamp": "2025-03-19T13:38:04.963242Z",
+    "branch": "multiproject",
+    "commit_hash": "6fe1737289ec7b347e9eefcd735904a2deee74ab",
+    "model": "o1-mini"
   }
 ]
