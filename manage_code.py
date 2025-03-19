@@ -335,7 +335,7 @@ def update_source():
     file_name = data["file"]
     project_name = data.get("project_name")
     commit_message = data.get("commit_message", "Manually updated source code via web UI.")
-    
+
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -379,7 +379,7 @@ def create_file():
         return jsonify({"error": "No file name specified."}), 400
     file_name = data["file"]
     project_name = data.get("project_name")
-    
+
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -420,7 +420,7 @@ def create_file():
 # Route to get coding contexts as JSON
 @app.route("/coding_contexts", methods=["GET"])
 def get_coding_contexts():
-    project_name = request.args.get('project_name')
+    project_name = get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -431,6 +431,8 @@ def get_coding_contexts():
 @app.route("/project_structure", methods=["GET"])
 def project_structure():
     project_name = request.args.get('project_name')
+    if not project_name:
+        project_name = get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -448,6 +450,8 @@ def get_models():
 @app.route("/git_current_branch", methods=["GET"])
 def git_current_branch():
     project_name = request.args.get('project_name')
+    if not project_name:
+        project_name = get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -461,6 +465,8 @@ def git_current_branch():
 @app.route("/git_branches", methods=["GET"])
 def git_branches():
     project_name = request.args.get('project_name')
+    if not project_name:
+        project_name = get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"error": project_path}), 400
@@ -480,6 +486,8 @@ def git_switch_branch():
     branch = data["branch"]
     project_name = data.get("project_name")
     
+    if not project_name:
+        project_name = get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"success": False, "error": project_path}), 400
@@ -500,6 +508,8 @@ def git_create_branch():
     branch = data["branch"]
     project_name = data.get("project_name")
     
+    if not project_name:
+        project_name = get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
         return jsonify({"success": False, "error": project_path}), 400
@@ -566,9 +576,7 @@ def list_projects():
 # New Endpoint: Get Project Details
 @app.route("/projects/details", methods=["GET"])
 def get_project_details():
-    project_name = request.args.get('project_name')
-    if not project_name:
-        return jsonify({"error": "No project name specified."}), 400
+    project_name = request.args.get('project_name') or get_current_project_name()
     if not re.match(r"^[\w\-]+$", project_name):
         return jsonify({"error": "Invalid project name."}), 400
     project_path = get_project_path(project_name)
@@ -734,7 +742,7 @@ if __name__ == "__main__":
     project_name = args.project_name if args.project_name else get_current_project_name()
     is_valid, project_path = validate_project(project_name)
     if not is_valid:
-        print(f"Error: {project_path}")
+        print(f"Error: {result}")
         exit(1)
 
     for source_file in args.source_files:
