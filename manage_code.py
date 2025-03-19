@@ -156,9 +156,9 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
     except Exception:
         file_contents = ""
     if file_contents:
-        final_content = "The following is the code which has been generated so far:\n" + file_contents
+        final_content = f"The file is named {file_path} and the following is the code which has been generated so far:\n" + file_contents
     else:
-        final_content = "Please start generating code for this file."
+        final_content = f"The file is named {file_path} - please start generating code for this file."
     final_msg = {
         "role": "user",
         "content": final_content
