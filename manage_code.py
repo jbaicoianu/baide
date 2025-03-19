@@ -97,13 +97,11 @@ def load_all_contexts(project_name=None):
     return contexts
 
 def load_contexts_by_names(project_name=None, context_names=None):
-    """Load specific contexts by their names from the contexts/ directory within the project."""
-    if not project_name:
-        project_name = get_current_project_name()
+    """Load specific contexts by their names from the contexts/ directory within the current working directory."""
     contexts = []
     if not context_names:
         return contexts
-    contexts_dir = os.path.join(get_project_path(project_name), "contexts")
+    contexts_dir = os.path.join(os.getcwd(), "contexts")
     for name in context_names:
         context_path = os.path.join(contexts_dir, f"{name}.txt")
         if os.path.exists(context_path):
