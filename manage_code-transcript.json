@@ -666,5 +666,20 @@
     "branch": "multiproject",
     "commit_hash": "75127601ba13064a0367b6dc726ec03b3ce4ed55",
     "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Update our default prompt to specify that we should never delete or change code unless it's part of the requested changes. Do not summarize or omit any existing unchanged functions.",
+    "timestamp": "2025-03-19T22:01:44.929374Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the default system prompt to ensure that code is never deleted or changed unless it is part of the requested changes. Additionally, the prompt now specifies that existing unchanged functions should not be summarized or omitted.",
+    "timestamp": "2025-03-19T22:02:48.089352Z",
+    "branch": "multiproject",
+    "commit_hash": "602ef0eacae8ac35ef7cc1c1b37e1f6ea9eda928",
+    "model": "o1-mini"
   }
 ]
