@@ -747,5 +747,20 @@
     "branch": "multiproject",
     "commit_hash": "6ca0dcd352aea0c26239df22571b4bde15f70f4f",
     "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "The backend response for our /projects/list response looks like this, please fix the addProjectSelector to work with this format:\n\n{\"projects\":[\"openai-code-manager\",\"openai-code-manager-multiproject\"]}",
+    "timestamp": "2025-03-19T13:42:05.736905Z",
+    "branch": "multiproject",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hi Team,\n\nI've updated the `addProjectSelector` function to correctly handle the backend response format where projects are nested under the `projects` key. This ensures that the project selector populates accurately with the available projects. Please let me know if there are any additional edge cases we should consider or if further enhancements are needed.",
+    "timestamp": "2025-03-19T13:44:12.512453Z",
+    "branch": "multiproject",
+    "commit_hash": "080718f512140ae2c65ba2761b8ef894cf6ce1f6",
+    "model": "o1-mini"
   }
 ]
