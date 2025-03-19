@@ -1207,6 +1207,9 @@ function saveFileActiveModels() {
   localStorage.setItem('fileActiveModels', JSON.stringify(fileActiveModels));
 }
 
+// Load file coding contexts from localStorage
+// This function is already defined above as loadFileCodingContextsFromStorage
+
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
   try {
@@ -1318,18 +1321,18 @@ function closeNewProjectModal() {
 // Function to create a new project
 async function createNewProject(projectName) {
   try {
-    const response = await fetch('/create_project', {
+    const response = await fetch('/projects/add', { // Updated endpoint
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ project: projectName })
+      body: JSON.stringify({ project_name: projectName }) // Updated parameter
     });
     const data = await response.json();
     if (data.success) {
-      showToast(`Project ${projectName} created successfully.`, 'success');
+      showToast(`Project ${data.project} created successfully.`, 'success'); // Use data.project
       // Optionally switch to the new project
-      switchProject(projectName);
+      switchProject(data.project); // Use data.project
     } else {
       showToast(`Error creating project: ${data.error}`, 'error');
     }
