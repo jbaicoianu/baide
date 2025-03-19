@@ -562,5 +562,20 @@
     "branch": "main",
     "commit_hash": "376bb08ead0d4b89476414ee8167f39236c93f16",
     "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "In our /git_branches endpoint, we strip leading \"* \" to remove the active branch marker. We also need to strip \"+ \" to match any branches that are checked out with git worktree",
+    "timestamp": "2025-03-19T12:47:52.219109Z",
+    "branch": "main",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "The `/git_branches` endpoint has been updated to also strip the \"+ \" prefix, ensuring compatibility with branches checked out using `git worktree`. Let me know if there are any additional modifications or enhancements you'd like to consider.",
+    "timestamp": "2025-03-19T12:48:34.208990Z",
+    "branch": "main",
+    "commit_hash": "abee2cc736f55442ae38a00b631cf0be8790cb77",
+    "model": "o1-mini"
   }
 ]
