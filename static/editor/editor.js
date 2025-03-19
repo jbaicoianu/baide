@@ -389,6 +389,13 @@ async function loadProjectStructure() {
           
       // Load Git Branch
       loadGitBranch();
+
+      // Check if there are no open files and show placeholder if necessary
+      if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+        showPlaceholderPage();
+      } else {
+        hidePlaceholderPage();
+      }
     } else {
       showToast('Failed to fetch project details.', 'error');
       console.error('Failed to fetch project details.');
@@ -457,7 +464,14 @@ async function switchProject(projectName) {
       // Reload project structure
       await loadProjectStructure();
       // Restore new project state
-      restoreProjectState(currentProject);
+      await restoreProjectState(currentProject);
+
+      // Check if there are no open files and show placeholder if necessary
+      if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+        showPlaceholderPage();
+      } else {
+        hidePlaceholderPage();
+      }
     } else {
       showToast('Failed to switch project.', 'error');
       console.error('Failed to switch project.');
@@ -531,6 +545,9 @@ function loadCurrentProject() {
         const projects = data.projects;
         if (projects.length > 0) {
           switchProject(projects[0]);
+        } else {
+          // No projects available, show placeholder
+          showPlaceholderPage();
         }
       })
       .catch(error => {
@@ -858,6 +875,9 @@ async function openFileInTab(filename, activate = true) {
         if (moreDropdown) {
           moreDropdown.classList.remove('show');
         }
+        
+        // Hide the placeholder if it's visible
+        hidePlaceholderPage();
       } else {
         openFiles[currentProject][filename] = true;
         saveOpenFiles(currentProject);
@@ -916,6 +936,9 @@ async function switchToTab(filename) {
   if (moreDropdown) {
     moreDropdown.classList.remove('show');
   }
+
+  // Hide the placeholder if it's visible
+  hidePlaceholderPage();
 }
 
 // Function to close a tab
@@ -953,6 +976,8 @@ function closeTab(filename) {
         document.getElementById('activeCodingContexts').innerHTML = '';
         // Reset AI model dropdown
         resetAIDropdown();
+        // Show the placeholder page since there are no open files
+        showPlaceholderPage();
       }
       adjustTabs(); // Adjust tabs after closing a tab
     }
@@ -1629,8 +1654,15 @@ window.onload = async function() {
   
   loadCurrentProject();
   await loadProjectStructure();
-  restoreProjectState(currentProject);
+  await restoreProjectState(currentProject);
   adjustTabs(); // Initial adjustment
+
+  // Check if there are no open files and show placeholder if necessary
+  if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+    showPlaceholderPage();
+  } else {
+    hidePlaceholderPage();
+  }
 };
 
 // Function to add a coding context
@@ -1766,3 +1798,78 @@ function updateChatHistoryViewer(chatHistories) {
   scrollToBottom(chatBox);
   scrollToBottom(commitSummaries);
 }
+
+// Function to show the "new project" placeholder page
+function showPlaceholderPage() {
+  const sourceCodeContainer = document.getElementById('sourceCodeContainer');
+  const chatBox = document.getElementById('chatBox');
+  const commitSummaries = document.getElementById('commitSummaries');
+  const activeCodingContexts = document.getElementById('activeCodingContexts');
+
+  if (sourceCodeContainer) sourceCodeContainer.style.display = 'none';
+  if (chatBox) chatBox.style.display = 'none';
+  if (commitSummaries) commitSummaries.style.display = 'none';
+  if (activeCodingContexts) activeCodingContexts.style.display = 'none';
+
+  let placeholder = document.getElementById('newProjectPlaceholder');
+  if (!placeholder) {
+    placeholder = document.createElement('div');
+    placeholder.id = 'newProjectPlaceholder';
+    placeholder.innerHTML = `
+      <h2>Welcome to Your New Project</h2>
+      <p>Please create or open files using the project browser pane on the left.</p>
+      <p>Getting started:</p>
+      <ul>
+        <li>Click the "New File" button to create a new file.</li>
+        <li>Select an existing file from the project browser to open it.</li>
+      </ul>
+    `;
+    placeholder.style.padding = '20px';
+    placeholder.style.textAlign = 'center';
+    placeholder.style.fontSize = '1.2em';
+    placeholder.style.color = '#555';
+    document.body.appendChild(placeholder);
+  }
+  placeholder.style.display = 'block';
+}
+
+// Function to hide the "new project" placeholder page
+function hidePlaceholderPage() {
+  const sourceCodeContainer = document.getElementById('sourceCodeContainer');
+  const chatBox = document.getElementById('chatBox');
+  const commitSummaries = document.getElementById('commitSummaries');
+  const activeCodingContexts = document.getElementById('activeCodingContexts');
+
+  if (sourceCodeContainer) sourceCodeContainer.style.display = 'block';
+  if (chatBox) chatBox.style.display = 'block';
+  if (commitSummaries) commitSummaries.style.display = 'block';
+  if (activeCodingContexts) activeCodingContexts.style.display = 'block';
+
+  const placeholder = document.getElementById('newProjectPlaceholder');
+  if (placeholder) {
+    placeholder.style.display = 'none';
+  }
+}
+
+// Function to load and display the current Git branch
+async function loadGitBranch() {
+  try {
+    const response = await fetch('/git_current_branch', {
+      headers: {
+        'Project-Name': currentProject
+      }
+    });
+    if (response.ok) {
+      const data = await response.json();
+      const gitBranchDiv = document.getElementById('gitBranchDisplay');
+      gitBranchDiv.textContent = `${data.current_branch}`;
+    } else {
+      console.error('Failed to load current Git branch.');
+    }
+  } catch (e) {
+    console.error('Error loading Git branch:', e);
+  }
+}
+
+// Continue with the rest of your existing functions as they are...
+// (Functions like createNewFile, extract_commit_summary, etc., remain unchanged)
