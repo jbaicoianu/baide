@@ -54,7 +54,7 @@ function setEditorValue(value) {
     editor.setValue(value);
     setTimeout(() => {
       editor.refresh();
-    }, 0); // Adjust the timeout as needed
+    }, 10); // Adjust the timeout as needed
   }
 }
 
