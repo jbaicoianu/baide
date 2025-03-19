@@ -461,6 +461,8 @@ async function switchProject(projectName) {
     showToast('Error switching project.', 'error');
     console.error('Error switching project:', e);
   }
+    
+  // Additional actions after switching can be added here
 }
 
 // Function to close all open tabs
@@ -748,7 +750,7 @@ async function openFileInTab(filename, activate = true) {
   }
     
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       // Create a new tab
@@ -837,7 +839,7 @@ async function switchToTab(filename) {
   saveActiveFile();
   // Load source code
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       document.getElementById('sourceCode').value = data.content;
@@ -966,7 +968,7 @@ function scrollToBottom(element) {
 // Function to load the existing conversation transcript for a specific file from the server.
 async function loadTranscript(filename) {
   try {
-    const response = await fetch(`/transcript?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/transcript?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       document.getElementById('chatBox').innerHTML = '';
@@ -1213,7 +1215,7 @@ function saveFileActiveModels() {
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
       document.getElementById('sourceCode').value = data.content;
