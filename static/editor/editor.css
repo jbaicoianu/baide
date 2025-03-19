@@ -602,7 +602,7 @@ form {
 /* CSS Styles for Project Placeholder */
 
 .hidden {
-  display: none;
+  display: none !important;
 }
 
 #sourceCodeContainer {
@@ -611,7 +611,8 @@ form {
 
 #newProjectPlaceholder {
   padding: 20px;
-  text-align: center;
+  text-align: left;
   font-size: 1.2em;
-  color: #555;
+  max-width: 60em;
+  margin: 0 auto;
 }
