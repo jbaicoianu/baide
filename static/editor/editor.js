@@ -368,6 +368,13 @@ async function loadProjectStructure() {
       // Add Project Selector
       addProjectSelector(projectBrowser);
       
+      // Add New Project Button
+      const newProjectBtn = document.createElement('button');
+      newProjectBtn.id = 'newProjectBtn';
+      newProjectBtn.textContent = 'New Project';
+      newProjectBtn.addEventListener('click', openNewProjectModal);
+      projectBrowser.appendChild(newProjectBtn);
+      
       // Add Git Branch Display
       const gitBranchDiv = document.createElement('div');
       gitBranchDiv.id = 'gitBranchDisplay';
@@ -636,15 +643,15 @@ function showAddBranchInput() {
     }
   });
       
-  // /* 
-  // CSS for Add Branch Input:
-  // #newBranchName {
-  //   width: 100%;
-  //   padding: 8px;
-  //   margin-top: 10px;
-  //   box-sizing: border-box;
-  // }
-  // */
+  /*
+  CSS for Add Branch Input:
+  #newBranchName {
+    width: 100%;
+    padding: 8px;
+    margin-top: 10px;
+    box-sizing: border-box;
+  }
+  */
 }
 
 // Function to add a new branch
@@ -1238,29 +1245,103 @@ function closeNewFileModal() {
   document.getElementById("newFileName").value = "";
 }
 
-// Rest of the functions remain unchanged...
+// Function to open new project modal
+function openNewProjectModal() {
+  let overlay = document.getElementById('newProjectOverlay');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'newProjectOverlay';
 
-async function createNewFile() {
-  const fileName = document.getElementById("newFileName").value.trim();
-  if (!fileName) {
-    showToast("File name cannot be empty.", "error");
-    return;
+    const box = document.createElement('div');
+    box.id = 'newProjectBox';
+
+    const title = document.createElement('h2');
+    title.textContent = 'Create New Project';
+    box.appendChild(title);
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'newProjectName';
+    input.placeholder = 'Enter project name...';
+    box.appendChild(input);
+
+    // Add keydown event listener for Ctrl+Enter and Esc
+    input.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        createProjectBtn.click();
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelProjectBtn.click();
+      }
+    });
+
+    const buttonsDiv = document.createElement('div');
+    buttonsDiv.className = 'buttons';
+
+    const createProjectBtn = document.createElement('button');
+    createProjectBtn.className = 'create-btn';
+    createProjectBtn.textContent = 'Create';
+    createProjectBtn.addEventListener('click', () => {
+      const projectName = input.value.trim();
+      if (projectName) {
+        overlay.style.display = 'none';
+        createNewProject(projectName);
+      } else {
+        showToast('Project name cannot be empty.', 'error');
+      }
+    });
+
+    const cancelProjectBtn = document.createElement('button');
+    cancelProjectBtn.className = 'cancel-btn';
+    cancelProjectBtn.textContent = 'Cancel';
+    cancelProjectBtn.addEventListener('click', () => {
+      overlay.style.display = 'none';
+    });
+
+    buttonsDiv.appendChild(cancelProjectBtn);
+    buttonsDiv.appendChild(createProjectBtn);
+    box.appendChild(buttonsDiv);
+
+    overlay.appendChild(box);
+    document.body.appendChild(overlay);
   }
-  const response = await fetch("/create_file", {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-      'Project-Name': currentProject
-    },
-    body: JSON.stringify({ file: fileName, project: currentProject })
-  });
-  const data = await response.json();
-  if (data.success) {
-    closeNewFileModal();
-    await loadProjectStructure();
-    showToast(`File ${fileName} created successfully.`, "success");
-  } else {
-    showToast("Error creating file: " + data.error, "error");
+
+  // Show the overlay
+  overlay.style.display = 'flex';
+  document.getElementById('newProjectName').focus();
+}
+
+// Function to close new project modal
+function closeNewProjectModal() {
+  const overlay = document.getElementById('newProjectOverlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+    document.getElementById('newProjectName').value = '';
+  }
+}
+
+// Function to create a new project
+async function createNewProject(projectName) {
+  try {
+    const response = await fetch('/create_project', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ project: projectName })
+    });
+    const data = await response.json();
+    if (data.success) {
+      showToast(`Project ${projectName} created successfully.`, 'success');
+      // Optionally switch to the new project
+      switchProject(projectName);
+    } else {
+      showToast(`Error creating project: ${data.error}`, 'error');
+    }
+  } catch (e) {
+    showToast('Error creating project.', 'error');
+    console.error('Error creating project:', e);
   }
 }
 
@@ -1269,6 +1350,11 @@ window.onclick = function(event) {
   const modal = document.getElementById("newFileModal");
   if (event.target == modal) {
     closeNewFileModal();
+  }
+  
+  const projectModal = document.getElementById('newProjectOverlay');
+  if (projectModal && event.target == projectModal) {
+    closeNewProjectModal();
   }
 }
 
