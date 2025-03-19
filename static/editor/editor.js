@@ -1339,7 +1339,30 @@ function closeNewFileModal() {
   modal.style.display = "none";
   document.getElementById("newFileName").value = "";
 }
-
+async function createNewFile() {
+  const fileName = document.getElementById("newFileName").value.trim();
+  if (!fileName) {
+    showToast("File name cannot be empty.", "error");
+    return;
+  }
+  const response = await fetch("/create_file", {
+    method: "POST",
+    headers: { 
+      "Content-Type": "application/json",
+      'Project-Name': currentProject
+    },
+    body: JSON.stringify({ file: fileName, project: currentProject })
+  });
+  const data = await response.json();
+  if (data.success) {
+    closeNewFileModal();
+    await loadProjectStructure();
+    showToast(`File ${fileName} created successfully.`, "success");
+  } else {
+    showToast("Error creating file: " + data.error, "error");
+  }
+}
+                                                      
 // Function to open new project modal
 function openNewProjectModal() {
   let overlay = document.getElementById('newProjectOverlay');
