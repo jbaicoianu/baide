@@ -48,11 +48,19 @@ function initializeCodeMirror() {
   });
 }
 
+// Function to set editor value and refresh
+function setEditorValue(value) {
+  if (editor) {
+    editor.setValue(value);
+    setTimeout(() => {
+      editor.refresh();
+    }, 100); // Adjust the timeout as needed
+  }
+}
+
 // Function to clear the editor content
 function clearEditor() {
-  if (editor) {
-    editor.setValue('');
-  }
+  setEditorValue('');
 }
 
 // Function to prompt for commit message
@@ -867,10 +875,7 @@ async function openFileInTab(filename, activate = true) {
         tab.classList.add('active');
             
         // Load content into CodeMirror editor
-        document.getElementById('sourceCode').value = data.content;
-        if (editor) {
-          editor.setValue(data.content);
-        }
+        setEditorValue(data.content);
         activeFile[currentProject] = filename;
         openFiles[currentProject][filename] = true;
         saveOpenFiles(currentProject);
@@ -933,10 +938,7 @@ async function switchToTab(filename) {
     const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
-      document.getElementById('sourceCode').value = data.content;
-      if (editor) {
-        editor.setValue(data.content);
-      }
+      setEditorValue(data.content);
       // Load transcript
       await loadTranscript(filename);
       // Load coding contexts
@@ -984,7 +986,7 @@ function closeTab(filename) {
       } else {
         activeFile[currentProject] = undefined;
         saveActiveFile(currentProject);
-        document.getElementById('sourceCode').value = '';
+        setEditorValue('');
         if (editor) {
           editor.setValue('');
         }
@@ -1315,10 +1317,7 @@ async function loadSourceCode(filename) {
     const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const data = await response.json();
-      document.getElementById('sourceCode').value = data.content;
-      if (editor) {
-        editor.setValue(data.content);
-      }
+      setEditorValue(data.content);
     }
   } catch (e) {
     console.error('Error loading source code:', e);
