@@ -706,61 +706,17 @@
   },
   {
     "role": "User",
-    "content": "Let's add support for multiple projects to our project browser UI. The following endpoints exist on the server, and take a project_name argument:\n* /projects/add\n* /projects/details\n\nIn addition, the following endpoint exists and takes no arguments, and will return a list of all known projects:\n* /projects/list\n\nWe'll add a project selector at the top of the project browser panel, above the branch selector. Switching projects will call /projects/details for the given project, and repopulate the directory tree view and any open tabs.\n\nAny CSS needed for this should be printed at the top of this file in a comment.",
-    "timestamp": "2025-03-19T12:09:49.920293Z",
+    "content": "The backend response for /projects/details looks like this, please update our loadProjectStructure to work with this format:\n{\n    \"branches\": [\n        \"main\",\n        \"multiproject\"\n    ],\n    \"git_status\": \"\",\n    \"path\": \"/home/bai/projects/openai-code-manager-multiproject\",\n    \"project_name\": \"openai-code-manager-multiproject\"\n}",
+    "timestamp": "2025-03-19T13:52:12.932475Z",
     "branch": "multiproject",
     "model": "o1-mini"
   },
   {
     "role": "Assistant",
-    "content": "Hello,\n\nI've implemented support for multiple projects in the project browser UI. A project selector has been added above the branch selector, allowing users to switch between different projects. Switching projects triggers a call to `/projects/details` for the selected project, repopulating the directory tree view and any open tabs accordingly. Additionally, I've integrated the existing server endpoints to manage projects and ensured that necessary CSS styles are included at the top of the file.\n\nPlease review the updated code below and let me know if you have any questions or further suggestions.",
-    "timestamp": "2025-03-19T12:11:40.434958Z",
+    "content": "I have updated the `loadProjectStructure` function to accommodate the new backend response format for `/projects/details`. Please review the changes below. Let me know if there are any additional fields or modifications you'd like to incorporate.",
+    "timestamp": "2025-03-19T13:54:14.200171Z",
     "branch": "multiproject",
-    "commit_hash": "2ac3a1d5a3b7b74c8b7cb678c456849545d95309",
-    "model": "o1-mini"
-  },
-  {
-    "role": "User",
-    "content": "Moved CSS to css file [Manual edit]",
-    "timestamp": "2025-03-19T12:12:45.034688Z",
-    "branch": "multiproject",
-    "commit_hash": "4d0cf8095f1c74c5a3b589c384b21971563a2984"
-  },
-  {
-    "role": "User",
-    "content": "Moved project selector CSS to css file [Manual edit]",
-    "timestamp": "2025-03-19T12:13:08.702029Z",
-    "branch": "multiproject",
-    "commit_hash": "12c9506e1750870ef635c1c5bcb3988d5e78b108"
-  },
-  {
-    "role": "User",
-    "content": "Our project selector is not displaying at the top of the project browser panel. After calling the /projects/list endpoint, please populate the project list, and add a button for creating a new project.",
-    "timestamp": "2025-03-19T13:20:50.201966Z",
-    "branch": "multiproject",
-    "model": "o1-mini"
-  },
-  {
-    "role": "Assistant",
-    "content": "Hi Team,\n\nI've updated the project browser panel to ensure the project selector is displayed at the top. Additionally, I've added a \"New Project\" button to allow users to create new projects seamlessly. Please review the changes and let me know if you have any questions or need further adjustments.",
-    "timestamp": "2025-03-19T13:23:02.837756Z",
-    "branch": "multiproject",
-    "commit_hash": "6ca0dcd352aea0c26239df22571b4bde15f70f4f",
-    "model": "o1-mini"
-  },
-  {
-    "role": "User",
-    "content": "The backend response for our /projects/list response looks like this, please fix the addProjectSelector to work with this format:\n\n{\"projects\":[\"openai-code-manager\",\"openai-code-manager-multiproject\"]}",
-    "timestamp": "2025-03-19T13:42:05.736905Z",
-    "branch": "multiproject",
-    "model": "o1-mini"
-  },
-  {
-    "role": "Assistant",
-    "content": "Hi Team,\n\nI've updated the `addProjectSelector` function to correctly handle the backend response format where projects are nested under the `projects` key. This ensures that the project selector populates accurately with the available projects. Please let me know if there are any additional edge cases we should consider or if further enhancements are needed.",
-    "timestamp": "2025-03-19T13:44:12.512453Z",
-    "branch": "multiproject",
-    "commit_hash": "080718f512140ae2c65ba2761b8ef894cf6ce1f6",
+    "commit_hash": "726709acacf657777b73aeec0a1c3bbdab15130a",
     "model": "o1-mini"
   }
 ]
