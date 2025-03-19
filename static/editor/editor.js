@@ -1,14 +1,3 @@
-/* 
-CSS for Project Selector:
-#projectSelector {
-  width: 100%;
-  padding: 8px;
-  margin-bottom: 10px;
-  box-sizing: border-box;
-  font-size: 14px;
-}
-*/
-
 let activeFile = null;
 let openFiles = {};
 let editor = null;
