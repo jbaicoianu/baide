@@ -48,6 +48,9 @@ editor_template_path = os.path.join("templates", "editor.html")
 if os.path.exists(editor_template_path):
     editor_template_mtime = os.path.getmtime(editor_template_path)
 
+# Define the projects directory
+PROJECTS_DIR = os.path.join(os.path.expanduser("~"), "projects")
+
 def transcript_filename(file_name):
     """Return the transcript filename based on the provided filename's basename."""
     base, _ = os.path.splitext(file_name)
@@ -410,6 +413,89 @@ def git_create_branch():
     except subprocess.CalledProcessError as e:
         return jsonify({"success": False, "error": f"Failed to create branch '{branch}'."}), 500
 
+# New Endpoint: Add Project
+@app.route("/projects/add", methods=["POST"])
+def add_project():
+    data = request.get_json()
+    if not data or "project_name" not in data:
+        return jsonify({"success": False, "error": "No project name specified."}), 400
+    project_name = data["project_name"]
+    if not re.match(r"^[\w\-]+$", project_name):
+        return jsonify({"success": False, "error": "Invalid project name. Use only letters, numbers, underscores, and hyphens."}), 400
+    project_path = os.path.join(PROJECTS_DIR, project_name)
+    if os.path.exists(project_path):
+        return jsonify({"success": False, "error": "Project already exists."}), 400
+    try:
+        os.makedirs(project_path, exist_ok=True)
+        # Initialize empty git repository
+        subprocess.run(["git", "init"], cwd=project_path, check=True)
+        # Create README.md template
+        readme_content = f"# {project_name}\n\n" \
+                         "## Description\n\n" \
+                         "Provide a short description of your project here.\n\n" \
+                         "## Installation\n\n" \
+                         "Describe the installation process.\n\n" \
+                         "## Usage\n\n" \
+                         "Provide examples and usage instructions.\n\n" \
+                         "## Contributing\n\n" \
+                         "Guidelines for contributing to the project.\n\n" \
+                         "## License\n\n" \
+                         "Specify the license under which the project is distributed."
+        readme_path = os.path.join(project_path, "README.md")
+        with open(readme_path, "w") as f:
+            f.write(readme_content)
+        # Commit the initial files
+        commit_msg = f"Initialize project '{project_name}' with README.md and git repository."
+        subprocess.run(["git", "add", "."], cwd=project_path, check=True)
+        subprocess.run(["git", "commit", "-m", commit_msg], cwd=project_path, check=True)
+        return jsonify({"success": True, "project": project_name}), 201
+    except subprocess.CalledProcessError as e:
+        return jsonify({"success": False, "error": f"Git operation failed: {e}"}), 500
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)}), 500
+
+# New Endpoint: List Projects
+@app.route("/projects/list", methods=["GET"])
+def list_projects():
+    try:
+        if not os.path.isdir(PROJECTS_DIR):
+            return jsonify({"projects": []})
+        projects = [name for name in os.listdir(PROJECTS_DIR)
+                    if os.path.isdir(os.path.join(PROJECTS_DIR, name))]
+        return jsonify({"projects": projects})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# New Endpoint: Get Project Details
+@app.route("/projects/details", methods=["GET"])
+def get_project_details():
+    project_name = request.args.get('project_name')
+    if not project_name:
+        return jsonify({"error": "No project name specified."}), 400
+    if not re.match(r"^[\w\-]+$", project_name):
+        return jsonify({"error": "Invalid project name."}), 400
+    project_path = os.path.join(PROJECTS_DIR, project_name)
+    if not os.path.isdir(project_path):
+        return jsonify({"error": "Project does not exist."}), 404
+    try:
+        # Get Git status
+        result = subprocess.run(["git", "status", "--porcelain"], cwd=project_path, capture_output=True, text=True)
+        git_status = result.stdout.strip()
+        # Get Git branches
+        result = subprocess.run(["git", "branch"], cwd=project_path, capture_output=True, text=True)
+        branches = [line.strip().lstrip("* ").strip() for line in result.stdout.strip().split('\n') if line.strip()]
+        details = {
+            "project_name": project_name,
+            "path": project_path,
+            "git_status": git_status,
+            "branches": branches
+        }
+        return jsonify(details)
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": f"Git operation failed: {e}"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 # Chat endpoint: accepts a JSON prompt, updates conversation, file, and transcript, then returns the full conversation.
 @app.route("/chat", methods=["POST"])
 def chat():
@@ -543,5 +629,8 @@ if __name__ == "__main__":
             open(source_file, "w").close()
         load_transcript_from_disk(source_file)
         ACTIVE_FILES.append(source_file)
+
+    # Ensure the projects directory exists
+    os.makedirs(PROJECTS_DIR, exist_ok=True)
 
     app.run(port=args.port)
