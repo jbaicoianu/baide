@@ -590,3 +590,12 @@ form {
   background-color: #f44336;
   color: white;
 }
+/* CSS for Project Selector */
+
+#projectSelector {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
