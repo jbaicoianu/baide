@@ -1324,11 +1324,25 @@ function openNewFileModal() {
   // Removed event listeners from here to prevent multiple registrations
 }
 
+// Function to get directory path from filename
+function getDirectoryPath(filename) {
+  const parts = filename.split('/');
+  if (parts.length > 1) {
+    parts.pop();
+    return parts.join('/') + '/';
+  } else {
+    return '';
+  }
+}
+
+// Function to close new file modal
 function closeNewFileModal() {
   const modal = document.getElementById("newFileModal");
   modal.style.display = "none";
   document.getElementById("newFileName").value = "";
 }
+
+// Function to create a new file
 async function createNewFile() {
   const fileName = document.getElementById("newFileName").value.trim();
   if (!fileName) {
@@ -1345,8 +1359,16 @@ async function createNewFile() {
   const data = await response.json();
   if (data.success) {
     closeNewFileModal();
+    
+    // Extract directory path from fileName
+    const dirPath = getDirectoryPath(fileName);
+    if (dirPath) {
+      openDirectories.get(currentProject).add(dirPath);
+      saveOpenDirectories(currentProject);
+    }
+
     await loadProjectStructure();
-    await openFileInTab(fileName, true); // Added this line to open the new file in a new tab
+    await openFileInTab(fileName, true); // Open the new file in a new tab
     showToast(`File ${fileName} created successfully.`, "success");
   } else {
     showToast("Error creating file: " + data.error, "error");
