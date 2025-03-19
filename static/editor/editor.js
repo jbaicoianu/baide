@@ -1,7 +1,7 @@
-let activeFile = null;
-let openFiles = {};
+let activeFile = {}; // Mapping of project name to active file
+let openFiles = {}; // Mapping of project name to open files
 let editor = null;
-let openDirectories = new Set();
+let openDirectories = new Map(); // Mapping of project name to open directories
 let fileCodingContexts = {}; // Mapping of filename to contexts
 let allCodingContexts = []; // All available coding contexts
 let fileActiveModels = {}; // Mapping of filename to active model
@@ -117,12 +117,13 @@ function promptCommitMessage() {
 
 // Save file function triggered by Ctrl+S with commit message
 function saveFile(commitMessage) {
-  if (!activeFile) return;
+  if (!currentProject || !activeFile[currentProject]) return;
+  const filename = activeFile[currentProject];
   const updatedContent = editor.getValue();
   fetch('/update_source', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage, project_name: currentProject })
+    body: JSON.stringify({ file: filename, content: updatedContent, commit_message: commitMessage, project_name: currentProject })
   })
   .then(response => response.json())
   .then(data => {
@@ -442,6 +443,11 @@ function addProjectSelector(parentElement) {
 
 // Function to switch projects
 async function switchProject(projectName) {
+  // Save current project state
+  if (currentProject) {
+    saveProjectState(currentProject);
+  }
+
   try {
     const response = await fetch(`/projects/details?project_name=${encodeURIComponent(projectName)}`);
     if (response.ok) {
@@ -450,9 +456,8 @@ async function switchProject(projectName) {
       localStorage.setItem('currentProject', currentProject);
       // Reload project structure
       await loadProjectStructure();
-      // Close all open tabs
-      closeAllTabs();
-      // Optionally, you might want to load the last active file for the new project
+      // Restore new project state
+      restoreProjectState(currentProject);
     } else {
       showToast('Failed to switch project.', 'error');
       console.error('Failed to switch project.');
@@ -461,8 +466,45 @@ async function switchProject(projectName) {
     showToast('Error switching project.', 'error');
     console.error('Error switching project:', e);
   }
-    
-  // Additional actions after switching can be added here
+}
+
+// Function to save the state of a project
+function saveProjectState(projectName) {
+  // Save open files
+  localStorage.setItem(`openFiles_${projectName}`, JSON.stringify(openFiles[projectName] || {}));
+  // Save active file
+  localStorage.setItem(`activeFile_${projectName}`, activeFile[projectName] || '');
+  // Save open directories
+  localStorage.setItem(`openDirectories_${projectName}`, JSON.stringify(Array.from(openDirectories.get(projectName) || [])));
+}
+
+// Function to restore the state of a project
+async function restoreProjectState(projectName) {
+  // Load open files
+  const storedOpenFiles = localStorage.getItem(`openFiles_${projectName}`);
+  openFiles[projectName] = storedOpenFiles ? JSON.parse(storedOpenFiles) : {};
+
+  // Load active file
+  activeFile[projectName] = localStorage.getItem(`activeFile_${projectName}`) || '';
+
+  // Load open directories
+  const storedOpenDirs = localStorage.getItem(`openDirectories_${projectName}`);
+  openDirectories.set(projectName, storedOpenDirs ? new Set(JSON.parse(storedOpenDirs)) : new Set());
+
+  // Close all current tabs
+  closeAllTabs();
+
+  // Open files for the new project
+  for (const filename of Object.keys(openFiles[projectName])) {
+    await openFileInTab(filename, false);
+  }
+
+  // Switch to active file
+  if (activeFile[projectName]) {
+    await switchToTab(activeFile[projectName]);
+  }
+
+  adjustTabs(); // Adjust tabs after restoring
 }
 
 // Function to close all open tabs
@@ -525,18 +567,18 @@ async function openBranchPopup() {
     popup = document.createElement('div');
     popup.id = 'branchPopup';
     popup.className = 'hidden';
-        
+    
     // Branch list container
     const branchList = document.createElement('div');
     branchList.id = 'branchList';
     popup.appendChild(branchList);
-        
+    
     // Add Branch button
     const addBranchBtn = document.createElement('button');
     addBranchBtn.textContent = 'Add New Branch';
     addBranchBtn.addEventListener('click', showAddBranchInput);
     popup.appendChild(addBranchBtn);
-        
+    
     document.body.appendChild(popup);
   }
     
@@ -638,7 +680,7 @@ function showAddBranchInput() {
       addNewBranch();
     }
   });
-      
+    
   /*
   CSS for Add Branch Input:
   #newBranchName {
@@ -705,11 +747,11 @@ function createProjectTree(structure, parentElement, currentPath = '') {
       dirSpan.classList.toggle('open');
       const fullPath = currentPath + dir.name + '/';
       if (childContainer.classList.contains('hidden')) {
-        openDirectories.delete(fullPath);
+        openDirectories.get(currentProject).delete(fullPath);
       } else {
-        openDirectories.add(fullPath);
+        openDirectories.get(currentProject).add(fullPath);
       }
-      saveOpenDirectories();
+      saveOpenDirectories(currentProject);
       adjustTabs(); // Adjust tabs when directories are toggled
     });
     itemDiv.className = 'directory';
@@ -741,6 +783,13 @@ function createProjectTree(structure, parentElement, currentPath = '') {
 
 // Function to open a file in a new tab
 async function openFileInTab(filename, activate = true) {
+  if (!currentProject) return;
+
+  // Initialize openFiles for the project if not present
+  if (!openFiles[currentProject]) {
+    openFiles[currentProject] = {};
+  }
+
   // Check if the tab already exists in the DOM
   if (document.getElementById(`tab-${sanitizeId(filename)}`)) {
     if (activate) {
@@ -791,10 +840,10 @@ async function openFileInTab(filename, activate = true) {
         if (editor) {
           editor.setValue(data.content);
         }
-        activeFile = filename;
-        openFiles[filename] = true;
-        saveOpenFiles();
-        saveActiveFile();
+        activeFile[currentProject] = filename;
+        openFiles[currentProject][filename] = true;
+        saveOpenFiles(currentProject);
+        saveActiveFile(currentProject);
         // Load transcript
         await loadTranscript(filename);
         // Load coding contexts
@@ -810,8 +859,8 @@ async function openFileInTab(filename, activate = true) {
           moreDropdown.classList.remove('show');
         }
       } else {
-        openFiles[filename] = true;
-        saveOpenFiles();
+        openFiles[currentProject][filename] = true;
+        saveOpenFiles(currentProject);
       }
     }
   } catch (e) {
@@ -826,7 +875,12 @@ function sanitizeId(filename) {
 
 // Function to switch to an existing tab
 async function switchToTab(filename) {
-  activeFile = filename;
+  if (!currentProject) return;
+
+  activeFile[currentProject] = filename;
+  // Save active file
+  saveActiveFile(currentProject);
+
   // Activate the selected tab
   const tabs = document.getElementById('tabs');
   Array.from(tabs.getElementsByClassName('tab')).forEach(t => {
@@ -836,7 +890,7 @@ async function switchToTab(filename) {
       t.classList.remove('active');
     }
   });
-  saveActiveFile();
+
   // Load source code
   try {
     const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
@@ -866,12 +920,14 @@ async function switchToTab(filename) {
 
 // Function to close a tab
 function closeTab(filename) {
+  if (!currentProject) return;
+
   const sanitizedId = sanitizeId(filename);
   const tab = document.getElementById(`tab-${sanitizedId}`);
   if (tab) {
     tab.parentNode.removeChild(tab);
-    delete openFiles[filename];
-    saveOpenFiles();
+    delete openFiles[currentProject][filename];
+    saveOpenFiles(currentProject);
     // Remove coding contexts for the closed file
     delete fileCodingContexts[filename];
     saveFileCodingContexts();
@@ -879,15 +935,15 @@ function closeTab(filename) {
     delete fileActiveModels[filename];
     saveFileActiveModels();
     // If the closed tab was active, switch to another tab
-    if (activeFile === filename) {
-      const remainingTabs = document.querySelectorAll('#tabs .tab');
+    if (activeFile[currentProject] === filename) {
+      const remainingTabs = document.querySelectorAll(`#tabs .tab`);
       if (remainingTabs.length > 0) {
         const newActiveTab = remainingTabs[remainingTabs.length - 1];
         const newActiveFilename = newActiveTab.textContent.slice(0, -1); // Remove close button
         switchToTab(newActiveFilename);
       } else {
-        activeFile = null;
-        saveActiveFile();
+        activeFile[currentProject] = undefined;
+        saveActiveFile(currentProject);
         document.getElementById('sourceCode').value = '';
         if (editor) {
           editor.setValue('');
@@ -944,11 +1000,12 @@ function appendCodingContext(context) {
 
 // Function to remove a coding context
 function removeCodingContext(contextName) {
-  if (!activeFile || !fileCodingContexts[activeFile]) return;
+  if (!currentProject || !activeFile[currentProject] || !fileCodingContexts[activeFile[currentProject]]) return;
+  const filename = activeFile[currentProject];
   // Remove from fileCodingContexts
-  fileCodingContexts[activeFile] = fileCodingContexts[activeFile].filter(ctx => ctx.name !== contextName);
-  if (fileCodingContexts[activeFile].length === 0) {
-    delete fileCodingContexts[activeFile];
+  fileCodingContexts[filename] = fileCodingContexts[filename].filter(ctx => ctx.name !== contextName);
+  if (fileCodingContexts[filename].length === 0) {
+    delete fileCodingContexts[filename];
   }
   saveFileCodingContexts();
   // Remove from UI
@@ -1029,7 +1086,8 @@ function setupEventListeners() {
     
   chatForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    if (!activeFile) return;
+    if (!currentProject || !activeFile[currentProject]) return;
+    const filename = activeFile[currentProject];
     const prompt = promptInput.value.trim();
     if (!prompt) return;
     appendMessage("User", prompt);
@@ -1038,16 +1096,16 @@ function setupEventListeners() {
     throbber.style.display = "block";
     
     // Gather active context names
-    const contexts = fileCodingContexts[activeFile] ? fileCodingContexts[activeFile].map(ctx => ctx.name) : [];
+    const contexts = fileCodingContexts[filename] ? fileCodingContexts[filename].map(ctx => ctx.name) : [];
     
     // Get active AI model for the current file
-    const activeModel = fileActiveModels[activeFile] || defaultModel;
+    const activeModel = fileActiveModels[filename] || defaultModel;
     
     try {
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", 'Project-Name': currentProject },
-        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts, model: activeModel, project_name: currentProject })
+        body: JSON.stringify({ prompt: prompt, file: filename, contexts: contexts, model: activeModel, project_name: currentProject })
       });
       if (response.ok) {
         const data = await response.json();
@@ -1069,9 +1127,9 @@ function setupEventListeners() {
         scrollToBottom(chatBox);
         scrollToBottom(commitSummaries);
         // Reload the source code after AI updates
-        await loadSourceCode(activeFile);
+        await loadSourceCode(filename);
         // Reload coding contexts
-        loadFileCodingContexts(activeFile);
+        loadFileCodingContexts(filename);
         // Reload project structure
         await loadProjectStructure();
       } else {
@@ -1167,8 +1225,8 @@ function createAIDropdown() {
     // Add event listener for model change
     modelSelect.addEventListener('change', (e) => {
       const selectedModel = e.target.value;
-      if (activeFile) {
-        fileActiveModels[activeFile] = selectedModel;
+      if (currentProject && activeFile[currentProject]) {
+        fileActiveModels[activeFile[currentProject]] = selectedModel;
         saveFileActiveModels();
       }
     });
@@ -1208,9 +1266,6 @@ function loadFileCodingContextsFromStorage() {
 function saveFileActiveModels() {
   localStorage.setItem('fileActiveModels', JSON.stringify(fileActiveModels));
 }
-
-// Load file coding contexts from localStorage
-// This function is already defined above as loadFileCodingContextsFromStorage
 
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
@@ -1333,6 +1388,12 @@ async function createNewProject(projectName) {
     const data = await response.json();
     if (data.success) {
       showToast(`Project ${data.project} created successfully.`, 'success'); // Use data.project
+      // Initialize storage for the new project
+      openFiles[data.project] = {};
+      activeFile[data.project] = '';
+      openDirectories.set(data.project, new Set());
+      // Save initial state
+      saveProjectState(data.project);
       // Optionally switch to the new project
       switchProject(data.project); // Use data.project
     } else {
@@ -1358,44 +1419,29 @@ window.onclick = function(event) {
 }
 
 // Save open files to localStorage
-function saveOpenFiles() {
-  localStorage.setItem('openFiles', JSON.stringify(openFiles));
-}
-
-// Load open files from localStorage
-async function loadOpenFiles() {
-  const storedOpenFiles = localStorage.getItem('openFiles');
-  if (storedOpenFiles) {
-    openFiles = JSON.parse(storedOpenFiles);
-    for (const filename of Object.keys(openFiles)) {
-      await openFileInTab(filename, false);
-    }
-  }
+function saveOpenFiles(projectName) {
+  localStorage.setItem(`openFiles_${projectName}`, JSON.stringify(openFiles[projectName]));
 }
 
 // Save active file to localStorage
-function saveActiveFile() {
-  localStorage.setItem('activeFile', activeFile);
-}
-
-// Load active file from localStorage
-function loadActiveFile() {
-  const storedActiveFile = localStorage.getItem('activeFile');
-  if (storedActiveFile) {
-    activeFile = storedActiveFile;
-  }
+function saveActiveFile(projectName) {
+  localStorage.setItem(`activeFile_${projectName}`, activeFile[projectName] || '');
 }
 
 // Save open directories to localStorage
-function saveOpenDirectories() {
-  localStorage.setItem('openDirectories', JSON.stringify(Array.from(openDirectories)));
+function saveOpenDirectories(projectName) {
+  localStorage.setItem(`openDirectories_${projectName}`, JSON.stringify(Array.from(openDirectories.get(projectName) || [])));
 }
 
 // Load open directories from localStorage
 function loadOpenDirectories() {
-  const storedOpenDirs = localStorage.getItem('openDirectories');
+  if (!currentProject) return;
+  const storedOpenDirs = localStorage.getItem(`openDirectories_${currentProject}`);
   if (storedOpenDirs) {
-    openDirectories = new Set(JSON.parse(storedOpenDirs));
+    const dirs = new Set(JSON.parse(storedOpenDirs));
+    openDirectories.set(currentProject, dirs);
+  } else {
+    openDirectories.set(currentProject, new Set());
   }
 }
 
@@ -1405,7 +1451,7 @@ function restoreOpenDirectories(parentElement, currentPath = '') {
   Array.from(directories).forEach(dir => {
     const dirName = dir.firstChild.textContent;
     const fullPath = currentPath + dirName + '/';
-    if (openDirectories.has(fullPath)) {
+    if (openDirectories.get(currentProject).has(fullPath)) {
       const childContainer = dir.querySelector('.directory-children');
       if (childContainer) {
         childContainer.classList.remove('hidden');
@@ -1583,29 +1629,28 @@ window.onload = async function() {
   
   loadCurrentProject();
   await loadProjectStructure();
-  await loadOpenFiles();
-  loadActiveFile();
-  if (activeFile) {
-    await switchToTab(activeFile);
-  }
+  restoreProjectState(currentProject);
   adjustTabs(); // Initial adjustment
 };
 
 // Function to add a coding context
 function addCodingContext(event) {
+  if (!currentProject || !activeFile[currentProject]) return;
+  
   const selectedContextName = event.target.value;
   if (!selectedContextName) return;
     
   const selectedContext = allCodingContexts.find(ctx => ctx.name === selectedContextName);
   if (!selectedContext) return;
     
-  if (!fileCodingContexts[activeFile]) {
-    fileCodingContexts[activeFile] = [];
+  const filename = activeFile[currentProject];
+  if (!fileCodingContexts[filename]) {
+    fileCodingContexts[filename] = [];
   }
     
-  if (!fileCodingContexts[activeFile].some(ctx => ctx.name === selectedContextName)) {
+  if (!fileCodingContexts[filename].some(ctx => ctx.name === selectedContextName)) {
     const newContext = { name: selectedContext.name, content: selectedContext.content };
-    fileCodingContexts[activeFile].push(newContext);
+    fileCodingContexts[filename].push(newContext);
     appendCodingContext(newContext);
     saveFileCodingContexts();
   }
@@ -1680,7 +1725,9 @@ async function loadAIModals() {
         });
 
         // Set default selected model
-        // This will be handled in loadFileActiveModel
+        if (defaultModel) {
+          modelSelect.value = defaultModel;
+        }
       }
     } else {
       console.error('Failed to fetch AI models.');
