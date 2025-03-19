@@ -637,12 +637,11 @@ def chat():
 
     if not os.path.exists(os.path.join(project_path, file_name)) or os.path.getsize(os.path.join(project_path, file_name)) == 0:
         system_prompt = (
-            "You are an assistant managing a software project. When given a prompt, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete contents for the project file. Output only the code in a single code block (using triple backticks) without additional commentary."
+            "You are an assistant managing a software project. When given a prompt, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete contents for the project file. Output only the code in a single code block (using triple backticks) without additional commentary. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
         )
     else:
         system_prompt = (
-            "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete updated file contents. Output only the updated code in a single code block (using triple backticks). "
-            "Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes."
+            "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete updated file contents. Output only the updated code in a single code block (using triple backticks). Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
         )
 
     messages = build_prompt_messages(system_prompt, user_input, file_name, model, coding_contexts, project_name)
