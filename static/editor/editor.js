@@ -48,6 +48,13 @@ function initializeCodeMirror() {
   });
 }
 
+// Function to clear the editor content
+function clearEditor() {
+  if (editor) {
+    editor.setValue('');
+  }
+}
+
 // Function to prompt for commit message
 function promptCommitMessage() {
   // Create overlay if it doesn't exist
@@ -455,6 +462,9 @@ async function switchProject(projectName) {
     saveProjectState(currentProject);
   }
 
+  // Clear the editor to prevent residual code
+  clearEditor();
+
   try {
     const response = await fetch(`/projects/details?project_name=${encodeURIComponent(projectName)}`);
     if (response.ok) {
@@ -516,6 +526,10 @@ async function restoreProjectState(projectName) {
   // Switch to active file
   if (activeFile[projectName]) {
     await switchToTab(activeFile[projectName]);
+  } else {
+    // If no active file, clear the editor and show placeholder
+    clearEditor();
+    showPlaceholderPage();
   }
 
   adjustTabs(); // Adjust tabs after restoring
@@ -910,6 +924,9 @@ async function switchToTab(filename) {
       t.classList.remove('active');
     }
   });
+
+  // Clear the editor before loading new content
+  clearEditor();
 
   // Load source code
   try {
