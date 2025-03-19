@@ -317,32 +317,6 @@ function updateSearchIndicator() {
   }
 }
 
-// Save file function triggered by Ctrl+S with commit message
-function saveFile(commitMessage) {
-  if (!activeFile) return;
-  const updatedContent = editor.getValue();
-  fetch('/update_source', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage, project: currentProject })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.message) {
-      showToast(data.message, 'success');
-    } else if (data.error) {
-      showToast(data.error, 'error');
-    }
-    if (data.chat_history) {
-      updateChatHistoryViewer(data.chat_history);
-    }
-  })
-  .catch(error => {
-    showToast('Error saving file.', 'error');
-    console.error('Error saving file:', error);
-  });
-}
-
 // Render Markdown while escaping any raw HTML.
 function renderMarkdown(text) {
   const renderer = new marked.Renderer();
@@ -415,7 +389,9 @@ function addProjectSelector(parentElement) {
   // Fetch all projects
   fetch('/projects/list')
     .then(response => response.json())
-    .then(projects => {
+    .then(data => {
+      const projects = data.projects; // Adjusted to access the 'projects' array
+      
       // Add a default option
       const defaultOption = document.createElement('option');
       defaultOption.value = '';
@@ -490,7 +466,8 @@ function loadCurrentProject() {
     // If no project is selected, you might want to select a default or prompt the user
     fetch('/projects/list')
       .then(response => response.json())
-      .then(projects => {
+      .then(data => {
+        const projects = data.projects;
         if (projects.length > 0) {
           switchProject(projects[0]);
         }
