@@ -599,3 +599,19 @@ form {
   box-sizing: border-box;
   font-size: 14px;
 }
+/* CSS Styles for Project Placeholder */
+
+.hidden {
+  display: none;
+}
+
+#sourceCodeContainer {
+  display: flex;
+}
+
+#newProjectPlaceholder {
+  padding: 20px;
+  text-align: center;
+  font-size: 1.2em;
+  color: #555;
+}
