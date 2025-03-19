@@ -378,7 +378,7 @@ def git_current_branch():
 def git_branches():
     try:
         result = subprocess.run(["git", "branch"], capture_output=True, text=True, check=True)
-        branches = [line.strip().lstrip("* ").strip() for line in result.stdout.strip().split('\n') if line.strip()]
+        branches = [re.sub(r'^(\* |\+ )', '', line.strip()) for line in result.stdout.strip().split('\n') if line.strip()]
         return jsonify({"branches": branches})
     except subprocess.CalledProcessError as e:
         return jsonify({"error": "Failed to list branches.", "details": e.stderr.strip()}), 500
