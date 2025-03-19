@@ -122,7 +122,7 @@ function saveFile(commitMessage) {
   fetch('/update_source', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage, project: currentProject })
+    body: JSON.stringify({ file: activeFile, content: updatedContent, commit_message: commitMessage, project_name: currentProject })
   })
   .then(response => response.json())
   .then(data => {
@@ -1047,7 +1047,7 @@ function setupEventListeners() {
       const response = await fetch("/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", 'Project-Name': currentProject },
-        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts, model: activeModel, project: currentProject })
+        body: JSON.stringify({ prompt: prompt, file: activeFile, contexts: contexts, model: activeModel, project_name: currentProject })
       });
       if (response.ok) {
         const data = await response.json();
