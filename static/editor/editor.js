@@ -1,22 +1,3 @@
-/*
-CSS Styles:
-
-.hidden {
-  display: none;
-}
-
-#sourceCodeContainer {
-  display: flex;
-}
-
-#newProjectPlaceholder {
-  padding: 20px;
-  text-align: center;
-  font-size: 1.2em;
-  color: #555;
-}
-*/
-
 let activeFile = {}; // Mapping of project name to active file
 let openFiles = {}; // Mapping of project name to open files
 let editor = null;
