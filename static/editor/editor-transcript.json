@@ -976,5 +976,20 @@
     "branch": "multiproject",
     "commit_hash": "63d2f768d62927fb43f1ab0c5ef49f8c9c4c6dc1",
     "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Our branch selector can't currently be dismissed. Clicking outside of the branch selector window or pressing esc while the branch selector is open should dismiss it",
+    "timestamp": "2025-03-20T11:20:08.696708Z",
+    "branch": "main",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've implemented the functionality to allow the branch selector to be dismissed by clicking outside of it or pressing the Esc key while it is open. This enhances user experience by providing intuitive ways to close the branch selector.",
+    "timestamp": "2025-03-20T11:23:07.333035Z",
+    "branch": "main",
+    "commit_hash": "4c9ecdbeb6b3648e9f5b304353b3a80540e2cd3e",
+    "model": "o1-mini"
   }
 ]
