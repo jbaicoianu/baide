@@ -1375,7 +1375,7 @@ async function createNewFile() {
     showToast("Error creating file: " + data.error, "error");
   }
 }
-                                                        
+  
 // Function to open new project modal
 function openNewProjectModal() {
   let overlay = document.getElementById('newProjectOverlay');
@@ -1493,7 +1493,21 @@ window.onclick = function(event) {
   if (projectModal && event.target == projectModal) {
     closeNewProjectModal();
   }
+
+  const branchPopup = document.getElementById('branchPopup');
+  if (branchPopup && event.target == branchPopup) {
+    branchPopup.classList.add('hidden');
+  }
 }
+
+window.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    const branchPopup = document.getElementById('branchPopup');
+    if(branchPopup && !branchPopup.classList.contains('hidden')) {
+      branchPopup.classList.add('hidden');
+    }
+  }
+});
 
 // Save open files to localStorage
 function saveOpenFiles(projectName) {
