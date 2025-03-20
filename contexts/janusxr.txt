@@ -27,7 +27,7 @@ You are working on a web-based 3d world using the JanusXR library. A janus room 
 </html>
 ```
 
-Janus markup can also be extended in assetscripts by using the following syntax:
+Janus markup can also be extended with custom elements in assetscripts by using the following syntax:
 ```
 room.registerElement('my-custom-element', {
   someattribute: 'defaultvalue',
@@ -60,15 +60,21 @@ room.registerElement('my-custom-element', {
 });
 ```
 
-Note that `this.createObject()` creates objects as a child of this object, while `room.createObject()` can be used to create objects parented to the room.
+Note that `this.createObject()` creates objects as a child of this object (which will follow the object as it moves and rotates), while `room.createObject()` can be used to create objects parented to the room (useful for spawning objects like projectiles or objects that our custom element places in the world).
 
-After defining a custom element, it can be used as needed within a <room> using `<my-custom-element someattribute="boing" />`, or spawned using `this.createObject('my-custom-element')`
+Attributes are defined simply by specifying them in our element definition as member attributes of our custom element, which can then be referenced in markup and in code. Their type is inferred by specifying a default value (boolean, string, numeric, or vector)
+
+After defining a custom element, it can be used as needed within a <room> using `<my-custom-element someattribute="boing" />`, or spawned using `this.createObject('my-custom-element', { someattribute: "boing" })`
 
 Note:
 - units are in meters
-- rotations are in degrees, not radians
+- rotations are always in degrees, not radians
 - built-in primitive types are sphere, cube, cone, cylinder, pyramid, torus, pipe, and plane
-- the physics engine can handle projectile physics (pos, vel, and accel properties) and angular rotations (rotation, angular, angularacceleration). It also supports force generators, eg, `this.addForce('friction', 0.2)` `this.addForce('static', V(0, 10, 0))`
-- vector attributes like pos, vel, etc. are instances of THREE.Vector3(). Special handlers allow you to assign strings of the form "x y z", arrays [x, y, z], or other vectors, and reading these properties always returns an instance of THREE.Vector3
+- All types of elements support a number of default attributes: pos, rotation, scale, vel, mass, accel, restitution, opacity, visible, billboard, classname, renderorder, pickable, collidable, collision_id, rotate_deg_per_sec, rotate_axis, locked, js_id)
+- All types of elements support a number of member functions: createObject, appendChild, removeChild, addEventListener, dispatchEvent, removeEventListener, localToWorld, worldToLocal, distanceTo, addForce, removeForce, die, addClass, removeClass, hasClass, raycast, getElementsByTagName
+- All types of elements support a number of events: update, change, collision, mouseover, mouseout, mousemove, mousedown, mouseup, click, touchstart, touchmove, touchend, dragover, drag, dragenter, dragleave, dragstart, dragend, drop. These events can be handled in code using the `object.addEventListener('eventtype', handlerFunction)` syntax or in markup with `<object oneventtype="doSomethingWith(this, event)">`
+- vector attributes like pos, vel, etc. are instances of THREE.Vector3(). Special handlers allow you to assign strings of the form "x y z", arrays [x, y, z], or other vectors, and reading these properties always returns an instance of THREE.Vector3. Vector3 objects can be allocated with the V() convenience function, which optionally takes x,y,z arguments.
 - colors can be specified using standard HTML color names, hex codes (short or long), or RGB values with values from 0..1
-
+- Our createObject() functions take two parameters. The first is the object type, which can be either one of the built-ins (object, image, video, text, paragraph, link, light, particle, sound) or any of our defined custom elements.  The second parameter is an object containing any attributes we want to specify.
+- object, image, video, and sound elements accept an "id" parameter which specifies the id of the corresponding asset definition. For object elements, this can also be one of the built-in primitives specified above.
+- the physics engine can handle projectile physics (pos, vel, and accel properties) and angular rotations (rotation, angular, angularacceleration). It also supports force generators, eg, `this.addForce('friction', 0.2)` `this.addForce('static', V(0, 10, 0))`. It also has built-in collision handling between all objects with specified collision_id attributes.
