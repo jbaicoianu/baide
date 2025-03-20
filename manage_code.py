@@ -1,4 +1,3 @@
-```python
 #!/usr/bin/env python3
 import os
 import re
@@ -768,4 +767,6 @@ if __name__ == "__main__":
     os.makedirs(PROJECTS_DIR, exist_ok=True)
 
     app.run(port=args.port)
-```
+===END CODE===
+
+Commit Summary: Removed wrapping triple backticks and language specifier from manage_code.py.
