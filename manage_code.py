@@ -234,6 +234,18 @@ def extract_code(text):
             if stripped == "===END_CODE===":
                 break
             code_lines.append(line)
+    code = "\n".join(code_lines).strip()
+
+    # Remove leading and trailing code block markdown if present
+    code_lines = code.splitlines()
+    if code_lines:
+        # Check for opening code block markdown with optional language specifier
+        opening = code_lines[0].strip()
+        if re.match(r"^```(\w+)?$", opening):
+            code_lines = code_lines[1:]
+        # Check for closing code block markdown
+        if code_lines and code_lines[-1].strip() == "```":
+            code_lines = code_lines[:-1]
     return "\n".join(code_lines).strip()
 
 def extract_professional_message(text):
