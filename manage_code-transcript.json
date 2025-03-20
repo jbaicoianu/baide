@@ -736,5 +736,22 @@
     "commit_hash": "9e836e41d5baef9be1a134a63ebe55f4869405c5",
     "model": "o1-mini",
     "file_name": "manage_code.py"
+  },
+  {
+    "role": "User",
+    "content": "If DEBUG is true, print the raw AI response to the console when it is received",
+    "timestamp": "2025-03-20T12:13:38.625898Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have added functionality to print the raw AI response to the console when `DEBUG` is set to `True`. This will assist in debugging by allowing you to inspect the exact response received from the OpenAI API.",
+    "timestamp": "2025-03-20T12:14:36.633857Z",
+    "branch": "main",
+    "commit_hash": "ccdb45c1338cfcefef121b80c9fd76af4ca9cb4b",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
   }
 ]
