@@ -787,5 +787,21 @@
     "commit_hash": "6b1808a54c3077fc2a84374573492a5c00a9f514",
     "model": "o1-mini",
     "file_name": "manage_code.py"
+  },
+  {
+    "role": "User",
+    "content": "Add support for project-specific prompt configs. In our prompt building code, check for the existence of project_path/.baiderc and if it exists, include its contents after our main prompt, but before any file-specific coding contexts",
+    "timestamp": "2025-03-20T12:30:42.898290Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
+  },
+  {
+    "role": "Assistant",
+    "content": "Error calling OpenAI API: Object of type ChatCompletion is not JSON serializable",
+    "timestamp": "2025-03-20T12:31:56.346533Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
   }
 ]
