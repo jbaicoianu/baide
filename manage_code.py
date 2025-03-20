@@ -168,7 +168,6 @@ def get_available_models():
     """Retrieve the list of available OpenAI models dynamically."""
     try:
         response = client.models.list()
-        print(response.data)
         return [model.id for model in response.data]
     except Exception as e:
         print(f"Error fetching available models: {e}")
