@@ -852,5 +852,22 @@
     "commit_hash": "d126f275d48039427da0d2ab140cb082fec9c47a",
     "model": "o1-mini",
     "file_name": "manage_code.py"
+  },
+  {
+    "role": "User",
+    "content": "In our extract_code, before returning our code we should check to see if any code block markdown exists at the beginning or end of our code. If it does, strip it out. Keep in mind that the opening code block often contains a language specifier as well.",
+    "timestamp": "2025-03-20T17:40:31.269561Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `extract_code` function in `manage_code.py` to remove any code block markdown at the beginning or end of the extracted code, including language specifiers.",
+    "timestamp": "2025-03-20T17:41:36.834910Z",
+    "branch": "main",
+    "commit_hash": "801ecfceebc91d951e49bdf63eb27ba16fe07019",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
   }
 ]
