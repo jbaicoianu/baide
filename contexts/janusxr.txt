@@ -110,3 +110,41 @@ JanusXR has a built-in physics engine which can simulate basic projectile motion
 
 
 `let force = object.addForce()` will return a force object which can then be updated with `force.update(...)`, for example, a "static" force accepts a Vector3 object which will alter the force generator's direction and magnitude.
+
+## Control contexts
+Janus elements can define custom control contexts which can be enabled, disabled, and remapped dynamically.
+
+Example:
+```
+room.registerElement('controllable-rocket', {
+    gimbalstrength: .1,
+    create() {
+        this.controlstate = this.addControlContext('controllable-rocket', {
+            'launch': { defaultbindings: 'keyboard_space', onactivate: ev => this.launch() },
+            'yaw_left': { defaultbindings: 'keyboard_a' },
+            'yaw_right': { defaultbindings: 'keyboard_d,gamepad_any_axis_0' },
+            'pitch_up': { defaultbindings: 'keyboard_w,gamepad_any_axis_1' },
+            'pitch_down': { defaultbindings: 'keyboard_s' },
+            'fire': { defaultbindings: 'keyboard_ctrl,gamepad_any_button_0', onactivate: ev => this.startFiring(), ondeactivate: this.stopFiring() }
+        });
+        this.thrustvector = V(0, 0, 0);
+        this.engineforce = this.addForce('static', { force: this.thrustvector, point: V(0,-1,0) });
+    },
+    update(dt) {
+        this.thrustvector.x = (this.controlstate.yaw_right - this.controlstate.yaw_left) * this.gimbalstrength;
+        this.thrustvector.z = (this.controlstate.pitch_up - this.controlstate.pitch_down) * this.gimbalstrength;
+        this.engineforce.update(this.thrustvector);
+    },
+    launch() {
+        this.thrustvector.y = 1000;
+    },
+    startFiring() {
+        this.firing = true;
+    },
+    stopFiring() {
+        this.firing = false;
+    }
+});
+```
+
+
