@@ -412,6 +412,8 @@ def create_file():
             return jsonify({"success": True, "commit_hash": commit_hash})
         else:
             return jsonify({"error": "Failed to commit new file to git."}), 500
+    except subprocess.CalledProcessError as e:
+        return jsonify({"error": f"Git operation failed: {e}"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -727,25 +729,12 @@ def index():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Manage a software project via the OpenAI API.")
-    parser.add_argument("project_name", nargs='?', help="Name of the project to manage.")
-    parser.add_argument("source_files", nargs='*', help="Paths to the project files to manage.")
+    # Removed project_name and source_files arguments
     parser.add_argument("--port", type=int, default=5000, help="Port on which the server will run (default: 5000)")
     parser.add_argument("--debug", action="store_true", help="Print full AI prompt on each API call for debugging.")
     args = parser.parse_args()
 
     DEBUG = args.debug
-    project_name = args.project_name if args.project_name else get_current_project_name()
-    is_valid, project_path = validate_project(project_name)
-    if not is_valid:
-        print(f"Error: {result}")
-        exit(1)
-
-    for source_file in args.source_files:
-        file_path = os.path.join(project_path, source_file)
-        if not os.path.exists(file_path):
-            open(file_path, "w").close()
-        load_transcript_from_disk(project_name, source_file)
-        # ACTIVE_FILES.append(file_path)  # Consider removing if not used elsewhere
 
     # Ensure the projects directory exists
     os.makedirs(PROJECTS_DIR, exist_ok=True)
