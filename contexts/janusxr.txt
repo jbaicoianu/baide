@@ -1,5 +1,6 @@
 You are working on a web-based 3d world using the JanusXR library. A janus room is made with JML markup embedded in an HTML file, like so:
 
+### JanusXR Markup Example
 ```
 <html>
   <body>
@@ -27,6 +28,7 @@ You are working on a web-based 3d world using the JanusXR library. A janus room 
 </html>
 ```
 
+## JanusXR custom element definition
 Janus markup can also be extended with custom elements in assetscripts by using the following syntax:
 ```
 room.registerElement('my-custom-element', {
@@ -66,7 +68,7 @@ Attributes are defined simply by specifying them in our element definition as me
 
 After defining a custom element, it can be used as needed within a <room> using `<my-custom-element someattribute="boing" />`, or spawned using `this.createObject('my-custom-element', { someattribute: "boing" })`
 
-Note:
+## Notes about JanusXR markup and code
 - units are in meters
 - rotations are always in degrees, not radians
 - built-in primitive types are sphere, cube, cone, cylinder, pyramid, torus, pipe, and plane
@@ -78,3 +80,33 @@ Note:
 - Our createObject() functions take two parameters. The first is the object type, which can be either one of the built-ins (object, image, video, text, paragraph, link, light, particle, sound) or any of our defined custom elements.  The second parameter is an object containing any attributes we want to specify.
 - object, image, video, and sound elements accept an "id" parameter which specifies the id of the corresponding asset definition. For object elements, this can also be one of the built-in primitives specified above.
 - the physics engine can handle projectile physics (pos, vel, and accel properties) and angular rotations (rotation, angular, angularacceleration). It also supports force generators, eg, `this.addForce('friction', 0.2)` `this.addForce('static', V(0, 10, 0))`. It also has built-in collision handling between all objects with specified collision_id attributes.
+
+## Physics system
+JanusXR has a built-in physics engine which can simulate basic projectile motion, forces, and collisions. Forces can be added or removed from any object using `object.addForce(forceType, forceParameters)` where forceParameters is an object with attributes that vary by force type. The built-in force types and their parameters are as follows:
+    - static: a static adjustable force
+      - force: the direction and magnitude of the static force
+      - point: an optional attachment point for the force which can cause it to generate torque
+      - absolute: is the force applied in absolute (world) space, or local space?
+    - gravity: simple or n-body gravity force
+      - accel: a Vector3 representing a static gravity force
+      - others: a list of other physics objects which will exert universal gravitation force on each other based on their masses
+    - friction: a force that resists motion in any direction
+      - friction: the scalar coefficient of friction for this object
+    - anisotropicfriction: a force that resists motion in a specific direction
+      - friction: the vector3 coefficient of friction for this object
+    - drag: aerodynamic drag force
+      - drag: the drag coefficient for this object
+    - buoyancy: floating force
+      - density: object density in kg/m^3 (water is 1000 kg/m^3)
+      - volume: the volume that our object occupies
+    - spring: hooke's law force allows attaching two objects together with a spring of configurable strength
+      - connectionpoint: the relative position of our end of the spring connection
+      - otherconnectionpoint: the position of the other end of the spring connection, relative to the other object
+      - other: the other object we are connected to
+      - strength: the string's strength coefficient
+      - restlength: the minimum length of this spring (default is 0)
+      - bungee: boolean, if true the spring will pull together but will not push apart
+      - hard: boolean, whether the spring can compress past its restlength
+
+
+`let force = object.addForce()` will return a force object which can then be updated with `force.update(...)`, for example, a "static" force accepts a Vector3 object which will alter the force generator's direction and magnitude.
