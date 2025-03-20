@@ -1,4 +1,3 @@
-```python
 #!/usr/bin/env python3
 import os
 import re
@@ -121,6 +120,7 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
     """
     Build a list of messages for the API:
       - Include the system prompt.
+      - Include project-specific .baiderc content (if provided).
       - Include all coding context prompts (if provided).
       - Append the user prompt.
       - Append a final user message with the current on-disk file contents.
@@ -132,12 +132,23 @@ def build_prompt_messages(system_prompt, user_prompt, file_name, model, coding_c
         project_name = get_current_project_name()
     messages = []
 
+    full_system_prompt = system_prompt
+
+    # Include project-specific .baiderc content if it exists
+    baiderc_path = os.path.join(get_project_path(project_name), ".baiderc")
+    if os.path.exists(baiderc_path):
+        try:
+            with open(baiderc_path, "r") as f:
+                baiderc_content = f.read().strip()
+            if baiderc_content:
+                full_system_prompt += f"\n\n{baiderc_content}"
+        except Exception as e:
+            print(f"Error loading .baiderc: {e}")
+
     # Combine system prompt and coding contexts
     if coding_contexts:
         combined_context = "\n\n".join(coding_contexts)
-        full_system_prompt = f"{system_prompt}\n\n{combined_context}"
-    else:
-        full_system_prompt = system_prompt
+        full_system_prompt += f"\n\n{combined_context}"
 
     # Assign role based on model
     role = "user" if model == "o1-mini" else "system"
@@ -646,7 +657,7 @@ def chat():
         )
     else:
         system_prompt = (
-            "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete updated file contents. Output only the updated code in a single code block (using ===BEGIN_CODE=== and ===END_CODE===). Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
+                "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete updated file contents. Output only the updated code in a single code block, making absolutely sure to use \"===BEGIN_CODE===\" and \"===END_CODE===\" to delimit our code block. Do not include a markup code block around this code, use only the delimiters specified. Then, on a new line after the code, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
         )
 
     messages = build_prompt_messages(system_prompt, user_input, file_name, model, coding_contexts, project_name)
@@ -663,7 +674,7 @@ def chat():
         )
         if DEBUG:
             print("DEBUG: Raw AI response:")
-            print(json.dumps(response, indent=2))
+            print(response.choices[0])
     except Exception as e:
             error_msg = f"Error calling OpenAI API: {str(e)}"
             chat_histories[key].append({
@@ -768,4 +779,3 @@ if __name__ == "__main__":
     os.makedirs(PROJECTS_DIR, exist_ok=True)
 
     app.run(port=args.port)
-```
