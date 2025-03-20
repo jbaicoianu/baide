@@ -1,3 +1,4 @@
+```python
 #!/usr/bin/env python3
 import os
 import re
@@ -207,7 +208,7 @@ def extract_code(text):
     """
     Extract the contents of the first code block using a simple state machine.
     The code block is assumed to start with a line that (after stripping whitespace)
-    starts with ===> BEGIN CODE <=== and ends when a line that is exactly ===> END CODE <=== is encountered
+    starts with ===BEGIN_CODE=== and ends when a line that is exactly ===END_CODE=== is encountered
     """
     lines = text.splitlines()
     in_code_block = False
@@ -215,18 +216,18 @@ def extract_code(text):
     for line in lines:
         stripped = line.strip()
         if not in_code_block:
-            if stripped.startswith("===> BEGIN CODE <==="):
+            if stripped.startswith("===BEGIN_CODE==="):
                 in_code_block = True
             continue
         else:
-            if stripped == "===> END CODE <===":
+            if stripped == "===END_CODE===":
                 break
             code_lines.append(line)
     return "\n".join(code_lines).strip()
 
 def extract_professional_message(text):
     """Extract the professional message before the code block."""
-    match = re.match(r"^(.*?)===> BEGIN CODE <===", text, re.DOTALL)
+    match = re.match(r"^(.*?)===BEGIN_CODE===", text, re.DOTALL)
     return match.group(1).strip() if match else text.strip()
 
 def compute_diff(old_content, new_content):
@@ -641,11 +642,11 @@ def chat():
 
     if not os.path.exists(os.path.join(project_path, file_name)) or os.path.getsize(os.path.join(project_path, file_name)) == 0:
         system_prompt = (
-            "You are an assistant managing a software project. When given a prompt, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete contents for the project file. Output only the code in a single code block (using ===> BEGIN CODE <=== and ===> END CODE <===) without additional commentary. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
+            "You are an assistant managing a software project. When given a prompt, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete contents for the project file. Output only the code in a single code block (using ===BEGIN_CODE=== and ===END_CODE===) without additional commentary. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
         )
     else:
         system_prompt = (
-            "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete updated file contents. Output only the updated code in a single code block (using ===> BEGIN CODE <=== and ===> END CODE <===). Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
+            "You are an assistant managing a software project. The project file already has content. When given a prompt for changes, respond with a brief professional message summarizing the changes and any questions or suggestions you have. Then, generate the complete updated file contents. Output only the updated code in a single code block (using ===BEGIN_CODE=== and ===END_CODE===). Then, on a new line after the code block, output a commit summary starting with 'Commit Summary:' followed by a brief description of the changes. Ensure that you never delete or change existing code unless it is part of the requested changes. Do not summarize or omit any existing unchanged functions."
         )
 
     messages = build_prompt_messages(system_prompt, user_input, file_name, model, coding_contexts, project_name)
@@ -767,6 +768,4 @@ if __name__ == "__main__":
     os.makedirs(PROJECTS_DIR, exist_ok=True)
 
     app.run(port=args.port)
-===END CODE===
-
-Commit Summary: Removed wrapping triple backticks and language specifier from manage_code.py.
+```
