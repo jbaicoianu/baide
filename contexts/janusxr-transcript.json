@@ -6,5 +6,13 @@
     "branch": "main",
     "commit_hash": "ec3832ef2e66035e76e7c139a3972881fe186e38",
     "file_name": "contexts/janusxr.txt"
+  },
+  {
+    "role": "User",
+    "content": "Updated janusxr code context with physics system info [Manual edit]",
+    "timestamp": "2025-03-20T18:13:32.959649Z",
+    "branch": "main",
+    "commit_hash": "4ee95e7f9e47cc7b0903c458168de63a1f05a182",
+    "file_name": "contexts/janusxr.txt"
   }
 ]
