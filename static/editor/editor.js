@@ -604,18 +604,33 @@ async function openBranchPopup() {
     popup.id = 'branchPopup';
     popup.className = 'hidden';
     
+    // Create content container
+    const content = document.createElement('div');
+    content.id = 'branchPopupContent';
+    content.className = 'branch-popup-content';
+    
     // Branch list container
     const branchList = document.createElement('div');
     branchList.id = 'branchList';
-    popup.appendChild(branchList);
+    content.appendChild(branchList);
     
     // Add Branch button
     const addBranchBtn = document.createElement('button');
     addBranchBtn.textContent = 'Add New Branch';
     addBranchBtn.addEventListener('click', showAddBranchInput);
-    popup.appendChild(addBranchBtn);
+    content.appendChild(addBranchBtn);
     
+    popup.appendChild(content);
+    
+    // Append popup to body
     document.body.appendChild(popup);
+    
+    // Add event listener to close popup when clicking outside the content
+    popup.addEventListener('click', (event) => {
+      if (event.target === popup) {
+        popup.classList.add('hidden');
+      }
+    });
   }
     
   // Toggle popup visibility
@@ -1494,10 +1509,7 @@ window.onclick = function(event) {
     closeNewProjectModal();
   }
 
-  const branchPopup = document.getElementById('branchPopup');
-  if (branchPopup && event.target == branchPopup) {
-    branchPopup.classList.add('hidden');
-  }
+  // Removed the previous branchPopup click outside handler as it's now handled within openBranchPopup
 }
 
 window.addEventListener('keydown', function(e) {
