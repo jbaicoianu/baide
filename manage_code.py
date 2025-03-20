@@ -1,3 +1,4 @@
+```python
 #!/usr/bin/env python3
 import os
 import re
@@ -660,6 +661,9 @@ def chat():
             messages=messages,
             temperature=1
         )
+        if DEBUG:
+            print("DEBUG: Raw AI response:")
+            print(json.dumps(response, indent=2))
     except Exception as e:
             error_msg = f"Error calling OpenAI API: {str(e)}"
             chat_histories[key].append({
@@ -764,3 +768,4 @@ if __name__ == "__main__":
     os.makedirs(PROJECTS_DIR, exist_ok=True)
 
     app.run(port=args.port)
+```
