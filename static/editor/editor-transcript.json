@@ -991,5 +991,20 @@
     "branch": "main",
     "commit_hash": "4c9ecdbeb6b3648e9f5b304353b3a80540e2cd3e",
     "model": "o1-mini"
+  },
+  {
+    "role": "User",
+    "content": "Pressing esc to dismiss the branch selector is working, but clicking outside is not. Please implement click-outside-to-dismiss behavior for this popup.",
+    "timestamp": "2025-03-20T11:25:54.750635Z",
+    "branch": "main",
+    "model": "o1-mini"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've implemented the click-outside-to-dismiss functionality for the branch selector popup. Now, clicking anywhere outside the popup content will dismiss the popup. Please review the changes and let me know if you have any questions or need further adjustments.",
+    "timestamp": "2025-03-20T11:28:35.195511Z",
+    "branch": "main",
+    "commit_hash": "6759ebb28ebe5aeda96c1628377e212418e995d6",
+    "model": "o1-mini"
   }
 ]
