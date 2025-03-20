@@ -835,5 +835,22 @@
     "branch": "main",
     "model": "o1-mini",
     "file_name": "manage_code.py"
+  },
+  {
+    "role": "User",
+    "content": "Add support for project-specific prompt configs. In our prompt building code, check for the existence of project_path/.baiderc and if it exists, include its contents after our main prompt, but before any file-specific coding contexts",
+    "timestamp": "2025-03-20T12:40:33.256224Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
+  },
+  {
+    "role": "Assistant",
+    "content": "Thank you for the request. I've implemented support for project-specific prompt configurations by checking for the existence of a `.baiderc` file within the project directory. If present, the contents of `.baiderc` are included after the main prompt and before any file-specific coding contexts in the prompt-building process. Please review the changes and let me know if you have any questions or further suggestions.",
+    "timestamp": "2025-03-20T12:41:45.761524Z",
+    "branch": "main",
+    "commit_hash": "d126f275d48039427da0d2ab140cb082fec9c47a",
+    "model": "o1-mini",
+    "file_name": "manage_code.py"
   }
 ]
