@@ -344,7 +344,7 @@ def update_source():
             f.write(new_content)
         commit_hash = commit_changes(project_name, file_path, commit_message)
         if commit_hash:
-            # Add timestamp, branch, and commit hash to transcript
+            # Add timestamp, branch, commit hash, and file_name to transcript
             current_branch = get_current_git_branch(project_path)
             timestamp = datetime.utcnow().isoformat() + "Z"
             key = f"{project_name}/{file_name}"
@@ -355,7 +355,8 @@ def update_source():
                 "content": f"{commit_message} [Manual edit]",
                 "timestamp": timestamp,
                 "branch": current_branch,
-                "commit_hash": commit_hash
+                "commit_hash": commit_hash,
+                "file_name": file_name
             }
             chat_histories[key].append(transcript_entry)
             update_transcript(project_name, file_name, commit_hash)
@@ -394,7 +395,7 @@ def create_file():
         commit_msg = f"Create new file {file_name}"
         commit_hash = commit_changes(project_name, file_path, commit_msg)
         if commit_hash:
-            # Add timestamp, branch, and commit hash to transcript
+            # Add timestamp, branch, commit hash, and file_name to transcript
             current_branch = get_current_git_branch(project_path)
             timestamp = datetime.utcnow().isoformat() + "Z"
             key = f"{project_name}/{file_name}"
@@ -405,7 +406,8 @@ def create_file():
                 "content": f"Created new file {file_name}.",
                 "timestamp": timestamp,
                 "branch": current_branch,
-                "commit_hash": commit_hash
+                "commit_hash": commit_hash,
+                "file_name": file_name
             }
             chat_histories[key].append(transcript_entry)
             update_transcript(project_name, file_name, commit_hash)
@@ -631,7 +633,8 @@ def chat():
         "content": user_input,
         "timestamp": timestamp,
         "branch": current_branch,
-        "model": model
+        "model": model,
+        "file_name": file_name
     })
 
     # Load specified contexts
@@ -660,7 +663,14 @@ def chat():
         )
     except Exception as e:
         error_msg = f"Error calling OpenAI API: {str(e)}"
-        chat_histories[key].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+        chat_histories[key].append({
+            "role": "Assistant",
+            "content": error_msg,
+            "timestamp": datetime.utcnow().isoformat() + "Z",
+            "branch": current_branch,
+            "model": model,
+            "file_name": file_name
+        })
         update_transcript(project_name, file_name)
         return jsonify(chat_histories[key]), 500
 
@@ -683,7 +693,14 @@ def chat():
                 raise Exception("Failed to commit changes to git.")
         except Exception as e:
             error_msg = f"Error applying changes: {str(e)}"
-            chat_histories[key].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+            chat_histories[key].append({
+                "role": "Assistant",
+                "content": error_msg,
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "branch": current_branch,
+                "model": model,
+                "file_name": file_name
+            })
             update_transcript(project_name, file_name)
             return jsonify(chat_histories[key]), 500
     else:
@@ -699,18 +716,26 @@ def chat():
                     raise Exception("Failed to commit changes to git.")
         except Exception as e:
             error_msg = f"Error applying changes: {str(e)}"
-            chat_histories[key].append({"role": "Assistant", "content": error_msg, "timestamp": datetime.utcnow().isoformat() + "Z", "branch": current_branch, "model": model})
+            chat_histories[key].append({
+                "role": "Assistant",
+                "content": error_msg,
+                "timestamp": datetime.utcnow().isoformat() + "Z",
+                "branch": current_branch,
+                "model": model,
+                "file_name": file_name
+            })
             update_transcript(project_name, file_name)
             return jsonify(chat_histories[key]), 500
 
-    # Append only the professional message with commit_hash
+    # Append only the professional message with commit_hash and file_name
     chat_histories[key].append({
         "role": "Assistant",
         "content": professional_message,
         "timestamp": datetime.utcnow().isoformat() + "Z",
         "branch": current_branch,
         "commit_hash": commit_hash,
-        "model": model
+        "model": model,
+        "file_name": file_name
     })
 
     update_transcript(project_name, file_name, commit_hash)
