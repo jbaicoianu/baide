@@ -49,7 +49,7 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
-  rollspeed: 80, // Updated turnrate to 80 degrees per second
+  rollspeed: 160, // Doubled rotation speed to 160 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
   totalracetime: 120, // Total race duration in seconds
