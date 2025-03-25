@@ -460,8 +460,8 @@ room.registerElement('spacezone-enginetrail', {
     // Push previous and current positions as individual vectors to the trail
     this.trail.positions.push(this.previousWorldPosition.clone(), currentWorldPosition.clone());
 
-    // If the trail has more than 20 vectors, remove the oldest two
-    if (this.trail.positions.length > 20) {
+    // If the trail has more than 60 vectors, remove the oldest two
+    if (this.trail.positions.length > 60) {
       this.trail.positions.shift();
       this.trail.positions.shift();
     }
