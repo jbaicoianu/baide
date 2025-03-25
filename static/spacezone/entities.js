@@ -560,8 +560,8 @@ room.registerElement('spacezone-enginetrail', {
     this.particle = room.createObject('particle', {
       pos: new THREE.Vector3(0, 0, 0),
       scale: V(0.02),
-      rate: 2000,
-      count: 6000,
+      rate: 20000, // Increased from 2000 to 20000
+      count: 60000, // Increased from 6000 to 60000
       duration: 3, // Reduced duration from 5 to 3
       opacity: 0.2,
       vel: V(0, 0, -1),
