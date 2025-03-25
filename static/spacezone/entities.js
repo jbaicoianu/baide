@@ -423,7 +423,7 @@ room.registerElement('spacezone-asteroidfield', {
     // Increment opacity for asteroids with opacity < 1
     for (let asteroid of this.asteroids) {
       if (asteroid.opacity !== undefined && asteroid.opacity < 1) {
-        asteroid.opacity += 0.001; // Further reduced increment for smoother transition
+        asteroid.opacity += 0.005; // Further reduced increment for smoother transition
         if (asteroid.opacity > 1) asteroid.opacity = 1;
       }
     }
