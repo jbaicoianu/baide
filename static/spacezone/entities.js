@@ -393,9 +393,9 @@ room.registerElement('spacezone-asteroidfield', {
 
     for (let asteroid of this.asteroids) {
       if (asteroid.pos.z < currentPos.z - 100) {
-        // Generate new random offsetX and offsetY in the range -200 to 200
-        const offsetX = (Math.random() * 400) - 200;
-        const offsetY = (Math.random() * 400) - 200;
+        // Generate new random offsetX and offsetY in the range -500 to 500
+        const offsetX = (Math.random() * 1000) - 500;
+        const offsetY = (Math.random() * 1000) - 500;
 
         // Generate a random t value between currentPathPosition and currentPathPosition + 0.1 plus pathPositionOffset
         let newT = Math.random() * 0.1 + currentPathPosition + pathPositionOffset;
