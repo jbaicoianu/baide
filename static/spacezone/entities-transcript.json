@@ -1660,5 +1660,13 @@
     "branch": "main",
     "commit_hash": "978b142655da24e2dca58fee25ead68faaa1b26b",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Keep engine trails relative to craft [Manual edit]",
+    "timestamp": "2025-03-25T22:17:21.413603Z",
+    "branch": "main",
+    "commit_hash": "ff0bb672be7cbcddd41e998ef697833e1525dbee",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
