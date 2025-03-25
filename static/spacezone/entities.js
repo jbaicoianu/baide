@@ -386,8 +386,10 @@ room.registerElement('spacezone-asteroidfield', {
       }
 
       // Initial repositioning of asteroids
-      this.repositionAsteroids(0);
+      // Moved repositionAsteroids call outside the else statement
     }
+
+    this.repositionAsteroids(0);
   },
   repositionAsteroids(currentPathPosition = 0, pathPositionOffset = 0) {
     const level = this.parent;
