@@ -564,8 +564,8 @@ room.registerElement('spacezone-enginetrail', {
       count: 6000, // Reverted from 60000 to 6000
       duration: 1.9, // Updated duration to 1.9
       opacity: 0.2,
-      vel: V(0), // Set velocity to V(0,0,-5)
-      rand_vel: V(0, 0, -5),
+      vel: V(0), // Set velocity to V(0,0,5)
+      rand_vel: V(0, 0, 5),
       col: 'cyan', // Set particle color to cyan
       image_id: 'spark' // Set image_id to 'spark'
     });
