@@ -823,5 +823,22 @@
     "commit_hash": "4cf447197231a3d14eb8ddee261ba82b8587f599",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Ok, my bad, I got the structure of the linesegments position array wrong. Instead of pushing an array, just push two individual vectors, previousWorldPosition and currentWorldPosition. Also update our logic to call positions.shift twice if positions.length is > 20",
+    "timestamp": "2025-03-25T17:56:55.231174Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "Understood. I've updated the `spacezone-enginetrail` element to push `previousWorldPosition` and `currentWorldPosition` as individual vectors instead of an array. Additionally, the logic now removes two positions when the `positions` array exceeds 20 elements. Let me know if you have any further adjustments or questions.",
+    "timestamp": "2025-03-25T17:57:27.316712Z",
+    "branch": "main",
+    "commit_hash": "fa006f883e2fbc51b0508a838d035c590049eb41",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
