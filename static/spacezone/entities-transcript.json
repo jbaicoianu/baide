@@ -1593,5 +1593,22 @@
     "commit_hash": "68e5489fa08ba22f1bb97a50016598575e980e4e",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Set image_id for our particle system to \"spark\"",
+    "timestamp": "2025-03-25T22:11:49.084265Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the particle system by setting the `image_id` to \"spark\". This will ensure that the particle emitter uses the specified image asset for rendering particles. Please ensure that the \"spark\" asset is correctly defined in your assets section.",
+    "timestamp": "2025-03-25T22:12:27.296144Z",
+    "branch": "main",
+    "commit_hash": "dab4b84bb4a1d95b39b38be6255b62be671ea6a8",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
