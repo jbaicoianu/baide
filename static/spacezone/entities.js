@@ -577,7 +577,7 @@ room.registerElement('spacezone-enginetrail', {
       rand_pos: V(0.1), // Add rand_pos: V(0.1)
       scale: V(1), // Updated scale from V(0.02) to V(1)
       rate: 100, // Reduced rate to 100
-      count: 2000, // Reduced count to 2000
+      count: 200, // Reduced count to 200
       duration: 1.9, // Updated duration to 1.9
       opacity: 0.2,
       vel: V(0, 0, 2.5), // Set vel to V(0,0,2.5)
