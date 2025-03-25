@@ -26,6 +26,7 @@ room.registerElement('spacezone-level', {
 
     // Add the text object above the start point
     this.textObject = this.createObject('text', {
+      id: 'startText', // Added ID for easier reference
       text: 'Click ship to start',
       pos: new THREE.Vector3(0, 5, 0),
       rotation: '0 90 0',
@@ -120,12 +121,17 @@ room.registerElement('spacezone-player', {
     player.disable();
     this.activateControlContext('spacezone-player');
     
-    // Create countdown text object
+    // Hide the "Click ship to start" text
+    if (this.parent && this.parent.textObject) {
+      this.parent.textObject.visible = false;
+    }
+
+    // Create countdown text object with updated rotation
     this.countdown = this.createObject('text', {
       id: 'countdown',
-      text: '3',
+      text: '3...',
       pos: new THREE.Vector3(0, 5, 0),
-      rotation: '0 0 0',
+      rotation: '0 180 0', // Set rotation to 0 180 0
       col: 'white',
       font_scale: false
     });
@@ -159,11 +165,11 @@ room.registerElement('spacezone-player', {
         this.countdownTime -= 1;
         this.countdownStep += 1;
         if (this.countdownStep === 1) {
-          this.countdown.text = '2';
+          this.countdown.text = '2...';
         } else if (this.countdownStep === 2) {
-          this.countdown.text = '1';
+          this.countdown.text = '1...';
         } else if (this.countdownStep === 3) {
-          this.countdown.text = 'Go!';
+          this.countdown.text = 'Go!...';
         } else if (this.countdownStep === 4) {
           this.isRacing = true;
           this.removeChild(this.countdown);
