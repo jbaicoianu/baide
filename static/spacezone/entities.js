@@ -515,8 +515,8 @@ room.registerElement('spacezone-planet', {
     this.planetObject = this.createObject('object', {
       id: 'sphere',
       image_id: this.surfacetexture,
-      normalmap_id: this.normaltexture, // Passed normaltexture as normalmap_id
-      normal_scale: 20, // Set normal_scale parameter
+	  normalmap_id: this.normaltexture, // Passed normaltexture as normalmap_id
+	  normal_scale: 20, // Set normal_scale parameter
       scale: V(this.radius * 2),
       rotate_deg_per_sec: 2,
     });
@@ -556,23 +556,6 @@ room.registerElement('spacezone-star', {
 
 room.registerElement('spacezone-enginetrail', {
   create() {
-    // Create a linesegments object to represent the trail
-    // this.trail = room.createObject('linesegments', {
-    //   pos: new THREE.Vector3(0, 0, 0),
-    //   col: 'cyan', // Trail color
-    //   linewidth: 2 // Trail width
-    // });
-
-    // Initialize the trail positions array
-    // this.trail.positions = [];
-    
-    // Store the previous world position
-    // this.previousWorldPosition = new THREE.Vector3();
-    // this.getWorldPosition(this.previousWorldPosition);
-
-    // Initialize totaltime for sine wave variation
-    // this.totaltime = 0;
-
     // Create a particle object for engine trails
     this.particle = room.createObject('particle', {
       pos: new THREE.Vector3(0, 0, 0),
@@ -582,7 +565,8 @@ room.registerElement('spacezone-enginetrail', {
       duration: 5,
       opacity: 0.2,
       vel: V(0, 0, -20),
-      rand_vel: V(0, 0, -5)
+      rand_vel: V(0, 0, -5),
+      col: 'cyan' // Set particle color to cyan
     });
 
     // Initialize totaltime for sine wave variation
