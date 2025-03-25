@@ -53,6 +53,8 @@ room.registerElement('spacezone-player', {
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
   totalracetime: 120, // Total race duration in seconds
+  rollDamping: 5, // Damping factor for roll
+  pitchDamping: 5, // Damping factor for pitch
 
   create() {
     // Initialization code for spacezone-player
@@ -265,9 +267,13 @@ room.registerElement('spacezone-player', {
     // Calculate the maximum turn based on rollspeed and delta time
     const maxTurn = this.rollspeed * dt;
 
-    // Apply limited turn
+    // Apply limited turn with damping
     let rollTurn = Math.min(Math.abs(rollDifference), maxTurn) * Math.sign(rollDifference);
     let pitchTurn = Math.min(Math.abs(pitchDifference), maxTurn) * Math.sign(pitchDifference);
+
+    // Apply damping to smooth out the turns
+    rollTurn -= (rollTurn * this.rollDamping * dt);
+    pitchTurn -= (pitchTurn * this.pitchDamping * dt);
 
     // Ignore small turn values to reduce shakiness
     const MIN_TURN = 0.01;
