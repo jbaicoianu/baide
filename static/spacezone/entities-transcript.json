@@ -1668,5 +1668,22 @@
     "branch": "main",
     "commit_hash": "ff0bb672be7cbcddd41e998ef697833e1525dbee",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Our craft controls are very shaky, let's try to fix that. I think if our rollTurn or pitchTurn values are less that some absolute magnitude, like .01, we should ignore them.",
+    "timestamp": "2025-03-25T22:19:33.086594Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've implemented your suggestion to stabilize the craft controls by ignoring `rollTurn` and `pitchTurn` values below an absolute magnitude of `0.01`. This should reduce the shakiness in the controls. Let me know if you have any further adjustments or if there's anything else you'd like to refine.",
+    "timestamp": "2025-03-25T22:20:16.734739Z",
+    "branch": "main",
+    "commit_hash": "0809100d296d97a2242d5650a271a9fc7557b759",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
