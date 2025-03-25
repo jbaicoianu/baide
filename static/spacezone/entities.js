@@ -514,10 +514,12 @@ room.registerElement('spacezone-asteroidfield', {
 
     // Get the player's current race position
     const player = this.parent.getElementsByTagName('spacezone-player')[0];
+    let currentPathPosition = 0;
     if (player && player.isRacing) {
-      const currentPathPosition = player.raceTime / player.totalracetime;
-      this.repositionAsteroids(currentPathPosition, 0.1);
+      currentPathPosition = player.raceTime / player.totalracetime;
     }
+
+    this.repositionAsteroids(currentPathPosition, 0.1);
   }
 });
 
