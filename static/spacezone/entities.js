@@ -117,6 +117,19 @@ room.registerElement('spacezone-player', {
     this.countdownTime = 0;
     this.countdownStep = 0;
   },
+  updatePositionAndDirection(currentPathPosition) {
+    const level = this.parent;
+    if (level && level.getPositionAtTime) {
+      const position = level.getPositionAtTime(currentPathPosition);
+      const lookAheadT = Math.min(currentPathPosition + 0.001, 1);
+      const lookAheadPos = level.getPositionAtTime(lookAheadT);
+      const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
+      this.pos = position;
+      this.zdir = direction;
+    } else {
+      console.warn('Level or getPositionAtTime method not found.');
+    }
+  },
   startRace() {
     player.disable();
     this.activateControlContext('spacezone-player');
@@ -141,12 +154,9 @@ room.registerElement('spacezone-player', {
     this.raceTime = 0;
     this.appendChild(player);
     player.pos = V(0, 0, -20);
-    this.pos = this.parent.getPositionAtTime(0);
-    const lookAheadPos = this.parent.getPositionAtTime(0.001);
+    this.updatePositionAndDirection(0);
         
-    // Compute direction vector
-    const direction = new THREE.Vector3().subVectors(lookAheadPos, this.pos).normalize();
-    this.zdir = direction; // Update zdir
+    // Compute direction vector is now handled within updatePositionAndDirection
 
     player.orientation.set(0, 1, 0, 0);
     console.log('Race countdown started!');
@@ -194,18 +204,7 @@ room.registerElement('spacezone-player', {
       // Assuming 'spacezone-level' is the parent element
       const level = this.parent;
       if (level && level.getPositionAtTime) {
-        const position = level.getPositionAtTime(t);
-
-        // Calculate look-ahead position
-        const lookAheadT = Math.min(t + 0.001, 1);
-        const lookAheadPos = level.getPositionAtTime(lookAheadT);
-        
-        // Compute direction vector
-        const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
-        this.zdir = direction; // Update zdir
-
-        // Update the player's position
-        this.pos = position;
+        this.updatePositionAndDirection(t);
 
         // Apply x and y offsets based on shuttle's rotation
         const rollRad = THREE.MathUtils.degToRad(this.currentRoll);
