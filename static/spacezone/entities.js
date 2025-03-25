@@ -139,15 +139,21 @@ room.registerElement('spacezone-player', {
       this.parent.textObject.visible = false;
     }
 
-    // Create countdown text object with updated rotation
-    this.countdown = this.createObject('text', {
-      id: 'countdown',
-      text: '3...',
-      pos: new THREE.Vector3(0, 5, 0),
-      rotation: '0 180 0', // Set rotation to 0 180 0
-      col: 'white',
-      font_scale: false
-    });
+    if (this.countdown) {
+      // Reuse existing countdown object
+      this.countdown.text = '3...';
+      this.countdown.visible = true;
+    } else {
+      // Create countdown text object with updated rotation
+      this.countdown = this.createObject('text', {
+        id: 'countdown',
+        text: '3...',
+        pos: new THREE.Vector3(0, 5, 0),
+        rotation: '0 180 0', // Set rotation to 0 180 0
+        col: 'white',
+        font_scale: false
+      });
+    }
     this.countdownTime = 0;
     this.countdownStep = 0;
     this.isRacing = false;
