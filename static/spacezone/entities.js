@@ -606,12 +606,12 @@ room.registerElement('spacezone-enginetrail', {
     // Set the particle emitter position
     //this.particle.emitter_pos = currentWorldPosition;
 
-    // Check player's isRacing property and set particle visibility
+    // Check player's isRacing property and set particle rate
     const player = this.getParentByTagName('spacezone-player');
     if (player && player.isRacing) {
-      this.particle.visible = true;
+      this.particle.rate = 100;
     } else {
-      this.particle.visible = false;
+      this.particle.rate = 0;
     }
   }
 });
