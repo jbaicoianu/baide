@@ -68,7 +68,7 @@ room.registerElement('spacezone-player', {
     });
 
     // Instantiate the engine trail without attaching it to a parent
-    this.enginetrail = this.createObject('spacezone-enginetrail');
+    this.enginetrail = room.createObject('spacezone-enginetrail');
 
     // Add click event listener to taufighter
     this.taufighter.addEventListener('click', ev => this.startRace());
@@ -429,7 +429,7 @@ room.registerElement('spacezone-star', {
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a linesegments object to represent the trail
-    this.trail = this.createObject('linesegments', {
+    this.trail = room.createObject('linesegments', {
       pos: new THREE.Vector3(0, 0, 0),
       col: 'blue', // Trail color
       linewidth: 2 // Trail width
@@ -458,7 +458,6 @@ room.registerElement('spacezone-enginetrail', {
     // Update the previous position for the next frame
     this.previousWorldPosition.copy(currentWorldPosition);
 
-    // Update the linesegments object with the new positions
-    this.trail.updateSegments(this.trail.positions);
+    // Removed updateSegments call as positions update automatically
   }
 });
