@@ -459,5 +459,8 @@ room.registerElement('spacezone-enginetrail', {
     this.previousWorldPosition.copy(currentWorldPosition);
 
     // Removed updateSegments call as positions update automatically
+
+    // Call updateLine to refresh the trail rendering
+    this.trail.updateLine();
   }
 });
