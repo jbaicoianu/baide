@@ -141,6 +141,7 @@ room.registerElement('spacezone-player', {
     this.raceTime = 0;
     this.appendChild(player);
     player.pos = V(0, 0, -20);
+    player.pos = level.getPositionAtTime(0);
     player.orientation.set(0, 1, 0, 0);
     console.log('Race countdown started!');
     
