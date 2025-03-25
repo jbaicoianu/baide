@@ -559,7 +559,7 @@ room.registerElement('spacezone-enginetrail', {
     // Create a particle object for engine trails
     this.particle = room.createObject('particle', {
       pos: new THREE.Vector3(0, 0, 0),
-      scale: V(0.02),
+      scale: V(1), // Updated scale from V(0.02) to V(1)
       rate: 2000, // Reverted from 20000 to 2000
       count: 6000, // Reverted from 60000 to 6000
       duration: 3, // Reduced duration from 5 to 3
