@@ -513,7 +513,7 @@ room.registerElement('spacezone-asteroidfield', {
     // Rotation is now handled by the physics engine using rotate_deg_per_sec and rotate_axis
 
     // Get the player's current race position
-    const player = this.parent.getElementsByTagName('spacezone-player')[0];
+    const player = this.getParentByTagName('spacezone-player')[0];
     let currentPathPosition = 0;
     if (player && player.isRacing) {
       currentPathPosition = player.raceTime / player.totalracetime;
@@ -606,8 +606,9 @@ room.registerElement('spacezone-enginetrail', {
     // Set the particle emitter position
     //this.particle.emitter_pos = currentWorldPosition;
 
-    // Check parent's isRacing property and set particle visibility
-    if (this.parent && this.parent.isRacing) {
+    // Check player's isRacing property and set particle visibility
+    const player = this.getParentByTagName('spacezone-player');
+    if (player && player[0] && player[0].isRacing) {
       this.particle.visible = true;
     } else {
       this.particle.visible = false;
