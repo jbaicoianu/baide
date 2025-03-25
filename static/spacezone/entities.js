@@ -582,7 +582,7 @@ room.registerElement('spacezone-enginetrail', {
     this.getWorldPosition(currentWorldPosition);
 
     // Apply sine wave variation to currentWorldPosition's y value
-    currentWorldPosition.y += Math.sin(this.totaltime * 2 * Math.PI * 10) * 0.0025;
+    currentWorldPosition.y += Math.sin(this.totaltime / 20) * 0.0025;
 
     // Push previous and current positions as individual vectors to the trail
     this.trail.positions.push(this.previousWorldPosition.clone(), currentWorldPosition.clone());
