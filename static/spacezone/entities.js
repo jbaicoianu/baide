@@ -299,10 +299,6 @@ room.registerElement('spacezone-asteroidfield', {
       // Initialize all asteroids at (0, 0, -9999)
       const asteroidPos = new THREE.Vector3(0, 0, -9999);
 
-      // Generate random offsetX and offsetY in the range -200 to 200
-      const offsetX = (Math.random() * 400) - 200;
-      const offsetY = (Math.random() * 400) - 200;
-
       // Generate random size between 5 and 30
       const size = Math.random() * 25 + 5; // 5 to 30
 
@@ -374,9 +370,7 @@ room.registerElement('spacezone-asteroidfield', {
         rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
         rotate_axis: rotateAxis,
         collidable: false,
-        pickable: false,
-        offsetX: offsetX, // Store offsetX
-        offsetY: offsetY  // Store offsetY
+        pickable: false
       }); 
       asteroid.pos = asteroidPos;
 
@@ -399,6 +393,10 @@ room.registerElement('spacezone-asteroidfield', {
 
     for (let asteroid of this.asteroids) {
       if (asteroid.pos.z < currentPos.z - 100) {
+        // Generate new random offsetX and offsetY in the range -200 to 200
+        const offsetX = (Math.random() * 400) - 200;
+        const offsetY = (Math.random() * 400) - 200;
+
         // Generate a random t value between currentPathPosition and currentPathPosition + 0.1
         let newT = Math.random() * 0.1 + currentPathPosition;
         if (newT > 1) newT = 1;
@@ -406,8 +404,8 @@ room.registerElement('spacezone-asteroidfield', {
         // Get new position along the curve
         const basePos = level.getPositionAtTime(newT);
 
-        // Apply existing randomized offsets
-        const newPos = basePos.clone().add(new THREE.Vector3(asteroid.offsetX, asteroid.offsetY, 0));
+        // Apply new randomized offsets
+        const newPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
         // Update asteroid position
         asteroid.pos = newPos;
