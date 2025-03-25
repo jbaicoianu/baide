@@ -608,8 +608,8 @@ room.registerElement('spacezone-enginetrail', {
     //this.particle.emitter_pos = currentWorldPosition;
 
     // Check player's isRacing property and set particle rate
-    const playerElements = this.parent.getElementsByTagName('spacezone-player');
-    const player = playerElements.length > 0 ? playerElements[0] : null;
+    const player = this.getParentByTagName('spacezone-player');
+
     if (player && player.isRacing) {
       this.particle.rate = 100;
     } else {
