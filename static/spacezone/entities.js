@@ -142,6 +142,12 @@ room.registerElement('spacezone-player', {
     this.appendChild(player);
     player.pos = V(0, 0, -20);
     this.pos = this.parent.getPositionAtTime(0);
+    const lookAheadPos = this.parent.getPositionAtTime(0.001);
+        
+    // Compute direction vector
+    const direction = new THREE.Vector3().subVectors(lookAheadPos, this.pos).normalize();
+    this.zdir = direction; // Update zdir
+
     player.orientation.set(0, 1, 0, 0);
     console.log('Race countdown started!');
     
