@@ -125,7 +125,7 @@ room.registerElement('spacezone-player', {
       id: 'countdown',
       text: '3',
       pos: new THREE.Vector3(0, 5, 0),
-      rotation: '0 90 0',
+      rotation: '0 0 0',
       col: 'white',
       font_scale: false
     });
