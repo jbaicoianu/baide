@@ -350,8 +350,8 @@ room.registerElement('spacezone-asteroidfield', {
       const grayValue = Math.floor(Math.random() * 256);
       const grayHex = `#${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}`;
 
-      // Create material for the asteroid with random gray color
-      const material = new THREE.MeshStandardMaterial({ color: grayHex });
+      // Create material for the asteroid with random gray color and enable transparency
+      const material = new THREE.MeshStandardMaterial({ color: grayHex, transparent: true, opacity: 1 });
 
       // Create mesh with geometry and material
       const asteroidMesh = new THREE.Mesh(geometry, material);
@@ -370,7 +370,8 @@ room.registerElement('spacezone-asteroidfield', {
         rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
         rotate_axis: rotateAxis,
         collidable: false,
-        pickable: false
+        pickable: false,
+        opacity: 1 // Initialize opacity to 1
       }); 
       asteroid.pos = asteroidPos;
 
@@ -411,8 +412,25 @@ room.registerElement('spacezone-asteroidfield', {
         // Apply new randomized offsets
         const newPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, offsetZ));
 
-        // Update asteroid position
+        // Update asteroid position and set opacity to 0
         asteroid.pos = newPos;
+        if (asteroid.opacity !== undefined) {
+          asteroid.opacity = 0;
+          if (asteroid.object && asteroid.object.material) {
+            asteroid.object.material.opacity = 0;
+          }
+        }
+      }
+    }
+
+    // Increment opacity for asteroids with opacity < 1
+    for (let asteroid of this.asteroids) {
+      if (asteroid.opacity !== undefined && asteroid.opacity < 1) {
+        asteroid.opacity += 0.05;
+        if (asteroid.opacity > 1) asteroid.opacity = 1;
+        if (asteroid.object && asteroid.object.material) {
+          asteroid.object.material.opacity = asteroid.opacity;
+        }
       }
     }
   },
