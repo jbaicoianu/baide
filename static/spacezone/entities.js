@@ -48,9 +48,9 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
-  rollspeed: 40, // Updated turnrate to 40 degrees per second
+  rollspeed: 80, // Updated turnrate to 80 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
-  thrust: 20, // Thrust force applied when moving forward
+  thrust: 40, // Thrust force applied when moving forward
   velocity: new THREE.Vector3(0, 0, 0), // Initialize velocity vector
 
   create() {
