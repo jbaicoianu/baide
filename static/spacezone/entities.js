@@ -381,7 +381,7 @@ room.registerElement('spacezone-asteroidfield', {
     // Initial repositioning of asteroids
     this.repositionAsteroids(0);
   },
-  repositionAsteroids(currentPathPosition = 0) {
+  repositionAsteroids(currentPathPosition = 0, pathPositionOffset = 0) {
     const level = this.parent;
     if (!level || !level.getPositionAtTime) {
       console.warn('spacezone-level element with getPositionAtTime method not found.');
@@ -397,8 +397,8 @@ room.registerElement('spacezone-asteroidfield', {
         const offsetX = (Math.random() * 400) - 200;
         const offsetY = (Math.random() * 400) - 200;
 
-        // Generate a random t value between currentPathPosition and currentPathPosition + 0.1
-        let newT = Math.random() * 0.1 + currentPathPosition;
+        // Generate a random t value between currentPathPosition and currentPathPosition + 0.1 plus pathPositionOffset
+        let newT = Math.random() * 0.1 + currentPathPosition + pathPositionOffset;
         if (newT > 1) newT = 1;
 
         // Get new position along the curve
@@ -420,7 +420,7 @@ room.registerElement('spacezone-asteroidfield', {
     const player = this.parent.getElementsByTagName('spacezone-player')[0];
     if (player && player.isRacing) {
       const currentPathPosition = player.raceTime / player.totalracetime;
-      this.repositionAsteroids(currentPathPosition);
+      this.repositionAsteroids(currentPathPosition, 0.1);
     }
   }
 });
