@@ -1051,5 +1051,22 @@
     "branch": "main",
     "commit_hash": "24c9aaaa4d766dd516769e3ce4d7a4cf33f7c07f",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "In our initAsteroids function, if our this.asteroids array is not empty, we don't need to recreate the geometries, just reset all their positions to (0,0,-9999) and let the repositionAsteroids function handle putting them in the right place",
+    "timestamp": "2025-03-25T19:31:47.531638Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `initAsteroids` function in the `spacezone-asteroidfield` element to reset the positions of existing asteroids when the `this.asteroids` array is not empty, avoiding the recreation of geometries. Let me know if you have any further adjustments or questions.",
+    "timestamp": "2025-03-25T19:32:29.890168Z",
+    "branch": "main",
+    "commit_hash": "92b4cac0b9110cb866adf0a4361963699c3fd4ea",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
