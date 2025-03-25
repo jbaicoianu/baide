@@ -557,7 +557,7 @@ room.registerElement('spacezone-star', {
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
-    this.particle = room.createObject('particle', {
+    this.particle = this.createObject('particle', {
       pos: new THREE.Vector3(0, 0, 0),
       scale: V(1), // Updated scale from V(0.02) to V(1)
       rate: 3000, // Updated rate to 3000
@@ -586,6 +586,6 @@ room.registerElement('spacezone-enginetrail', {
     currentWorldPosition.y += Math.sin(this.totaltime * 80) * 0.2;
 
     // Set the particle emitter position
-    this.particle.emitter_pos = currentWorldPosition;
+    //this.particle.emitter_pos = currentWorldPosition;
   }
 });
