@@ -68,7 +68,7 @@ room.registerElement('spacezone-player', {
     });
 
     // Instantiate the engine trail as a child of the player
-    this.enginetrail = this.createObject('spacezone-enginetrail');
+    this.enginetrail = this.taufighter.createObject('spacezone-enginetrail');
 
     // Add click event listener to taufighter
     this.taufighter.addEventListener('click', ev => this.startRace());
