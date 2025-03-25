@@ -1760,5 +1760,22 @@
     "commit_hash": "59afc027e46a53ef613347eb8b6fbf49e4b928a0",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "In our ship trails, let's check to see if our parent's isRacing property is set. If it's not set, we can set our particle system's visible parameter to false, otherwise set it to true.",
+    "timestamp": "2025-03-25T23:16:41.929084Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have implemented the requested functionality in the `spacezone-enginetrail` element. The particle system now checks the parent's `isRacing` property and sets its `visible` parameter accordingly. Please review the changes and let me know if you have any further adjustments or questions.",
+    "timestamp": "2025-03-25T23:17:24.902355Z",
+    "branch": "main",
+    "commit_hash": "3a19cd01179a89523495a48a19b9c213b041bf44",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
