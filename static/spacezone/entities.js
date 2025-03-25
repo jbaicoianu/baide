@@ -566,7 +566,8 @@ room.registerElement('spacezone-enginetrail', {
       opacity: 0.2,
       vel: V(0), // Set velocity to V(0)
       rand_vel: V(0, 0, -1),
-      col: 'cyan' // Set particle color to cyan
+      col: 'cyan', // Set particle color to cyan
+      image_id: 'spark' // Set image_id to 'spark'
     });
 
     // Initialize totaltime for sine wave variation
