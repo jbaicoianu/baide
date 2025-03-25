@@ -120,8 +120,8 @@ room.registerElement('spacezone-player', {
   updatePositionAndDirection(currentPathPosition) {
     const level = this.parent;
     if (level && level.getPositionAtTime) {
-      const position = level.getPositionAtTime(currentPathPosition);
-      const lookAheadT = Math.min(currentPathPosition, 0.999); // Updated to use Math.min(currentPathPosition, 0.999)
+      const position = level.getPositionAtTime(Math.min(currentPathPosition, 0.999));
+      const lookAheadT = Math.min(currentPathPosition + .001, 1.0);
       const lookAheadPos = level.getPositionAtTime(lookAheadT);
       const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
       this.pos = position;
