@@ -573,8 +573,8 @@ room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
     this.particle = this.createObject('particle', {
-      pos: V(-0.05), // Set pos to V(-0.05)
-      rand_pos: V(0.1), // Add rand_pos: V(0.1)
+      pos: V(-0.15), // Set pos to V(-0.05)
+      rand_pos: V(0.3), // Add rand_pos: V(0.1)
       scale: V(1), // Updated scale from V(0.02) to V(1)
       rate: 100, // Reduced rate to 100
       count: 200, // Reduced count to 200
