@@ -67,8 +67,8 @@ room.registerElement('spacezone-player', {
       roughness: 0.4
     });
 
-    // Instantiate the engine trail without attaching it to a parent
-    this.enginetrail = room.createObject('spacezone-enginetrail');
+    // Instantiate the engine trail as a child of the player
+    this.enginetrail = this.createObject('spacezone-enginetrail');
 
     // Add click event listener to taufighter
     this.taufighter.addEventListener('click', ev => this.startRace());
@@ -429,7 +429,7 @@ room.registerElement('spacezone-star', {
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a linesegments object to represent the trail
-    this.trail = room.createObject('linesegments', {
+    this.trail = this.createObject('linesegments', {
       pos: new THREE.Vector3(0, 0, 0),
       col: 'blue', // Trail color
       linewidth: 2 // Trail width
