@@ -88,7 +88,7 @@ room.registerElement('spacezone-player', {
 
     // Add background music sound object
     this.music = this.createObject('sound', {
-      id: 'music-darkgateway', // Updated music ID if necessary
+      id: 'music-lastparsec', // Updated music ID to default to 'music-lastparsec'
       loop: true,
       volume: 1.0,
       auto_play: true
