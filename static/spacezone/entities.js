@@ -310,7 +310,8 @@ room.registerElement('spacezone-waypoint', {
       id: 'sphere',
       scale: new THREE.Vector3(5, 5, 5),
       col: 'green',
-      opacity: 0.5
+      opacity: 0.5,
+      visible: false
     });
   },
   update(dt) {
