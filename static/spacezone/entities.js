@@ -67,6 +67,11 @@ room.registerElement('spacezone-player', {
       roughness: 0.4
     });
 
+    // Instantiate the engine trail and attach it to the ship
+    this.enginetrail = this.createObject('spacezone-enginetrail', {
+      parent: this.taufighter
+    });
+
     // Add click event listener to taufighter
     this.taufighter.addEventListener('click', ev => this.startRace());
 
@@ -420,5 +425,42 @@ room.registerElement('spacezone-star', {
   },
   update(dt) {
     // Update logic for spacezone-star if needed
+  }
+});
+
+room.registerElement('spacezone-enginetrail', {
+  create() {
+    // Create a linesegments object to represent the trail
+    this.trail = this.createObject('linesegments', {
+      pos: new THREE.Vector3(0, 0, 0),
+      col: 'blue', // Trail color
+      linewidth: 2 // Trail width
+    });
+
+    // Initialize the trail positions array
+    this.trail.positions = [];
+    
+    // Store the previous world position
+    this.previousWorldPosition = new THREE.Vector3();
+    this.getWorldPosition(this.previousWorldPosition);
+  },
+  update(dt) {
+    // Get the current world position
+    const currentWorldPosition = new THREE.Vector3();
+    this.getWorldPosition(currentWorldPosition);
+
+    // Push a new segment [previous, current] to the trail
+    this.trail.positions.push([this.previousWorldPosition.clone(), currentWorldPosition.clone()]);
+
+    // If the trail has more than 10 segments, remove the oldest one
+    if (this.trail.positions.length > 10) {
+      this.trail.positions.shift();
+    }
+
+    // Update the previous position for the next frame
+    this.previousWorldPosition.copy(currentWorldPosition);
+
+    // Update the linesegments object with the new positions
+    this.trail.updateSegments(this.trail.positions);
   }
 });
