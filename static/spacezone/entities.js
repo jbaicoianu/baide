@@ -581,7 +581,8 @@ room.registerElement('spacezone-enginetrail', {
     const currentWorldPosition = new THREE.Vector3();
     this.getWorldPosition(currentWorldPosition);
 
-    // Apply sine wave variation to currentWorldPosition's y value
+    // Apply sine wave variation to currentWorldPosition's x and y values
+    currentWorldPosition.x += Math.sin(this.totaltime * 75) * .2;
     currentWorldPosition.y += Math.sin(this.totaltime * 80) * .2;
 
     // Push previous and current positions as individual vectors to the trail
