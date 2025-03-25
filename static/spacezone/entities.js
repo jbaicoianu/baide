@@ -224,11 +224,11 @@ room.registerElement('spacezone-player', {
       )).normalize();
 
       // Apply thrust in the forward direction
-      const thrustVector = forward.multiplyScalar(this.thrust * dt);
-      this.velocity.add(thrustVector);
+      // const thrustVector = forward.multiplyScalar(this.thrust * dt);
+      // this.velocity.add(thrustVector);
 
       // Update position based on velocity
-      this.taufighter.pos.add(this.velocity.clone().multiplyScalar(dt));
+      // this.taufighter.pos.add(this.velocity.clone().multiplyScalar(dt));
     }
   }
 });
