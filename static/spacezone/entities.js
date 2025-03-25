@@ -51,7 +51,7 @@ room.registerElement('spacezone-player', {
   rollspeed: 80, // Updated turnrate to 80 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
-  velocity: new THREE.Vector3(0, 0, 0), // Initialize velocity vector
+  totalracetime: 60, // Total race duration in seconds
 
   create() {
     // Initialization code for spacezone-player
@@ -72,7 +72,6 @@ room.registerElement('spacezone-player', {
 
     this.isRacing = false;
     this.raceTime = 0;
-    this.totalRaceTime = 120; // Total race duration in seconds
 
     // Add background music sound object
     this.music = this.createObject('sound', {
@@ -126,7 +125,7 @@ room.registerElement('spacezone-player', {
   update(dt) {
     if (this.isRacing) {
       this.raceTime += dt;
-      let t = this.raceTime / this.totalRaceTime;
+      let t = this.raceTime / this.totalracetime;
       if (t > 1) t = 1;
 
       // Assuming 'spacezone-level' is the parent element
