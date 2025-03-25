@@ -48,9 +48,9 @@ room.registerElement('spacezone-level', {
 });
 
 room.registerElement('spacezone-player', {
-  rollspeed: 20, // Updated turnrate to 120 degrees per second
+  rollspeed: 40, // Updated turnrate to 40 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
-  thrust: 10, // Thrust force applied when moving forward
+  thrust: 20, // Thrust force applied when moving forward
   velocity: new THREE.Vector3(0, 0, 0), // Initialize velocity vector
 
   create() {
@@ -229,10 +229,6 @@ room.registerElement('spacezone-player', {
 
       // Update position based on velocity
       this.taufighter.pos.add(this.velocity.clone().multiplyScalar(dt));
-
-      // Apply damping to simulate friction/space resistance
-      const damping = 0.98;
-      this.velocity.multiplyScalar(damping);
     }
   }
 });
