@@ -605,5 +605,12 @@ room.registerElement('spacezone-enginetrail', {
 
     // Set the particle emitter position
     //this.particle.emitter_pos = currentWorldPosition;
+
+    // Check parent's isRacing property and set particle visibility
+    if (this.parent && this.parent.isRacing) {
+      this.particle.visible = true;
+    } else {
+      this.particle.visible = false;
+    }
   }
 });
