@@ -426,7 +426,7 @@ room.registerElement('spacezone-asteroidfield', {
     // Increment opacity for asteroids with opacity < 1
     for (let asteroid of this.asteroids) {
       if (asteroid.opacity !== undefined && asteroid.opacity < 1) {
-        asteroid.opacity += 0.05;
+        asteroid.opacity += 0.01; // Reduced increment for smoother transition
         if (asteroid.opacity > 1) asteroid.opacity = 1;
         if (asteroid.object && asteroid.object.material) {
           asteroid.object.material.opacity = asteroid.opacity;
