@@ -564,8 +564,8 @@ room.registerElement('spacezone-enginetrail', {
       count: 6000,
       duration: 3, // Reduced duration from 5 to 3
       opacity: 0.2,
-      vel: V(0, 0, -5),
-      rand_vel: V(0, 0, -5),
+      vel: V(0, 0, -1),
+      rand_vel: V(0, 0, -1),
       col: 'cyan' // Set particle color to cyan
     });
 
