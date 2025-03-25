@@ -110,17 +110,34 @@ room.registerElement('spacezone-player', {
     // Initialize current orientation
     this.currentRoll = 180;
     this.currentPitch = 0;
+
+    // Initialize countdown variables
+    this.countdown = null;
+    this.countdownTime = 0;
+    this.countdownStep = 0;
   },
   startRace() {
     player.disable();
     this.activateControlContext('spacezone-player');
     
-    this.isRacing = true;
+    // Create countdown text object
+    this.countdown = this.createObject('text', {
+      id: 'countdown',
+      text: '3',
+      pos: new THREE.Vector3(0, 5, 0),
+      rotation: '0 90 0',
+      col: 'white',
+      font_scale: false
+    });
+    this.countdownTime = 0;
+    this.countdownStep = 0;
+    this.isRacing = false;
     this.raceTime = 0;
     this.appendChild(player);
     player.pos = V(0, 0, -20);
     player.orientation.set(0, 1, 0, 0);
-    console.log('Race started!');
+    console.log('Race countdown started!');
+    
     // Switch background music to 'music-darkgateway'
     if (this.music) {
       this.music.id = 'music-darkgateway';
@@ -136,6 +153,26 @@ room.registerElement('spacezone-player', {
     }
   },
   update(dt) {
+    if (this.countdown) {
+      this.countdownTime += dt;
+      if (this.countdownTime >= 1) {
+        this.countdownTime -= 1;
+        this.countdownStep += 1;
+        if (this.countdownStep === 1) {
+          this.countdown.text = '2';
+        } else if (this.countdownStep === 2) {
+          this.countdown.text = '1';
+        } else if (this.countdownStep === 3) {
+          this.countdown.text = 'Go!';
+        } else if (this.countdownStep === 4) {
+          this.isRacing = true;
+          this.removeChild(this.countdown);
+          this.countdown = null;
+          console.log('Race started!');
+        }
+      }
+    }
+
     if (this.isRacing) {
       this.raceTime += dt;
       let t = this.raceTime / this.totalracetime;
