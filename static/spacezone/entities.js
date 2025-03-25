@@ -296,16 +296,12 @@ room.registerElement('spacezone-asteroidfield', {
     this.asteroids = [];
 
     for (let i = 0; i < this.numasteroids; i++) {
-      // Generate a random t value between 0 and 1
-      const t = Math.random();
+      // Initialize all asteroids at (0, 0, -9999)
+      const asteroidPos = new THREE.Vector3(0, 0, -9999);
 
-      // Get position along the level's curve
-      const basePos = level.getPositionAtTime(t);
-
-      // Add random offset to x and y in the range -200 to 200
+      // Generate random offsetX and offsetY in the range -200 to 200
       const offsetX = (Math.random() * 400) - 200;
       const offsetY = (Math.random() * 400) - 200;
-      const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
       // Generate random size between 5 and 30
       const size = Math.random() * 25 + 5; // 5 to 30
@@ -378,17 +374,56 @@ room.registerElement('spacezone-asteroidfield', {
         rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
         rotate_axis: rotateAxis,
         collidable: false,
-        pickable: false
+        pickable: false,
+        offsetX: offsetX, // Store offsetX
+        offsetY: offsetY  // Store offsetY
       }); 
       asteroid.pos = asteroidPos;
 
       this.asteroids.push(asteroid);
       this.appendChild(asteroid);
     }
+
+    // Initial repositioning of asteroids
+    this.repositionAsteroids(0);
+  },
+  repositionAsteroids(currentPathPosition = 0) {
+    const level = this.parent;
+    if (!level || !level.getPositionAtTime) {
+      console.warn('spacezone-level element with getPositionAtTime method not found.');
+      return;
+    }
+
+    // Get the world coordinate position based on currentPathPosition
+    const currentPos = level.getPositionAtTime(currentPathPosition);
+
+    for (let asteroid of this.asteroids) {
+      if (asteroid.pos.z < currentPos.z - 100) {
+        // Generate a random t value between currentPathPosition and currentPathPosition + 0.1
+        let newT = Math.random() * 0.1 + currentPathPosition;
+        if (newT > 1) newT = 1;
+
+        // Get new position along the curve
+        const basePos = level.getPositionAtTime(newT);
+
+        // Apply existing randomized offsets
+        const newPos = basePos.clone().add(new THREE.Vector3(asteroid.offsetX, asteroid.offsetY, 0));
+
+        // Update asteroid position
+        asteroid.pos = newPos;
+      }
+    }
   },
   update(dt) {
     // Update logic for spacezone-asteroidfield
     // Rotation is now handled by the physics engine using rotate_deg_per_sec and rotate_axis
+
+    // Get the player's current race position
+    const player = this.parent.getElementsByTagName('spacezone-player')[0];
+    if (player && player.isRacing) {
+      const currentPathPosition = player.raceTime / player.totalracetime;
+      this.repositionAsteroids(currentPathPosition);
+    }
   }
 });
 
