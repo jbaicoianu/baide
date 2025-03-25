@@ -412,13 +412,10 @@ room.registerElement('spacezone-asteroidfield', {
         // Apply new randomized offsets
         const newPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, offsetZ));
 
-        // Update asteroid position and set opacity to 0
+        // Update asteroid position and set opacity to 0 if pathPositionOffset > 0
         asteroid.pos = newPos;
-        if (asteroid.opacity !== undefined) {
+        if (pathPositionOffset > 0 && asteroid.opacity !== undefined) {
           asteroid.opacity = 0;
-          if (asteroid.object && asteroid.object.material) {
-            asteroid.object.material.opacity = 0;
-          }
         }
       }
     }
@@ -426,11 +423,8 @@ room.registerElement('spacezone-asteroidfield', {
     // Increment opacity for asteroids with opacity < 1
     for (let asteroid of this.asteroids) {
       if (asteroid.opacity !== undefined && asteroid.opacity < 1) {
-        asteroid.opacity += 0.01; // Reduced increment for smoother transition
+        asteroid.opacity += 0.001; // Further reduced increment for smoother transition
         if (asteroid.opacity > 1) asteroid.opacity = 1;
-        if (asteroid.object && asteroid.object.material) {
-          asteroid.object.material.opacity = asteroid.opacity;
-        }
       }
     }
   },
