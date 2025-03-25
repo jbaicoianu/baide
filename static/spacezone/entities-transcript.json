@@ -1718,5 +1718,13 @@
     "branch": "main",
     "commit_hash": "4ba278bf77a1d1be60267f6ead5408fe248f1b91",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Tweaked trail particle velocity [Manual edit]",
+    "timestamp": "2025-03-25T23:09:40.898653Z",
+    "branch": "main",
+    "commit_hash": "08bfa65af1b82974a53f427cecef49c48bfefdc9",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
