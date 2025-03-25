@@ -302,9 +302,9 @@ room.registerElement('spacezone-asteroidfield', {
       // Get position along the level's curve
       const basePos = level.getPositionAtTime(t);
 
-      // Add random offset to x and y in the range -100 to 100
-      const offsetX = (Math.random() * 200) - 100;
-      const offsetY = (Math.random() * 200) - 100;
+      // Add random offset to x and y in the range -200 to 200
+      const offsetX = (Math.random() * 400) - 200;
+      const offsetY = (Math.random() * 400) - 200;
       const asteroidPos = basePos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
 
       // Generate random size between 5 and 30
@@ -364,15 +364,19 @@ room.registerElement('spacezone-asteroidfield', {
       // Create mesh with geometry and material
       const asteroidMesh = new THREE.Mesh(geometry, material);
 
+      // Generate a random unit vector for rotation axis
+      const rotateAxis = new THREE.Vector3(
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1
+      ).normalize();
+
       // Create asteroid object with the mesh
       const asteroid = this.createObject('object', {
         object: asteroidMesh,
         col: grayHex,
-        rotate_deg_per_sec: V(
-          Math.random() * 60 - 30, // Random value between -30 and 30 for x
-          Math.random() * 60 - 30, // Random value between -30 and 30 for y
-          Math.random() * 60 - 30  // Random value between -30 and 30 for z
-        ),
+        rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
+        rotate_axis: rotateAxis,
         collidable: false,
         pickable: false
       }); 
@@ -384,7 +388,7 @@ room.registerElement('spacezone-asteroidfield', {
   },
   update(dt) {
     // Update logic for spacezone-asteroidfield
-    // Rotation is now handled by the physics engine using rotate_deg_per_sec
+    // Rotation is now handled by the physics engine using rotate_deg_per_sec and rotate_axis
   }
 });
 
