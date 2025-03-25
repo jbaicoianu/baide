@@ -429,7 +429,7 @@ room.registerElement('spacezone-star', {
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a linesegments object to represent the trail
-    this.trail = this.createObject('linesegments', {
+    this.trail = room.createObject('linesegments', {
       pos: new THREE.Vector3(0, 0, 0),
       col: 'blue', // Trail color
       linewidth: 2 // Trail width
