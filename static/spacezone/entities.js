@@ -515,8 +515,8 @@ room.registerElement('spacezone-planet', {
     this.planetObject = this.createObject('object', {
       id: 'sphere',
       image_id: this.surfacetexture,
-	  normalmap_id: this.normaltexture, // Passed normaltexture as normalmap_id
-	  normal_scale: 20, // Set normal_scale parameter
+      normalmap_id: this.normaltexture, // Passed normaltexture as normalmap_id
+      normal_scale: 20, // Set normal_scale parameter
       scale: V(this.radius * 2),
       rotate_deg_per_sec: 2,
     });
@@ -562,7 +562,7 @@ room.registerElement('spacezone-enginetrail', {
       scale: V(0.01),
       rate: 1000,
       count: 5000,
-      duration: 5,
+      duration: 3, // Reduced duration from 5 to 3
       opacity: 0.2,
       vel: V(0, 0, -20),
       rand_vel: V(0, 0, -5),
