@@ -557,18 +557,33 @@ room.registerElement('spacezone-star', {
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a linesegments object to represent the trail
-    this.trail = room.createObject('linesegments', {
-      pos: new THREE.Vector3(0, 0, 0),
-      col: 'cyan', // Trail color
-      linewidth: 2 // Trail width
-    });
+    // this.trail = room.createObject('linesegments', {
+    //   pos: new THREE.Vector3(0, 0, 0),
+    //   col: 'cyan', // Trail color
+    //   linewidth: 2 // Trail width
+    // });
 
     // Initialize the trail positions array
-    this.trail.positions = [];
+    // this.trail.positions = [];
     
     // Store the previous world position
-    this.previousWorldPosition = new THREE.Vector3();
-    this.getWorldPosition(this.previousWorldPosition);
+    // this.previousWorldPosition = new THREE.Vector3();
+    // this.getWorldPosition(this.previousWorldPosition);
+
+    // Initialize totaltime for sine wave variation
+    // this.totaltime = 0;
+
+    // Create a particle object for engine trails
+    this.particle = room.createObject('particle', {
+      pos: new THREE.Vector3(0, 0, 0),
+      scale: V(0.01),
+      rate: 1000,
+      count: 5000,
+      duration: 5,
+      opacity: 0.2,
+      vel: V(0, 0, -20),
+      rand_vel: V(0, 0, -5)
+    });
 
     // Initialize totaltime for sine wave variation
     this.totaltime = 0;
@@ -582,24 +597,10 @@ room.registerElement('spacezone-enginetrail', {
     this.getWorldPosition(currentWorldPosition);
 
     // Apply sine wave variation to currentWorldPosition's x and y values
-    currentWorldPosition.x += Math.sin(this.totaltime * 75) * .2;
-    currentWorldPosition.y += Math.sin(this.totaltime * 80) * .2;
+    currentWorldPosition.x += Math.sin(this.totaltime * 75) * 0.2;
+    currentWorldPosition.y += Math.sin(this.totaltime * 80) * 0.2;
 
-    // Push previous and current positions as individual vectors to the trail
-    this.trail.positions.push(this.previousWorldPosition.clone(), currentWorldPosition.clone());
-
-    // If the trail has more than 60 vectors, remove the oldest two
-    if (this.trail.positions.length > 60) {
-      this.trail.positions.shift();
-      this.trail.positions.shift();
-    }
-
-    // Update the previous position for the next frame
-    this.previousWorldPosition.copy(currentWorldPosition);
-
-    // Removed updateSegments call as positions update automatically
-
-    // Call updateLine to refresh the trail rendering
-    this.trail.updateLine();
+    // Set the particle emitter position
+    this.particle.emitter_pos = currentWorldPosition;
   }
 });
