@@ -266,8 +266,17 @@ room.registerElement('spacezone-player', {
     const maxTurn = this.rollspeed * dt;
 
     // Apply limited turn
-    const rollTurn = Math.min(Math.abs(rollDifference), maxTurn) * Math.sign(rollDifference);
-    const pitchTurn = Math.min(Math.abs(pitchDifference), maxTurn) * Math.sign(pitchDifference);
+    let rollTurn = Math.min(Math.abs(rollDifference), maxTurn) * Math.sign(rollDifference);
+    let pitchTurn = Math.min(Math.abs(pitchDifference), maxTurn) * Math.sign(pitchDifference);
+
+    // Ignore small turn values to reduce shakiness
+    const MIN_TURN = 0.01;
+    if (Math.abs(rollTurn) < MIN_TURN) {
+      rollTurn = 0;
+    }
+    if (Math.abs(pitchTurn) < MIN_TURN) {
+      pitchTurn = 0;
+    }
 
     // Update current orientation
     this.currentRoll += rollTurn;
