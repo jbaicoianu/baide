@@ -573,14 +573,15 @@ room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
     this.particle = this.createObject('particle', {
-      pos: new THREE.Vector3(0, 0, 0),
+      pos: V(-0.05), // Set pos to V(-0.05)
+      rand_pos: V(0.1), // Add rand_pos: V(0.1)
       scale: V(1), // Updated scale from V(0.02) to V(1)
-      rate: 3000, // Updated rate to 3000
-      count: 6000, // Reverted from 60000 to 6000
+      rate: 100, // Reduced rate to 100
+      count: 2000, // Reduced count to 2000
       duration: 1.9, // Updated duration to 1.9
       opacity: 0.2,
-      vel: V(0), // Set velocity to V(0,0,5)
-      rand_vel: V(0, 0, 5),
+      vel: V(0, 0, 2.5), // Set vel to V(0,0,2.5)
+      rand_vel: V(0, 0, 2.5), // Set rand_vel to V(0,0,2.5)
       col: 'cyan', // Set particle color to cyan
       image_id: 'spark' // Set image_id to 'spark'
     });
