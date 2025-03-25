@@ -559,7 +559,7 @@ room.registerElement('spacezone-enginetrail', {
     // Create a linesegments object to represent the trail
     this.trail = room.createObject('linesegments', {
       pos: new THREE.Vector3(0, 0, 0),
-      col: 'blue', // Trail color
+      col: 'cyan', // Trail color
       linewidth: 2 // Trail width
     });
 
