@@ -289,98 +289,105 @@ room.registerElement('spacezone-asteroidfield', {
       return;
     }
 
-    // Clear existing asteroids if any
-    for (let asteroid of this.asteroids) {
-      this.removeChild(asteroid);
-    }
-    this.asteroids = [];
-
-    for (let i = 0; i < this.numasteroids; i++) {
-      // Initialize all asteroids at (0, 0, -9999)
-      const asteroidPos = new THREE.Vector3(0, 0, -9999);
-
-      // Generate random size between 5 and 30
-      const size = Math.random() * 25 + 5; // 5 to 30
-
-      // Create DodecahedronGeometry with random size
-      const geometry = new THREE.DodecahedronGeometry(size);
-
-      // Replace vertex modification code with the new snippet
-      const pos = geometry.attributes.position;
-      const vertices = pos.array;
-      const bypass = [];
-      for (let i = 0; i < vertices.length / pos.itemSize; i++) {
-          if (bypass.indexOf(i) > -1) {
-              continue;
-          }
-
-          const currX = pos.getX(i);
-          const currY = pos.getY(i);
-          const currZ = pos.getZ(i);
-          const x = currX + (0 - Math.random() * 10);
-          const y = currY + (0 - Math.random() * 10);
-          const z = currZ + (0 - Math.random() * 10);
-
-          pos.setX(i, x);
-          pos.setY(i, y);
-          pos.setZ(i, z);
-
-          for (let j = 0; j < vertices.length; j += 3) {
-              if (
-                  vertices[j] === currX &&
-                  vertices[j + 1] === currY &&
-                  vertices[j + 2] === currZ
-              ) {
-                  geometry.attributes.position.array[
-                      j
-                  ] = x;
-                  geometry.attributes.position.array[
-                      j + 1
-                  ] = y;
-                  geometry.attributes.position.array[
-                      j + 2
-                  ] = z;
-                  bypass.push(j / 3);
-              }
-          }
+    if (this.asteroids.length > 0) {
+      // Reset positions of existing asteroids
+      for (let asteroid of this.asteroids) {
+        asteroid.pos = new THREE.Vector3(0, 0, -9999);
       }
-      geometry.attributes.position.needsUpdate = true;
+    } else {
+      // Clear existing asteroids if any
+      for (let asteroid of this.asteroids) {
+        this.removeChild(asteroid);
+      }
+      this.asteroids = [];
 
-      // Generate a random shade of gray
-      const grayValue = Math.floor(Math.random() * 256);
-      const grayHex = `#${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}`;
+      for (let i = 0; i < this.numasteroids; i++) {
+        // Initialize all asteroids at (0, 0, -9999)
+        const asteroidPos = new THREE.Vector3(0, 0, -9999);
 
-      // Create material for the asteroid with random gray color and enable transparency
-      const material = new THREE.MeshStandardMaterial({ color: grayHex, transparent: true, opacity: 1 });
+        // Generate random size between 5 and 30
+        const size = Math.random() * 25 + 5; // 5 to 30
 
-      // Create mesh with geometry and material
-      const asteroidMesh = new THREE.Mesh(geometry, material);
+        // Create DodecahedronGeometry with random size
+        const geometry = new THREE.DodecahedronGeometry(size);
 
-      // Generate a random unit vector for rotation axis
-      const rotateAxis = new THREE.Vector3(
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1,
-        Math.random() * 2 - 1
-      ).normalize();
+        // Replace vertex modification code with the new snippet
+        const pos = geometry.attributes.position;
+        const vertices = pos.array;
+        const bypass = [];
+        for (let i = 0; i < vertices.length / pos.itemSize; i++) {
+            if (bypass.indexOf(i) > -1) {
+                continue;
+            }
 
-      // Create asteroid object with the mesh
-      const asteroid = this.createObject('object', {
-        object: asteroidMesh,
-        col: grayHex,
-        rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
-        rotate_axis: rotateAxis,
-        collidable: false,
-        pickable: false,
-        opacity: 1 // Initialize opacity to 1
-      }); 
-      asteroid.pos = asteroidPos;
+            const currX = pos.getX(i);
+            const currY = pos.getY(i);
+            const currZ = pos.getZ(i);
+            const x = currX + (0 - Math.random() * 10);
+            const y = currY + (0 - Math.random() * 10);
+            const z = currZ + (0 - Math.random() * 10);
 
-      this.asteroids.push(asteroid);
-      this.appendChild(asteroid);
+            pos.setX(i, x);
+            pos.setY(i, y);
+            pos.setZ(i, z);
+
+            for (let j = 0; j < vertices.length; j += 3) {
+                if (
+                    vertices[j] === currX &&
+                    vertices[j + 1] === currY &&
+                    vertices[j + 2] === currZ
+                ) {
+                    geometry.attributes.position.array[
+                        j
+                    ] = x;
+                    geometry.attributes.position.array[
+                        j + 1
+                    ] = y;
+                    geometry.attributes.position.array[
+                        j + 2
+                    ] = z;
+                    bypass.push(j / 3);
+                }
+            }
+        }
+        geometry.attributes.position.needsUpdate = true;
+
+        // Generate a random shade of gray
+        const grayValue = Math.floor(Math.random() * 256);
+        const grayHex = `#${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}`;
+
+        // Create material for the asteroid with random gray color and enable transparency
+        const material = new THREE.MeshStandardMaterial({ color: grayHex, transparent: true, opacity: 1 });
+
+        // Create mesh with geometry and material
+        const asteroidMesh = new THREE.Mesh(geometry, material);
+
+        // Generate a random unit vector for rotation axis
+        const rotateAxis = new THREE.Vector3(
+          Math.random() * 2 - 1,
+          Math.random() * 2 - 1,
+          Math.random() * 2 - 1
+        ).normalize();
+
+        // Create asteroid object with the mesh
+        const asteroid = this.createObject('object', {
+          object: asteroidMesh,
+          col: grayHex,
+          rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
+          rotate_axis: rotateAxis,
+          collidable: false,
+          pickable: false,
+          opacity: 1 // Initialize opacity to 1
+        }); 
+        asteroid.pos = asteroidPos;
+
+        this.asteroids.push(asteroid);
+        this.appendChild(asteroid);
+      }
+
+      // Initial repositioning of asteroids
+      this.repositionAsteroids(0);
     }
-
-    // Initial repositioning of asteroids
-    this.repositionAsteroids(0);
   },
   repositionAsteroids(currentPathPosition = 0, pathPositionOffset = 0) {
     const level = this.parent;
