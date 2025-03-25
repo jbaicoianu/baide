@@ -447,11 +447,12 @@ room.registerElement('spacezone-enginetrail', {
     const currentWorldPosition = new THREE.Vector3();
     this.getWorldPosition(currentWorldPosition);
 
-    // Push a new segment [previous, current] to the trail
-    this.trail.positions.push([this.previousWorldPosition.clone(), currentWorldPosition.clone()]);
+    // Push previous and current positions as individual vectors to the trail
+    this.trail.positions.push(this.previousWorldPosition.clone(), currentWorldPosition.clone());
 
-    // If the trail has more than 10 segments, remove the oldest one
-    if (this.trail.positions.length > 10) {
+    // If the trail has more than 20 vectors, remove the oldest two
+    if (this.trail.positions.length > 20) {
+      this.trail.positions.shift();
       this.trail.positions.shift();
     }
 
