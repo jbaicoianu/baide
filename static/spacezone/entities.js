@@ -67,8 +67,18 @@ room.registerElement('spacezone-player', {
       roughness: 0.4
     });
 
-    // Instantiate the engine trail as a child of the player
-    this.enginetrail = this.taufighter.createObject('spacezone-enginetrail');
+    // Instantiate multiple engine trails as children of the player
+    this.enginetrails = [];
+    const trailPositions = [
+      '1.9 0.4 2.5',
+      '-1.9 0.4 2.5',
+      '1.9 -0.4 2.5',
+      '-1.9 -0.4 2.5'
+    ];
+    for (const pos of trailPositions) {
+      let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos });
+      this.enginetrails.push(trail);
+    }
 
     // Add click event listener to taufighter
     this.taufighter.addEventListener('click', ev => this.startRace());
