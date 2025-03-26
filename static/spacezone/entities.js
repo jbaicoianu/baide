@@ -230,7 +230,7 @@ room.registerElement('spacezone-player', {
       // Apply speed multiplier based on afterburner state
       const speedMultiplier = this.afterburner ? 1.5 : 1.0;
       this.raceTime += dt * speedMultiplier;
-      let t = this.raceTime / this.totalracetime * speedMultiplier;
+      let t = this.raceTime / this.totalracetime;
       if (t > 1) t = 1;
 
       // Assuming 'spacezone-level' is the parent element
