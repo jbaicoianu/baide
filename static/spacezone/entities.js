@@ -63,7 +63,7 @@ room.registerElement('spacezone-player', {
     // Add child object 'taufighter' with specified metalness and roughness
     this.taufighter = this.createObject('object', {
       id: 'taufighter',
-      collision_id: 'taufighter',
+      collision_id: 'sphere', // Updated collision_id to 'sphere'
       pos: new THREE.Vector3(0, 0, 0),
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1), // Set zdir to 0, 0, -1
