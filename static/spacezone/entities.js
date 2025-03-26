@@ -73,6 +73,9 @@ room.registerElement('spacezone-player', {
       mass: 1000,
     });
     this.taufighter.addForce('drag', 0);
+    
+    // Add collide event listener to taufighter
+    this.taufighter.addEventListener('collide', ev => this.handleCollide(ev));
 
     // Instantiate multiple engine trails as children of the player
     this.enginetrails = [];
@@ -156,6 +159,9 @@ room.registerElement('spacezone-player', {
       trail.particle.col = 'cyan';
     }
     console.log('Afterburner deactivated!');
+  },
+  handleCollide(ev) {
+    console.log(ev);
   },
   updatePositionAndDirection(currentPathPosition) {
     const level = this.parent;
