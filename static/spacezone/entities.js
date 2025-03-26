@@ -368,7 +368,7 @@ room.registerElement('spacezone-player', {
       this.targetFov = 70;
     }
 
-    const fovChangeRate = 20; // degrees per second
+    const fovChangeRate = 60; // degrees per second
     if (this.currentFov < this.targetFov) {
       this.currentFov += fovChangeRate * dt;
       if (this.currentFov > this.targetFov) {
