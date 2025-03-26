@@ -361,12 +361,9 @@ room.registerElement('spacezone-player', {
       // this.taufighter.pos.add(this.velocity.clone().multiplyScalar(dt));
     }
 
-    // Adjust camera FOV based on afterburner state
-    if (this.afterburner) {
-      this.targetFov = 90;
-    } else {
-      this.targetFov = 70;
-    }
+    // Calculate target FOV based on currentSpeedMultiplier
+    const clampedSpeedMultiplier = Math.max(1, Math.min(this.currentSpeedMultiplier, 1.5));
+    this.targetFov = 70 + (clampedSpeedMultiplier - 1) * 40;
 
     const fovChangeRate = 60; // degrees per second
     if (this.currentFov < this.targetFov) {
