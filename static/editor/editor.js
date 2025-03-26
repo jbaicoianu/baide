@@ -265,7 +265,9 @@ function openSearchOverlay(cm) {
 
   overlay.style.display = 'flex';
   overlay.classList.remove('no-results');
-  overlay.querySelector('#searchInput').focus();
+  const searchInputElement = overlay.querySelector('#searchInput');
+  searchInputElement.focus();
+  searchInputElement.select();
 }
 
 // Function to perform search using CodeMirror's search addon
@@ -1528,7 +1530,7 @@ function saveOpenFiles(projectName) {
 
 // Save active file to localStorage
 function saveActiveFile(projectName) {
-  localStorage.setItem(`activeFile_${projectName}`, activeFile[projectName] || '');
+  localStorage.setItem(`activeFile_${projectName}`, activeFile[currentProject] || '');
 }
 
 // Save open directories to localStorage
