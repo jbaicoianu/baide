@@ -126,9 +126,13 @@ room.registerElement('spacezone-player', {
 
     // Initialize afterburner state
     this.afterburner = false;
+    this.currentSpeedMultiplier = 1.0;
+    this.targetSpeedMultiplier = 1.0;
+    this.speedChangeRate = 1.0; // Multiplier change per second
   },
   activateAfterburner() {
     this.afterburner = true;
+    this.targetSpeedMultiplier = 1.5;
     for (let trail of this.enginetrails) {
       trail.particle.col = 'orange';
     }
@@ -136,6 +140,7 @@ room.registerElement('spacezone-player', {
   },
   deactivateAfterburner() {
     this.afterburner = false;
+    this.targetSpeedMultiplier = 1.0;
     for (let trail of this.enginetrails) {
       trail.particle.col = 'cyan';
     }
@@ -227,9 +232,21 @@ room.registerElement('spacezone-player', {
     }
 
     if (this.isRacing) {
-      // Apply speed multiplier based on afterburner state
-      const speedMultiplier = this.afterburner ? 1.5 : 1.0;
-      this.raceTime += dt * speedMultiplier;
+      // Smoothly adjust the currentSpeedMultiplier towards targetSpeedMultiplier
+      if (this.currentSpeedMultiplier < this.targetSpeedMultiplier) {
+        this.currentSpeedMultiplier += this.speedChangeRate * dt;
+        if (this.currentSpeedMultiplier > this.targetSpeedMultiplier) {
+          this.currentSpeedMultiplier = this.targetSpeedMultiplier;
+        }
+      } else if (this.currentSpeedMultiplier > this.targetSpeedMultiplier) {
+        this.currentSpeedMultiplier -= this.speedChangeRate * dt;
+        if (this.currentSpeedMultiplier < this.targetSpeedMultiplier) {
+          this.currentSpeedMultiplier = this.targetSpeedMultiplier;
+        }
+      }
+
+      // Apply speed multiplier based on currentSpeedMultiplier
+      this.raceTime += dt * this.currentSpeedMultiplier;
       let t = this.raceTime / this.totalracetime;
       if (t > 1) t = 1;
 
@@ -600,15 +617,15 @@ room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
     this.particle = this.createObject('particle', {
-      pos: V(-0.15), // Set pos to V(-0.05)
-      rand_pos: V(0.3), // Add rand_pos: V(0.1)
+      pos: V(-0.15), // Set pos to V(-0.15)
+      rand_pos: V(0.3), // Add rand_pos: V(0.3)
       scale: V(1), // Updated scale from V(0.02) to V(1)
       rate: 400, // Increased rate to 400
       count: 200, // Reduced count to 200
       duration: 0.5, // Decreased duration to 0.5
       opacity: 0.2,
       vel: V(0, 0, 10), // Set vel to V(0,0,10)
-      rand_vel: V(0, 0, 20), // Set rand_vel to V(0,0,20)
+      rand_vel: V(0,0,20), // Set rand_vel to V(0,0,20)
       col: 'cyan', // Set particle color to cyan
       image_id: 'spark' // Set image_id to 'spark'
     });
