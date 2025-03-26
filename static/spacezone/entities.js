@@ -523,13 +523,13 @@ room.registerElement('spacezone-asteroidfield', {
         // Create asteroid object with the mesh
         const asteroid = this.createObject('object', {
           id: 'asteroid-' + i,
-          collision_id: null, // Initialize collision_id to null
+          collision_id: 'asteroid-' + i, // Initialize collision_id to null
           col: grayHex,
           rotate_deg_per_sec: 0, // Disabled rotation by setting to 0
           rotate_axis: rotateAxis,
           pickable: false,
           opacity: 1, // Initialize opacity to 1
-          collidable: false, // Initialize collidable to false
+          collidable: true, // Initialize collidable to false
           emissive: 'black' // Initialize emissive to black
         }); 
         asteroid.pos = asteroidPos;
@@ -590,12 +590,12 @@ room.registerElement('spacezone-asteroidfield', {
         const distanceZ = Math.abs(asteroid.pos.z - shipZ);
         const shouldBeCollidable = distanceZ < 500;
         if (shouldBeCollidable && !asteroid.collidable) {
-          asteroid.collidable = true;
-          asteroid.collision_id = asteroid.id;
+          //asteroid.collidable = true;
+          //asteroid.collision_id = asteroid.id;
           asteroid.emissive = 'green';
         } else if (!shouldBeCollidable && asteroid.collidable) {
           //asteroid.collision_id = null;
-          asteroid.collidable = false;
+          //asteroid.collidable = false;
           asteroid.emissive = 'black';
         }
       }
