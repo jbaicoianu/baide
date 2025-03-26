@@ -64,7 +64,7 @@ room.registerElement('spacezone-player', {
     this.taufighter = this.createObject('object', {
       id: 'taufighter',
       collision_id: 'sphere', // Updated collision_id to 'sphere'
-      collision_scale: V(6),
+      collision_scale: V(12),
       pos: new THREE.Vector3(0, 0, 0),
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1), // Set zdir to 0, 0, -1
