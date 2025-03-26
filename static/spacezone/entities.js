@@ -142,7 +142,7 @@ room.registerElement('spacezone-player', {
     this.afterburner = true;
     this.targetSpeedMultiplier = this.maxspeedmultiplier; // Use maxspeedmultiplier
     for (let trail of this.enginetrails) {
-      trail.particle.col = 'orange';
+      trail.particle.col = '#FFAA00'; // Set to brighter yellowish orange
     }
     console.log('Afterburner activated!');
   },
@@ -681,7 +681,7 @@ room.registerElement('spacezone-enginetrail', {
     if (player && player.isRacing) {
       this.particle.rate = 400;
       if (player.afterburner) {
-        this.particle.col = 'orange';
+        this.particle.col = '#FFAA00'; // Changed to brighter yellowish orange
       } else {
         this.particle.col = 'cyan';
       }
