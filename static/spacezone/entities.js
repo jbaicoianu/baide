@@ -586,7 +586,7 @@ room.registerElement('spacezone-asteroidfield', {
       // Collision Optimization: Set collidable based on relative z position to the ship
       if (player) {
         const distanceZ = Math.abs(asteroid.pos.z - shipZ);
-        asteroid.collidable = distanceZ < 100;
+        asteroid.collidable = distanceZ < 250;
         asteroid.emissive = asteroid.collidable ? 'green' : 'black'; // Set emissive based on collidability
       }
     }
