@@ -129,6 +129,14 @@ room.registerElement('spacezone-player', {
     this.currentSpeedMultiplier = 1.0;
     this.targetSpeedMultiplier = 1.0;
     this.speedChangeRate = 1.0; // Multiplier change per second
+
+    // Initialize camera FOV parameters
+    this.currentFov = 70;
+    this.targetFov = 70;
+    if (this.camera) {
+      this.camera.fov = this.currentFov;
+      this.camera.updateProjectionMatrix();
+    }
   },
   activateAfterburner() {
     this.afterburner = true;
@@ -352,6 +360,31 @@ room.registerElement('spacezone-player', {
 
       // Update position based on velocity
       // this.taufighter.pos.add(this.velocity.clone().multiplyScalar(dt));
+    }
+
+    // Adjust camera FOV based on afterburner state
+    if (this.afterburner) {
+      this.targetFov = 90;
+    } else {
+      this.targetFov = 70;
+    }
+
+    const fovChangeRate = 20; // degrees per second
+    if (this.currentFov < this.targetFov) {
+      this.currentFov += fovChangeRate * dt;
+      if (this.currentFov > this.targetFov) {
+        this.currentFov = this.targetFov;
+      }
+    } else if (this.currentFov > this.targetFov) {
+      this.currentFov -= fovChangeRate * dt;
+      if (this.currentFov < this.targetFov) {
+        this.currentFov = this.targetFov;
+      }
+    }
+
+    if (this.camera) {
+      this.camera.fov = this.currentFov;
+      this.camera.updateProjectionMatrix();
     }
   }
 });
