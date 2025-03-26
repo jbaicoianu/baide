@@ -1870,5 +1870,22 @@
     "commit_hash": "96698ef565cac08899e2a5fc9ead8f01415c031b",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Great, but it seems like when we hit the afterburner we suddenly jump forwards to a different position. I think it's because of this line - drop the * speedMultiplier part:\n\nlet t = this.raceTime / this.totalracetime * speedMultiplier;",
+    "timestamp": "2025-03-26T05:34:13.048551Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "Understood. I've removed the multiplication by `speedMultiplier` from the calculation of `t` in the `spacezone-player` element to prevent the position jump when activating the afterburner.",
+    "timestamp": "2025-03-26T05:34:59.532318Z",
+    "branch": "main",
+    "commit_hash": "a56c3282d889193819375ae45c8adafd2f0a81d3",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
