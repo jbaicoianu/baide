@@ -523,7 +523,7 @@ room.registerElement('spacezone-asteroidfield', {
           id: 'asteroid-' + i,
           collision_id: null, // Initialize collision_id to null
           col: grayHex,
-          rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
+          rotate_deg_per_sec: 0, // Disabled rotation by setting to 0
           rotate_axis: rotateAxis,
           pickable: false,
           opacity: 1, // Initialize opacity to 1
