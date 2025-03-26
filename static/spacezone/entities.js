@@ -362,7 +362,7 @@ room.registerElement('spacezone-player', {
 
     // Calculate target FOV based on currentSpeedMultiplier
     const clampedSpeedMultiplier = Math.max(1, Math.min(this.currentSpeedMultiplier, this.maxspeedmultiplier));
-    this.targetFov = 70 + (clampedSpeedMultiplier - 1) * 40;
+    this.targetFov = 70 + ((clampedSpeedMultiplier - 1) / (this.maxspeedmultiplier - 1)) * 20;
 
     const fovChangeRate = 60; // degrees per second
     if (this.currentFov < this.targetFov) {
