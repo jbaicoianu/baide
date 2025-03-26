@@ -522,7 +522,6 @@ room.registerElement('spacezone-asteroidfield', {
           col: grayHex,
           rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
           rotate_axis: rotateAxis,
-          collidable: false,
           pickable: false,
           opacity: 1 // Initialize opacity to 1
         }); 
