@@ -434,6 +434,7 @@ room.registerElement('spacezone-asteroidfield', {
       for (let asteroid of this.asteroids) {
         asteroid.pos = new THREE.Vector3(0, 0, -9999);
         asteroid.collidable = false; // Ensure collidable is false initially
+        asteroid.collision_id = null; // Set collision_id to null when not collidable
         asteroid.emissive = 'black'; // Set emissive to black when not collidable
       }
     } else {
@@ -520,7 +521,7 @@ room.registerElement('spacezone-asteroidfield', {
         // Create asteroid object with the mesh
         const asteroid = this.createObject('object', {
           id: 'asteroid-' + i,
-          collision_id: 'asteroid-' + i,
+          collision_id: null, // Initialize collision_id to null
           col: grayHex,
           rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
           rotate_axis: rotateAxis,
@@ -583,10 +584,11 @@ room.registerElement('spacezone-asteroidfield', {
         }
 
       }
-      // Collision Optimization: Set collidable based on relative z position to the ship
+      // Collision Optimization: Set collidable and collision_id based on relative z position to the ship
       if (player) {
         const distanceZ = Math.abs(asteroid.pos.z - shipZ);
         asteroid.collidable = distanceZ < 500;
+        asteroid.collision_id = asteroid.collidable ? asteroid.id : null; // Dynamically set collision_id
         asteroid.emissive = asteroid.collidable ? 'green' : 'black'; // Set emissive based on collidability
       }
     }
