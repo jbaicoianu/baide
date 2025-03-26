@@ -72,6 +72,7 @@ room.registerElement('spacezone-player', {
       roughness: 0.4,
       mass: 1000,
     });
+    this.taufighter.addForce('drag', 0);
 
     // Instantiate multiple engine trails as children of the player
     this.enginetrails = [];
@@ -282,7 +283,6 @@ room.registerElement('spacezone-player', {
         this.isRacing = false;
         console.log('Race completed!');
       }
-      this.taufighter.vel.z = -1e-9; // FIXME - hack to force physics from sleeping this object
     }
 
     // Handle targeting reticle movement based on mouse delta
