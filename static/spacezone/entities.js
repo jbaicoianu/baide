@@ -55,6 +55,7 @@ room.registerElement('spacezone-player', {
   totalracetime: 120, // Total race duration in seconds
   rollDamping: 5, // Damping factor for roll
   pitchDamping: 5, // Damping factor for pitch
+  maxspeedmultiplier: 3, // New property for maximum speed multiplier
 
   create() {
     // Initialization code for spacezone-player
@@ -139,7 +140,7 @@ room.registerElement('spacezone-player', {
   },
   activateAfterburner() {
     this.afterburner = true;
-    this.targetSpeedMultiplier = 1.5;
+    this.targetSpeedMultiplier = this.maxspeedmultiplier; // Use maxspeedmultiplier
     for (let trail of this.enginetrails) {
       trail.particle.col = 'orange';
     }
@@ -360,7 +361,7 @@ room.registerElement('spacezone-player', {
     }
 
     // Calculate target FOV based on currentSpeedMultiplier
-    const clampedSpeedMultiplier = Math.max(1, Math.min(this.currentSpeedMultiplier, 1.5));
+    const clampedSpeedMultiplier = Math.max(1, Math.min(this.currentSpeedMultiplier, this.maxspeedmultiplier));
     this.targetFov = 70 + (clampedSpeedMultiplier - 1) * 40;
 
     const fovChangeRate = 60; // degrees per second
