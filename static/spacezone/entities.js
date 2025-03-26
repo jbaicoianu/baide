@@ -582,13 +582,15 @@ room.registerElement('spacezone-asteroidfield', {
         if (pathPositionOffset > 0 && asteroid.opacity !== undefined) {
           asteroid.opacity = 0;
         }
-
       }
       // Collision Optimization: Set collidable and collision_id based on relative z position to the ship
       if (player) {
         const distanceZ = Math.abs(asteroid.pos.z - shipZ);
-        asteroid.collidable = distanceZ < 500;
-        asteroid.collision_id = asteroid.collidable ? asteroid.id : null; // Dynamically set collision_id
+        const shouldBeCollidable = distanceZ < 500;
+        if (asteroid.collision_id !== (shouldBeCollidable ? asteroid.id : null)) {
+          asteroid.collision_id = shouldBeCollidable ? asteroid.id : null; // Dynamically set collision_id
+        }
+        asteroid.collidable = shouldBeCollidable;
         asteroid.emissive = asteroid.collidable ? 'green' : 'black'; // Set emissive based on collidability
       }
     }
