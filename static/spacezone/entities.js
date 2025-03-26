@@ -133,9 +133,9 @@ room.registerElement('spacezone-player', {
     // Initialize camera FOV parameters
     this.currentFov = 70;
     this.targetFov = 70;
-    if (this.camera) {
-      this.camera.fov = this.currentFov;
-      this.camera.updateProjectionMatrix();
+    if (player && player.camera) {
+      player.camera.fov = this.currentFov;
+      player.camera.updateProjectionMatrix();
     }
   },
   activateAfterburner() {
@@ -382,9 +382,9 @@ room.registerElement('spacezone-player', {
       }
     }
 
-    if (this.camera) {
-      this.camera.fov = this.currentFov;
-      this.camera.updateProjectionMatrix();
+    if (player && player.camera) {
+      player.camera.fov = this.currentFov;
+      player.camera.updateProjectionMatrix();
     }
   }
 });
