@@ -592,7 +592,9 @@ room.registerElement('spacezone-asteroidfield', {
         if (shouldBeCollidable) {
           //asteroid.collidable = true;
           if (!asteroid.collision_id) {
-            asteroid.collision_id = asteroid.id;
+            setTimeout(() => {
+              asteroid.collision_id = asteroid.id;
+            }, 0);
           }
           asteroid.emissive = 'green';
         } else if (!shouldBeCollidable) {
