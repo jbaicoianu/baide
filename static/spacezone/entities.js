@@ -239,17 +239,15 @@ room.registerElement('spacezone-player', {
     }
 
     if (this.isRacing) {
-      // Smoothly adjust the currentSpeedMultiplier towards targetSpeedMultiplier
-      if (this.currentSpeedMultiplier < this.targetSpeedMultiplier) {
-        this.currentSpeedMultiplier += this.speedChangeRate * dt;
-        if (this.currentSpeedMultiplier > this.targetSpeedMultiplier) {
-          this.currentSpeedMultiplier = this.targetSpeedMultiplier;
-        }
-      } else if (this.currentSpeedMultiplier > this.targetSpeedMultiplier) {
-        this.currentSpeedMultiplier -= this.speedChangeRate * dt;
-        if (this.currentSpeedMultiplier < this.targetSpeedMultiplier) {
-          this.currentSpeedMultiplier = this.targetSpeedMultiplier;
-        }
+      // Quadratic ease for speed multiplier towards targetSpeedMultiplier
+      const speedDifference = this.targetSpeedMultiplier - this.currentSpeedMultiplier;
+      const acceleration = this.speedChangeRate * speedDifference * Math.abs(speedDifference);
+      this.currentSpeedMultiplier += acceleration * dt;
+
+      // Clamp the speed multiplier to avoid overshooting
+      if ((speedDifference > 0 && this.currentSpeedMultiplier > this.targetSpeedMultiplier) ||
+          (speedDifference < 0 && this.currentSpeedMultiplier < this.targetSpeedMultiplier)) {
+        this.currentSpeedMultiplier = this.targetSpeedMultiplier;
       }
 
       // Apply speed multiplier based on currentSpeedMultiplier
