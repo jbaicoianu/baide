@@ -1887,5 +1887,22 @@
     "commit_hash": "a56c3282d889193819375ae45c8adafd2f0a81d3",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Let's increase the vel and rand_vel of our trails to 0,0,10 and 0,0,20 respectively, decrease our duration to 0.5, and increase our rate to 400",
+    "timestamp": "2025-03-26T05:38:26.647523Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the engine trail particle properties as per your instructions. The `vel` and `rand_vel` have been increased to `0,0,10` and `0,0,20` respectively, the `duration` has been decreased to `0.5`, and the `rate` has been increased to `400`. Please review these changes to ensure they meet your desired\u6548\u679c and let me know if any further adjustments are needed.",
+    "timestamp": "2025-03-26T05:39:17.881793Z",
+    "branch": "main",
+    "commit_hash": "0011925b6fea733245636041debe4186923c14d0",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
