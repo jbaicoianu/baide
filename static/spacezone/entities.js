@@ -433,6 +433,7 @@ room.registerElement('spacezone-asteroidfield', {
       // Reset positions of existing asteroids
       for (let asteroid of this.asteroids) {
         asteroid.pos = new THREE.Vector3(0, 0, -9999);
+        asteroid.collidable = false; // Ensure collidable is false initially
       }
     } else {
       // Clear existing asteroids if any
@@ -523,7 +524,8 @@ room.registerElement('spacezone-asteroidfield', {
           rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
           rotate_axis: rotateAxis,
           pickable: false,
-          opacity: 1 // Initialize opacity to 1
+          opacity: 1, // Initialize opacity to 1
+          collidable: false // Initialize collidable to false
         }); 
         asteroid.pos = asteroidPos;
 
@@ -546,6 +548,11 @@ room.registerElement('spacezone-asteroidfield', {
 
     // Get the world coordinate position based on currentPathPosition
     const currentPos = level.getPositionAtTime(currentPathPosition);
+
+    // Retrieve the player to get the ship's position
+    const playerElements = level.getElementsByTagName('spacezone-player');
+    const player = playerElements.length > 0 ? playerElements[0] : null;
+    const shipZ = player ? player.pos.z : 0;
 
     for (let asteroid of this.asteroids) {
       if (asteroid.pos.z < currentPos.z - 100) {
@@ -571,6 +578,12 @@ room.registerElement('spacezone-asteroidfield', {
         asteroid.pos = newPos;
         if (pathPositionOffset > 0 && asteroid.opacity !== undefined) {
           asteroid.opacity = 0;
+        }
+
+        // Collision Optimization: Set collidable based on relative z position to the ship
+        if (player) {
+          const distanceZ = Math.abs(asteroid.pos.z - shipZ);
+          asteroid.collidable = distanceZ < 100;
         }
       }
     }
