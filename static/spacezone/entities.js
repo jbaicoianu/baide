@@ -64,6 +64,7 @@ room.registerElement('spacezone-player', {
     this.taufighter = this.createObject('object', {
       id: 'taufighter',
       collision_id: 'sphere', // Updated collision_id to 'sphere'
+      collision_scale: V(3),
       pos: new THREE.Vector3(0, 0, 0),
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1), // Set zdir to 0, 0, -1
@@ -517,7 +518,7 @@ room.registerElement('spacezone-asteroidfield', {
         // Create asteroid object with the mesh
         const asteroid = this.createObject('object', {
           id: 'asteroid-' + i,
-          collision_id: 'astroid_' + i,
+          collision_id: 'asteroid_' + i,
           col: grayHex,
           rotate_deg_per_sec: Math.random() * 20, // Random scalar between 0 and 20
           rotate_axis: rotateAxis,
