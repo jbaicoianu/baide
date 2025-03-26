@@ -2298,5 +2298,22 @@
     "branch": "main",
     "commit_hash": "8b91790c253a6bf054d1679a39763e53d1cd2936",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Let's disable asteroid rotation for now, I think that's leading to some expensive physics calculations",
+    "timestamp": "2025-03-26T21:46:27.547599Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've disabled the rotation of asteroids by setting their `rotate_deg_per_sec` property to `0`. This should reduce the load from expensive physics calculations related to asteroid rotation. If there are any additional optimizations you'd like to explore, please let me know.",
+    "timestamp": "2025-03-26T21:47:22.576195Z",
+    "branch": "main",
+    "commit_hash": "7a9252d672551632a0a3baa12382963ba45a93a1",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
