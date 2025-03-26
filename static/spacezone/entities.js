@@ -523,7 +523,7 @@ room.registerElement('spacezone-asteroidfield', {
         // Create asteroid object with the mesh
         const asteroid = this.createObject('object', {
           id: 'asteroid-' + i,
-          collision_id: 'asteroid-' + i, // Initialize collision_id to null
+          //collision_id: 'asteroid-' + i, // Initialize collision_id to null
           col: grayHex,
           rotate_deg_per_sec: 0, // Disabled rotation by setting to 0
           rotate_axis: rotateAxis,
@@ -591,7 +591,9 @@ room.registerElement('spacezone-asteroidfield', {
         const shouldBeCollidable = distanceZ < 500;
         if (shouldBeCollidable) {
           //asteroid.collidable = true;
-          //asteroid.collision_id = asteroid.id;
+          if (!asteroid.collision_id) {
+            asteroid.collision_id = asteroid.id;
+          }
           asteroid.emissive = 'green';
         } else if (!shouldBeCollidable) {
           //asteroid.collision_id = null;
