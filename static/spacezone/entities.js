@@ -580,11 +580,11 @@ room.registerElement('spacezone-asteroidfield', {
           asteroid.opacity = 0;
         }
 
-        // Collision Optimization: Set collidable based on relative z position to the ship
-        if (player) {
-          const distanceZ = Math.abs(asteroid.pos.z - shipZ);
-          asteroid.collidable = distanceZ < 100;
-        }
+      }
+      // Collision Optimization: Set collidable based on relative z position to the ship
+      if (player) {
+        const distanceZ = Math.abs(asteroid.pos.z - shipZ);
+        asteroid.collidable = distanceZ < 100;
       }
     }
 
