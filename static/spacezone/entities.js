@@ -97,9 +97,14 @@ room.registerElement('spacezone-player', {
       auto_play: true
     });
 
-    // Add control context for targeting
+    // Add control context for targeting and afterburner
     this.controlstate = this.addControlContext('spacezone-player', {
-      'targeting': { defaultbindings: 'mouse_delta' }
+      'targeting': { defaultbindings: 'mouse_delta' },
+      'afterburner': { 
+        defaultbindings: 'keyboard_shift', 
+        onactivate: () => this.activateAfterburner(),
+        ondeactivate: () => this.deactivateAfterburner()
+      }
     });
 
     // Add targeting reticle as a sphere placeholder
@@ -118,6 +123,23 @@ room.registerElement('spacezone-player', {
     this.countdown = null;
     this.countdownTime = 0;
     this.countdownStep = 0;
+
+    // Initialize afterburner state
+    this.afterburner = false;
+  },
+  activateAfterburner() {
+    this.afterburner = true;
+    for (let trail of this.enginetrails) {
+      trail.particle.col = 'orange';
+    }
+    console.log('Afterburner activated!');
+  },
+  deactivateAfterburner() {
+    this.afterburner = false;
+    for (let trail of this.enginetrails) {
+      trail.particle.col = 'cyan';
+    }
+    console.log('Afterburner deactivated!');
   },
   updatePositionAndDirection(currentPathPosition) {
     const level = this.parent;
@@ -205,8 +227,10 @@ room.registerElement('spacezone-player', {
     }
 
     if (this.isRacing) {
-      this.raceTime += dt;
-      let t = this.raceTime / this.totalracetime;
+      // Apply speed multiplier based on afterburner state
+      const speedMultiplier = this.afterburner ? 1.5 : 1.0;
+      this.raceTime += dt * speedMultiplier;
+      let t = this.raceTime / this.totalracetime * speedMultiplier;
       if (t > 1) t = 1;
 
       // Assuming 'spacezone-level' is the parent element
@@ -607,11 +631,16 @@ room.registerElement('spacezone-enginetrail', {
     // Set the particle emitter position
     //this.particle.emitter_pos = currentWorldPosition;
 
-    // Check player's isRacing property and set particle rate
+    // Check player's isRacing property and set particle rate and color
     const player = this.getParentByTagName('spacezone-player');
 
     if (player && player.isRacing) {
       this.particle.rate = 100;
+      if (player.afterburner) {
+        this.particle.col = 'orange';
+      } else {
+        this.particle.col = 'cyan';
+      }
     } else {
       this.particle.rate = 0;
     }
