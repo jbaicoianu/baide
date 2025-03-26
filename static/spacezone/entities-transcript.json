@@ -2266,5 +2266,13 @@
     "commit_hash": "0b9ee7a5c624dabfaf20512d09649010f2ce0eab",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Change order for setting collision parameters [Manual edit]",
+    "timestamp": "2025-03-26T21:00:35.168892Z",
+    "branch": "main",
+    "commit_hash": "5381bcb279c70da3a91c88fa8c6de37a56064881",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
