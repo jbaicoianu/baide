@@ -589,11 +589,11 @@ room.registerElement('spacezone-asteroidfield', {
       if (player) {
         const distanceZ = Math.abs(asteroid.pos.z - shipZ);
         const shouldBeCollidable = distanceZ < 500;
-        if (shouldBeCollidable && !asteroid.collidable) {
+        if (shouldBeCollidable) {
           //asteroid.collidable = true;
           //asteroid.collision_id = asteroid.id;
           asteroid.emissive = 'green';
-        } else if (!shouldBeCollidable && asteroid.collidable) {
+        } else if (!shouldBeCollidable) {
           //asteroid.collision_id = null;
           //asteroid.collidable = false;
           asteroid.emissive = 'black';
