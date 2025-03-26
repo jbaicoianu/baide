@@ -128,7 +128,7 @@ room.registerElement('spacezone-player', {
     this.afterburner = false;
     this.currentSpeedMultiplier = 1.0;
     this.targetSpeedMultiplier = 1.0;
-    this.speedChangeRate = 1.0; // Multiplier change per second
+    this.speedChangeRate = 4.0; // Multiplier change per second
 
     // Initialize camera FOV parameters
     this.currentFov = 70;
