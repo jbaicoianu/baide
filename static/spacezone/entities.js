@@ -282,7 +282,7 @@ room.registerElement('spacezone-player', {
         this.isRacing = false;
         console.log('Race completed!');
       }
-      this.taufighter.vel.z = 1e-9; // FIXME - hack to force physics from sleeping this object
+      this.taufighter.vel.z = -1e-9; // FIXME - hack to force physics from sleeping this object
     }
 
     // Handle targeting reticle movement based on mouse delta
