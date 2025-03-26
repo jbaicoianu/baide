@@ -603,12 +603,12 @@ room.registerElement('spacezone-enginetrail', {
       pos: V(-0.15), // Set pos to V(-0.05)
       rand_pos: V(0.3), // Add rand_pos: V(0.1)
       scale: V(1), // Updated scale from V(0.02) to V(1)
-      rate: 100, // Reduced rate to 100
+      rate: 400, // Increased rate to 400
       count: 200, // Reduced count to 200
-      duration: 1.9, // Updated duration to 1.9
+      duration: 0.5, // Decreased duration to 0.5
       opacity: 0.2,
-      vel: V(0, 0, 2.5), // Set vel to V(0,0,2.5)
-      rand_vel: V(0, 0, 5), // Set rand_vel to V(0,0,2.5)
+      vel: V(0, 0, 10), // Set vel to V(0,0,10)
+      rand_vel: V(0, 0, 20), // Set rand_vel to V(0,0,20)
       col: 'cyan', // Set particle color to cyan
       image_id: 'spark' // Set image_id to 'spark'
     });
@@ -635,7 +635,7 @@ room.registerElement('spacezone-enginetrail', {
     const player = this.getParentByTagName('spacezone-player');
 
     if (player && player.isRacing) {
-      this.particle.rate = 100;
+      this.particle.rate = 400;
       if (player.afterburner) {
         this.particle.col = 'orange';
       } else {
