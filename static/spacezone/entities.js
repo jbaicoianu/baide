@@ -384,7 +384,7 @@ room.registerElement('spacezone-player', {
     this.taufighter.rotation.set(
       this.currentPitch,
       0,
-      -this.currentRoll
+      this.currentRoll
     );
 
     // Inertial Flight Model
