@@ -272,10 +272,7 @@ room.registerElement('spacezone-player', {
           this.countdown = null;
           console.log('Race started!');
           
-          // Set taufighter back to pickable when race starts
-          if (this.taufighter) {
-            this.taufighter.pickable = true;
-          }
+          // Removed setting taufighter.pickable to true when race starts
         }
       }
     }
