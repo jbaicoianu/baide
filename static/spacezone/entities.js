@@ -585,16 +585,23 @@ room.registerElement('spacezone-asteroidfield', {
         const shapeIndex = Math.floor(Math.random() * this.uniqueshapes);
         const selectedShape = this.uniqueAsteroidAssets[shapeIndex];
 
-        // Create asteroid object with the selected unique shape
-        // Generate a random shade of grey
-        const greyValue = Math.floor(Math.random() * 256);
-        const greyHex = `#${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}`;
+        // Generate a random color ensuring minimum brightness and introducing shades of brown
+        let colorHex;
+        if (Math.random() < 0.3) { // 30% chance for brown shades
+          const r = Math.floor(Math.random() * 56 + 100); // 100-155
+          const g = Math.floor(Math.random() * 40 + 50);  // 50-90
+          const b = Math.floor(Math.random() * 30 + 20);  // 20-50
+          colorHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+        } else {
+          const greyValue = Math.floor(Math.random() * 206 + 50); // 50-255
+          colorHex = `#${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}`;
+        }
 
         const asteroid = this.createObject('object', {
           id: selectedShape.high, // Use high-detail mesh as ID
           object: selectedShape.high, // Use high-detail mesh
           collision_id: selectedShape.low, // Use low-detail mesh for collisions
-          col: greyHex, // Set a random shade of grey
+          col: colorHex, // Set a random color with constraints
           normalmap_id: "asteroid-normal", // Added normalmap_id
           normal_scale: 3,
           texture_repeat: V(3),
