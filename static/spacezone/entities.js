@@ -56,7 +56,7 @@ room.registerElement('spacezone-player', {
   rollDamping: 5, // Damping factor for roll
   pitchDamping: 5, // Damping factor for pitch
   maxspeedmultiplier: 1.5, // Reverted property for maximum speed multiplier
-  maxPitch: 22.5, // Maximum pitch angle in degrees
+  maxPitch: 11.25, // Maximum pitch angle in degrees
 
   create() {
     // Initialization code for spacezone-player
