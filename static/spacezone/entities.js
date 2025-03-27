@@ -80,10 +80,8 @@ room.registerElement('spacezone-player', {
     // Instantiate multiple engine trails as children of the player
     this.enginetrails = [];
     const trailPositions = [
-      '-1.9 0.4 -2.5',
-      '1.9 0.4 -2.5',
-      '-1.9 -0.4 -2.5',
-      '1.9 -0.4 -2.5'
+      '-1.25 -0.2 -3',
+      '1.25 -0.2 -3'
     ];
     for (const pos of trailPositions) {
       let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos });
