@@ -753,11 +753,6 @@ room.registerElement('spacezone-cannon', {
     this.firing = false;
     this.cooldown = 0;
 
-    // Initialize the object pool for laser beams
-    this.pool = this.createObject('objectpool', {
-      objecttype: 'spacezone-laserbeam',
-      max: 20
-    });
   },
   startFiring() {
     this.firing = true;
@@ -766,6 +761,13 @@ room.registerElement('spacezone-cannon', {
     this.firing = false;
   },
   fire() {
+    if (!this.pool) {
+      // Initialize the object pool for laser beams
+      this.pool = this.createObject('objectpool', {
+        objecttype: 'spacezone-laserbeam',
+        max: 20
+      });
+    }        
     // Get spawnPosition using ship's world coordinates
     const spawnPosition = this.localToWorld(V(0));
 
