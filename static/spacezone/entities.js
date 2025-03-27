@@ -565,7 +565,7 @@ room.registerElement('spacezone-asteroidfield', {
 
         // Clone the asteroid mesh for high-detail version
         const highDetailMesh = asteroidMesh.clone();
-        highDetailMesh.geometry = THREE.LoopSubdivide.modify(asteroidMesh.geometry, 3, { split: true, uvSmooth: true });
+        highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 3, { split: true, uvSmooth: true });
 
         // Load the high-detail asteroid mesh as a new asset
         this.loadNewAsset('object', {
