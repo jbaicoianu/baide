@@ -707,7 +707,7 @@ room.registerElement('spacezone-enginetrail', {
       opacity: 0.2,
       vel: V(0, 0, 10), // Set vel to V(0,0,10)
       rand_vel: V(0,0,20), // Set rand_vel to V(0,0,20)
-      col: 'cyan', // Set particle color to cyan
+      col: '#FFA500', // Set particle color to bright orange
       image_id: 'spark' // Set image_id to 'spark'
     });
 
@@ -795,10 +795,10 @@ room.registerElement('spacezone-cannon', {
 
 room.registerElement('spacezone-laserbeam', {
   create() {
-    // Create a red 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 2, 0.25)
+    // Create a bright orange 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 2, 0.25)
     this.laserBeam = this.createObject('object', {
       id: 'capsule',
-      col: 'red',
+      col: '#FFA500', // Changed laser beam color to bright orange
       scale: '0.25 2 0.25', // Updated scale to .25, 2, .25
       rotation: '90 0 0',
     });
