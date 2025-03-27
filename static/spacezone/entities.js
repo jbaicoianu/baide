@@ -315,7 +315,7 @@ room.registerElement('spacezone-player', {
 
     // Handle targeting reticle movement based on mouse delta
     const targetingDelta = this.controlstate.targeting;
-    if (targetingDelta && Array.isArray(targetingDelta) && targetingDelta.length >= 2) {
+    if (targetingDelta && Array.isArray(targetingDelta) && targetDelta.length >= 2) {
       // Restore original x and y directions with negated values
       this.reticle.pos.x += -targetingDelta[0];
       this.reticle.pos.y += -targetingDelta[1];
@@ -465,7 +465,6 @@ room.registerElement('spacezone-asteroidfield', {
         asteroid.pos = new THREE.Vector3(0, 0, -9999);
         asteroid.collidable = false; // Ensure collidable is false initially
         asteroid.collision_id = null; // Set collision_id to null when not collidable
-        asteroid.emissive = 'black'; // Set emissive to black when not collidable
       }
     } else {
       // Clear existing asteroids if any
@@ -624,11 +623,9 @@ room.registerElement('spacezone-asteroidfield', {
               asteroid.collision_id = asteroid.id;
             }, 0);
           }
-          asteroid.emissive = 'green';
         } else if (!shouldBeCollidable) {
           //asteroid.collision_id = null;
           //asteroid.collidable = false;
-          asteroid.emissive = 'black';
         }
       }
     }
@@ -718,7 +715,7 @@ room.registerElement('spacezone-enginetrail', {
       opacity: 0.2,
       vel: V(0, 0, 10), // Set vel to V(0,0,10)
       rand_vel: V(0,0,20), // Set rand_vel to V(0,0,20)
-      col: '#FFA500', // Set particle color to bright orange
+      col: 'limegreen', // Set particle color to lime green
       image_id: 'spark' // Set image_id to 'spark'
     });
 
@@ -806,10 +803,10 @@ room.registerElement('spacezone-cannon', {
 
 room.registerElement('spacezone-laserbeam', {
   create() {
-    // Create a bright orange 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 4, 0.25)
+    // Create a bright lime green 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 4, 0.25)
     this.laserBeam = this.createObject('object', {
       id: 'capsule',
-      col: '#FFA500', // Changed laser beam color to bright orange
+      col: 'limegreen', // Changed laser beam color to lime green
       scale: '0.25 4 0.25', // Updated scale to .25, 4, .25
       rotation: '90 0 0',
       lighting: false
