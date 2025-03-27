@@ -3462,5 +3462,13 @@
     "branch": "main",
     "commit_hash": "d31e88107d194bc086e9a141ec0ff3b9c32ef501",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Limit ship pitch to 11.25 degrees [Manual edit]",
+    "timestamp": "2025-03-27T22:59:38.895153Z",
+    "branch": "main",
+    "commit_hash": "d69acaf831f6e7c8f5a8cd6d63651d846af33f6c",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
