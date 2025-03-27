@@ -114,8 +114,14 @@ room.registerElement('spacezone-player', {
       },
       'fire': {
         defaultbindings: 'keyboard_f,gamepad_button_0',
-        onactivate: () => this.cannon.startFiring(),
-        ondeactivate: () => this.cannon.stopFiring()
+        onactivate: () => {
+          this.cannonLeft.startFiring();
+          this.cannonRight.startFiring();
+        },
+        ondeactivate: () => {
+          this.cannonLeft.stopFiring();
+          this.cannonRight.stopFiring();
+        }
       }
     });
 
@@ -149,9 +155,14 @@ room.registerElement('spacezone-player', {
       player.camera.fov = this.currentFov;
     }
 
-    // Add spacezone-cannon to the taufighter
-    this.cannon = this.taufighter.createObject('spacezone-cannon', {
-      pos: '0 0 0', // Position relative to taufighter
+    // Add spacezone-cannons to the taufighter
+    this.cannonLeft = this.taufighter.createObject('spacezone-cannon', {
+      pos: '-7.5 -1 -4', // Position relative to taufighter
+      rotation: '0 0 0' // Default rotation
+    });
+
+    this.cannonRight = this.taufighter.createObject('spacezone-cannon', {
+      pos: '7.5 -1 -4', // Position relative to taufighter
       rotation: '0 0 0' // Default rotation
     });
   },
