@@ -801,6 +801,7 @@ room.registerElement('spacezone-laserbeam', {
       col: '#FFA500', // Changed laser beam color to bright orange
       scale: '0.25 2 0.25', // Updated scale to .25, 2, .25
       rotation: '90 0 0',
+      lighting: false
     });
 
     // Set a lifetime for the laser beam
