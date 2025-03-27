@@ -224,6 +224,7 @@ room.registerElement('spacezone-player', {
         pos: new THREE.Vector3(0, 0, -5), // Centered on screen
         rotation: '0 180 0', // Set rotation to 0 180 0
         col: 'red', // Changed text color to red
+        emissive: 'red',
         font_scale: false,
         font_size: 4,
         metalness: 1,
@@ -268,7 +269,7 @@ room.registerElement('spacezone-player', {
         } else if (this.countdownStep === 2) {
           this.countdown.text = '1...';
         } else if (this.countdownStep === 3) {
-          this.countdown.text = 'Go!...';
+          this.countdown.text = 'Go!';
         } else if (this.countdownStep === 4) {
           this.isRacing = true;
           this.removeChild(this.countdown);
