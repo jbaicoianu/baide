@@ -600,7 +600,7 @@ room.registerElement('spacezone-asteroidfield', {
           id: selectedShape.high, // Use high-detail mesh as ID
           object: selectedShape.high, // Use high-detail mesh
           collision_id: selectedShape.low, // Use low-detail mesh for collisions
-          collision_scale: V(0.8),
+          collision_scale: V(0.75),
           col: colorHex, // Set a random color with constraints
           normalmap_id: "asteroid-normal", // Added normalmap_id
           normal_scale: 3,
