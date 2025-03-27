@@ -55,7 +55,7 @@ room.registerElement('spacezone-player', {
   totalracetime: 120, // Total race duration in seconds
   rollDamping: 5, // Damping factor for roll
   pitchDamping: 5, // Damping factor for pitch
-  maxspeedmultiplier: 3, // New property for maximum speed multiplier
+  maxspeedmultiplier: 2, // Reverted property for maximum speed multiplier
 
   create() {
     // Initialization code for spacezone-player
@@ -803,6 +803,13 @@ room.registerElement('spacezone-cannon', {
     });
   },
   update(dt) {
+    // Dynamically set muzzlespeed based on currentSpeedMultiplier
+    if (this.parent && this.parent.parent) {
+      this.muzzlespeed = 400 * this.parent.parent.currentSpeedMultiplier;
+    } else {
+      console.warn('Unable to access currentSpeedMultiplier for muzzlespeed calculation.');
+    }
+
     if (this.firing) {
       this.cooldown -= dt;
       if (this.cooldown <= 0) {
