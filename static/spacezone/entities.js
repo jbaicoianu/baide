@@ -64,7 +64,6 @@ room.registerElement('spacezone-player', {
     this.taufighter = this.createObject('object', {
       id: 'taufighter',
       collision_id: 'sphere', // Updated collision_id to 'sphere'
-      collision_scale: V(0.8),
       pos: new THREE.Vector3(0, 0, 0),
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1), // Set zdir to 0, 0, -1
@@ -600,7 +599,7 @@ room.registerElement('spacezone-asteroidfield', {
           id: selectedShape.high, // Use high-detail mesh as ID
           object: selectedShape.high, // Use high-detail mesh
           collision_id: selectedShape.low, // Use low-detail mesh for collisions
-          collision_scale: V(0.8),
+          collision_scale: V(0.9),
           col: colorHex, // Set a random color with constraints
           normalmap_id: "asteroid-normal", // Added normalmap_id
           normal_scale: 3,
