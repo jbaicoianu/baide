@@ -55,7 +55,7 @@ room.registerElement('spacezone-player', {
   totalracetime: 120, // Total race duration in seconds
   rollDamping: 5, // Damping factor for roll
   pitchDamping: 5, // Damping factor for pitch
-  maxspeedmultiplier: 2, // Reverted property for maximum speed multiplier
+  maxspeedmultiplier: 1.5, // Reverted property for maximum speed multiplier
 
   create() {
     // Initialization code for spacezone-player
