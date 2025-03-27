@@ -747,7 +747,7 @@ room.registerElement('spacezone-enginetrail', {
 
 room.registerElement('spacezone-cannon', {
   rate: 4, // Default rate: 4 shots per second
-  muzzlespeed: 20, // Default muzzle speed
+  muzzlespeed: 200, // Default muzzle speed increased to 200
   create() {
     // Initialization code for spacezone-cannon
     this.firing = false;
@@ -787,11 +787,11 @@ room.registerElement('spacezone-cannon', {
 
 room.registerElement('spacezone-laserbeam', {
   create() {
-    // Create a red 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.1, 1, 0.1)
+    // Create a red 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 2, 0.25)
     this.laserBeam = this.createObject('object', {
       id: 'capsule',
       col: 'red',
-      scale: '0.1 1 0.1',
+      scale: '0.25 2 0.25', // Updated scale to .25, 2, .25
       rotation: '90 0 0',
     });
 
