@@ -64,7 +64,7 @@ room.registerElement('spacezone-player', {
     this.taufighter = this.createObject('object', {
       id: 'taufighter',
       collision_id: 'sphere', // Updated collision_id to 'sphere'
-      collision_scale: V(5),
+      collision_scale: V(7),
       pos: new THREE.Vector3(0, 0, 0),
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, -1), // Set zdir to 0, 0, -1
@@ -535,7 +535,7 @@ room.registerElement('spacezone-asteroidfield', {
       highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 1, { split: true, uvSmooth: true });
 
       // Scale our low-res mesh down a bit to account for the size reduction caused by subdivision 
-      asteroidMesh.scale.set(.9, .9, .9);
+      asteroidMesh.scale.set(.8, .8, .8);
 
       // Load the asteroid mesh as a new asset
       this.loadNewAsset('object', {
