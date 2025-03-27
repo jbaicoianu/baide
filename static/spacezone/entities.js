@@ -80,10 +80,10 @@ room.registerElement('spacezone-player', {
     // Instantiate multiple engine trails as children of the player
     this.enginetrails = [];
     const trailPositions = [
-      '1.9 0.4 2.5',
-      '-1.9 0.4 2.5',
-      '1.9 -0.4 2.5',
-      '-1.9 -0.4 2.5'
+      '-1.9 0.4 -2.5',
+      '1.9 0.4 -2.5',
+      '-1.9 -0.4 -2.5',
+      '1.9 -0.4 -2.5'
     ];
     for (const pos of trailPositions) {
       let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos });
@@ -157,13 +157,13 @@ room.registerElement('spacezone-player', {
 
     // Add spacezone-cannons to the taufighter
     this.cannonLeft = this.taufighter.createObject('spacezone-cannon', {
-      pos: '-7.5 -1 -4', // Position relative to taufighter
-      rotation: '0 0 0' // Default rotation
+      pos: '7.5 -1 4', // Flipped position relative to taufighter
+      rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
 
     this.cannonRight = this.taufighter.createObject('spacezone-cannon', {
-      pos: '7.5 -1 -4', // Position relative to taufighter
-      rotation: '0 0 0' // Default rotation
+      pos: '-7.5 -1 4', // Flipped position relative to taufighter
+      rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
   },
   activateAfterburner() {
