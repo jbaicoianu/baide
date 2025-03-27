@@ -747,7 +747,7 @@ room.registerElement('spacezone-enginetrail', {
 
 room.registerElement('spacezone-cannon', {
   rate: 4, // Default rate: 4 shots per second
-  muzzlespeed: 200, // Default muzzle speed increased to 200
+  muzzlespeed: 400, // Default muzzle speed increased to 400
   create() {
     // Initialization code for spacezone-cannon
     this.firing = false;
