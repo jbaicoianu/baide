@@ -835,7 +835,7 @@ room.registerElement('spacezone-cannon', {
       type: 'point', // Using point light; can be changed to spotlight if preferred
       light_intensity: 0, // Initial light_intensity is 0 (off)
       col: 'limegreen', // Same color as laser beam
-      light_range: 400, // Set light range to 400
+      light_range: 500, // Set light range to 500
       decay: 1, // Light decay rate
       pos: V(0, 0, 2) // Moved light forward by 2 meters on the z-axis
     });
