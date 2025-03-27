@@ -3282,5 +3282,13 @@
     "branch": "main",
     "commit_hash": "7ce6b394d102f19856033b088d270faf74aa84e0",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Tweaked collider scales [Manual edit]",
+    "timestamp": "2025-03-27T20:36:42.730802Z",
+    "branch": "main",
+    "commit_hash": "5635a2de36bbe7a94c89d71c656ad995da7ed4d9",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
