@@ -393,8 +393,8 @@ room.registerElement('spacezone-player', {
     if (this.isRacing) {
       // Calculate forward direction based on current orientation
       const forward = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(
-        THREE.MathUtils.degToRad(this.currentPitch),
-        THREE.MathUtils.degToRad(this.currentRoll),
+        -THREE.MathUtils.degToRad(this.currentPitch),
+        -THREE.MathUtils.degToRad(this.currentRoll),
         0,
         'XYZ'
       )).normalize();
@@ -786,8 +786,8 @@ room.registerElement('spacezone-enginetrail', {
       count: 200, // Reduced count to 200
       duration: 0.5, // Decreased duration to 0.5
       opacity: 0.2,
-      vel: V(0, 0, 10), // Set vel to V(0,0,10)
-      rand_vel: V(0,0,20), // Set rand_vel to V(0,0,20)
+      vel: V(0, 0, -10), // Set vel to V(0,0,10)
+      rand_vel: V(0,0,-20), // Set rand_vel to V(0,0,20)
       col: 'limegreen', // Set particle color to lime green
       image_id: 'spark' // Set image_id to 'spark'
     });
