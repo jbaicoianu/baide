@@ -104,13 +104,18 @@ room.registerElement('spacezone-player', {
       auto_play: true
     });
 
-    // Add control context for targeting and afterburner
+    // Add control context for targeting, afterburner, and fire
     this.controlstate = this.addControlContext('spacezone-player', {
       'targeting': { defaultbindings: 'mouse_delta' },
       'afterburner': { 
         defaultbindings: 'keyboard_shift', 
         onactivate: () => this.activateAfterburner(),
         ondeactivate: () => this.deactivateAfterburner()
+      },
+      'fire': {
+        defaultbindings: 'keyboard_f,gamepad_button_0',
+        onactivate: () => this.cannon.startFiring(),
+        ondeactivate: () => this.cannon.stopFiring()
       }
     });
 
@@ -143,6 +148,12 @@ room.registerElement('spacezone-player', {
     if (player && player.camera) {
       player.camera.fov = this.currentFov;
     }
+
+    // Add spacezone-cannon to the taufighter
+    this.cannon = this.taufighter.createObject('spacezone-cannon', {
+      pos: '0 0 0', // Position relative to taufighter
+      rotation: '0 0 0' // Default rotation
+    });
   },
   activateAfterburner() {
     this.afterburner = true;
@@ -730,6 +741,68 @@ room.registerElement('spacezone-enginetrail', {
       }
     } else {
       this.particle.rate = 0;
+    }
+  }
+});
+
+room.registerElement('spacezone-cannon', {
+  rate: 4, // Default rate: 4 shots per second
+  muzzlespeed: 20, // Default muzzle speed
+  create() {
+    // Initialization code for spacezone-cannon
+    this.firing = false;
+    this.cooldown = 0;
+  },
+  startFiring() {
+    this.firing = true;
+  },
+  stopFiring() {
+    this.firing = false;
+  },
+  fire() {
+    // Spawn a spacezone-laserbeam in the direction the cannon is facing
+    const direction = new THREE.Vector3(0, 0, -1).applyQuaternion(this.rotation).normalize();
+    const spawnPosition = this.pos.clone().add(direction.multiplyScalar(1)); // Adjust spawn distance as needed
+
+    this.room.createObject('spacezone-laserbeam', {
+      pos: spawnPosition,
+      direction: direction.clone().multiplyScalar(this.muzzlespeed)
+    });
+  },
+  update(dt) {
+    if (this.firing) {
+      this.cooldown -= dt;
+      if (this.cooldown <= 0) {
+        this.fire();
+        this.cooldown = 1 / this.rate;
+      }
+    }
+  }
+});
+
+room.registerElement('spacezone-laserbeam', {
+  create() {
+    // Create a red 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.1, 1, 0.1)
+    this.laserBeam = this.createObject('object', {
+      id: 'capsule',
+      col: 'red',
+      scale: '0.1 1 0.1',
+      rotation: '90 0 0',
+      // Additional properties like velocity can be set here if needed
+      vel: this.direction || V(0, 0, 0)
+    });
+
+    // Set a lifetime for the laser beam
+    this.lifetime = 2; // seconds
+  },
+  update(dt) {
+    // Move the laser beam
+    this.pos.add(this.vel.clone().multiplyScalar(dt));
+
+    // Decrease lifetime and remove the laser beam when it expires
+    this.lifetime -= dt;
+    if (this.lifetime <= 0) {
+      this.die();
     }
   }
 });
