@@ -752,6 +752,12 @@ room.registerElement('spacezone-cannon', {
     // Initialization code for spacezone-cannon
     this.firing = false;
     this.cooldown = 0;
+
+    // Initialize the object pool for laser beams
+    this.pool = this.createObjectPool({
+      objecttype: 'spacezone-laserbeam',
+      max: 20
+    });
   },
   startFiring() {
     this.firing = true;
@@ -767,8 +773,8 @@ room.registerElement('spacezone-cannon', {
     const forwardPosition = this.localToWorld(V(0, 0, 1));
     const direction = new THREE.Vector3().subVectors(spawnPosition, forwardPosition).normalize();
 
-    // Spawn a spacezone-laserbeam in the calculated direction
-    this.room.createObject('spacezone-laserbeam', {
+    // Spawn a spacezone-laserbeam using the object pool
+    this.pool.grab({
       pos: spawnPosition,
       zdir: direction,
       vel: direction.clone().multiplyScalar(this.muzzlespeed)
@@ -799,10 +805,10 @@ room.registerElement('spacezone-laserbeam', {
     this.lifetime = 2; // seconds
   },
   update(dt) {
-    // Decrease lifetime and remove the laser beam when it expires
+    // Decrease lifetime; object pool handles recycling
     this.lifetime -= dt;
     if (this.lifetime <= 0) {
-      this.die();
+      // this.die(); // Removed this as pool handles recycling
     }
   }
 });
