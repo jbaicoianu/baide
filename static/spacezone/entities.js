@@ -760,10 +760,14 @@ room.registerElement('spacezone-cannon', {
     this.firing = false;
   },
   fire() {
-    // Spawn a spacezone-laserbeam in the direction the cannon is facing
-    const direction = new THREE.Vector3(0, 0, -1).applyQuaternion(this.rotation).normalize();
-    const spawnPosition = this.pos.clone().add(direction.multiplyScalar(1)); // Adjust spawn distance as needed
+    // Get spawnPosition using ship's world coordinates
+    const spawnPosition = this.localToWorld(V(0));
 
+    // Get forward position and compute direction
+    const forwardPosition = this.localToWorld(V(0, 0, -1));
+    const direction = new THREE.Vector3().subVectors(forwardPosition, spawnPosition).normalize();
+
+    // Spawn a spacezone-laserbeam in the calculated direction
     this.room.createObject('spacezone-laserbeam', {
       pos: spawnPosition,
       direction: direction.clone().multiplyScalar(this.muzzlespeed)
