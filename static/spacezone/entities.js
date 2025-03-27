@@ -270,11 +270,11 @@ room.registerElement('spacezone-player', {
           this.countdown.text = '1...';
         } else if (this.countdownStep === 3) {
           this.countdown.text = 'Go!';
-        } else if (this.countdownStep === 4) {
           this.isRacing = true;
+          console.log('Race started!');
+        } else if (this.countdownStep === 4) {
           this.removeChild(this.countdown);
           this.countdown = null;
-          console.log('Race started!');
           
           // Removed setting taufighter.pickable to true when race starts
         }
