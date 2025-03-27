@@ -71,6 +71,7 @@ room.registerElement('spacezone-player', {
       metalness: 0.2,
       roughness: 0.4,
       mass: 1000,
+      normalmap_id: "asteroid-normal" // Added normalmap_id
     });
     this.taufighter.addForce('drag', 0);
     
@@ -568,6 +569,7 @@ room.registerElement('spacezone-asteroidfield', {
           id: 'asteroid-' + i,
           //collision_id: 'asteroid-' + i, // Initialize collision_id to null
           col: grayHex,
+          normalmap_id: "asteroid-normal", // Added normalmap_id
           rotate_deg_per_sec: 0, // Disabled rotation by setting to 0
           rotate_axis: rotateAxis,
           pickable: false,
