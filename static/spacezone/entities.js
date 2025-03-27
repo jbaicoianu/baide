@@ -585,13 +585,17 @@ room.registerElement('spacezone-asteroidfield', {
         const shapeIndex = Math.floor(Math.random() * this.uniqueshapes);
         const selectedShape = this.uniqueAsteroidAssets[shapeIndex];
 
-        // Generate a random color ensuring minimum brightness and introducing shades of brown
+        // Generate a random color ensuring minimum brightness and introducing shades of brown using HSL
         let colorHex;
         if (Math.random() < 0.3) { // 30% chance for brown shades
-          const r = Math.floor(Math.random() * 56 + 100); // 100-155
-          const g = Math.floor(Math.random() * 40 + 50);  // 50-90
-          const b = Math.floor(Math.random() * 30 + 20);  // 20-50
-          colorHex = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+          // Define hue range for brown (20-40 degrees)
+          const hue = 20 + Math.random() * 20; // 20-40 degrees
+          const saturation = 0.5 + Math.random() * 0.3; // 0.5-0.8
+          const lightness = 0.3 + Math.random() * 0.2; // 0.3-0.5
+
+          const color = new THREE.Color();
+          color.setHSL(hue / 360, saturation, lightness);
+          colorHex = `#${color.getHexString()}`;
         } else {
           const greyValue = Math.floor(Math.random() * 206 + 50); // 50-255
           colorHex = `#${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}`;
