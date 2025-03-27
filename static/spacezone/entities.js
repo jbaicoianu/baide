@@ -770,7 +770,8 @@ room.registerElement('spacezone-cannon', {
     // Spawn a spacezone-laserbeam in the calculated direction
     this.room.createObject('spacezone-laserbeam', {
       pos: spawnPosition,
-      direction: direction.clone().multiplyScalar(-this.muzzlespeed)
+      zdir: direction,
+      vel: direction.clone().multiplyScalar(this.muzzlespeed)
     });
   },
   update(dt) {
@@ -792,17 +793,12 @@ room.registerElement('spacezone-laserbeam', {
       col: 'red',
       scale: '0.1 1 0.1',
       rotation: '90 0 0',
-      // Additional properties like velocity can be set here if needed
-      vel: this.direction || V(0, 0, 0)
     });
 
     // Set a lifetime for the laser beam
     this.lifetime = 2; // seconds
   },
   update(dt) {
-    // Move the laser beam
-    this.pos.add(this.vel.clone().multiplyScalar(dt));
-
     // Decrease lifetime and remove the laser beam when it expires
     this.lifetime -= dt;
     if (this.lifetime <= 0) {
