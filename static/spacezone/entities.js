@@ -69,8 +69,6 @@ room.registerElement('spacezone-player', {
       pos: new THREE.Vector3(0, 0, 0),
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, 1),
-      metalness: 0.2,
-      roughness: 0.4,
       mass: 1000,
     });
     this.taufighter.addForce('drag', 0);
