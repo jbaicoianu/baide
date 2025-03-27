@@ -586,11 +586,15 @@ room.registerElement('spacezone-asteroidfield', {
         const selectedShape = this.uniqueAsteroidAssets[shapeIndex];
 
         // Create asteroid object with the selected unique shape
+        // Generate a random shade of grey
+        const greyValue = Math.floor(Math.random() * 256);
+        const greyHex = `#${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}${greyValue.toString(16).padStart(2, '0')}`;
+
         const asteroid = this.createObject('object', {
           id: selectedShape.high, // Use high-detail mesh as ID
           object: selectedShape.high, // Use high-detail mesh
           collision_id: selectedShape.low, // Use low-detail mesh for collisions
-          col: 'gray', // Set a fixed color
+          col: greyHex, // Set a random shade of grey
           normalmap_id: "asteroid-normal", // Added normalmap_id
           normal_scale: 3,
           texture_repeat: V(3),
