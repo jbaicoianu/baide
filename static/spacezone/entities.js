@@ -315,7 +315,7 @@ room.registerElement('spacezone-player', {
 
     // Handle targeting reticle movement based on mouse delta
     const targetingDelta = this.controlstate.targeting;
-    if (targetingDelta && Array.isArray(targetingDelta) && targetDelta.length >= 2) {
+    if (targetingDelta && Array.isArray(targetingDelta) && targetingDelta.length >= 2) {
       // Restore original x and y directions with negated values
       this.reticle.pos.x += -targetingDelta[0];
       this.reticle.pos.y += -targetingDelta[1];
