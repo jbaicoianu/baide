@@ -385,7 +385,7 @@ room.registerElement('spacezone-player', {
     // Update the taufighter's orientation
     this.taufighter.rotation.set(
       this.currentPitch,
-      180,
+      0,
       -this.currentRoll
     );
 
