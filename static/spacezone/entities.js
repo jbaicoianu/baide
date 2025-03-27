@@ -659,7 +659,8 @@ room.registerElement('spacezone-asteroidfield', {
           Math.random() * 2 - 1,
           Math.random() * 2 - 1
         ).normalize();
-        asteroid.rotate_deg_per_sec = Math.random() * 40 - 20; // Random value between -20 and 20
+        // FIXME - this causes bad performance with collision detection, we need collision layers so we're not checking asteroids colliding against each other
+        asteroid.rotate_deg_per_sec = 0; Math.random() * 40 - 20; // Random value between -20 and 20
 
         if (pathPositionOffset > 0 && asteroid.opacity !== undefined) {
           asteroid.opacity = 0;
