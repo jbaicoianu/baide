@@ -530,15 +530,18 @@ room.registerElement('spacezone-asteroidfield', {
         Math.random() * 2 - 1
       ).normalize();
 
+      // Clone the asteroid mesh for high-detail version
+      const highDetailMesh = asteroidMesh.clone();
+      highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 1, { split: true, uvSmooth: true });
+
+      // Scale our low-res mesh down a bit to account for the size reduction caused by subdivision 
+      asteroidMesh.scale.set(.5, .5, .5);
+
       // Load the asteroid mesh as a new asset
       this.loadNewAsset('object', {
         id: `asteroid-shape-${shapeIndex}`,
         object: asteroidMesh
       });
-
-      // Clone the asteroid mesh for high-detail version
-      const highDetailMesh = asteroidMesh.clone();
-      highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 1, { split: true, uvSmooth: true });
 
       // Load the high-detail asteroid mesh as a new asset
       this.loadNewAsset('object', {
