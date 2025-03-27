@@ -770,7 +770,7 @@ room.registerElement('spacezone-cannon', {
     // Spawn a spacezone-laserbeam in the calculated direction
     this.room.createObject('spacezone-laserbeam', {
       pos: spawnPosition,
-      direction: direction.clone().multiplyScalar(this.muzzlespeed)
+      direction: direction.clone().multiplyScalar(-this.muzzlespeed)
     });
   },
   update(dt) {
