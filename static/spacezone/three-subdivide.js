@@ -191,7 +191,7 @@ class LoopSubdivision {
         attributeList.forEach((attributeName) => {
             const attribute = existing.getAttribute(attributeName);
             if (! attribute) return;
-            const floatArray = LoopSubdivision.splitAttribute(attribute, attributeName);
+            const floatArray = LoopSubdivision.splitAttribute(attribute, attributeName, edgeHashToTriangle, triangleExist, triangleEdgeHashes, edgeLength);
             split.setAttribute(attributeName, new THREE.BufferAttribute(floatArray, attribute.itemSize));
         });
 
@@ -204,7 +204,7 @@ class LoopSubdivision {
             // Process Array of Float32BufferAttributes
             for (let i = 0, l = morphAttribute.length; i < l; i++) {
                 if (morphAttribute[i].count !== vertexCount) continue;
-                const floatArray = LoopSubdivision.splitAttribute(morphAttribute[i], attributeName, true);
+                const floatArray = LoopSubdivision.splitAttribute(morphAttribute[i], attributeName, edgeHashToTriangle, triangleExist, triangleEdgeHashes, edgeLength, true);
                 array.push(new THREE.BufferAttribute(floatArray, morphAttribute[i].itemSize));
             }
             split.morphAttributes[attributeName] = array;
@@ -214,145 +214,146 @@ class LoopSubdivision {
         // Clean Up, Return New Geometry
         existing.dispose();
         return split;
+    }
 
-        // Loop Subdivide Function
-        static splitAttribute(attribute, attributeName, morph = false) {
-            const newTriangles = 4; /* maximum number of new triangles */
-            const arrayLength = (vertexCount * attribute.itemSize) * newTriangles;
-            const floatArray = new attribute.array.constructor(arrayLength);
+    // Loop Subdivide Function
+    static splitAttribute(attribute, attributeName, edgeHashToTriangle, triangleExist, triangleEdgeHashes, edgeLength, morph = false) {
+        const newTriangles = 4; /* maximum number of new triangles */
+        const vertexCount = attribute.count;
+        const arrayLength = (vertexCount * attribute.itemSize) * newTriangles;
+        const floatArray = new attribute.array.constructor(arrayLength);
 
-            const processGroups = (attributeName === 'position' && ! morph && existing.groups.length > 0);
-            let groupStart = undefined, groupMaterial = undefined;
+        const processGroups = (attributeName === 'position' && ! morph && existing.groups.length > 0);
+        let groupStart = undefined, groupMaterial = undefined;
 
-            let index = 0;
-            let skipped = 0;
-            let step = attribute.itemSize;
-            for (let i = 0; i < vertexCount; i += 3) {
+        let index = 0;
+        let skipped = 0;
+        let step = attribute.itemSize;
+        for (let i = 0; i < vertexCount; i += 3) {
 
-                // Verify Triangle is Valid
-                if (! triangleExist[i / 3]) {
-                    skipped += 3;
-                    continue;
-                }
+            // Verify Triangle is Valid
+            if (! triangleExist[i / 3]) {
+                skipped += 3;
+                continue;
+            }
 
-                // Get Triangle Points
-                LoopSubdivision._vector0.fromBufferAttribute(attribute, i + 0);
-                LoopSubdivision._vector1.fromBufferAttribute(attribute, i + 1);
-                LoopSubdivision._vector2.fromBufferAttribute(attribute, i + 2);
+            // Get Triangle Points
+            LoopSubdivision._vector0.fromBufferAttribute(attribute, i + 0);
+            LoopSubdivision._vector1.fromBufferAttribute(attribute, i + 1);
+            LoopSubdivision._vector2.fromBufferAttribute(attribute, i + 2);
 
-                // Check for Shared Edges
-                const existingIndex = i / 3;
-                const edgeHash0to1 = triangleEdgeHashes[existingIndex][0];
-                const edgeHash1to2 = triangleEdgeHashes[existingIndex][1];
-                const edgeHash2to0 = triangleEdgeHashes[existingIndex][2];
+            // Check for Shared Edges
+            const existingIndex = i / 3;
+            const edgeHash0to1 = triangleEdgeHashes[existingIndex][0];
+            const edgeHash1to2 = triangleEdgeHashes[existingIndex][1];
+            const edgeHash2to0 = triangleEdgeHashes[existingIndex][2];
 
-                const edgeCount0to1 = edgeHashToTriangle[edgeHash0to1].length;
-                const edgeCount1to2 = edgeHashToTriangle[edgeHash1to2].length;
-                const edgeCount2to0 = edgeHashToTriangle[edgeHash2to0].length;
-                const sharedCount = (edgeCount0to1 + edgeCount1to2 + edgeCount2to0) - 3;
+            const edgeCount0to1 = edgeHashToTriangle[edgeHash0to1].length;
+            const edgeCount1to2 = edgeHashToTriangle[edgeHash1to2].length;
+            const edgeCount2to0 = edgeHashToTriangle[edgeHash2to0].length;
+            const sharedCount = (edgeCount0to1 + edgeCount1to2 + edgeCount2to0) - 3;
 
-                // New Index (Before New Triangles, used for Groups)
-                const loopStartIndex = ((index * 3) / step) / 3;
+            // New Index (Before New Triangles, used for Groups)
+            const loopStartIndex = ((index * 3) / step) / 3;
 
-                // No Shared Edges
-                if (sharedCount === 0) {
-                    LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._vector1, LoopSubdivision._vector2); index += (step * 3);
+            // No Shared Edges
+            if (sharedCount === 0) {
+                LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._vector1, LoopSubdivision._vector2); index += (step * 3);
 
-                // Shared Edges
-                } else {
-                    const length0to1 = edgeLength[edgeHash0to1];
-                    const length1to2 = edgeLength[edgeHash1to2];
-                    const length2to0 = edgeLength[edgeHash2to0];
+            // Shared Edges
+            } else {
+                const length0to1 = edgeLength[edgeHash0to1];
+                const length1to2 = edgeLength[edgeHash1to2];
+                const length2to0 = edgeLength[edgeHash2to0];
 
-                    // Add New Triangle Positions
-                    if ((length0to1 > length1to2 || edgeCount1to2 <= 1) &&
-                        (length0to1 > length2to0 || edgeCount2to0 <= 1) && edgeCount0to1 > 1) {
-                        LoopSubdivision._center.copy(LoopSubdivision._vector0).add(LoopSubdivision._vector1).divideScalar(2.0);
-                        if (edgeCount2to0 > 1) {
-                            LoopSubdivision._midpoint.copy(LoopSubdivision._vector2).add(LoopSubdivision._vector0).divideScalar(2.0);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._center, LoopSubdivision._midpoint); index += (step * 3);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector2, LoopSubdivision._midpoint); index += (step * 3);
-                        } else {
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._center, LoopSubdivision._vector2); index += (step * 3);
-                        }
-                        if (edgeCount1to2 > 1) {
-                            LoopSubdivision._midpoint.copy(LoopSubdivision._vector1).add(LoopSubdivision._vector2).divideScalar(2.0);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector1, LoopSubdivision._midpoint); index += (step * 3);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._vector2, LoopSubdivision._center); index += (step * 3);
-                        } else {
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector1, LoopSubdivision._vector2, LoopSubdivision._center); index += (step * 3);
-                        }
-
-                    } else if ((length1to2 > length2to0 || edgeCount2to0 <= 1) && edgeCount1to2 > 1) {
-                        LoopSubdivision._center.copy(LoopSubdivision._vector1).add(LoopSubdivision._vector2).divideScalar(2.0);
-                        if (edgeCount0to1 > 1) {
-                            LoopSubdivision._midpoint.copy(LoopSubdivision._vector0).add(LoopSubdivision._vector1).divideScalar(2.0);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._midpoint, LoopSubdivision._vector1); index += (step * 3);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._center, LoopSubdivision._vector0); index += (step * 3);
-                        } else {
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector1, LoopSubdivision._center, LoopSubdivision._vector0); index += (step * 3);
-                        }
-                        if (edgeCount2to0 > 1) {
-                            LoopSubdivision._midpoint.copy(LoopSubdivision._vector2).add(LoopSubdivision._vector0).divideScalar(2.0);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector2, LoopSubdivision._midpoint); index += (step * 3);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._vector0, LoopSubdivision._center); index += (step * 3);
-                        } else {
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector2, LoopSubdivision._vector0, LoopSubdivision._center); index += (step * 3);
-                        }
-
-                    } else if (edgeCount2to0 > 1) {
-                        LoopSubdivision._center.copy(LoopSubdivision._vector2).add(LoopSubdivision._vector0).divideScalar(2.0);
-                        if (edgeCount1to2 > 1) {
-                            LoopSubdivision._midpoint.copy(LoopSubdivision._vector1).add(LoopSubdivision._vector2).divideScalar(2.0);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector2, LoopSubdivision._center, LoopSubdivision._midpoint); index += (step * 3);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector1, LoopSubdivision._midpoint); index += (step * 3);
-                        } else {
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector2, LoopSubdivision._center, LoopSubdivision._vector1); index += (step * 3);
-                        }
-                        if (edgeCount0to1 > 1) {
-                            LoopSubdivision._midpoint.copy(LoopSubdivision._vector0).add(LoopSubdivision._vector1).divideScalar(2.0);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._midpoint, LoopSubdivision._center); index += (step * 3);
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._vector1, LoopSubdivision._center); index += (step * 3);
-                        } else {
-                            LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._vector1, LoopSubdivision._center); index += (step * 3);
-                        }
-
+                // Add New Triangle Positions
+                if ((length0to1 > length1to2 || edgeCount1to2 <= 1) &&
+                    (length0to1 > length2to0 || edgeCount2to0 <= 1) && edgeCount0to1 > 1) {
+                    LoopSubdivision._center.copy(LoopSubdivision._vector0).add(LoopSubdivision._vector1).divideScalar(2.0);
+                    if (edgeCount2to0 > 1) {
+                        LoopSubdivision._midpoint.copy(LoopSubdivision._vector2).add(LoopSubdivision._vector0).divideScalar(2.0);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._center, LoopSubdivision._midpoint); index += (step * 3);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector2, LoopSubdivision._midpoint); index += (step * 3);
                     } else {
-                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._vector1, LoopSubdivision._vector2); index += (step * 3);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._center, LoopSubdivision._vector2); index += (step * 3);
                     }
-                }
+                    if (edgeCount1to2 > 1) {
+                        LoopSubdivision._midpoint.copy(LoopSubdivision._vector1).add(LoopSubdivision._vector2).divideScalar(2.0);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector1, LoopSubdivision._midpoint); index += (step * 3);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._vector2, LoopSubdivision._center); index += (step * 3);
+                    } else {
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector1, LoopSubdivision._vector2, LoopSubdivision._center); index += (step * 3);
+                    }
 
-                // Process Groups
-                if (processGroups) {
-                    existing.groups.forEach((group) => {
-                        if (group.start === (i - skipped)) {
-                            if (groupStart !== undefined && groupMaterial !== undefined) {
-                                split.addGroup(groupStart, loopStartIndex - groupStart, groupMaterial);
-                            }
-                            groupStart = loopStartIndex;
-                            groupMaterial = group.materialIndex;
+                } else if ((length1to2 > length2to0 || edgeCount2to0 <= 1) && edgeCount1to2 > 1) {
+                    LoopSubdivision._center.copy(LoopSubdivision._vector1).add(LoopSubdivision._vector2).divideScalar(2.0);
+                    if (edgeCount0to1 > 1) {
+                        LoopSubdivision._midpoint.copy(LoopSubdivision._vector0).add(LoopSubdivision._vector1).divideScalar(2.0);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._midpoint, LoopSubdivision._vector1); index += (step * 3);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._center, LoopSubdivision._vector0); index += (step * 3);
+                    } else {
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector1, LoopSubdivision._center, LoopSubdivision._vector0); index += (step * 3);
+                    }
+                    if (edgeCount2to0 > 1) {
+                        LoopSubdivision._midpoint.copy(LoopSubdivision._vector2).add(LoopSubdivision._vector0).divideScalar(2.0);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector2, LoopSubdivision._midpoint); index += (step * 3);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._vector0, LoopSubdivision._center); index += (step * 3);
+                    } else {
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector2, LoopSubdivision._vector0, LoopSubdivision._center); index += (step * 3);
+                    }
+
+                } else if (edgeCount2to0 > 1) {
+                    LoopSubdivision._center.copy(LoopSubdivision._vector2).add(LoopSubdivision._vector0).divideScalar(2.0);
+                    if (edgeCount1to2 > 1) {
+                        LoopSubdivision._midpoint.copy(LoopSubdivision._vector1).add(LoopSubdivision._vector2).divideScalar(2.0);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector2, LoopSubdivision._center, LoopSubdivision._midpoint); index += (step * 3);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._center, LoopSubdivision._vector1, LoopSubdivision._midpoint); index += (step * 3);
+                    } else {
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector2, LoopSubdivision._center, LoopSubdivision._vector1); index += (step * 3);
+                    }
+                    if (edgeCount0to1 > 1) {
+                        LoopSubdivision._midpoint.copy(LoopSubdivision._vector0).add(LoopSubdivision._vector1).divideScalar(2.0);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._midpoint, LoopSubdivision._center); index += (step * 3);
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._midpoint, LoopSubdivision._vector1, LoopSubdivision._center); index += (step * 3);
+                    } else {
+                        LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._vector1, LoopSubdivision._center); index += (step * 3);
+                    }
+
+                } else {
+                    LoopSubdivision.setTriangle(floatArray, index, step, LoopSubdivision._vector0, LoopSubdivision._vector1, LoopSubdivision._vector2); index += (step * 3);
+                }
+            }
+
+            // Process Groups
+            if (processGroups) {
+                existing.groups.forEach((group) => {
+                    if (group.start === (i - skipped)) {
+                        if (groupStart !== undefined && groupMaterial !== undefined) {
+                            split.addGroup(groupStart, loopStartIndex - groupStart, groupMaterial);
                         }
-                    });
-                }
-
-                // Reset Skipped Triangle Counter
-                skipped = 0;
+                        groupStart = loopStartIndex;
+                        groupMaterial = group.materialIndex;
+                    }
+                });
             }
 
-            // Resize Array
-            const reducedCount = (index * 3) / step;
-            const reducedArray = new attribute.array.constructor(reducedCount);
-            for (let i = 0; i < reducedCount; i++) {
-                reducedArray[i] = floatArray[i];
-            }
-
-            // Final Group
-            if (processGroups && groupStart !== undefined && groupMaterial !== undefined) {
-                split.addGroup(groupStart, (((index * 3) / step) / 3) - groupStart, groupMaterial);
-            }
-
-            return reducedArray;
+            // Reset Skipped Triangle Counter
+            skipped = 0;
         }
+
+        // Resize Array
+        const reducedCount = (index * 3) / step;
+        const reducedArray = new attribute.array.constructor(reducedCount);
+        for (let i = 0; i < reducedCount; i++) {
+            reducedArray[i] = floatArray[i];
+        }
+
+        // Final Group
+        if (processGroups && groupStart !== undefined && groupMaterial !== undefined) {
+            split.addGroup(groupStart, (((index * 3) / step) / 3) - groupStart, groupMaterial);
+        }
+
+        return reducedArray;
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -386,7 +387,7 @@ class LoopSubdivision {
             const morphAttribute = morphAttributes[attributeName];
 
             // Process Array of Float32BufferAttributes
-			for (let i = 0, l = morphAttribute.length; i < l; i++) {
+            for (let i = 0, l = morphAttribute.length; i < l; i++) {
                 if (morphAttribute[i].count !== vertexCount) continue;
                 array.push(LoopSubdivision.flatAttribute(morphAttribute[i], vertexCount, params));
             }
@@ -457,22 +458,6 @@ class LoopSubdivision {
         const flatOpposites = {};           // Position hash mapped to new edge point opposites
         const existingEdges = {};
 
-        static addNeighbor(posHash, neighborHash, index) {
-            if (! existingNeighbors[posHash]) existingNeighbors[posHash] = {};
-            if (! existingNeighbors[posHash][neighborHash]) existingNeighbors[posHash][neighborHash] = [];
-            existingNeighbors[posHash][neighborHash].push(index);
-        }
-
-        static addOpposite(posHash, index) {
-            if (! flatOpposites[posHash]) flatOpposites[posHash] = [];
-            flatOpposites[posHash].push(index);
-        }
-
-        static addEdgePoint(posHash, edgeHash) {
-            if (! existingEdges[posHash]) existingEdges[posHash] = new Set();
-            existingEdges[posHash].add(edgeHash);
-        }
-
         ///// Existing Vertex Hashes
         for (let i = 0; i < vertexCount; i += 3) {
             const posHash0 = LoopSubdivision.hashFromVector(LoopSubdivision._vertex[0].fromBufferAttribute(posAttribute, i + 0));
@@ -520,7 +505,7 @@ class LoopSubdivision {
             const flattenedAttribute = flat.getAttribute(attributeName);
             if (existingAttribute === undefined || flattenedAttribute === undefined) return;
 
-            const floatArray = LoopSubdivision.subdivideAttribute(attributeName, existingAttribute, flattenedAttribute);
+            const floatArray = LoopSubdivision.subdivideAttribute(attributeName, existingAttribute, flattenedAttribute, hashToIndex, existingNeighbors, flatOpposites, existingEdges, params);
             loop.setAttribute(attributeName, new THREE.BufferAttribute(floatArray, flattenedAttribute.itemSize));
         });
 
@@ -536,7 +521,7 @@ class LoopSubdivision {
                 const existingAttribute = morphAttribute[i];
                 const flattenedAttribute = LoopSubdivision.flatAttribute(morphAttribute[i], morphAttribute[i].count, params);
 
-                const floatArray = LoopSubdivision.subdivideAttribute(attributeName, existingAttribute, flattenedAttribute);
+                const floatArray = LoopSubdivision.subdivideAttribute(attributeName, existingAttribute, flattenedAttribute, hashToIndex, existingNeighbors, flatOpposites, existingEdges, params);
                 array.push(new THREE.BufferAttribute(floatArray, flattenedAttribute.itemSize));
             }
             loop.morphAttributes[attributeName] = array;
@@ -550,13 +535,13 @@ class LoopSubdivision {
     }
 
     // Loop Subdivide Function
-    static subdivideAttribute(attributeName, existingAttribute, flattenedAttribute) {
-        const arrayLength = (flat.attributes.position.count * flattenedAttribute.itemSize);
+    static subdivideAttribute(attributeName, existingAttribute, flattenedAttribute, hashToIndex, existingNeighbors, flatOpposites, existingEdges, params) {
+        const arrayLength = (flattenedAttribute.count * flattenedAttribute.itemSize);
         const floatArray = new existingAttribute.array.constructor(arrayLength);
 
         // Process Triangles
         let index = 0;
-        for (let i = 0; i < flat.attributes.position.count; i += 3) {
+        for (let i = 0; i < flattenedAttribute.count; i += 3) {
 
             // Process Triangle Points
             for (let v = 0; v < 3; v++) {
@@ -567,11 +552,11 @@ class LoopSubdivision {
 
                 } else if (attributeName === 'normal') { // && params.normalSmooth) {
 
-                    LoopSubdivision._position[v].fromBufferAttribute(flatPosition, i + v);
+                    LoopSubdivision._position[v].fromBufferAttribute(flattenedAttribute, i + v);
                     const positionHash = LoopSubdivision.hashFromVector(LoopSubdivision._position[v]);
                     const positions = hashToIndex[positionHash];
 
-                    const k = Object.keys(positions).length;
+                    const k = positions.length;
                     const beta = 0.75 / k;
                     const startWeight = 1.0 - (beta * k);
 
@@ -623,7 +608,7 @@ class LoopSubdivision {
                         const heavy = (1 / k) / k;
 
                         ///// Interpolate Beta -> Heavy
-                        const weight = lerp(heavy, beta, params.weight);
+                        const weight = LoopSubdivision.lerp(heavy, beta, params.weight);
 
                         ///// Average with Neighbors
                         const startWeight = 1.0 - (weight * k);
@@ -757,6 +742,26 @@ class LoopSubdivision {
             geometry.computeVertexNormals();
         }
         return true;
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////
+    /////   Helper Methods
+    /////////////////////////////////////////////////////////////////////////////////////
+
+    static addNeighbor(posHash, neighborHash, index) {
+        if (! existingNeighbors[posHash]) existingNeighbors[posHash] = {};
+        if (! existingNeighbors[posHash][neighborHash]) existingNeighbors[posHash][neighborHash] = [];
+        existingNeighbors[posHash][neighborHash].push(index);
+    }
+
+    static addOpposite(posHash, index) {
+        if (! flatOpposites[posHash]) flatOpposites[posHash] = [];
+        flatOpposites[posHash].push(index);
+    }
+
+    static addEdgePoint(posHash, edgeHash) {
+        if (! existingEdges[posHash]) existingEdges[posHash] = new Set();
+        existingEdges[posHash].add(edgeHash);
     }
 }
 
