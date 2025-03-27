@@ -392,7 +392,7 @@ room.registerElement('spacezone-player', {
       // Calculate forward direction based on current orientation
       const forward = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(
         -THREE.MathUtils.degToRad(this.currentPitch),
-        THREE.MathUtils.degToRad(this.currentRoll),
+        -THREE.MathUtils.degToRad(this.currentRoll),
         0,
         'XYZ'
       )).normalize();
