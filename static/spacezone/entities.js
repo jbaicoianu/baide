@@ -652,6 +652,10 @@ room.registerElement('spacezone-asteroidfield', {
 
         // Update asteroid position and set opacity to 0 if pathPositionOffset > 0
         asteroid.pos = newPos;
+
+        // Assign a random rotation in degrees on all axes
+        asteroid.rotation = `${Math.random() * 360} ${Math.random() * 360} ${Math.random() * 360}`;
+
         if (pathPositionOffset > 0 && asteroid.opacity !== undefined) {
           asteroid.opacity = 0;
         }
