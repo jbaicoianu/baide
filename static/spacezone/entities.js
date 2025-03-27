@@ -535,7 +535,7 @@ room.registerElement('spacezone-asteroidfield', {
       highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 1, { split: true, uvSmooth: true });
 
       // Scale our low-res mesh down a bit to account for the size reduction caused by subdivision 
-      asteroidMesh.scale.set(.5, .5, .5);
+      asteroidMesh.scale.set(.9, .9, .9);
 
       // Load the asteroid mesh as a new asset
       this.loadNewAsset('object', {
