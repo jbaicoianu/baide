@@ -3008,5 +3008,13 @@
     "branch": "main",
     "commit_hash": "4cc502141c37255720804bd5dfdba0b1fef77989",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Tweaked base asteroid vertex offsets [Manual edit]",
+    "timestamp": "2025-03-27T19:14:05.010652Z",
+    "branch": "main",
+    "commit_hash": "20c25016e966cea6006a7a7c84cdef1f5ec00252",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
