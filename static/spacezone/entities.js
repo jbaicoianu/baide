@@ -224,6 +224,7 @@ room.registerElement('spacezone-player', {
         pos: new THREE.Vector3(0, 0, -5), // Centered on screen
         rotation: '0 180 0', // Set rotation to 0 180 0
         col: 'white',
+        emissive: 0x111111,
         font_scale: false,
         font_size: 4,
         metalness: 1,
