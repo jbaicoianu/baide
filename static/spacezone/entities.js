@@ -830,12 +830,33 @@ room.registerElement('spacezone-cannon', {
     this.firing = false;
     this.cooldown = 0;
 
+    // Add dynamic light matching the laser beam color
+    this.flashLight = this.createObject('light', {
+      type: 'point', // Using point light; can be changed to spotlight if preferred
+      intensity: 0, // Initial intensity is 0 (off)
+      col: 'limegreen', // Same color as laser beam
+      distance: 20, // Adjust as needed for visibility
+      decay: 1, // Light decay rate
+      pos: V(0, 0, 0) // Position relative to the cannon
+    });
+
+    // Flash light parameters
+    this.flashIntensity = 5; // Intensity when flashing
+    this.flashFadeRate = 20; // Rate at which the light fades per second
   },
   startFiring() {
     this.firing = true;
   },
   stopFiring() {
     this.firing = false;
+  },
+  flashLightIntensity(dt) {
+    if (this.flashLight.intensity > 0) {
+      this.flashLight.intensity -= this.flashFadeRate * dt;
+      if (this.flashLight.intensity < 0) {
+        this.flashLight.intensity = 0;
+      }
+    }
   },
   fire() {
     if (!this.pool) {
@@ -858,6 +879,9 @@ room.registerElement('spacezone-cannon', {
       zdir: direction,
       vel: direction.clone().multiplyScalar(this.muzzlespeed)
     });
+
+    // Trigger the flash light
+    this.flashLight.intensity = this.flashIntensity;
   },
   update(dt) {
     // Dynamically set muzzlespeed based on currentSpeedMultiplier
@@ -874,6 +898,9 @@ room.registerElement('spacezone-cannon', {
         this.cooldown = 1 / this.rate;
       }
     }
+
+    // Handle light fading
+    this.flashLightIntensity(dt);
   }
 });
 
