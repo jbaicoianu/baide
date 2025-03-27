@@ -2670,5 +2670,22 @@
     "branch": "main",
     "commit_hash": "edf2340f32785b702956ba00ab1c35bb2f78e282",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Change our fire control binding to mouse_button_0. Also, set taufighter.pickable = false in our startRace function, and set it back to true when the race is complete.",
+    "timestamp": "2025-03-27T06:51:52.859767Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the fire control binding to `mouse_button_0` and modified the `startRace` function to set `taufighter.pickable` to `false` when the race starts and back to `true` upon race completion. Let me know if you need any further adjustments.",
+    "timestamp": "2025-03-27T06:52:56.284015Z",
+    "branch": "main",
+    "commit_hash": "039963c48cc6b90349d5064d276deafcbfdb4ef0",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
