@@ -223,12 +223,12 @@ room.registerElement('spacezone-player', {
         text: '3...',
         pos: new THREE.Vector3(0, 0, -5), // Centered on screen
         rotation: '0 180 0', // Set rotation to 0 180 0
-        col: 'red', // Changed text color to red
-        emissive: 0x330000,
+        col: 'white',
+        emissive: 0x333333,
         font_scale: false,
         font_size: 4,
         metalness: 1,
-        roughness: 0.2
+        roughness: 0.1
       });
     }
     this.countdownTime = 0;
