@@ -596,7 +596,7 @@ room.registerElement('spacezone-asteroidfield', {
           texture_repeat: V(3),
           
           rotate_deg_per_sec: 0, // Disabled rotation by setting to 0
-          rotate_axis: selectedShape.rotateAxis || new THREE.Vector3(1, 0, 0), // Use existing rotation axis or default
+          // rotate_axis: selectedShape.rotateAxis || new THREE.Vector3(1, 0, 0), // Removed rotation axis initialization
           pickable: false,
           opacity: 1, // Initialize opacity to 1
           collidable: true, // Initialize collidable to true
@@ -653,8 +653,13 @@ room.registerElement('spacezone-asteroidfield', {
         // Update asteroid position and set opacity to 0 if pathPositionOffset > 0
         asteroid.pos = newPos;
 
-        // Assign a random rotation in degrees on all axes
-        asteroid.rotation = `${Math.random() * 360} ${Math.random() * 360} ${Math.random() * 360}`;
+        // Assign a random rotation axis and rotation speed
+        asteroid.rotate_axis = new THREE.Vector3(
+          Math.random() * 2 - 1,
+          Math.random() * 2 - 1,
+          Math.random() * 2 - 1
+        ).normalize();
+        asteroid.rotate_deg_per_sec = Math.random() * 40 - 20; // Random value between -20 and 20
 
         if (pathPositionOffset > 0 && asteroid.opacity !== undefined) {
           asteroid.opacity = 0;
