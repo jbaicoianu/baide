@@ -3314,5 +3314,13 @@
     "branch": "main",
     "commit_hash": "e8b1a57327c237f873f08fc2ea5647c89c5e8b35",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "Scale asteroid collider down [Manual edit]",
+    "timestamp": "2025-03-27T20:42:08.002332Z",
+    "branch": "main",
+    "commit_hash": "562a9e371b1e88af9f2fe8d9c3df2775774e54b8",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
