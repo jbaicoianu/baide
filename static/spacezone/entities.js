@@ -833,7 +833,7 @@ room.registerElement('spacezone-cannon', {
     // Add dynamic light matching the laser beam color
     this.flashLight = this.createObject('light', {
       type: 'point', // Using point light; can be changed to spotlight if preferred
-      intensity: 0, // Initial intensity is 0 (off)
+      light_intensity: 0, // Initial light_intensity is 0 (off)
       col: 'limegreen', // Same color as laser beam
       distance: 20, // Adjust as needed for visibility
       decay: 1, // Light decay rate
@@ -851,10 +851,10 @@ room.registerElement('spacezone-cannon', {
     this.firing = false;
   },
   flashLightIntensity(dt) {
-    if (this.flashLight.intensity > 0) {
-      this.flashLight.intensity -= this.flashFadeRate * dt;
-      if (this.flashLight.intensity < 0) {
-        this.flashLight.intensity = 0;
+    if (this.flashLight.light_intensity > 0) {
+      this.flashLight.light_intensity -= this.flashFadeRate * dt;
+      if (this.flashLight.light_intensity < 0) {
+        this.flashLight.light_intensity = 0;
       }
     }
   },
@@ -881,7 +881,7 @@ room.registerElement('spacezone-cannon', {
     });
 
     // Trigger the flash light
-    this.flashLight.intensity = this.flashIntensity;
+    this.flashLight.light_intensity = this.flashIntensity;
   },
   update(dt) {
     // Dynamically set muzzlespeed based on currentSpeedMultiplier
