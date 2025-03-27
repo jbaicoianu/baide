@@ -601,7 +601,7 @@ room.registerElement('spacezone-asteroidfield', {
           opacity: 1, // Initialize opacity to 1
           collidable: true, // Initialize collidable to true
           emissive: 'black', // Initialize emissive to black
-          scale: new THREE.Vector3(1, 1, 1) // Set fixed scale
+          scale: V(Math.random() * 45 + 5) // Random scale between 5-50
         }); 
         asteroid.pos = new THREE.Vector3(0, 0, -9999);
 
