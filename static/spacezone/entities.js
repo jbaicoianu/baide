@@ -764,7 +764,7 @@ room.registerElement('spacezone-cannon', {
     const spawnPosition = this.localToWorld(V(0));
 
     // Get forward position and compute direction
-    const forwardPosition = this.localToWorld(V(0, 0, -1));
+    const forwardPosition = this.localToWorld(V(0, 0, 1));
     const direction = new THREE.Vector3().subVectors(forwardPosition, spawnPosition).normalize();
 
     // Spawn a spacezone-laserbeam in the calculated direction
