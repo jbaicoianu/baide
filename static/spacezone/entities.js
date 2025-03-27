@@ -588,9 +588,9 @@ room.registerElement('spacezone-asteroidfield', {
         // Generate a random color ensuring minimum brightness and using brown shades
         let colorHex;
         // Define hue range for brown (20-40 degrees)
-        const hue = 20 + Math.random() * 20; // 20-40 degrees
+        const hue = 20 + Math.random() * 15; // 20-35 degrees
         const saturation = Math.random() * 0.5; // 0-0.5
-        const lightness = 0.3 + Math.random() * 0.2; // 0.3-0.5
+        const lightness = 0.1 + Math.random() * 0.2; // 0.1-0.3
 
         const color = new THREE.Color();
         color.setHSL(hue / 360, saturation, lightness);
