@@ -458,10 +458,105 @@ room.registerElement('spacezone-waypoint', {
 
 room.registerElement('spacezone-asteroidfield', {
   numasteroids: 10,
+  uniqueshapes: 10, // Added uniqueshapes attribute with default value of 10
+  uniqueAsteroidAssets: [], // Array to hold unique asteroid asset IDs
+
   create() {
     // Initialization code for spacezone-asteroidfield
     this.asteroids = [];
     
+    // Generate unique asteroid shapes
+    for (let shapeIndex = 0; shapeIndex < this.uniqueshapes; shapeIndex++) {
+      // Initialize all unique asteroids at (0, 0, -9999)
+      const asteroidPos = new THREE.Vector3(0, 0, -9999);
+
+      // Generate random size between 5 and 30 for unique shapes
+      const size = Math.random() * 25 + 5; // 5 to 30
+
+      // Create DodecahedronGeometry with random size
+      const geometry = new THREE.DodecahedronGeometry(size);
+
+      // Modify geometry vertices
+      const pos = geometry.attributes.position;
+      const vertices = pos.array;
+      const bypass = [];
+      for (let j = 0; j < vertices.length / pos.itemSize; j++) {
+          if (bypass.indexOf(j) > -1) {
+              continue;
+          }
+
+          const currX = pos.getX(j);
+          const currY = pos.getY(j);
+          const currZ = pos.getZ(j);
+          const x = currX + (0 - Math.random() * 10);
+          const y = currY + (0 - Math.random() * 10);
+          const z = currZ + (0 - Math.random() * 10);
+
+          pos.setX(j, x);
+          pos.setY(j, y);
+          pos.setZ(j, z);
+
+          for (let k = 0; k < vertices.length; k += 3) {
+              if (
+                  vertices[k] === currX &&
+                  vertices[k + 1] === currY &&
+                  vertices[k + 2] === currZ
+              ) {
+                  geometry.attributes.position.array[
+                      k
+                  ] = x;
+                  geometry.attributes.position.array[
+                      k + 1
+                  ] = y;
+                  geometry.attributes.position.array[
+                      k + 2
+                  ] = z;
+                  bypass.push(k / 3);
+              }
+          }
+      }
+      geometry.attributes.position.needsUpdate = true;
+
+      // Generate a random shade of gray
+      const grayValue = Math.floor(Math.random() * 256);
+      const grayHex = `#${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}`;
+
+      // Create material for the asteroid with random gray color and enable transparency
+      const material = new THREE.MeshStandardMaterial({ color: grayHex, transparent: true, opacity: 1 });
+
+      // Create mesh with geometry and material
+      const asteroidMesh = new THREE.Mesh(geometry, material);
+
+      // Generate a random unit vector for rotation axis
+      const rotateAxis = new THREE.Vector3(
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1,
+        Math.random() * 2 - 1
+      ).normalize();
+
+      // Load the asteroid mesh as a new asset
+      this.loadNewAsset('object', {
+        id: `asteroid-shape-${shapeIndex}`,
+        object: asteroidMesh
+      });
+
+      // Clone the asteroid mesh for high-detail version
+      const highDetailMesh = asteroidMesh.clone();
+      highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 1, { split: true, uvSmooth: true });
+
+      // Load the high-detail asteroid mesh as a new asset
+      this.loadNewAsset('object', {
+        id: `asteroid-shape-${shapeIndex}-high`,
+        object: highDetailMesh
+      });
+
+      // Store unique asteroid asset IDs for reference
+      this.uniqueAsteroidAssets.push({
+        high: `asteroid-shape-${shapeIndex}-high`,
+        low: `asteroid-shape-${shapeIndex}`
+      });
+    }
+
     // Listen for 'level_start' event to initialize asteroids
     this.parent.addEventListener('level_start', () => {
       this.initAsteroids();
@@ -490,106 +585,36 @@ room.registerElement('spacezone-asteroidfield', {
       this.asteroids = [];
 
       for (let i = 0; i < this.numasteroids; i++) {
-        // Initialize all asteroids at (0, 0, -9999)
-        const asteroidPos = new THREE.Vector3(0, 0, -9999);
+        // Randomly select a unique shape index
+        const shapeIndex = Math.floor(Math.random() * this.uniqueshapes);
+        const selectedShape = this.uniqueAsteroidAssets[shapeIndex];
 
-        // Generate random size between 5 and 30
-        const size = Math.random() * 25 + 5; // 5 to 30
-
-        // Create DodecahedronGeometry with random size
-        const geometry = new THREE.DodecahedronGeometry(size);
-
-        // Replace vertex modification code with the new snippet
-        const pos = geometry.attributes.position;
-        const vertices = pos.array;
-        const bypass = [];
-        for (let j = 0; j < vertices.length / pos.itemSize; j++) {
-            if (bypass.indexOf(j) > -1) {
-                continue;
-            }
-
-            const currX = pos.getX(j);
-            const currY = pos.getY(j);
-            const currZ = pos.getZ(j);
-            const x = currX + (0 - Math.random() * 10);
-            const y = currY + (0 - Math.random() * 10);
-            const z = currZ + (0 - Math.random() * 10);
-
-            pos.setX(j, x);
-            pos.setY(j, y);
-            pos.setZ(j, z);
-
-            for (let k = 0; k < vertices.length; k += 3) {
-                if (
-                    vertices[k] === currX &&
-                    vertices[k + 1] === currY &&
-                    vertices[k + 2] === currZ
-                ) {
-                    geometry.attributes.position.array[
-                        k
-                    ] = x;
-                    geometry.attributes.position.array[
-                        k + 1
-                    ] = y;
-                    geometry.attributes.position.array[
-                        k + 2
-                    ] = z;
-                    bypass.push(k / 3);
-                }
-            }
-        }
-        geometry.attributes.position.needsUpdate = true;
+        // Generate a random scale between 5 and 50
+        const scaleValue = Math.random() * 45 + 5; // 5 to 50
 
         // Generate a random shade of gray
         const grayValue = Math.floor(Math.random() * 256);
         const grayHex = `#${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}${grayValue.toString(16).padStart(2, '0')}`;
 
-        // Create material for the asteroid with random gray color and enable transparency
-        const material = new THREE.MeshStandardMaterial({ color: grayHex, transparent: true, opacity: 1 });
-
-        // Create mesh with geometry and material
-        const asteroidMesh = new THREE.Mesh(geometry, material);
-
-        // Generate a random unit vector for rotation axis
-        const rotateAxis = new THREE.Vector3(
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1,
-          Math.random() * 2 - 1
-        ).normalize();
-
-        // Load the asteroid mesh as a new asset
-        this.loadNewAsset('object', {
-          id: 'asteroid-' + i,
-          object: asteroidMesh
-        });
-
-        // Clone the asteroid mesh for high-detail version
-        const highDetailMesh = asteroidMesh.clone();
-        highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 1, { split: true, uvSmooth: true });
-
-        // Load the high-detail asteroid mesh as a new asset
-        this.loadNewAsset('object', {
-          id: 'asteroid-' + i + '-high',
-          object: highDetailMesh
-        });
-
-        // Create asteroid object with the high-detail mesh
+        // Create asteroid object with the selected unique shape
         const asteroid = this.createObject('object', {
-          id: 'asteroid-' + i + '-high',
-          //collision_id: 'asteroid-' + i, // Initialize collision_id to null
+          id: `asteroid-${i}`,
+          object: selectedShape.high, // Use high-detail mesh
+          collision_id: selectedShape.low, // Use low-detail mesh for collisions
           col: grayHex,
           normalmap_id: "asteroid-normal", // Added normalmap_id
           normal_scale: 3,
           texture_repeat: V(3),
           
           rotate_deg_per_sec: 0, // Disabled rotation by setting to 0
-          rotate_axis: rotateAxis,
+          rotate_axis: selectedShape.rotateAxis || new THREE.Vector3(1, 0, 0), // Use existing rotation axis or default
           pickable: false,
           opacity: 1, // Initialize opacity to 1
-          collidable: true, // Initialize collidable to false
-          emissive: 'black' // Initialize emissive to black
+          collidable: true, // Initialize collidable to true
+          emissive: 'black', // Initialize emissive to black
+          scale: new THREE.Vector3(scaleValue, scaleValue, scaleValue) // Set randomized scale
         }); 
-        asteroid.pos = asteroidPos;
+        asteroid.pos = new THREE.Vector3(0, 0, -9999);
 
         this.asteroids.push(asteroid);
         this.appendChild(asteroid);
@@ -647,7 +672,6 @@ room.registerElement('spacezone-asteroidfield', {
         const distanceZ = Math.abs(asteroid.pos.z - shipZ);
         const shouldBeCollidable = distanceZ < 500;
         if (shouldBeCollidable) {
-          //asteroid.collidable = true;
           if (!asteroid.collision_id) {
             setTimeout(() => {
               asteroid.collision_id = asteroid.id;
