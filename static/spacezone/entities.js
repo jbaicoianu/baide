@@ -488,9 +488,9 @@ room.registerElement('spacezone-asteroidfield', {
           const currX = pos.getX(j);
           const currY = pos.getY(j);
           const currZ = pos.getZ(j);
-          const x = currX + (0 - Math.random() * 1);
-          const y = currY + (0 - Math.random() * 1);
-          const z = currZ + (0 - Math.random() * 1);
+          const x = currX + (0 - Math.random() * .9);
+          const y = currY + (0 - Math.random() * .9);
+          const z = currZ + (0 - Math.random() * .9);
 
           pos.setX(j, x);
           pos.setY(j, y);
