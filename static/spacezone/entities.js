@@ -221,7 +221,7 @@ room.registerElement('spacezone-player', {
       this.countdown = this.createObject('text', {
         id: 'countdown',
         text: '3...',
-        pos: new THREE.Vector3(0, 0, 15), // Centered on screen
+        pos: new THREE.Vector3(0, 0, -5), // Centered on screen
         rotation: '0 180 0', // Set rotation to 0 180 0
         col: 'red', // Changed text color to red
         font_scale: false,
