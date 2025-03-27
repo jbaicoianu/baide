@@ -2544,5 +2544,22 @@
     "commit_hash": "c66c6cc25e90511587682c95a394f4b63cfe9960",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "User",
+    "content": "No, we don't create our objectpool with this.createObjectPool, we spawn it like any other object: this.createObject('objectpool', args)",
+    "timestamp": "2025-03-27T05:56:09.121757Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "Acknowledged. Updated the object pool initialization in `spacezone-cannon` to use `this.createObject('objectpool', args)` as per your instructions. Let me know if there are any additional changes or enhancements you'd like to implement.",
+    "timestamp": "2025-03-27T05:57:12.503153Z",
+    "branch": "main",
+    "commit_hash": "bd01dc41ede6a54638be76ad906c9d8cd9ae3899",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities.js"
   }
 ]
