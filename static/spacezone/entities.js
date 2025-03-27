@@ -478,7 +478,7 @@ room.registerElement('spacezone-asteroidfield', {
         const asteroidPos = new THREE.Vector3(0, 0, -9999);
 
         // Generate random size between 5 and 30
-        const size = Math.random() * 25 + 50; // 5 to 30
+        const size = Math.random() * 25 + 5; // 5 to 30
 
         // Create DodecahedronGeometry with random size
         const geometry = new THREE.DodecahedronGeometry(size);
