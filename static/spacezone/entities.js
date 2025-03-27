@@ -165,18 +165,6 @@ room.registerElement('spacezone-player', {
       pos: '7.5 -1 -4', // Position relative to taufighter
       rotation: '0 0 0' // Default rotation
     });
-
-    // Create countdown text object with updated properties
-    this.countdown = this.createObject('text', {
-      id: 'countdown',
-      text: '3...',
-      pos: new THREE.Vector3(0, 0, 0), // Centered on screen
-      rotation: '0 180 0', // Set rotation to 0 180 0
-      col: 'red', // Changed text color to red
-      font_scale: 4, // Increased font scale by 4x
-      metalness: 1,
-      roughness: 0.05
-    });
   },
   activateAfterburner() {
     this.afterburner = true;
@@ -236,7 +224,8 @@ room.registerElement('spacezone-player', {
         pos: new THREE.Vector3(0, 0, 0), // Centered on screen
         rotation: '0 180 0', // Set rotation to 0 180 0
         col: 'red', // Changed text color to red
-        font_scale: 4, // Increased font scale by 4x
+        font_scale: false,
+        font_size: 4,
         metalness: 1,
         roughness: 0.05
       });
