@@ -503,38 +503,38 @@ room.registerElement('spacezone-asteroidfield', {
         const pos = geometry.attributes.position;
         const vertices = pos.array;
         const bypass = [];
-        for (let i = 0; i < vertices.length / pos.itemSize; i++) {
-            if (bypass.indexOf(i) > -1) {
+        for (let j = 0; j < vertices.length / pos.itemSize; j++) {
+            if (bypass.indexOf(j) > -1) {
                 continue;
             }
 
-            const currX = pos.getX(i);
-            const currY = pos.getY(i);
-            const currZ = pos.getZ(i);
+            const currX = pos.getX(j);
+            const currY = pos.getY(j);
+            const currZ = pos.getZ(j);
             const x = currX + (0 - Math.random() * 10);
             const y = currY + (0 - Math.random() * 10);
             const z = currZ + (0 - Math.random() * 10);
 
-            pos.setX(i, x);
-            pos.setY(i, y);
-            pos.setZ(i, z);
+            pos.setX(j, x);
+            pos.setY(j, y);
+            pos.setZ(j, z);
 
-            for (let j = 0; j < vertices.length; j += 3) {
+            for (let k = 0; k < vertices.length; k += 3) {
                 if (
-                    vertices[j] === currX &&
-                    vertices[j + 1] === currY &&
-                    vertices[j + 2] === currZ
+                    vertices[k] === currX &&
+                    vertices[k + 1] === currY &&
+                    vertices[k + 2] === currZ
                 ) {
                     geometry.attributes.position.array[
-                        j
+                        k
                     ] = x;
                     geometry.attributes.position.array[
-                        j + 1
+                        k + 1
                     ] = y;
                     geometry.attributes.position.array[
-                        j + 2
+                        k + 2
                     ] = z;
-                    bypass.push(j / 3);
+                    bypass.push(k / 3);
                 }
             }
         }
@@ -563,9 +563,19 @@ room.registerElement('spacezone-asteroidfield', {
           object: asteroidMesh
         });
 
-        // Create asteroid object with the mesh
+        // Clone the asteroid mesh for high-detail version
+        const highDetailMesh = asteroidMesh.clone();
+        highDetailMesh.geometry = THREE.LoopSubdivide.modify(asteroidMesh.geometry, 3, { split: true, uvSmooth: true });
+
+        // Load the high-detail asteroid mesh as a new asset
+        this.loadNewAsset('object', {
+          id: 'asteroid-' + i + '-high',
+          object: highDetailMesh
+        });
+
+        // Create asteroid object with the high-detail mesh
         const asteroid = this.createObject('object', {
-          id: 'asteroid-' + i,
+          id: 'asteroid-' + i + '-high',
           //collision_id: 'asteroid-' + i, // Initialize collision_id to null
           col: grayHex,
           normalmap_id: "asteroid-normal", // Added normalmap_id
