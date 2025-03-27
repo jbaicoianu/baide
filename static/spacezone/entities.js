@@ -56,6 +56,7 @@ room.registerElement('spacezone-player', {
   rollDamping: 5, // Damping factor for roll
   pitchDamping: 5, // Damping factor for pitch
   maxspeedmultiplier: 1.5, // Reverted property for maximum speed multiplier
+  maxPitch: 45, // Maximum pitch angle in degrees
 
   create() {
     // Initialization code for spacezone-player
@@ -379,6 +380,9 @@ room.registerElement('spacezone-player', {
     // Update current orientation
     this.currentRoll += rollTurn;
     this.currentPitch += pitchTurn;
+
+    // Clamp currentPitch to the maximum allowed pitch
+    this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
 
     // Update the taufighter's orientation
     this.taufighter.rotation.set(
