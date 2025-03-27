@@ -113,7 +113,7 @@ room.registerElement('spacezone-player', {
         ondeactivate: () => this.deactivateAfterburner()
       },
       'fire': {
-        defaultbindings: 'keyboard_f,gamepad_button_0',
+        defaultbindings: 'mouse_button_0',
         onactivate: () => {
           this.cannonLeft.startFiring();
           this.cannonRight.startFiring();
@@ -207,6 +207,11 @@ room.registerElement('spacezone-player', {
       this.parent.textObject.visible = false;
     }
 
+    // Set taufighter as not pickable when race starts
+    if (this.taufighter) {
+      this.taufighter.pickable = false;
+    }
+
     if (this.countdown) {
       // Reuse existing countdown object
       this.countdown.text = '3...';
@@ -266,6 +271,11 @@ room.registerElement('spacezone-player', {
           this.removeChild(this.countdown);
           this.countdown = null;
           console.log('Race started!');
+          
+          // Set taufighter back to pickable when race starts
+          if (this.taufighter) {
+            this.taufighter.pickable = true;
+          }
         }
       }
     }
@@ -310,6 +320,11 @@ room.registerElement('spacezone-player', {
       if(t >= 1){
         this.isRacing = false;
         console.log('Race completed!');
+        
+        // Set taufighter back to pickable when race is complete
+        if (this.taufighter) {
+          this.taufighter.pickable = true;
+        }
       }
     }
 
