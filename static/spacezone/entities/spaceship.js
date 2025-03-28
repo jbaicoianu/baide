@@ -16,7 +16,7 @@ room.registerElement('spacezone-spaceship', {
     this.score = this.createObject('spacezone-score');
 
     // Initialize timeElapsedTimer for tracking time_elapsed events
-    this.timeElapsedTimer = 0;
+    // this.timeElapsedTimer = 0; // Removed as not needed anymore
 
     // Add child object 'taufighter' with specified metalness and roughness
     this.taufighter = this.createObject('object', {
@@ -243,13 +243,9 @@ room.registerElement('spacezone-spaceship', {
     }
 
     if (this.isRacing) {
-      // Emit time_elapsed event every second
-      this.timeElapsedTimer += dt * this.currentSpeedMultiplier;
-      if (this.timeElapsedTimer >= 1) {
-        this.timeElapsedTimer -= 1;
-        this.dispatchEvent({type: 'time_elapsed'});
-      }
-
+      // Emit time_elapsed event every frame with dt as data
+      this.dispatchEvent({type: 'time_elapsed', data: dt});
+      
       // Quadratic ease for speed multiplier towards targetSpeedMultiplier
       const speedDifference = this.targetSpeedMultiplier - this.currentSpeedMultiplier;
       const acceleration = this.speedChangeRate * speedDifference * Math.abs(speedDifference);
@@ -593,9 +589,9 @@ room.registerElement('spacezone-score', {
 
     // Event handlers bound to the parent
     if(this.parent) {
-      this.parent.addEventListener('time_elapsed', () => this.addScore('time_elapsed'));
-      this.parent.addEventListener('weapon_fire', () => this.addScore('weapon_fire'));
-      this.parent.addEventListener('race_complete', () => this.addScore('race_complete'));
+      this.parent.addEventListener('time_elapsed', (e) => this.addScore(e));
+      this.parent.addEventListener('weapon_fire', (e) => this.addScore(e));
+      this.parent.addEventListener('race_complete', (e) => this.addScore(e));
     } else {
       console.warn('Parent not found. Cannot bind event listeners.');
     }
@@ -611,15 +607,20 @@ room.registerElement('spacezone-score', {
     console.log('Score has been reset to 0.');
   },
 
-  addScore(eventType) {
-    if(this.scores.hasOwnProperty(eventType)) {
-      this.totalScore += this.scores[eventType];
-      console.log(`Event '${eventType}' occurred. Score change: ${this.scores[eventType]}. Total score: ${this.totalScore}`);
-      if(this.scoreLabel) {
-        this.scoreLabel.text = `Score: ${this.totalScore}`;
-      }
+  addScore(event) {
+    if(event.type === 'time_elapsed') {
+      const scoreChange = Math.round(event.data * this.scores[event.type]);
+      this.totalScore += scoreChange;
+      console.log(`Event '${event.type}' occurred. Score change: ${scoreChange}. Total score: ${this.totalScore}`);
+    } else if(this.scores.hasOwnProperty(event.type)) {
+      this.totalScore += this.scores[event.type];
+      console.log(`Event '${event.type}' occurred. Score change: ${this.scores[event.type]}. Total score: ${this.totalScore}`);
     } else {
-      console.warn(`Unknown event type '${eventType}' for scoring.`);
+      console.warn(`Unknown event type '${event.type}' for scoring.`);
+    }
+
+    if(this.scoreLabel) {
+      this.scoreLabel.text = `Score: ${this.totalScore}`;
     }
   }
 });
