@@ -1,3 +1,4 @@
+// File: static/spacezone/entities/spaceship.js
 room.registerElement('spacezone-spaceship', {
   rollspeed: 160, // Doubled rotation speed to 160 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
@@ -10,6 +11,12 @@ room.registerElement('spacezone-spaceship', {
 
   create() {
     // Initialization code for spacezone-spaceship
+
+    // Create spacezone-score element
+    this.score = this.createObject('spacezone-score');
+
+    // Initialize timeElapsedTimer for tracking time_elapsed events
+    this.timeElapsedTimer = 0;
 
     // Add child object 'taufighter' with specified metalness and roughness
     this.taufighter = this.createObject('object', {
@@ -149,6 +156,13 @@ room.registerElement('spacezone-spaceship', {
     player.disable();
     this.activateControlContext('spacezone-spaceship');
     
+    // Reset the score at the start of the race
+    if (this.score && typeof this.score.reset === 'function') {
+      this.score.reset();
+    } else {
+      console.warn('Score object not found or reset method is unavailable.');
+    }
+    
     // Hide the "Click ship to start" text
     if (this.parent && this.parent.textObject) {
       this.parent.textObject.visible = false;
@@ -198,11 +212,11 @@ room.registerElement('spacezone-spaceship', {
     } else {
       console.warn('Music object not found.');
     }
-    // Emit 'level_start' event
+    // Emit 'race_start' event
     if(this.parent) {
-      this.parent.dispatchEvent({type: 'level_start'});
+      this.parent.dispatchEvent({type: 'race_start'});
     } else {
-      console.warn('Parent not found. Cannot dispatch level_start event.');
+      console.warn('Parent not found. Cannot dispatch race_start event.');
     }
   },
   update(dt) {
@@ -229,6 +243,13 @@ room.registerElement('spacezone-spaceship', {
     }
 
     if (this.isRacing) {
+      // Emit time_elapsed event every second
+      this.timeElapsedTimer += dt * this.currentSpeedMultiplier;
+      if (this.timeElapsedTimer >= 1) {
+        this.timeElapsedTimer -= 1;
+        this.dispatchEvent({type: 'time_elapsed'});
+      }
+
       // Quadratic ease for speed multiplier towards targetSpeedMultiplier
       const speedDifference = this.targetSpeedMultiplier - this.currentSpeedMultiplier;
       const acceleration = this.speedChangeRate * speedDifference * Math.abs(speedDifference);
@@ -272,6 +293,13 @@ room.registerElement('spacezone-spaceship', {
         // Set taufighter back to pickable when race is complete
         if (this.taufighter) {
           this.taufighter.pickable = true;
+        }
+
+        // Emit 'race_complete' event
+        if(this.parent) {
+          this.parent.dispatchEvent({type: 'race_complete'});
+        } else {
+          console.warn('Parent not found. Cannot dispatch race_complete event.');
         }
       }
     }
@@ -391,8 +419,8 @@ room.registerElement('spacezone-enginetrail', {
       count: 200, // Reduced count to 200
       duration: 0.5, // Decreased duration to 0.5
       opacity: 0.2,
-      vel: V(0, 0, -10), // Set vel to V(0,0,10)
-      rand_vel: V(0,0,-20), // Set rand_vel to V(0,0,20)
+      vel: V(0, 0, -10), // Set vel to V(0,0,-10)
+      rand_vel: V(0,0,-20), // Set rand_vel to V(0,0,-20)
       col: 'limegreen', // Set particle color to lime green
       image_id: 'spark' // Set image_id to 'spark'
     });
@@ -492,6 +520,9 @@ room.registerElement('spacezone-cannon', {
 
     // Trigger the flash light
     this.flashLight.light_intensity = this.flashIntensity;
+
+    // Dispatch "weapon_fire" event
+    this.dispatchEvent({ type: 'weapon_fire' });
   },
   update(dt) {
     // Dynamically set muzzlespeed based on currentSpeedMultiplier
@@ -533,6 +564,42 @@ room.registerElement('spacezone-laserbeam', {
     this.lifetime -= dt;
     if (this.lifetime <= 0) {
       // this.die(); // Removed this as pool handles recycling
+    }
+  }
+});
+
+// File: static/spacezone/entities/spacezone-score.js
+room.registerElement('spacezone-score', {
+  scores: {
+    time_elapsed: 100,
+    weapon_fire: -5,
+    race_complete: 10000
+  },
+  totalScore: 0,
+
+  create() {
+    // Initialize totalScore and set up event listeners
+    this.reset();
+
+    // Event handlers
+    this.addEventListener('time_elapsed', () => this.addScore('time_elapsed'));
+    this.addEventListener('weapon_fire', () => this.addScore('weapon_fire'));
+    this.addEventListener('race_complete', () => this.addScore('race_complete'));
+
+    console.log('Spacezone-score element created and event listeners attached.');
+  },
+
+  reset() {
+    this.totalScore = 0;
+    console.log('Score has been reset to 0.');
+  },
+
+  addScore(eventType) {
+    if(this.scores.hasOwnProperty(eventType)) {
+      this.totalScore += this.scores[eventType];
+      console.log(`Event '${eventType}' occurred. Score change: ${this.scores[eventType]}. Total score: ${this.totalScore}`);
+    } else {
+      console.warn(`Unknown event type '${eventType}' for scoring.`);
     }
   }
 });
