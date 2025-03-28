@@ -184,5 +184,22 @@
     "commit_hash": "8bbb193e0f026f55078ee12fb500b3bc6b638703",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Do not include our userControlledRoll in our calculations for our ship's offsetX and offsetY",
+    "timestamp": "2025-03-28T20:29:06.842127Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "Understood. I have updated the `static/spacezone/entities/spaceship.js` file to exclude `userControlledRoll` from the calculations for `offsetX` and `offsetY`. Please review the changes and let me know if you have any further adjustments or questions.",
+    "timestamp": "2025-03-28T20:30:04.552049Z",
+    "branch": "main",
+    "commit_hash": "040027308065102e9adf2f2c01b6b2572c2bc595",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
