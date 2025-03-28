@@ -14,7 +14,9 @@
         <assetobject id="shuttle" src="https://raw.githubusercontent.com/jbaicoianu/elation-component-space/refs/heads/master/media/models/shuttle2.obj" />
         <assetobject id="taufighter" src="https://github.com/jbaicoianu/elation-component-space/raw/refs/heads/master/media/models/tau.obj" />
         <assetobject id="spacefighter" src="assets/space-fighter.glb" />
-        <assetscript src="entities.js" />
+        <assetscript src="entities/level.js" />
+        <assetscript src="entities/spaceship.js" />
+        <assetscript src="entities/asteroidfield.js" />
         <assetscript src="enemies.js" />
         <assetsound id="music-lastparsec" src="https://assets.metacade.com/spaceships/Last Parsec.mp3" auto_play="true" loop="true" />
         <assetsound id="music-darkgateway" src="https://assets.metacade.com/spaceships/Dark Gateway.mp3" auto_play="true" loop="true" />
@@ -44,7 +46,7 @@
           <spacezone-waypoint pos="-130 175 19000" />
           <spacezone-waypoint pos="110 -200 20000" />
           <spacezone-asteroidfield numasteroids="200" />
-          <spacezone-player zdir="0 0 1" js_id="player-ship" />
+          <spacezone-spaceship zdir="0 0 1" js_id="player-ship" />
           <spacezone-planet surfacetexture="mars-surface" normaltexture="mars-normal" pos="20000 -11000 50000" radius="10000" />
           <spacezone-star pos="-1000000 200000 -200000" radius="50000" intensity="100" />
         </spacezone-level>
