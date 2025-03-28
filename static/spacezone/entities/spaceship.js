@@ -367,6 +367,14 @@ room.registerElement('spacezone-spaceship', {
 
     // Update current orientation
     this.currentRoll += rollTurn;
+
+    // Clamp the currentRoll to the range -180 to 180 degrees
+    if (this.currentRoll > 180) {
+      this.currentRoll -= 360;
+    } else if (this.currentRoll < -180) {
+      this.currentRoll += 360;
+    }
+
     this.currentPitch += pitchTurn;
 
     // Apply additional roll from key inputs
