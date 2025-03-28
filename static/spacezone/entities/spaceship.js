@@ -576,7 +576,7 @@ room.registerElement('spacezone-enemy-drone', {
     this.drone = this.createObject('object', {
       id: 'sphere',
       col: 'darkgrey',
-      scale: V(1, 1, 1), // 2m in diameter assuming scale units are meters
+      scale: V(10, 10, 10), // Increased scale to 10
       pos: V(0, 0, 0), // Initial position; adjust as needed
       collision_id: 'enemy_drone',
       collision_scale: V(1), // Sphere collider with radius 1m
