@@ -84,7 +84,8 @@ room.registerElement('spacezone-spaceship', {
       id: 'sphere',
       col: 'red',
       scale: V(1),
-      pos: new THREE.Vector3(0, 0, 20) // Positioned at (0, 0, 20)
+      pos: new THREE.Vector3(0, 0, 20), // Positioned at (0, 0, 20)
+      visible: false
     });
 
     // Initialize current orientation
