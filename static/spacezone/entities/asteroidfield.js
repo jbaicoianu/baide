@@ -171,7 +171,7 @@ room.registerElement('spacezone-asteroidfield', {
 
     this.repositionAsteroids(0);
   },
-  repositionAsteroids(currentPathPosition = 0, pathPositionOffset = 0) {
+  repositionAsteroids(currentPathPosition = 0, pathPositionOffset = 0, dt = undefined) {
     const level = this.parent;
     if (!level || !level.getPositionAtTime) {
       console.warn('spacezone-level element with getPositionAtTime method not found.');
@@ -248,7 +248,11 @@ room.registerElement('spacezone-asteroidfield', {
     // Increment opacity for asteroids with opacity < 1
     for (let asteroid of this.asteroids) {
       if (asteroid.opacity !== undefined && asteroid.opacity < 1) {
-        asteroid.opacity += 0.005; // Further reduced increment for smoother transition
+        if (dt !== undefined) {
+          asteroid.opacity += dt / 2;
+        } else {
+          asteroid.opacity += 0.005; // Further reduced increment for smoother transition
+        }
         if (asteroid.opacity > 1) asteroid.opacity = 1;
       }
     }
@@ -265,6 +269,6 @@ room.registerElement('spacezone-asteroidfield', {
       currentPathPosition = player.raceTime / player.totalracetime;
     }
 
-    this.repositionAsteroids(currentPathPosition, 0.1);
+    this.repositionAsteroids(currentPathPosition, 0.1, dt);
   }
 });
