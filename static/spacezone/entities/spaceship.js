@@ -521,8 +521,8 @@ room.registerElement('spacezone-cannon', {
     // Trigger the flash light
     this.flashLight.light_intensity = this.flashIntensity;
 
-    // Dispatch "weapon_fire" event
-    this.dispatchEvent({ type: 'weapon_fire' });
+    // Dispatch "weapon_fire" event with bubbles: true
+    this.dispatchEvent({ type: 'weapon_fire', bubbles: true });
   },
   update(dt) {
     // Dynamically set muzzlespeed based on currentSpeedMultiplier
@@ -581,16 +581,33 @@ room.registerElement('spacezone-score', {
     // Initialize totalScore and set up event listeners
     this.reset();
 
-    // Event handlers
-    this.addEventListener('time_elapsed', () => this.addScore('time_elapsed'));
-    this.addEventListener('weapon_fire', () => this.addScore('weapon_fire'));
-    this.addEventListener('race_complete', () => this.addScore('race_complete'));
+    // Create text object for displaying the score
+    this.scoreLabel = this.createObject('text', {
+      text: `Score: ${this.totalScore}`,
+      pos: new THREE.Vector3(22, 12, 0),
+      rotation: '0 180 0',
+      font_scale: false,
+      col: 'white',
+      font_size: 2
+    });
+
+    // Event handlers bound to the parent
+    if(this.parent) {
+      this.parent.addEventListener('time_elapsed', () => this.addScore('time_elapsed'));
+      this.parent.addEventListener('weapon_fire', () => this.addScore('weapon_fire'));
+      this.parent.addEventListener('race_complete', () => this.addScore('race_complete'));
+    } else {
+      console.warn('Parent not found. Cannot bind event listeners.');
+    }
 
     console.log('Spacezone-score element created and event listeners attached.');
   },
 
   reset() {
     this.totalScore = 0;
+    if(this.scoreLabel) {
+      this.scoreLabel.text = `Score: ${this.totalScore}`;
+    }
     console.log('Score has been reset to 0.');
   },
 
@@ -598,6 +615,9 @@ room.registerElement('spacezone-score', {
     if(this.scores.hasOwnProperty(eventType)) {
       this.totalScore += this.scores[eventType];
       console.log(`Event '${eventType}' occurred. Score change: ${this.scores[eventType]}. Total score: ${this.totalScore}`);
+      if(this.scoreLabel) {
+        this.scoreLabel.text = `Score: ${this.totalScore}`;
+      }
     } else {
       console.warn(`Unknown event type '${eventType}' for scoring.`);
     }
