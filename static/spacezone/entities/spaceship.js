@@ -597,7 +597,7 @@ room.registerElement('spacezone-score', {
       console.warn('Parent not found. Cannot bind event listeners.');
     }
 
-    console.log('Spacezone-score element created and event listeners attached.');
+    // console.log('Spacezone-score element created and event listeners attached.');
   },
 
   reset() {
@@ -605,17 +605,17 @@ room.registerElement('spacezone-score', {
     if(this.scoreLabel) {
       this.scoreLabel.text = `Score: ${this.totalScore}`;
     }
-    console.log('Score has been reset to 0.');
+    // console.log('Score has been reset to 0.');
   },
 
   addScore(event) {
     if(event.type === 'time_elapsed') {
       const scoreChange = Math.round(event.data * this.scores[event.type]);
       this.totalScore += scoreChange;
-      console.log(`Event '${event.type}' occurred. Score change: ${scoreChange}. Total score: ${this.totalScore}`);
+      // console.log(`Event '${event.type}' occurred. Score change: ${scoreChange}. Total score: ${this.totalScore}`);
     } else if(this.scores.hasOwnProperty(event.type)) {
       this.totalScore += this.scores[event.type];
-      console.log(`Event '${event.type}' occurred. Score change: ${this.scores[event.type]}. Total score: ${this.totalScore}`);
+      // console.log(`Event '${event.type}' occurred. Score change: ${this.scores[event.type]}. Total score: ${this.totalScore}`);
     } else {
       console.warn(`Unknown event type '${event.type}' for scoring.`);
     }
