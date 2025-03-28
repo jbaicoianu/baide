@@ -101,6 +101,7 @@ room.registerElement('spacezone-spaceship', {
     // Initialize current orientation
     this.currentRoll = 180;
     this.currentPitch = 0;
+    this.userControlledRoll = 0; // Added separate tracking for user-controlled roll
 
     // Initialize countdown variables
     this.countdown = null;
@@ -283,7 +284,7 @@ room.registerElement('spacezone-spaceship', {
         this.updatePositionAndDirection(t);
 
         // Apply x and y offsets based on shuttle's rotation
-        const rollRad = THREE.MathUtils.degToRad(this.currentRoll);
+        const rollRad = THREE.MathUtils.degToRad(this.currentRoll + this.userControlledRoll);
         const pitchRad = THREE.MathUtils.degToRad(this.currentPitch);
 
         let offsetX = Math.sin(rollRad) * this.offsetRange;
@@ -370,30 +371,32 @@ room.registerElement('spacezone-spaceship', {
 
     // Apply additional roll from key inputs
     if (this.isRollingLeft) {
-      this.currentRoll -= this.rollspeed * dt;
+      this.userControlledRoll -= this.rollspeed * dt; // Update user-controlled roll
     }
     if (this.isRollingRight) {
-      this.currentRoll += this.rollspeed * dt;
+      this.userControlledRoll += this.rollspeed * dt; // Update user-controlled roll
     }
 
-    // Smoothly return to default roll when not rolling
+    // Smoothly return userControlledRoll to 0 when not rolling
     if (!this.isRollingLeft && !this.isRollingRight) {
-      const defaultRoll = 180;
-      let rollDifferenceToDefault = defaultRoll - this.currentRoll;
-      // Normalize
-      rollDifferenceToDefault = ((rollDifferenceToDefault + 180) % 360) - 180;
-      const rollAdjustment = rollDifferenceToDefault * this.rollDamping * dt;
-      this.currentRoll += rollAdjustment;
+      const rollDecay = this.rollDamping * dt;
+      if (this.userControlledRoll > rollDecay) {
+        this.userControlledRoll -= rollDecay;
+      } else if (this.userControlledRoll < -rollDecay) {
+        this.userControlledRoll += rollDecay;
+      } else {
+        this.userControlledRoll = 0;
+      }
     }
 
     // Clamp currentPitch to the maximum allowed pitch
     this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
 
-    // Update the taufighter's orientation
+    // Apply the combined roll and pitch to the taufighter's orientation
     this.taufighter.rotation.set(
       this.currentPitch,
       0,
-      this.currentRoll
+      this.currentRoll + this.userControlledRoll
     );
 
     // Inertial Flight Model
@@ -401,7 +404,7 @@ room.registerElement('spacezone-spaceship', {
       // Calculate forward direction based on current orientation
       const forward = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(
         -THREE.MathUtils.degToRad(this.currentPitch),
-        -THREE.MathUtils.degToRad(this.currentRoll),
+        -THREE.MathUtils.degToRad(this.currentRoll + this.userControlledRoll),
         0,
         'XYZ'
       )).normalize();
