@@ -98,8 +98,8 @@ room.registerElement('spacezone-asteroidfield', {
       });
     }
 
-    // Listen for 'level_start' event to initialize asteroids
-    this.parent.addEventListener('level_start', () => {
+    // Listen for 'race_start' event to initialize asteroids
+    this.parent.addEventListener('race_start', () => {
       this.initAsteroids();
     });
   },
