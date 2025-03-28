@@ -397,6 +397,13 @@ room.registerElement('spacezone-spaceship', {
       }
     }
 
+    // Wrap userControlledRoll to stay between -180 and 180 degrees
+    if (this.userControlledRoll > 180) {
+      this.userControlledRoll -= 360;
+    } else if (this.userControlledRoll < -180) {
+      this.userControlledRoll += 360;
+    }
+
     // Clamp currentPitch to the maximum allowed pitch
     this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
 
