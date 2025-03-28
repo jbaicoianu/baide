@@ -34,19 +34,19 @@ room.registerElement('spacezone-level', {
       font_scale: false
     });
 
-    // Generate 10 enemy drones positioned randomly along the path
-    this.enemyDrones = [];
-    for (let i = 0; i < 10; i++) {
-      const t = Math.random(); // Random value between 0 and 1
-      const pos = this.curve.getPoint(t);
-      const drone = this.createObject('spacezone-enemy-drone', {
-        pos: pos,
-        rotation: '0 0 0',
-        scale: new THREE.Vector3(1, 1, 1),
-        col: 'red'
-      });
-      this.enemyDrones.push(drone);
-    }
+    // // Generate 10 enemy drones positioned randomly along the path
+    // this.enemyDrones = [];
+    // for (let i = 0; i < 10; i++) {
+    //   const t = Math.random(); // Random value between 0 and 1
+    //   const pos = this.curve.getPoint(t);
+    //   const drone = this.createObject('spacezone-enemy-drone', {
+    //     pos: pos,
+    //     rotation: '0 0 0',
+    //     scale: new THREE.Vector3(1, 1, 1),
+    //     col: 'red'
+    //   });
+    //   this.enemyDrones.push(drone);
+    // }
   },
   update(dt) {
     // Update logic for spacezone-level
