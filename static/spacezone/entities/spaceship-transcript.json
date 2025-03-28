@@ -327,5 +327,22 @@
     "branch": "main",
     "commit_hash": "e0d23ccc851793e6db8985e5b6523430a36c9f9a",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Disable the collider on our taufighter, and move our click event handler onto the shipcollider object instead",
+    "timestamp": "2025-03-28T20:59:28.063188Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "Collider on taufighter has been disabled, and the click event handler has been relocated to the shipcollider object.",
+    "timestamp": "2025-03-28T21:00:40.604591Z",
+    "branch": "main",
+    "commit_hash": "912bc4329f217a08e978aa3e5d9834dbd7b9b667",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
