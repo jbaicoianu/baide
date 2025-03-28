@@ -58,7 +58,7 @@ room.registerElement('spacezone-spaceship', {
       auto_play: true
     });
 
-    // Add control context for targeting, afterburner, and fire
+    // Add control context for targeting, afterburner, fire, and rolling
     this.controlstate = this.addControlContext('spacezone-spaceship', {
       'targeting': { defaultbindings: 'mouse_delta' },
       'afterburner': { 
@@ -76,6 +76,16 @@ room.registerElement('spacezone-spaceship', {
           this.cannonLeft.stopFiring();
           this.cannonRight.stopFiring();
         }
+      },
+      'roll_left': { 
+        defaultbindings: 'keyboard_a', 
+        onactivate: () => { this.isRollingLeft = true; },
+        ondeactivate: () => { this.isRollingLeft = false; }
+      },
+      'roll_right': { 
+        defaultbindings: 'keyboard_d', 
+        onactivate: () => { this.isRollingRight = true; },
+        ondeactivate: () => { this.isRollingRight = false; }
       }
     });
 
@@ -120,6 +130,10 @@ room.registerElement('spacezone-spaceship', {
       pos: '-6.5 0 6', // Moved position to -6.5, 0, 6
       rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
+
+    // Initialize rolling state
+    this.isRollingLeft = false;
+    this.isRollingRight = false;
   },
   activateAfterburner() {
     this.afterburner = true;
@@ -353,6 +367,24 @@ room.registerElement('spacezone-spaceship', {
     // Update current orientation
     this.currentRoll += rollTurn;
     this.currentPitch += pitchTurn;
+
+    // Apply additional roll from key inputs
+    if (this.isRollingLeft) {
+      this.currentRoll -= this.rollspeed * dt;
+    }
+    if (this.isRollingRight) {
+      this.currentRoll += this.rollspeed * dt;
+    }
+
+    // Smoothly return to default roll when not rolling
+    if (!this.isRollingLeft && !this.isRollingRight) {
+      const defaultRoll = 180;
+      let rollDifferenceToDefault = defaultRoll - this.currentRoll;
+      // Normalize
+      rollDifferenceToDefault = ((rollDifferenceToDefault + 180) % 360) - 180;
+      const rollAdjustment = rollDifferenceToDefault * this.rollDamping * dt;
+      this.currentRoll += rollAdjustment;
+    }
 
     // Clamp currentPitch to the maximum allowed pitch
     this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
