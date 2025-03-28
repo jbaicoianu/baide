@@ -47,5 +47,13 @@
     "branch": "main",
     "commit_hash": "0f9b7cedfcc86122b01863beaca0aba2682656c2",
     "file_name": "static/spacezone/entities/asteroidfield.js"
+  },
+  {
+    "role": "User",
+    "content": "Drop asteroid normal scale to 1 [Manual edit]",
+    "timestamp": "2025-03-28T23:11:17.948554Z",
+    "branch": "main",
+    "commit_hash": "2d72177ccc16760c6add7473923b52bfec7defa3",
+    "file_name": "static/spacezone/entities/asteroidfield.js"
   }
 ]
