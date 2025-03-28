@@ -27,7 +27,6 @@ room.registerElement('spacezone-spaceship', {
       mass: 1000,
       collidable: false, // Collider has been disabled
     });
-    this.taufighter.addForce('drag', 0);
     
     // Instantiate multiple engine trails as children of the player
     this.enginetrails = [];
@@ -135,6 +134,7 @@ room.registerElement('spacezone-spaceship', {
       opacity: 0.2,
       rotation: V(0, 0, 90)
     });
+    this.shipcollider.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
 
     // Add collide event listener to taufighter
     this.shipcollider.addEventListener('collide', ev => this.handleCollide(ev));
