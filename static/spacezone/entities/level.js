@@ -134,24 +134,3 @@ room.registerElement('spacezone-planet', {
     // Update logic for spacezone-planet if needed
   }
 });
-
-room.registerElement('spacezone-enemy-drone', {
-  create() {
-    // Initialization code for enemy drone
-    this.droneObject = this.createObject('object', {
-      id: 'droneModel', // Ensure 'droneModel' is defined in assets
-      pos: this.pos || new THREE.Vector3(0, 0, 0),
-      rotation: this.rotation || '0 0 0',
-      scale: this.scale || new THREE.Vector3(1, 1, 1),
-      col: this.col || 'red',
-      collideable: true,
-      pickable: false
-    });
-
-    // Additional initialization like adding behaviors or AI can be added here
-  },
-  update(dt) {
-    // Update logic for enemy drone
-    // For example, move along the path or track the player
-  }
-});
