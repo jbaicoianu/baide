@@ -379,7 +379,7 @@ room.registerElement('spacezone-spaceship', {
 
     // Smoothly return userControlledRoll to 0 when not rolling
     if (!this.isRollingLeft && !this.isRollingRight) {
-      const rollDecay = this.rollDamping * dt;
+      const rollDecay = this.rollspeed * dt;
       if (this.userControlledRoll > rollDecay) {
         this.userControlledRoll -= rollDecay;
       } else if (this.userControlledRoll < -rollDecay) {
