@@ -136,7 +136,8 @@ room.registerElement('spacezone-spaceship', {
     this.shipcollider = this.taufighter.createObject('object', {
       id: 'capsule',
       collision_id: 'capsule',
-      scale: V(6), // Scaled shipcollider to V(6)
+      pos: V(2.5, 0, 0),
+      scale: V(5),
       col: 'red',
       opacity: 0.2,
       rotation: V(0, 0, 90)
