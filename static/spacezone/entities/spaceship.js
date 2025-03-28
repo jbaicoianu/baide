@@ -132,6 +132,15 @@ room.registerElement('spacezone-spaceship', {
       rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
 
+    // Add shipcollider object as a separate collider
+    this.shipcollider = this.createObject('object', {
+      id: 'capsule',
+      collision_id: 'capsule',
+      col: 'red',
+      opacity: 0.2,
+      rotation: V(0, 0, 90)
+    });
+
     // Initialize rolling state
     this.isRollingLeft = false;
     this.isRollingRight = false;
