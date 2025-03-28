@@ -311,5 +311,13 @@
     "branch": "main",
     "commit_hash": "a0bb3487956ec16ad0f62c9df8d3f4b36a43dcab",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Change collision_scale to scale [Manual edit]",
+    "timestamp": "2025-03-28T20:56:22.492861Z",
+    "branch": "main",
+    "commit_hash": "ac7492f9838ebf59f5a45247b9422810497b9ec7",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
