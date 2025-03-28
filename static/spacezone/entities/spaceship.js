@@ -1,10 +1,10 @@
 // File: static/spacezone/entities/spaceship.js
 room.registerElement('spacezone-spaceship', {
-  rollspeed: 160, // Doubled rotation speed to 160 degrees per second
+  rollspeed: 200, // Increased rotation speed to 200 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
   totalracetime: 120, // Total race duration in seconds
-  rollDamping: 5, // Damping factor for roll
+  rollDamping: 10, // Increased damping factor for roll
   pitchDamping: 5, // Damping factor for pitch
   maxspeedmultiplier: 1.5, // Reverted property for maximum speed multiplier
   maxPitch: 20, // Maximum pitch angle in degrees
