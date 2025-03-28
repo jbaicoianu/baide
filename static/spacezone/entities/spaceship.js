@@ -547,6 +547,7 @@ room.registerElement('spacezone-laserbeam', {
     // Create a bright lime green 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 4, 0.25)
     this.laserBeam = this.createObject('object', {
       id: 'capsule',
+      collision_id: 'capsule', // Added collision_id for collision detection
       col: 'limegreen', // Changed laser beam color to lime green
       scale: '0.25 4 0.25', // Updated scale to .25, 4, .25
       rotation: '90 0 0',
@@ -562,6 +563,103 @@ room.registerElement('spacezone-laserbeam', {
     if (this.lifetime <= 0) {
       // this.die(); // Removed this as pool handles recycling
     }
+  }
+});
+
+// Added Enemy Drone Entity
+room.registerElement('spacezone-enemy-drone', {
+  activationDistance: 1000, // Distance in meters to activate the drone
+  firingRate: 1, // Shots per second
+  droneSpeed: 40, // Speed of the drone in meters per second
+  create() {
+    // Create the enemy drone as a dark grey sphere with 2m diameter
+    this.drone = this.createObject('object', {
+      id: 'sphere',
+      col: 'darkgrey',
+      scale: V(1, 1, 1), // 2m in diameter assuming scale units are meters
+      pos: V(0, 0, 0), // Initial position; adjust as needed
+      collision_id: 'enemy_drone',
+      collision_scale: V(1), // Sphere collider with radius 1m
+      mass: 500, // Assign mass as appropriate
+      zdir: V(0, 0, 1),
+      visible: true
+    });
+
+    // Add a cannon to the drone
+    this.cannon = this.drone.createObject('spacezone-cannon', {
+      pos: '0 0 1', // Positioned at the front of the drone
+      rotation: '0 0 0', // Facing forward
+      rate: this.firingRate // One shot per second
+    });
+
+    // Initialize state
+    this.isActive = false;
+
+    // Add event listener for collision with laserbolts
+    this.drone.addEventListener('collide', ev => this.handleCollision(ev));
+
+    // Reference to player object
+    this.player = player; // Assuming 'player' is globally accessible
+  },
+  update(dt) {
+    if (!this.isActive) {
+      // Check distance to player
+      if (this.player) {
+        const distance = this.drone.pos.distanceTo(this.player.pos);
+        if (distance <= this.activationDistance) {
+          this.isActive = true;
+          this.activateDrone();
+        }
+      }
+    } else {
+      // Move along the path at the same speed as the player
+      this.moveAlongPath(dt);
+
+      // Fire at the player
+      this.cannon.firingRate = this.firingRate;
+      if (this.cannon) {
+        this.cannon.startFiring();
+      }
+    }
+  },
+  activateDrone() {
+    // Add thrust to move the drone forward at the specified speed
+    this.drone.addForce('thrust', { direction: this.drone.zdir, magnitude: this.droneSpeed });
+    console.log('Enemy drone activated and started moving.');
+  },
+  moveAlongPath(dt) {
+    // Implement movement logic to follow the level path
+    const level = this.parent;
+    if (level && level.getPositionAtTime) {
+      // Example: Move based on elapsed time and droneSpeed
+      // You may need to implement a more sophisticated path-following mechanism
+      const currentPosition = this.drone.pos;
+      const direction = this.drone.zdir.clone().normalize();
+      const newPosition = currentPosition.clone().add(direction.multiplyScalar(this.droneSpeed * dt));
+      this.drone.pos = newPosition;
+    }
+  },
+  handleCollision(ev) {
+    if (ev.type === 'collision' && ev.other.collision_id === 'capsule') {
+      this.explodeDrone();
+    }
+  },
+  explodeDrone() {
+    // Create explosion effect
+    const explosion = this.createObject('object', {
+      id: 'explosion',
+      col: 'orange',
+      scale: V(2, 2, 2),
+      pos: this.drone.pos.clone(),
+      visible: true
+    });
+
+    // Add explosion behavior (e.g., particles, sound)
+    // This can be expanded based on the available asset scripts
+
+    // Remove the drone from the scene
+    this.drone.die();
+    console.log('Enemy drone has been destroyed.');
   }
 });
 
