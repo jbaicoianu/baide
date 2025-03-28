@@ -129,8 +129,8 @@ room.registerElement('spacezone-spaceship', {
     this.shipcollider = this.taufighter.createObject('object', {
       id: 'capsule',
       collision_id: 'capsule',
-      pos: V(2.5, 0, 0),
-      scale: V(5),
+      pos: V(3, 0, 0),
+      scale: V(6),
       col: 'red',
       opacity: 0.2,
       rotation: V(0, 0, 90)
@@ -194,9 +194,9 @@ room.registerElement('spacezone-spaceship', {
       this.parent.textObject.visible = false;
     }
 
-    // Set taufighter as not pickable when race starts
-    if (this.taufighter) {
-      this.taufighter.pickable = false;
+    // Set shipcollider as not pickable when race starts
+    if (this.shipcollider) {
+      this.shipcollider.pickable = false;
     }
 
     if (this.countdown) {
@@ -312,9 +312,9 @@ room.registerElement('spacezone-spaceship', {
         this.isRacing = false;
         console.log('Race completed!');
         
-        // Set taufighter back to pickable when race is complete
-        if (this.taufighter) {
-          this.taufighter.pickable = true;
+        // Set shipcollider back to pickable when race is complete
+        if (this.shipcollider) {
+          this.shipcollider.pickable = true;
         }
 
         // Emit 'race_complete' event
