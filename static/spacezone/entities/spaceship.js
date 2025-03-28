@@ -27,6 +27,7 @@ room.registerElement('spacezone-spaceship', {
       scale: new THREE.Vector3(1, 1, 1),
       zdir: new THREE.Vector3(0, 0, 1),
       mass: 1000,
+      collidable: false, // Collider has been disabled
     });
     this.taufighter.addForce('drag', 0);
     
@@ -44,8 +45,8 @@ room.registerElement('spacezone-spaceship', {
       this.enginetrails.push(trail);
     }
 
-    // Add click event listener to taufighter
-    this.taufighter.addEventListener('click', ev => this.startRace());
+    // Add click event listener to shipcollider
+    this.shipcollider.addEventListener('click', ev => this.startRace());
 
     this.isRacing = false;
     this.raceTime = 0;
