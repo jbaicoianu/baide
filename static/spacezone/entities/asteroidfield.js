@@ -2,8 +2,8 @@ room.registerElement('spacezone-asteroidfield', {
   numasteroids: 10,
   uniqueshapes: 10, // Added uniqueshapes attribute with default value of 10
   uniqueAsteroidAssets: [], // Array to hold unique asteroid asset IDs
-  offsetX: 50, // Configurable X offset range for asteroid placement
-  offsetY: 50, // Configurable Y offset range for asteroid placement
+  offsetX: 500, // Configurable X offset range for asteroid placement
+  offsetY: 500, // Configurable Y offset range for asteroid placement
 
   create() {
     // Initialization code for spacezone-asteroidfield
