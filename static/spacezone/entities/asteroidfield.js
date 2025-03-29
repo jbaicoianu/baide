@@ -2,6 +2,8 @@ room.registerElement('spacezone-asteroidfield', {
   numasteroids: 10,
   uniqueshapes: 10, // Added uniqueshapes attribute with default value of 10
   uniqueAsteroidAssets: [], // Array to hold unique asteroid asset IDs
+  offsetX: 50, // Configurable X offset range for asteroid placement
+  offsetY: 50, // Configurable Y offset range for asteroid placement
 
   create() {
     // Initialization code for spacezone-asteroidfield
@@ -190,9 +192,9 @@ room.registerElement('spacezone-asteroidfield', {
 
     for (let asteroid of this.asteroids) {
       if (asteroid.pos.z < currentPos.z - 100) {
-        // Generate new random offsetX and offsetY in the range -500 to 500
-        const offsetX = (Math.random() * 100) - 50;
-        const offsetY = (Math.random() * 100) - 50;
+        // Generate new random offsetX and offsetY based on configurable attributes
+        const offsetX = (Math.random() * this.offsetX * 2) - this.offsetX;
+        const offsetY = (Math.random() * this.offsetY * 2) - this.offsetY;
 
         // Generate a random t value between currentPathPosition and currentPathPosition + 0.1 plus pathPositionOffset
         let newT = Math.random() * 0.1 + currentPathPosition + pathPositionOffset;
