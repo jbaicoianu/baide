@@ -8,6 +8,7 @@ room.registerElement('spacezone-spaceship', {
   pitchDamping: 5, // Damping factor for pitch
   maxspeedmultiplier: 1.5, // Reverted property for maximum speed multiplier
   maxPitch: 20, // Maximum pitch angle in degrees
+  rollDecayDelay: 0.5, // Delay before starting roll decay in seconds
 
   create() {
     // Initialization code for spacezone-spaceship
@@ -71,13 +72,25 @@ room.registerElement('spacezone-spaceship', {
       },
       'roll_left': { 
         defaultbindings: 'keyboard_a', 
-        onactivate: () => { this.isRollingLeft = true; },
-        ondeactivate: () => { this.isRollingLeft = false; }
+        onactivate: () => { 
+          this.isRollingLeft = true; 
+          this.rollDecayTimer = 0; // Reset decay timer on activation
+        },
+        ondeactivate: () => { 
+          this.isRollingLeft = false; 
+          this.rollDecayTimer = 0; // Start decay timer on deactivation
+        }
       },
       'roll_right': { 
         defaultbindings: 'keyboard_d', 
-        onactivate: () => { this.isRollingRight = true; },
-        ondeactivate: () => { this.isRollingRight = false; }
+        onactivate: () => { 
+          this.isRollingRight = true; 
+          this.rollDecayTimer = 0; // Reset decay timer on activation
+        },
+        ondeactivate: () => { 
+          this.isRollingRight = false; 
+          this.rollDecayTimer = 0; // Start decay timer on deactivation
+        }
       }
     });
 
@@ -94,6 +107,7 @@ room.registerElement('spacezone-spaceship', {
     this.currentRoll = 180;
     this.currentPitch = 0;
     this.userControlledRoll = 0; // Added separate tracking for user-controlled roll
+    this.rollDecayTimer = 0; // Timer for roll decay delay
 
     // Initialize countdown variables
     this.countdown = null;
@@ -390,21 +404,28 @@ room.registerElement('spacezone-spaceship', {
     // Apply additional roll from key inputs
     if (this.isRollingLeft) {
       this.userControlledRoll -= this.rollspeed * dt; // Update user-controlled roll
+      this.rollDecayTimer = 0; // Reset decay timer while rolling
     }
     if (this.isRollingRight) {
       this.userControlledRoll += this.rollspeed * dt; // Update user-controlled roll
+      this.rollDecayTimer = 0; // Reset decay timer while rolling
     }
 
-    // Smoothly return userControlledRoll to 0 when not rolling
+    // Handle roll decay delay
     if (!this.isRollingLeft && !this.isRollingRight) {
-      const rollDecay = this.rollspeed * dt;
-      if (this.userControlledRoll > rollDecay) {
-        this.userControlledRoll -= rollDecay;
-      } else if (this.userControlledRoll < -rollDecay) {
-        this.userControlledRoll += rollDecay;
-      } else {
-        this.userControlledRoll = 0;
+      this.rollDecayTimer += dt;
+      if (this.rollDecayTimer >= this.rollDecayDelay) {
+        const rollDecay = this.rollspeed * dt;
+        if (this.userControlledRoll > rollDecay) {
+          this.userControlledRoll -= rollDecay;
+        } else if (this.userControlledRoll < -rollDecay) {
+          this.userControlledRoll += rollDecay;
+        } else {
+          this.userControlledRoll = 0;
+        }
       }
+    } else {
+      this.rollDecayTimer = 0; // Reset timer if still rolling
     }
 
     // Wrap userControlledRoll to stay between -180 and 180 degrees
