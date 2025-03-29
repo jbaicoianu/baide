@@ -426,5 +426,13 @@
     "branch": "main",
     "commit_hash": "dbd6fe7d2e07e103ed4b3be3ed14083bd24e0f72",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Disabled visual rendering of ship collider [Manual edit]",
+    "timestamp": "2025-03-29T09:14:20.065826Z",
+    "branch": "main",
+    "commit_hash": "a74b6f959cd7741a132bf31ef633c15e0160e794",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
