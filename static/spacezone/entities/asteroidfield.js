@@ -75,6 +75,7 @@ room.registerElement('spacezone-asteroidfield', {
       // Clone the asteroid mesh for high-detail version
       const highDetailMesh = asteroidMesh.clone();
       highDetailMesh.geometry = THREE.LoopSubdivision.modify(asteroidMesh.geometry, 1, { split: true, uvSmooth: true });
+      highDetailMesh.geometry.computeVertexNormals(); // Recalculate normals after subdivision
 
       // Scale our low-res mesh down a bit to account for the size reduction caused by subdivision 
       asteroidMesh.scale.set(.8, .8, .8);
