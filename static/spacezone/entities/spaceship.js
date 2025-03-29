@@ -552,7 +552,7 @@ room.registerElement('spacezone-cannon', {
       col: 'limegreen', // Same color as laser beam
       light_range: 500, // Set light range to 500
       decay: 1, // Light decay rate
-      pos: V(0, 0, 2), // Moved light forward by 2 meters on the z-axis
+      pos: V(0, 0, 2.5), // Moved light forward by 0.5 meters on the z-axis
       light_shadow: true
     });
 
