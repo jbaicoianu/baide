@@ -8,7 +8,7 @@ room.registerElement('spacezone-spaceship', {
   pitchDamping: 5, // Damping factor for pitch
   maxspeedmultiplier: 1.5, // Reverted property for maximum speed multiplier
   maxPitch: 20, // Maximum pitch angle in degrees
-  rollDecayDelay: 0.5, // Delay before starting roll decay in seconds
+  rollDecayDelay: 0.1, // Delay before starting roll decay in seconds
 
   create() {
     // Initialization code for spacezone-spaceship
@@ -410,6 +410,9 @@ room.registerElement('spacezone-spaceship', {
       this.userControlledRoll += this.rollspeed * dt; // Update user-controlled roll
       this.rollDecayTimer = 0; // Reset decay timer while rolling
     }
+
+    // Clamp userControlledRoll to ±90 degrees
+    this.userControlledRoll = THREE.MathUtils.clamp(this.userControlledRoll, -90, 90);
 
     // Handle roll decay delay
     if (!this.isRollingLeft && !this.isRollingRight) {
