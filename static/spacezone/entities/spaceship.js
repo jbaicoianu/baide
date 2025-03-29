@@ -3,7 +3,7 @@ room.registerElement('spacezone-spaceship', {
   rollspeed: 360, // Increased rotation speed to 360 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
-  totalracetime: 600, // Total race duration in seconds
+  totalracetime: 120, // Total race duration in seconds
   rollDamping: 10, // Increased damping factor for roll
   pitchDamping: 5, // Damping factor for pitch
   maxspeedmultiplier: 1.5, // Reverted property for maximum speed multiplier
