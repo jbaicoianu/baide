@@ -58,6 +58,7 @@ room.registerElement('spacezone-asteroidfield', {
           }
       }
       geometry.attributes.position.needsUpdate = true;
+      geometry.computeVertexNormals(); // Recalculate normals after vertex manipulation
 
       // Create material for the asteroid without random color
       const material = new THREE.MeshStandardMaterial({ color: 0x808080, transparent: true, opacity: 1 }); // Fixed gray color
