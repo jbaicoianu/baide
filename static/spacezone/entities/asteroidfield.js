@@ -161,7 +161,6 @@ room.registerElement('spacezone-asteroidfield', {
           opacity: 1, // Initialize opacity to 1
           collidable: true, // Initialize collidable to true
           emissive: 'black', // Initialize emissive to black
-          scale: V(Math.random() * 45 + 5) // Random scale between 5-50
         }); 
         asteroid.pos = new THREE.Vector3(0, 0, -9999);
 
@@ -232,6 +231,8 @@ room.registerElement('spacezone-asteroidfield', {
           asteroid.opacity = 0;
         }
       }
+      asteroid.scale = V(Math.random() * 45 + 5) // Random scale between 5-50
+
       // Collision Optimization: Set collidable and collision_id based on relative z position to the ship
       if (player) {
         const distanceZ = Math.abs(asteroid.pos.z - shipZ);
@@ -254,7 +255,6 @@ room.registerElement('spacezone-asteroidfield', {
       if (asteroid.opacity !== undefined && asteroid.opacity < 1) {
         if (dt !== undefined) {
           asteroid.opacity += dt / 2;
-        } else {
           asteroid.opacity += 0.005; // Further reduced increment for smoother transition
         }
         if (asteroid.opacity > 1) asteroid.opacity = 1;
