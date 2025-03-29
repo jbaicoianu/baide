@@ -230,8 +230,8 @@ room.registerElement('spacezone-asteroidfield', {
         if (pathPositionOffset > 0 && asteroid.opacity !== undefined) {
           asteroid.opacity = 0;
         }
+        asteroid.scale = V(Math.random() * 45 + 5) // Random scale between 5-50
       }
-      asteroid.scale = V(Math.random() * 45 + 5) // Random scale between 5-50
 
       // Collision Optimization: Set collidable and collision_id based on relative z position to the ship
       if (player) {
