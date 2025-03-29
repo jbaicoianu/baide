@@ -441,11 +441,17 @@ room.registerElement('spacezone-spaceship', {
     // Clamp currentPitch to the maximum allowed pitch
     this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
 
+    // Calculate combined roll
+    let combinedRoll = this.currentRoll + this.userControlledRoll;
+
+    // Clamp combined roll to ±90 degrees
+    combinedRoll = THREE.MathUtils.clamp(combinedRoll, -90, 90);
+
     // Apply the combined roll and pitch to the taufighter's orientation
     this.taufighter.rotation.set(
       this.currentPitch,
       0,
-      this.currentRoll + this.userControlledRoll
+      combinedRoll
     );
 
     // Inertial Flight Model
