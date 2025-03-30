@@ -239,6 +239,14 @@ room.registerElement('spacezone-spaceship', {
 
     // Optionally, update score or trigger events based on damage
     this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
+
+    // Check for race failure due to excessive damage
+    if (this.shieldstrength <= 0) {
+      console.log('Race failed due to excessive damage!');
+      this.isRacing = false;
+      this.deactivateControlContext('spacezone-spaceship');
+      this.dialog.showDialog('dialogs/failure.html');
+    }
   },
   startRace() {
     player.disable();
