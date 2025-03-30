@@ -6,7 +6,7 @@ Set in the year **2036**, "Spacezone" unfolds on Mars, now an established colony
 
 ## Current Situation
 
-A rebel faction within the colony has splintered off, igniting a civil war on Mars. Communication with Earth is severely limited as traditional media has been nearly eradicated due to recent political upheavals. News now flows primarily through biased and inaccurate reports from social media platforms like Twitter, spreading misinformation through various "threadbois."
+Reporting about the situation on Mars is limited on Earth due to a combination of the described problems with media distribution and because all communication with the colony is handled via SpaceX's Starlink system, which is controlled by the richest man, the antagonist in our game. News now flows primarily through biased and inaccurate reports from social media platforms like Twitter, spreading misinformation through various "threadbois."
 
 ## Protagonist's Mission
 
@@ -39,5 +39,3 @@ As players make deliveries, they gather information from interactions with vario
 ## Player's Choice and Conclusion
 
 Players must decide which side to support by determining whom to assist with their deliveries. A running leaderboard tracks player contributions to each faction, influencing the game's outcome based on collective player decisions.
-
----
