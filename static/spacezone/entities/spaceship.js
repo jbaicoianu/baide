@@ -1,3 +1,46 @@
+/* 
+/* CSS Definitions for Spacezone Dialog */
+/* ====================================================== */
+.spacezone-dialog-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, rgba(10,10,40,0.9), rgba(20,20,60,0.9));
+  color: #00FFEA;
+  padding: 25px 30px;
+  border-radius: 12px 8px 20px 8px;
+  box-shadow: 0 8px 32px 0 rgba(31,38,135,0.37);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  z-index: 1000;
+}
+
+.spacezone-dialog-container button.spacezone-continue-button {
+  margin-top: 25px;
+  padding: 12px 25px;
+  font-size: 18px;
+  cursor: pointer;
+  background-color: rgba(0, 255, 234, 0.2);
+  border: 2px solid #00FFEA;
+  border-radius: 6px;
+  color: #00FFEA;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.spacezone-dialog-container button.spacezone-continue-button:hover {
+  background-color: rgba(0, 255, 234, 0.4);
+  transform: scale(1.05);
+}
+
+.spacezone-dialog-container button.spacezone-continue-button:active {
+  background-color: rgba(0, 255, 234, 0.6);
+  transform: scale(0.95);
+}
+/* ====================================================== */
+*/
+
 room.registerElement('spacezone-spaceship', {
   initialcargo: 100, // Configurable initial number of medical supplies
   currentcargo: 100, // Current number of medical supplies
@@ -574,14 +617,6 @@ room.registerElement('spacezone-dialog', {
     // Create the dialog container
     this.dialogContainer = document.createElement('div');
     this.dialogContainer.className = 'spacezone-dialog-container';
-    this.dialogContainer.style.position = 'fixed';
-    this.dialogContainer.style.top = '50%';
-    this.dialogContainer.style.left = '50%';
-    this.dialogContainer.style.transform = 'translate(-50%, -50%)';
-    this.dialogContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-    this.dialogContainer.style.color = 'white';
-    this.dialogContainer.style.padding = '20px';
-    this.dialogContainer.style.borderRadius = '8px';
     this.dialogContainer.style.display = 'none'; // Initially hidden
 
     // Create the content area
@@ -591,10 +626,7 @@ room.registerElement('spacezone-dialog', {
     // Create the "Continue" button
     this.continueButton = document.createElement('button');
     this.continueButton.textContent = 'Continue';
-    this.continueButton.style.marginTop = '20px';
-    this.continueButton.style.padding = '10px 20px';
-    this.continueButton.style.fontSize = '16px';
-    this.continueButton.style.cursor = 'pointer';
+    this.continueButton.className = 'spacezone-continue-button';
     this.dialogContainer.appendChild(this.continueButton);
 
     // Append the dialog to the document body
