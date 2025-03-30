@@ -6,7 +6,7 @@ Set in the year **2036**, "Spacezone" unfolds on Mars, now an established colony
 
 ## Current Situation
 
-Reporting about the situation on Mars is limited on Earth due to a combination of the described problems with media distribution and because all communication with the colony is handled via SpaceX's Starlink system, which is controlled by the richest man, the antagonist in our game. News now flows primarily through biased and inaccurate reports from social media platforms like Twitter, spreading misinformation through various "threadbois."
+Reporting about the situation on Mars is limited on Earth as traditional media has been all but eradicated due to the political situation over the preceding years, and because all communication with the colony is handled via SpaceX's Starlink system, which is controlled by the richest man, the antagonist in our game. News now flows primarily through biased and inaccurate reports from social media platforms like X (formerly Twitter), which are full of biased reporting and subject to manipulation by the same man who's leading the Mars colony efforts, spreading misinformation through various "threadbois."
 
 ## Protagonist's Mission
 
