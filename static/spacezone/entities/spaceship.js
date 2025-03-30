@@ -1,19 +1,3 @@
-// CSS for the ship stats overlay
-/* 
-.ship-stats-overlay {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-family: Arial, sans-serif;
-  font-size: 14px;
-  z-index: 1000;
-}
-*/
-
 room.registerElement('spacezone-spaceship', {
   initialcargo: 100, // Configurable initial number of medical supplies
   currentcargo: 100, // Current number of medical supplies
