@@ -69,4 +69,5 @@
 .spacezone-dialog-container h6,
 .spacezone-dialog-container button {
   font-family: 'Orbitron', sans-serif;
+  margin-bottom: 0.5em;
 }
