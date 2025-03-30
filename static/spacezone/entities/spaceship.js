@@ -1,5 +1,11 @@
 // File: static/spacezone/entities/spaceship.js
 room.registerElement('spacezone-spaceship', {
+  initialcargo: 100, // Configurable initial number of medical supplies
+  currentcargo: 100, // Current number of medical supplies
+  shieldstrength: 100, // Current strength of the radiation shield
+  supplyexpirationrate: 1, // Base rate at which supplies expire per second
+  damage: 0, // Current damage sustained by the ship
+
   rollspeed: 360, // Increased rotation speed to 360 degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
@@ -12,6 +18,11 @@ room.registerElement('spacezone-spaceship', {
 
   create() {
     // Initialization code for spacezone-spaceship
+
+    // Initialize medical supplies and shield attributes
+    this.currentcargo = this.initialcargo;
+    this.shieldstrength = 100; // Fully shielded at start
+    this.damage = 0;
 
     // Create spacezone-score element
     this.score = this.createObject('spacezone-score');
@@ -178,18 +189,19 @@ room.registerElement('spacezone-spaceship', {
   },
   handleCollide(ev) {
     console.log(ev);
-  },
-  updatePositionAndDirection(currentPathPosition) {
-    const level = this.parent;
-    if (level && level.getPositionAtTime) {
-      const position = level.getPositionAtTime(Math.min(currentPathPosition, 0.999));
-      const lookAheadT = Math.min(currentPathPosition + .001, 1.0);
-      const lookAheadPos = level.getPositionAtTime(lookAheadT);
-      const direction = new THREE.Vector3().subVectors(lookAheadPos, position).normalize();
-      this.pos = position;
-      this.zdir = direction;
-    } else {
-      console.warn('Level or getPositionAtTime method not found.');
+
+    // Implement damage model
+    if (ev.type === 'collision') {
+      const damageAmount = 10; // Configurable damage per collision
+      this.damage += damageAmount;
+      console.log(`Ship damaged! Total damage: ${this.damage}`);
+
+      // Decrease shield strength based on damage
+      this.shieldstrength = Math.max(0, 100 - this.damage * 2); // Example: each damage reduces shield by 2
+      console.log(`Shield strength: ${this.shieldstrength}`);
+
+      // Optionally, update score or trigger events based on damage
+      this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
     }
   },
   startRace() {
@@ -203,6 +215,11 @@ room.registerElement('spacezone-spaceship', {
       console.warn('Score object not found or reset method is unavailable.');
     }
     
+    // Reset medical supplies and shield strength at the start of the race
+    this.currentcargo = this.initialcargo;
+    this.shieldstrength = 100;
+    this.damage = 0;
+
     // Hide the "Click ship to start" text
     if (this.parent && this.parent.textObject) {
       this.parent.textObject.visible = false;
@@ -337,6 +354,26 @@ room.registerElement('spacezone-spaceship', {
         } else {
           console.warn('Parent not found. Cannot dispatch race_complete event.');
         }
+      }
+
+      // Implement supply expiration logic
+      const effectiveShield = Math.max(0, this.shieldstrength);
+      const supplyRate = this.supplyexpirationrate * (1 / (effectiveShield / 100 + 0.1)); // Prevent division by zero
+      const suppliesLost = supplyRate * dt;
+      this.currentcargo = Math.max(0, this.currentcargo - suppliesLost);
+      this.dispatchEvent({ type: 'supplies_lost', data: suppliesLost });
+
+      // Update score based on remaining supplies
+      if(this.score && typeof this.score.updateSupplies === 'function') {
+        this.score.updateSupplies(this.currentcargo);
+      }
+
+      // Check if all supplies are lost
+      if(this.currentcargo <= 0){
+        this.isRacing = false;
+        console.log('All medical supplies have been lost!');
+        // Emit an event or handle game over state as needed
+        this.dispatchEvent({ type: 'supplies_depleted' });
       }
     }
 
@@ -758,7 +795,8 @@ room.registerElement('spacezone-score', {
   scores: {
     time_elapsed: 100,
     weapon_fire: -5,
-    race_complete: 10000
+    race_complete: 10000,
+    supplies_lost: -10 // Added score for supplies lost
   },
   totalScore: 0,
 
@@ -781,6 +819,7 @@ room.registerElement('spacezone-score', {
       this.parent.addEventListener('time_elapsed', (e) => this.addScore(e));
       this.parent.addEventListener('weapon_fire', (e) => this.addScore(e));
       this.parent.addEventListener('race_complete', (e) => this.addScore(e));
+      this.parent.addEventListener('supplies_lost', (e) => this.addScore(e)); // Listen for supplies_lost
     } else {
       console.warn('Parent not found. Cannot bind event listeners.');
     }
@@ -811,5 +850,15 @@ room.registerElement('spacezone-score', {
     if(this.scoreLabel) {
       this.scoreLabel.text = `Score: ${this.totalScore}`;
     }
+  },
+  
+  updateSupplies(currentCargo) {
+    const lostSupplies = this.initialcargo - currentCargo;
+    const scoreChange = this.scores.supplies_lost * lostSupplies;
+    this.totalScore += scoreChange;
+    if(this.scoreLabel) {
+      this.scoreLabel.text = `Score: ${this.totalScore}`;
+    }
+    console.log(`Supplies lost: ${lostSupplies}. Score changed by: ${scoreChange}. Total score: ${this.totalScore}`);
   }
 });
