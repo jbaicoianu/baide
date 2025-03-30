@@ -377,10 +377,8 @@ room.registerElement('spacezone-spaceship', {
       this.dispatchEvent({ type: 'supplies_lost', data: suppliesLost });
 
       // Update score based on remaining supplies
-      if(this.score && typeof this.score.updateSupplies === 'function') {
-        this.score.updateSupplies(this.currentcargo);
-      }
-
+      // Removed the call to this.score.updateSupplies(this.currentcargo);
+      
       // Check if all supplies are lost
       if(this.currentcargo <= 0){
         this.isRacing = false;
@@ -865,13 +863,17 @@ room.registerElement('spacezone-score', {
     }
   },
   
-  updateSupplies(currentCargo) {
-    const lostSupplies = this.initialcargo - currentCargo;
-    const scoreChange = this.scores.supplies_lost * lostSupplies;
-    this.totalScore += scoreChange;
-    if(this.scoreLabel) {
-      this.scoreLabel.text = `Score: ${this.totalScore}`;
+  updateSupplies() {
+    if(this.parent && typeof this.parent.initialcargo === 'number' && typeof this.parent.currentcargo === 'number') {
+      const lostSupplies = this.parent.initialcargo - this.parent.currentcargo;
+      const scoreChange = this.scores.supplies_lost * lostSupplies;
+      this.totalScore += scoreChange;
+      if(this.scoreLabel) {
+        this.scoreLabel.text = `Score: ${this.totalScore}`;
+      }
+      console.log(`Supplies lost: ${lostSupplies}. Score changed by: ${scoreChange}. Total score: ${this.totalScore}`);
+    } else {
+      console.warn('Parent initialcargo or currentcargo is not accessible.');
     }
-    console.log(`Supplies lost: ${lostSupplies}. Score changed by: ${scoreChange}. Total score: ${this.totalScore}`);
   }
 });
