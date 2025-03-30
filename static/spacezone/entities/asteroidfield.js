@@ -152,7 +152,7 @@ room.registerElement('spacezone-asteroidfield', {
           collision_scale: V(0.1),
           col: colorHex, // Set a random color with constraints
           normalmap_id: "asteroid-normal", // Added normalmap_id
-          normal_scale: 4,
+          normal_scale: 40,
           texture_repeat: V(3),
           
           rotate_deg_per_sec: 0, // Disabled rotation by setting to 0
