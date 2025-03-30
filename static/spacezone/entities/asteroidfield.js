@@ -104,6 +104,11 @@ room.registerElement('spacezone-asteroidfield', {
 
     // Initialize asteroids immediately upon creation
     this.initAsteroids();
+
+    // Listen for the race_start event on the parent to initialize asteroids when a race starts
+    if (this.parent) {
+      this.parent.addEventListener('race_start', () => this.initAsteroids());
+    }
   },
   initAsteroids() {
     const level = this.parent;
