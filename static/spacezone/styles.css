@@ -32,6 +32,7 @@
   border: 1px solid rgba(255, 255, 255, 0.18);
   z-index: 1000;
   font-family: 'Tektur', sans-serif;
+  font-size: 1.2em;
 }
 
 .spacezone-dialog-container p {
