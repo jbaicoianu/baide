@@ -172,6 +172,11 @@ room.registerElement('spacezone-spaceship', {
     // Initialize rolling state
     this.isRollingLeft = false;
     this.isRollingRight = false;
+
+    // Create spacezone-dialog element and initialize dialog
+    this.dialog = this.createObject('spacezone-dialog');
+    this.dialog.showDialog('dialogs/intro.txt');
+    this.dialog.addEventListener('continue', () => this.startRace());
   },
   createShipStatsOverlay() {
     // Create a div element for the overlay
@@ -561,6 +566,69 @@ room.registerElement('spacezone-spaceship', {
     if (player && player.camera) {
       player.camera.fov = this.currentFov;
     }
+  }
+});
+
+room.registerElement('spacezone-dialog', {
+  create() {
+    // Create the dialog container
+    this.dialogContainer = document.createElement('div');
+    this.dialogContainer.className = 'spacezone-dialog-container';
+    this.dialogContainer.style.position = 'fixed';
+    this.dialogContainer.style.top = '50%';
+    this.dialogContainer.style.left = '50%';
+    this.dialogContainer.style.transform = 'translate(-50%, -50%)';
+    this.dialogContainer.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    this.dialogContainer.style.color = 'white';
+    this.dialogContainer.style.padding = '20px';
+    this.dialogContainer.style.borderRadius = '8px';
+    this.dialogContainer.style.display = 'none'; // Initially hidden
+
+    // Create the content area
+    this.contentArea = document.createElement('div');
+    this.dialogContainer.appendChild(this.contentArea);
+
+    // Create the "Continue" button
+    this.continueButton = document.createElement('button');
+    this.continueButton.textContent = 'Continue';
+    this.continueButton.style.marginTop = '20px';
+    this.continueButton.style.padding = '10px 20px';
+    this.continueButton.style.fontSize = '16px';
+    this.continueButton.style.cursor = 'pointer';
+    this.dialogContainer.appendChild(this.continueButton);
+
+    // Append the dialog to the document body
+    document.body.appendChild(this.dialogContainer);
+
+    // Add event listener to the "Continue" button
+    this.continueButton.addEventListener('click', () => {
+      this.emitContinueEvent();
+      this.hideDialog();
+    });
+  },
+  showDialog(dialogPath) {
+    fetch(dialogPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to load dialog file: ${response.statusText}`);
+        }
+        return response.text();
+      })
+      .then(htmlContent => {
+        this.contentArea.innerHTML = htmlContent;
+        this.dialogContainer.style.display = 'block';
+      })
+      .catch(error => {
+        console.error('Error loading dialog:', error);
+        this.contentArea.innerHTML = '<p>Error loading dialog.</p>';
+        this.dialogContainer.style.display = 'block';
+      });
+  },
+  hideDialog() {
+    this.dialogContainer.style.display = 'none';
+  },
+  emitContinueEvent() {
+    this.dispatchEvent(new Event('continue'));
   }
 });
 
