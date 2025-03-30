@@ -2,7 +2,7 @@
 
 ## Overview
 
-Set in the not-too-distant future, "Spacezone" unfolds on Mars, now an established colony housing tens of thousands of people. Initially populated by scientists and engineers, Mars has seen a significant influx of inhabitants from all walks of life, thanks to the marketing efforts of the world's richest man—modeled after Elon Musk—whose identity remains unnamed in the game.
+Set in the year **2036**, "Spacezone" unfolds on Mars, now an established colony housing tens of thousands of people. This rapid development was made possible by the accelerated timeline of SpaceX's original 2029 plan, driven by the world's richest man—modeled after Elon Musk—who leveraged his political connections and unprecedented control of people's perceptions and motivations via social media. Initially populated by scientists and engineers, Mars has seen a significant influx of inhabitants from all walks of life, thanks to these efforts. Despite his influential role, the richest man's identity remains unnamed in the game.
 
 ## Current Situation
 
