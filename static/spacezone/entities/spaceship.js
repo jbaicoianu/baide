@@ -1,4 +1,19 @@
-// File: static/spacezone/entities/spaceship.js
+// CSS for the ship stats overlay
+/* 
+.ship-stats-overlay {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+  z-index: 1000;
+}
+*/
+
 room.registerElement('spacezone-spaceship', {
   initialcargo: 100, // Configurable initial number of medical supplies
   currentcargo: 100, // Current number of medical supplies
@@ -18,6 +33,9 @@ room.registerElement('spacezone-spaceship', {
 
   create() {
     // Initialization code for spacezone-spaceship
+
+    // Create HTML overlay for ship stats
+    this.createShipStatsOverlay();
 
     // Initialize medical supplies and shield attributes
     this.currentcargo = this.initialcargo;
@@ -171,6 +189,24 @@ room.registerElement('spacezone-spaceship', {
     this.isRollingLeft = false;
     this.isRollingRight = false;
   },
+  createShipStatsOverlay() {
+    // Create a div element for the overlay
+    this.shipStatsOverlay = document.createElement('div');
+    this.shipStatsOverlay.className = 'ship-stats-overlay';
+    this.shipStatsOverlay.innerHTML = `
+      <div>Shield Strength: <span id="shield-strength">100</span>%</div>
+      <div>Cargo Remaining: <span id="cargo-remaining">100</span></div>
+    `;
+    document.body.appendChild(this.shipStatsOverlay);
+  },
+  updateShipStatsOverlay() {
+    if (this.shipStatsOverlay) {
+      const shieldElement = this.shipStatsOverlay.querySelector('#shield-strength');
+      const cargoElement = this.shipStatsOverlay.querySelector('#cargo-remaining');
+      if (shieldElement) shieldElement.textContent = Math.round(this.shieldstrength);
+      if (cargoElement) cargoElement.textContent = Math.round(this.currentcargo);
+    }
+  },
   activateAfterburner() {
     this.afterburner = true;
     this.targetSpeedMultiplier = this.maxspeedmultiplier; // Use maxspeedmultiplier
@@ -290,6 +326,9 @@ room.registerElement('spacezone-spaceship', {
     }
   },
   update(dt) {
+    // Update ship stats overlay
+    this.updateShipStatsOverlay();
+
     if (this.countdown) {
       this.countdownTime += dt;
       if (this.countdownTime >= 1) {
