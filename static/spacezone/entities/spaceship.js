@@ -224,18 +224,16 @@ room.registerElement('spacezone-spaceship', {
     console.log(ev);
 
     // Implement damage model
-    if (ev.type === 'collision') {
-      const damageAmount = 10; // Configurable damage per collision
-      this.damage += damageAmount;
-      console.log(`Ship damaged! Total damage: ${this.damage}`);
+    const damageAmount = 10; // Configurable damage per collision
+    this.damage += damageAmount;
+    console.log(`Ship damaged! Total damage: ${this.damage}`);
 
-      // Decrease shield strength based on damage
-      this.shieldstrength = Math.max(0, 100 - this.damage * 2); // Example: each damage reduces shield by 2
-      console.log(`Shield strength: ${this.shieldstrength}`);
+    // Decrease shield strength based on damage
+    this.shieldstrength = Math.max(0, 100 - this.damage * 2); // Example: each damage reduces shield by 2
+    console.log(`Shield strength: ${this.shieldstrength}`);
 
-      // Optionally, update score or trigger events based on damage
-      this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
-    }
+    // Optionally, update score or trigger events based on damage
+    this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
   },
   startRace() {
     player.disable();
