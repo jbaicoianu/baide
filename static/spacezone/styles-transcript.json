@@ -47,5 +47,22 @@
     "commit_hash": "293798ccc06832a48069d10017f4bbc3ab200a75",
     "model": "o1-mini",
     "file_name": "static/spacezone/styles.css"
+  },
+  {
+    "role": "User",
+    "content": "Add styles to use Orbitron font font for any header tag or buttons in our dialog",
+    "timestamp": "2025-03-30T20:40:28.497077Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/styles.css"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `styles.css` file to apply the Orbitron font to all header tags and buttons within the dialog. Additionally, I've included the Orbitron font import from Google Fonts. Let me know if you have any further adjustments or questions.",
+    "timestamp": "2025-03-30T20:40:53.546313Z",
+    "branch": "main",
+    "commit_hash": "c2185614a9ba170983fe39a42fc3ad5d6e321be6",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/styles.css"
   }
 ]
