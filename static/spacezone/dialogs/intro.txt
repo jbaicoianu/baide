@@ -1,3 +1,4 @@
+<h1>Mission Briefing</h1>
 <p>An alarm sounds, and a warning sign flashes up on your ship's dashboard. The red light blares against the dim interior, casting eerie shadows as you glance at the rapidly approaching asteroid field. The van Allen belts' high radiation zone looms ahead, a treacherous path riddled with unpredictable dangers. You've flown this route before, but rumors of enemy turrets and hidden mines have taken their toll on even the most seasoned pilots.</p>
 
 <p>Your ship, the <em>Starlight Runner</em>, hums steadily as you adjust the navigation systems, eyes fixed on the blinking radar dots that represent potential threats. Sweat beads on your forehead despite the ship's climate control—these medical supplies are vital. The Mars colony's need is urgent, and every second spent in this radiation-soaked gauntlet reduces their efficacy.</p>
