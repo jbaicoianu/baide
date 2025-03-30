@@ -198,6 +198,7 @@ room.registerElement('spacezone-spaceship', {
       this.zdir = direction;
     } else {
       console.warn('Level or getPositionAtTime method not found.');
+    }
   },
   handleCollide(ev) {
     console.log(ev);
