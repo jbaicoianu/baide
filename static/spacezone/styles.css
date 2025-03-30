@@ -37,6 +37,7 @@
 .spacezone-dialog-container p {
   margin-bottom: 1em;
   line-height: 1.5;
+  text-align: justify;
 }
 
 .spacezone-dialog-container button.spacezone-continue-button {
