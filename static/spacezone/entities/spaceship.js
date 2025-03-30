@@ -419,6 +419,8 @@ room.registerElement('spacezone-spaceship', {
         console.log('All medical supplies have been lost!');
         // Emit an event or handle game over state as needed
         this.dispatchEvent({ type: 'supplies_depleted' });
+        this.deactivateControlContext('spacezone-spaceship');
+        this.dialog.showDialog('dialogs/failure-depleted.html');
       }
     }
 
