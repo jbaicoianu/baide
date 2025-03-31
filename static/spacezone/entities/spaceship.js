@@ -180,6 +180,12 @@ room.registerElement('spacezone-spaceship', {
 
     // Initialize Enemy Drone Controller
     // Removed as drone controllers are now spawned by the level
+
+    // Initialize Missile Launcher
+    this.missileLauncher = this.createObject('spacezone-missile-launcher', {
+      scanrange: 1000,
+      locktime: 2
+    });
   },
   createShipStatsOverlay() {
     // Create a div element for the overlay
@@ -984,6 +990,265 @@ room.registerElement('spacezone-enemy-drone', {
   }
 });
     
+// File: static/spacezone/entities/spacezone-score.js
+room.registerElement('spacezone-score', {
+  scores: {
+    time_elapsed: 100,
+    weapon_fire: -5,
+    race_complete: 10000,
+    supplies_lost: -10 // Added score for supplies lost
+  },
+  totalScore: 0,
+
+  create() {
+    // Initialize totalScore and set up event listeners
+    this.reset();
+
+    // Create text object for displaying the score
+    this.scoreLabel = this.createObject('text', {
+      text: `Score: ${this.totalScore}`,
+      pos: new THREE.Vector3(22, 12, 0),
+      rotation: '0 180 0',
+      font_scale: false,
+      col: 'white',
+      font_size: 2
+    });
+
+    // Event handlers bound to the parent
+    if(this.parent) {
+      this.parent.addEventListener('time_elapsed', (e) => this.addScore(e));
+      this.parent.addEventListener('weapon_fire', (e) => this.addScore(e));
+      this.parent.addEventListener('race_complete', (e) => this.addScore(e));
+      this.parent.addEventListener('supplies_lost', (e) => this.addScore(e)); // Listen for supplies_lost
+    } else {
+      console.warn('Parent not found. Cannot bind event listeners.');
+    }
+
+    // console.log('Spacezone-score element created and event listeners attached.');
+  },
+
+  reset() {
+    this.totalScore = 0;
+    if(this.scoreLabel) {
+      this.scoreLabel.text = `Score: ${this.totalScore}`;
+    }
+    // console.log('Score has been reset to 0.');
+  },
+
+  addScore(event) {
+    if(event.type === 'time_elapsed') {
+      const scoreChange = Math.round(event.data.dt * this.scores[event.type]);
+      this.totalScore += scoreChange;
+      // console.log(`Event '${event.type}' occurred. Score change: ${scoreChange}. Total score: ${this.totalScore}`);
+    } else if(this.scores.hasOwnProperty(event.type)) {
+      this.totalScore += this.scores[event.type];
+      // console.log(`Event '${event.type}' occurred. Score change: ${this.scores[event.type]}. Total score: ${this.totalScore}`);
+    } else {
+      console.warn(`Unknown event type '${event.type}' for scoring.`);
+    }
+
+    if(this.scoreLabel) {
+      this.scoreLabel.text = `Score: ${this.totalScore}`;
+    }
+  },
+  
+  updateSupplies() {
+    if(this.parent && typeof this.parent.initialcargo === 'number' && typeof this.parent.currentcargo === 'number') {
+      const lostSupplies = this.parent.initialcargo - this.parent.currentcargo;
+      const scoreChange = this.scores.supplies_lost * lostSupplies;
+      this.totalScore += scoreChange;
+      if(this.scoreLabel) {
+        this.scoreLabel.text = `Score: ${this.totalScore}`;
+      }
+      console.log(`Supplies lost: ${lostSupplies}. Score changed by: ${scoreChange}. Total score: ${this.totalScore}`);
+    } else {
+      console.warn('Parent initialcargo or currentcargo is not accessible.');
+    }
+  }
+});
+
+// New Element: spacezone-missile-launcher
+room.registerElement('spacezone-missile-launcher', {
+  scanrange: 1000, // Default scan range in meters
+  locktime: 2, // Default lock time in seconds
+  activetarget: null,
+  locked: false,
+  lockTimer: null,
+
+  create() {
+    // Initialization code for missile launcher
+    this.scan();
+    this.addEventListener('targetacquired', (event) => {
+      console.log('Target acquired:', event.data);
+    });
+    this.addEventListener('targetlocked', (event) => {
+      console.log('Target locked:', event.data);
+    });
+  },
+
+  scan() {
+    const enemies = room.getElementsByClassName('enemy');
+    if (enemies.length === 0) {
+      console.log('No enemies found within scan range.');
+      return;
+    }
+
+    // Find the closest enemy within scan range
+    let closestEnemy = null;
+    let minDistance = Infinity;
+    const launcherPosition = this.pos.clone();
+
+    for (let enemy of enemies) {
+      const distance = launcherPosition.distanceTo(enemy.pos);
+      if (distance < minDistance && distance <= this.scanrange) {
+        minDistance = distance;
+        closestEnemy = enemy;
+      }
+    }
+
+    if (closestEnemy) {
+      this.activetarget = closestEnemy;
+      this.locked = false;
+      this.dispatchEvent({
+        type: 'targetacquired',
+        data: this.activetarget
+      });
+
+      // Clear existing timer if any
+      if (this.lockTimer) {
+        clearTimeout(this.lockTimer);
+      }
+
+      // Set timer to lock the target after locktime seconds
+      this.lockTimer = setTimeout(() => {
+        if (this.activetarget && !this.locked) {
+          this.lock();
+        }
+      }, this.locktime * 1000);
+    } else {
+      console.log('No enemies within scan range.');
+    }
+  },
+
+  lock() {
+    if (this.activetarget) {
+      this.locked = true;
+      this.dispatchEvent({
+        type: 'targetlocked',
+        data: this.activetarget
+      });
+      console.log('Target locked:', this.activetarget);
+    }
+  },
+
+  fire() {
+    if (this.locked && this.activetarget) {
+      // Spawn a new missile
+      const missile = room.createObject('spacezone-missile', {
+        pos: this.getWorldPosition(),
+        orientation: this.getWorldOrientation(),
+        target: this.activetarget
+      });
+      console.log('Missile fired towards:', this.activetarget);
+    } else {
+      console.log('Cannot fire: No target locked.');
+    }
+  },
+
+  update(dt) {
+    // Optionally, implement periodic scanning
+    // For example, scan every 5 seconds
+    this.scanInterval = this.scanInterval || 0;
+    this.scanInterval += dt;
+    if (this.scanInterval >= 5) {
+      this.scan();
+      this.scanInterval = 0;
+    }
+  }
+});
+
+// New Element: spacezone-missile
+room.registerElement('spacezone-missile', {
+  target: null,
+  speed: 100, // Missile speed in meters per second
+  active: true,
+
+  create() {
+    // Initialize missile properties
+    this.target = this.properties.target;
+    if (!this.target) {
+      console.warn('Missile launched without a target.');
+      this.active = false;
+      this.die();
+      return;
+    }
+
+    // Create missile object
+    this.missile = this.createObject('object', {
+      id: 'capsule',
+      col: 'orange',
+      scale: V(0.5, 2, 0.5),
+      pos: this.properties.pos || V(0, 0, 0),
+      rotation: this.properties.orientation || '0 0 0',
+      collision_id: 'missile',
+      mass: 50,
+      zdir: new THREE.Vector3(0, 0, 1),
+      visible: true
+    });
+
+    // Add velocity towards the target
+    const direction = this.target.pos.clone().sub(this.missile.pos).normalize();
+    this.missile.vel = direction.multiplyScalar(this.speed);
+
+    // Add collision event listener
+    this.missile.addEventListener('collide', (ev) => this.handleCollision(ev));
+  },
+
+  handleCollision(ev) {
+    if (ev.type === 'collision' && ev.other.collision_id === 'enemy_drone') {
+      console.log('Missile hit an enemy drone:', ev.other);
+      this.explode();
+      ev.other.dispatchEvent({ type: 'hit', data: this });
+      this.die();
+    }
+  },
+
+  explode() {
+    // Create explosion effect
+    const explosion = this.createObject('object', {
+      id: 'explosion',
+      col: 'red',
+      scale: V(1, 1, 1),
+      pos: this.missile.pos.clone(),
+      visible: true
+    });
+
+    // Optionally, add particle effects or sound here
+
+    console.log('Missile exploded at:', this.missile.pos);
+  },
+
+  update(dt) {
+    if (!this.active) return;
+
+    // Move missile forward
+    this.missile.pos.add(this.missile.vel.clone().multiplyScalar(dt));
+
+    // Optionally, track the target's movement
+    if (this.target) {
+      const newDirection = this.target.pos.clone().sub(this.missile.pos).normalize();
+      this.missile.vel = newDirection.multiplyScalar(this.speed);
+    }
+
+    // Optionally, check if missile is out of bounds
+    // For example, if too far from origin, deactivate
+    const maxDistance = 2000;
+    if (this.missile.pos.length() > maxDistance) {
+      this.die();
+    }
+  }
+});
+        
 // File: static/spacezone/entities/spacezone-score.js
 room.registerElement('spacezone-score', {
   scores: {
