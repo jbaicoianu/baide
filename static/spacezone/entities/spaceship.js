@@ -1281,7 +1281,7 @@ room.registerElement('spacezone-missile-launcher', {
     if (!this.missilePool) {
       this.missilePool = this.createObject('objectpool', {
         objecttype: 'spacezone-missile',
-        max: 5
+        max: 2
       });
     }
 
@@ -1293,6 +1293,7 @@ room.registerElement('spacezone-missile-launcher', {
       this.missilePool.grab({
         pos: this.getWorldPosition(), // Using this.getWorldPosition() for current launcher position
         zdir: missilezdir,
+        vel: missilezdir.clone().multiplyScalar(400);  
         target: this.activetarget
       });
       console.log('Missile fired towards:', this.activetarget);
