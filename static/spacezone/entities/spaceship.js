@@ -638,11 +638,19 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     for (let drone of this.drones) {
       if (drone.pos.z < this.player.pos.z - 100) { // Assuming 'behind' means having a lesser z-position
         // Calculate a new position
-        const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
-        const newT = currentPathPosition + randomOffset;
-        const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
+        // const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
+        // const newT = currentPathPosition + randomOffset;
+        // const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
 
-        const newPosition = this.level.getPositionAtTime(clampedT);
+        const newPosition = this.level.getPositionAtTime(Math.min(currentPathPosition, 1.0));
+
+        // Generate random offsetX and offsetY between -50 and 50
+        const offsetX = Math.random() * 100 - 50;
+        const offsetY = Math.random() * 100 - 50;
+
+        // Apply random offsets
+        newPosition.x += offsetX;
+        newPosition.y += offsetY;
 
         // Reposition the drone
         drone.pos = newPosition;
@@ -650,7 +658,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     }
   }
 });
-
+    
 room.registerElement('spacezone-dialog', {
   create() {
     // Create the dialog container
@@ -702,7 +710,7 @@ room.registerElement('spacezone-dialog', {
     this.dispatchEvent(new Event('continue'));
   }
 });
-
+    
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
@@ -763,7 +771,7 @@ room.registerElement('spacezone-enginetrail', {
     }
   }
 });
-
+    
 room.registerElement('spacezone-cannon', {
   rate: 10, // Default rate: increased to 10 shots per second
   muzzlespeed: 400, // Default muzzle speed increased to 400
@@ -849,7 +857,7 @@ room.registerElement('spacezone-cannon', {
     this.flashLightIntensity(dt);
   }
 });
-
+    
 room.registerElement('spacezone-laserbeam', {
   create() {
     // Create a bright lime green 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 4, 0.25)
@@ -873,7 +881,7 @@ room.registerElement('spacezone-laserbeam', {
     }
   }
 });
-
+    
 // Added Enemy Drone Entity
 room.registerElement('spacezone-enemy-drone', {
   activationDistance: 1000, // Distance in meters to activate the drone
@@ -970,7 +978,7 @@ room.registerElement('spacezone-enemy-drone', {
     console.log('Enemy drone has been destroyed.');
   }
 });
-
+    
 // File: static/spacezone/entities/spacezone-score.js
 room.registerElement('spacezone-score', {
   scores: {
