@@ -1325,6 +1325,7 @@ room.registerElement('spacezone-missile', {
       scale: V(1, 4, 1),
       //pos: this.properties.pos || V(0, 0, 0),
       //zdir: this.properties.zdir || V(0, 0, 1),
+      rotation: V(90, 0, 0),
       collision_id: 'missile',
       mass: 50,
       visible: true
