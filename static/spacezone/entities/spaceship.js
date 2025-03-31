@@ -827,7 +827,7 @@ room.registerElement('spacezone-cannon', {
       });
     }        
     // Get spawnPosition using ship's world coordinates
-    const spawnPosition = this.localToWorld(V(0));
+    const spawnPosition = this.getWorldPosition(); // Updated to use this.getWorldPosition()
 
     // Get forward position and compute direction
     const forwardPosition = this.localToWorld(V(0, 0, 1));
@@ -992,7 +992,7 @@ room.registerElement('spacezone-enemy-drone', {
     console.log('Enemy drone has been destroyed.');
   }
 });
-    
+
 // File: static/spacezone/entities/spacezone-score.js
 room.registerElement('spacezone-score', {
   scores: {
@@ -1148,7 +1148,7 @@ room.registerElement('spacezone-missile-launcher', {
     if (this.locked && this.activetarget) {
       // Spawn a new missile
       const missile = room.createObject('spacezone-missile', {
-        pos: this.getWorldPosition(),
+        pos: this.getWorldPosition(), // Using this.getWorldPosition() for current launcher position
         orientation: this.getWorldOrientation(),
         target: this.activetarget
       });
