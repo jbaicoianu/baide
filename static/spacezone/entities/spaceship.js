@@ -1322,16 +1322,16 @@ room.registerElement('spacezone-missile', {
     this.missile = this.createObject('object', {
       id: 'capsule',
       col: 'orange',
-      scale: V(0.5, 2, 0.5),
-      pos: this.properties.pos || V(0, 0, 0),
-      zdir: this.properties.zdir || V(0, 0, 1),
+      scale: V(1, 4, 1),
+      //pos: this.properties.pos || V(0, 0, 0),
+      //zdir: this.properties.zdir || V(0, 0, 1),
       collision_id: 'missile',
       mass: 50,
       visible: true
     });
 
     // Add velocity based on zdir
-    this.missile.vel = this.zdir.clone().multiplyScalar(this.speed);
+    this.vel = this.zdir.clone().multiplyScalar(this.speed);
 
     // Add collision event listener
     this.missile.addEventListener('collide', (ev) => this.handleCollision(ev));
