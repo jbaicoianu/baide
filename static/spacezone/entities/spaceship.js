@@ -1205,7 +1205,7 @@ room.registerElement('spacezone-missile-launcher', {
           if (this.activetarget && !this.locked) {
             this.lock();
           }
-        }, this.scantime * 1000);
+        }, this.locktime * 1000);
       }
     } else {
       console.log('No suitable targets within angle restrictions.');
