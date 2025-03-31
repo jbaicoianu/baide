@@ -595,15 +595,16 @@ room.registerElement('spacezone-enemy-dronecontroller', {
   create() {
     // Preallocate drones and store them in this.drones
     this.drones = [];
+    this.player = this.parent.getElementsByTagName('spacezone-spaceship')[0]; // Ensure player is retrieved here
     for (let i = 0; i < this.numdrones; i++) {
       let drone = this.createObject('spacezone-enemy-drone', {
-        pos: V(0, 0, 0) // Initialize at origin or desired spawn position
+        pos: V(0, 0, 0), // Initialize at origin or desired spawn position
+        player: this.player // Pass the player reference to each drone
       });
       this.drones.push(drone);
     }
 
     // Reference to the player and level
-    this.player = this.parent.getElementsByTagName('spacezone-spaceship')[0];
     this.level = this.parent;
 
     if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
@@ -889,7 +890,8 @@ room.registerElement('spacezone-enemy-drone', {
       collision_scale: V(1), // Sphere collider with radius 1m
       mass: 500, // Assign mass as appropriate
       zdir: V(0, 0, 1),
-      visible: true
+      visible: true,
+      player: this.player // Store the player reference
     });
 
     // Add a cannon to the drone
