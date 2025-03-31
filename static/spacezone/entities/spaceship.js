@@ -1397,9 +1397,9 @@ room.registerElement('spacezone-targeting-reticle', {
   create() {
     // Create a red plane object with billboard: 'y' and opacity 0.4
     this.reticle = this.createObject('object', {
-      id: 'plane',
-      col: 'red',
-      scale: V(2, 2, 1), // Adjust scale as needed
+      id: 'cube',
+      col: 'green',
+      scale: V(10, 10, .1), // Adjust scale as needed
       billboard: 'y',
       opacity: 0.4,
       visible: false // Initially hidden
@@ -1408,7 +1408,7 @@ room.registerElement('spacezone-targeting-reticle', {
 
   setTargetPosition(targetPosition) {
     if (this.reticle) {
-      this.reticle.pos = targetPosition.clone();
+      this.pos = targetPosition;
       this.reticle.visible = true;
     }
   },
