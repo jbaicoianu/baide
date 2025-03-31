@@ -1092,7 +1092,38 @@ room.registerElement('spacezone-score', {
   }
 });
 
-// New Element: spacezone-missile-launcher
+// New Element: spacezone-targeting-reticle
+room.registerElement('spacezone-targeting-reticle', {
+  create() {
+    // Create a red plane object with billboard: 'y' and opacity 0.4
+    this.reticle = this.createObject('object', {
+      id: 'plane',
+      col: 'red',
+      scale: V(2, 2, 1), // Adjust scale as needed
+      billboard: 'y',
+      opacity: 0.4,
+      visible: false // Initially hidden
+    });
+  },
+
+  setTargetPosition(targetPosition) {
+    if (this.reticle) {
+      this.reticle.pos = targetPosition.clone();
+      this.reticle.visible = true;
+    }
+  },
+
+  hideReticle() {
+    if (this.reticle) {
+      this.reticle.visible = false;
+    }
+  },
+
+  update(dt) {
+    // Additional update logic if needed
+  }
+});
+        
 room.registerElement('spacezone-missile-launcher', {
   scanrange: 1000, // Default scan range in meters
   locktime: 2, // Default lock time in seconds
@@ -1365,5 +1396,37 @@ room.registerElement('spacezone-score', {
     } else {
       console.warn('Parent initialcargo or currentcargo is not accessible.');
     }
+  }
+});
+
+// New Element: spacezone-targeting-reticle
+room.registerElement('spacezone-targeting-reticle', {
+  create() {
+    // Create a red plane object with billboard: 'y' and opacity 0.4
+    this.reticle = this.createObject('object', {
+      id: 'plane',
+      col: 'red',
+      scale: V(2, 2, 1), // Adjust scale as needed
+      billboard: 'y',
+      opacity: 0.4,
+      visible: false // Initially hidden
+    });
+  },
+
+  setTargetPosition(targetPosition) {
+    if (this.reticle) {
+      this.reticle.pos = targetPosition.clone();
+      this.reticle.visible = true;
+    }
+  },
+
+  hideReticle() {
+    if (this.reticle) {
+      this.reticle.visible = false;
+    }
+  },
+
+  update(dt) {
+    // Additional update logic if needed
   }
 });
