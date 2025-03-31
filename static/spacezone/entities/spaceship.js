@@ -184,7 +184,8 @@ room.registerElement('spacezone-spaceship', {
     // Initialize Missile Launcher
     this.missileLauncher = this.createObject('spacezone-missile-launcher', {
       scanrange: 1000,
-      locktime: 2
+      locktime: 2,
+      scantime: 0.5 // Added scantime attribute with default value of 0.5 seconds
     });
   },
   createShipStatsOverlay() {
@@ -1074,6 +1075,7 @@ room.registerElement('spacezone-score', {
 room.registerElement('spacezone-missile-launcher', {
   scanrange: 1000, // Default scan range in meters
   locktime: 2, // Default lock time in seconds
+  scantime: 0.5, // Added scantime attribute with default value of 0.5 seconds
   activetarget: null,
   locked: false,
   lockTimer: null,
@@ -1122,12 +1124,12 @@ room.registerElement('spacezone-missile-launcher', {
         clearTimeout(this.lockTimer);
       }
 
-      // Set timer to lock the target after locktime seconds
+      // Set timer to lock the target after scantime seconds
       this.lockTimer = setTimeout(() => {
         if (this.activetarget && !this.locked) {
           this.lock();
         }
-      }, this.locktime * 1000);
+      }, this.scantime * 1000);
     } else {
       console.log('No enemies within scan range.');
     }
@@ -1160,10 +1162,10 @@ room.registerElement('spacezone-missile-launcher', {
 
   update(dt) {
     // Optionally, implement periodic scanning
-    // For example, scan every 5 seconds
+    // For example, scan every scantime seconds
     this.scanInterval = this.scanInterval || 0;
     this.scanInterval += dt;
-    if (this.scanInterval >= 5) {
+    if (this.scanInterval >= this.scantime) {
       this.scan();
       this.scanInterval = 0;
     }
