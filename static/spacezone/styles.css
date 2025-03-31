@@ -86,5 +86,6 @@
     height: 96vh;
     overflow-y: auto;
     padding: 20px;
+    max-height: calc(96vh - 40px);
   }
 }
