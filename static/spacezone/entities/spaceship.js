@@ -596,8 +596,8 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     }
 
     // Reference to the player and level
-    this.player = this.parent; // Changed to access player via this.parent
-    this.level = this.parent.parent; // Changed to access level via this.parent.parent
+    this.player = this.parent.getElementsByTagName('spacezone-spaceship');
+    this.level = this.parent;
 
     if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
       console.warn('Level or getPositionAtTime method not found. Enemy Drone Controller may not function correctly.');
