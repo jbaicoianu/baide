@@ -261,10 +261,10 @@ room.registerElement('spacezone-spaceship', {
     window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
 
     // Initialize Kalman filters for smoothing device orientation
-    this.pitchFilter = new this.KalmanFilter(0.9, 0.1);
-    this.rollFilter = new this.KalmanFilter(0.9, 0.1);
-    this.offsetXFilter = new this.KalmanFilter(0.9, 0.1);
-    this.offsetYFilter = new this.KalmanFilter(0.9, 0.1);
+    this.pitchFilter = new this.KalmanFilter(0.99, 0.1);
+    this.rollFilter = new this.KalmanFilter(0.99, 0.1);
+    this.offsetXFilter = new this.KalmanFilter(0.99, 0.1);
+    this.offsetYFilter = new this.KalmanFilter(0.99, 0.1);
 
     // Set initial filter values if needed
     this.pitchFilter.setInitial(0);
