@@ -189,7 +189,7 @@ room.registerElement('spacezone-spaceship', {
     });
 
     // Create targeting reticle
-    this.targetingReticle = this.createObject('spacezone-targeting-reticle');
+    this.targetingReticle = room.createObject('spacezone-targeting-reticle');
 
     // Add event listeners for missile launcher to handle reticle position
     this.missileLauncher.addEventListener('targetlocked', (event) => {
