@@ -1120,7 +1120,7 @@ room.registerElement('spacezone-score', {
 
 room.registerElement('spacezone-missile-launcher', {
   scanrange: 1000, // Default scan range in meters
-  locktime: 1, // Default lock time in seconds
+  locktime: 2, // Default lock time in seconds
   scantime: 0.25, // Added scantime attribute with default value of 0.5 seconds
   activetarget: null,
   locked: false,
