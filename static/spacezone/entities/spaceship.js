@@ -248,7 +248,7 @@ room.registerElement('spacezone-spaceship', {
       console.log('Race failed due to excessive damage!');
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
-      this.dialog.showDialog('dialogs/failure-destroyed.html');
+      this.dialog.showDialog('dialogs/failure-deestroy.html');
     }
   },
   startRace() {
@@ -422,6 +422,16 @@ room.registerElement('spacezone-spaceship', {
         this.deactivateControlContext('spacezone-spaceship');
         this.dialog.showDialog('dialogs/failure-depleted.html');
       }
+
+      // Emit time_elapsed event with updated data
+      this.dispatchEvent({
+        type: 'time_elapsed',
+        data: {
+          dt: dt,
+          pos: this.pos.clone(),
+          currentPathPosition: t
+        }
+      });
     }
 
     // Handle targeting reticle movement based on mouse delta
@@ -576,16 +586,6 @@ room.registerElement('spacezone-spaceship', {
     if (player && player.camera) {
       player.camera.fov = this.currentFov;
     }
-
-    // Emit time_elapsed event at the end of the update function with updated data
-    this.dispatchEvent({
-      type: 'time_elapsed',
-      data: {
-        dt: dt,
-        pos: this.pos.clone(),
-        currentPathPosition: t
-      }
-    });
   }
 });
     
@@ -738,6 +738,16 @@ room.registerElement('spacezone-enginetrail', {
       } else {
         this.particle.col = 'cyan';
       }
+
+      // Emit time_elapsed event with updated data
+      this.dispatchEvent({
+        type: 'time_elapsed',
+        data: {
+          dt: dt,
+          pos: this.pos.clone(),
+          currentPathPosition: player.raceTime / player.totalracetime
+        }
+      });
     } else {
       this.particle.rate = 0;
     }
