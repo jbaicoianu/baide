@@ -1452,7 +1452,7 @@ room.registerElement('spacezone-targeting-reticle', {
       visible: false, // Initially hidden
       cull_face: 'none',
       rotate_deg_per_sec: 90,
-      rotation_axis: V(0, 0, 1),
+      rotate_axis: V(0, 0, 1),
     });
   },
 
