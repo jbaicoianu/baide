@@ -596,7 +596,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     }
 
     // Reference to the player and level
-    this.player = this.parent.getElementsByTagName('spacezone-spaceship');
+    this.player = this.parent.getElementsByTagName('spacezone-spaceship')[0];
     this.level = this.parent;
 
     if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
