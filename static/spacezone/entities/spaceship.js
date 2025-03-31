@@ -691,7 +691,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     for (let drone of this.drones) {
       if (drone.pos.z < this.player.pos.z - 100) { // Assuming 'behind' means having a lesser z-position
         // Calculate a new position
-        const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
+        const randomOffset = 0.1 + Math.random() * 0.2; // Random between 0.1 and 0.3
         const newT = currentPathPosition + randomOffset;
         const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
 
@@ -1415,12 +1415,11 @@ room.registerElement('spacezone-score', {
 });
 
 
-// New Element: spacezone-targeting-reticle
 room.registerElement('spacezone-targeting-reticle', {
   create() {
     // Create a green plane object with billboard: 'y' and opacity 0.6
     this.reticle = this.createObject('object', {
-      id: 'cube',
+      id: 'plane',
       col: 'green',
       scale: V(20, 20, .1), // Adjust scale as needed
       billboard: 'y',
@@ -1428,7 +1427,9 @@ room.registerElement('spacezone-targeting-reticle', {
       depth_test: false,
       render_order: 10,
       lighting: false, // Set lighting to false
-      visible: false // Initially hidden
+      visible: false, // Initially hidden
+      cull_face: 'none',
+      rotate_deg_per_sec: '0 0 90' // Angular velocity set to (0, 0, 90) degrees per second
     });
   },
 
