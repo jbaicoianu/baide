@@ -638,11 +638,11 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     for (let drone of this.drones) {
       if (drone.pos.z < this.player.pos.z - 100) { // Assuming 'behind' means having a lesser z-position
         // Calculate a new position
-        // const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
-        // const newT = currentPathPosition + randomOffset;
-        // const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
+        const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
+        const newT = currentPathPosition + randomOffset;
+        const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
 
-        const newPosition = this.level.getPositionAtTime(Math.min(currentPathPosition, 1.0));
+        const newPosition = this.level.getPositionAtTime(newT);
 
         // Generate random offsetX and offsetY between -50 and 50
         const offsetX = Math.random() * 100 - 50;
