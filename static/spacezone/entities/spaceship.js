@@ -1323,7 +1323,7 @@ room.registerElement('spacezone-missile', {
   target: null,
   speed: 300, // Missile speed in meters per second
   active: true,
-  turnrate: 30, // Added turnrate attribute with default value 10
+  turnrate: 90, // Added turnrate attribute with default value 10
 
   create() {
     // Initialize missile properties
