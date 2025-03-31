@@ -372,7 +372,7 @@ room.registerElement('spacezone-spaceship', {
       if (t > 1) t = 1;
 
       // Assuming 'spacezone-level' is the parent element
-      const level = this.parent.parent;
+      const level = this.parent;
       if (level && level.getPositionAtTime) {
         this.updatePositionAndDirection(t);
 
