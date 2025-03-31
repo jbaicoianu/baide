@@ -1158,14 +1158,14 @@ room.registerElement('spacezone-missile-launcher', {
     let closestEnemy = null;
     let minDistance = Infinity;
     const launcherPosition = this.getWorldPosition();
+    const headingPoint = launcherPosition.clone().add(new THREE.Vector3(0, 0, 1)); // 1m in front on z-axis
+    const headingVector = headingPoint.clone().sub(launcherPosition).normalize();
 
     for (let enemy of enemies) {
       const distance = launcherPosition.distanceTo(enemy.pos);
       if (distance <= this.scanrange) {
         // Calculate angle between heading vector and target vector
-        const headingPoint = launcherPosition.clone().add(new THREE.Vector3(0, 0, 1)); // 1m in front on z-axis
-        const headingVector = headingPoint.clone().sub(launcherPosition).normalize();
-        const targetVector = enemy.pos.clone().sub(launcherPosition).normalize();
+        const targetVector = enemy.getWorldPosition().clone().sub(launcherPosition).normalize();
         const dotProduct = headingVector.dot(targetVector);
         const angle = Math.acos(dotProduct) * (180 / Math.PI); // Convert to degrees
 
