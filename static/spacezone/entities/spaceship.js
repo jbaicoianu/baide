@@ -588,11 +588,14 @@ room.registerElement('spacezone-enemy-dronecontroller', {
   numdrones: 10, // Default number of drones
 
   create() {
-    // Initialize the object pool for enemy drones
-    this.objectPool = this.createObject('objectpool', {
-      objecttype: 'spacezone-enemy-drone',
-      max: this.numdrones
-    });
+    // Preallocate drones and store them in this.drones
+    this.drones = [];
+    for (let i = 0; i < this.numdrones; i++) {
+      let drone = this.createObject('spacezone-enemy-drone', {
+        pos: V(0, 0, 0) // Initialize at origin or desired spawn position
+      });
+      this.drones.push(drone);
+    }
 
     // Reference to the player and level
     this.player = player; // Assuming 'player' is globally accessible
@@ -616,8 +619,8 @@ room.registerElement('spacezone-enemy-dronecontroller', {
 
     const currentPathPosition = this.player.currentPathPosition || 0; // Default to 0 if not available
 
-    // Iterate through all active drones
-    for (let drone of this.objectPool.activeObjects) {
+    // Iterate through all preallocated drones
+    for (let drone of this.drones) {
       if (drone.pos.z > this.player.pos.z) { // Assuming 'behind' means having a greater z-position
         // Calculate a new position
         const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
@@ -943,16 +946,18 @@ room.registerElement('spacezone-enemy-drone', {
   }
 });
 
-// Added Enemy Drone Controller
 room.registerElement('spacezone-enemy-dronecontroller', {
   numdrones: 10, // Default number of drones
 
   create() {
-    // Initialize the object pool for enemy drones
-    this.objectPool = this.createObject('objectpool', {
-      objecttype: 'spacezone-enemy-drone',
-      max: this.numdrones
-    });
+    // Preallocate drones and store them in this.drones
+    this.drones = [];
+    for (let i = 0; i < this.numdrones; i++) {
+      let drone = this.createObject('spacezone-enemy-drone', {
+        pos: V(0, 0, 0) // Initialize at origin or desired spawn position
+      });
+      this.drones.push(drone);
+    }
 
     // Reference to the player and level
     this.player = player; // Assuming 'player' is globally accessible
@@ -976,8 +981,8 @@ room.registerElement('spacezone-enemy-dronecontroller', {
 
     const currentPathPosition = this.player.currentPathPosition || 0; // Default to 0 if not available
 
-    // Iterate through all active drones
-    for (let drone of this.objectPool.activeObjects) {
+    // Iterate through all preallocated drones
+    for (let drone of this.drones) {
       if (drone.pos.z > this.player.pos.z) { // Assuming 'behind' means having a greater z-position
         // Calculate a new position
         const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
