@@ -1343,7 +1343,7 @@ room.registerElement('spacezone-missile', {
       pos: this.properties.pos || V(0, 0, 0),
       //zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
       rotation: V(90, 0, 0),
-      collision_id: 'capsule',
+      collision_id: 'sphere',
       mass: 50,
       visible: true
     });
