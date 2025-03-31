@@ -179,9 +179,7 @@ room.registerElement('spacezone-spaceship', {
     this.dialog.addEventListener('continue', () => this.startRace());
 
     // Initialize Enemy Drone Controller
-    this.enemyDroneController = this.createObject('spacezone-enemy-dronecontroller', {
-      numdrones: 10
-    });
+    // Removed as drone controllers are now spawned by the level
   },
   createShipStatsOverlay() {
     // Create a div element for the overlay
