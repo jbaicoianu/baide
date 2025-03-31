@@ -1563,7 +1563,7 @@ room.registerElement('explosion', {
   create() {
     // Initialize the particle system for the explosion
     this.particles = this.createObject('particle', {
-      count: 1000,
+      count: 50,
       rate: 20000,
       loop: false,
       col: V(0.3),
