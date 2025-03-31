@@ -248,7 +248,7 @@ room.registerElement('spacezone-spaceship', {
       console.log('Race failed due to excessive damage!');
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
-      this.dialog.showDialog('dialogs/failure-deestroy.html');
+      this.dialog.showDialog('dialogs/failure-destroyed.html'); // Show our failure-destroyed dialog
     }
   },
   startRace() {
