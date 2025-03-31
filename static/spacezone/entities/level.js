@@ -41,7 +41,7 @@ room.registerElement('spacezone-level', {
         rotation: '0 0 0',
         scale: new THREE.Vector3(1, 1, 1)
       });
-    }, 1000);
+    }, 3000);
 
     // // Generate 10 enemy drones positioned randomly along the path
     // this.enemyDrones = [];
