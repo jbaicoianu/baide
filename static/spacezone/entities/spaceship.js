@@ -278,6 +278,11 @@ room.registerElement('spacezone-spaceship', {
       this.missileLauncher.disarm(); // Disarm missile launcher
       this.dialog.showDialog('dialogs/failure-destroyed.html'); // Show our failure-destroyed dialog
       this.targetingReticle.hideReticle(); // Hide reticle when race fails
+
+      // Set shipcollider.collidable to false when race ends
+      if (this.shipcollider) {
+        this.shipcollider.collidable = false;
+      }
     }
   },
   startRace() {
@@ -308,9 +313,9 @@ room.registerElement('spacezone-spaceship', {
       this.parent.textObject.visible = false;
     }
 
-    // Set shipcollider as not pickable when race starts
+    // Set shipcollider.collidable to true when race starts
     if (this.shipcollider) {
-      this.shipcollider.pickable = false;
+      this.shipcollider.collidable = true;
     }
 
     if (this.countdown) {
@@ -426,9 +431,9 @@ room.registerElement('spacezone-spaceship', {
         this.isRacing = false;
         console.log('Race completed!');
         
-        // Set shipcollider back to pickable when race is complete
+        // Set shipcollider.collidable to false when race ends
         if (this.shipcollider) {
-          this.shipcollider.pickable = true;
+          this.shipcollider.collidable = false;
         }
 
         // Disarm the missile launcher
@@ -474,6 +479,11 @@ room.registerElement('spacezone-spaceship', {
         this.deactivateControlContext('spacezone-spaceship');
         this.dialog.showDialog('dialogs/failure-depleted.html');
         this.targetingReticle.hideReticle(); // Hide reticle when supplies are depleted
+
+        // Set shipcollider.collidable to false when race ends
+        if (this.shipcollider) {
+          this.shipcollider.collidable = false;
+        }
       }
 
       // Emit time_elapsed event with updated data
