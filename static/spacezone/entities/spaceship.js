@@ -1070,7 +1070,7 @@ room.registerElement('spacezone-enemy-drone', {
     }
   },
   handleCollision(ev) {
-    if (ev.type === 'collision' && ev.other.collision_id === 'capsule') {
+    if (ev.type === 'collision' && ev.data.other.collision_id === 'capsule') {
       this.explodeDrone();
     }
   },
@@ -1371,7 +1371,7 @@ room.registerElement('spacezone-missile', {
   },
 
   handleCollision(ev) {
-    if (ev.other.hasClass('nomissile')) {
+    if (ev.data.other.hasClass('nomissile')) {
       // Do not explode if colliding with an object that has the 'nomissile' class
       return;
     }
