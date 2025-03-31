@@ -20,6 +20,10 @@ room.registerElement('spacezone-spaceship', {
   deviceRoll: 0,
   deviceOffsetX: 0,
   deviceOffsetY: 0,
+  
+  // Properties for orientation calibration
+  initialDevicePitch: null,
+  initialDeviceRoll: null,
 
   create() {
     // Initialization code for spacezone-spaceship
@@ -230,8 +234,8 @@ room.registerElement('spacezone-spaceship', {
       this.deviceRoll = Math.atan2(acc.x, acc.z);
 
       // Clamp pitch and roll to prevent excessive tilting
-      this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch, this.maxPitch);
-      this.deviceRoll = THREE.MathUtils.clamp(this.deviceRoll, -90, 90);
+      this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
+      this.deviceRoll = THREE.MathUtils.clamp(this.deviceRoll, -Math.PI / 2, Math.PI / 2);
     }
 
     if (event.acceleration) {
@@ -243,6 +247,12 @@ room.registerElement('spacezone-spaceship', {
       // Clamp offsets within the configured range
       this.deviceOffsetX = THREE.MathUtils.clamp(this.deviceOffsetX, -this.offsetRange, this.offsetRange);
       this.deviceOffsetY = THREE.MathUtils.clamp(this.deviceOffsetY, -this.offsetRange, this.offsetRange);
+    }
+
+    // Handle orientation calibration
+    if (this.isRacing && this.initialDevicePitch !== null && this.initialDeviceRoll !== null) {
+      this.devicePitch -= this.initialDevicePitch;
+      this.deviceRoll -= this.initialDeviceRoll;
     }
   },
   createShipStatsOverlay() {
@@ -321,6 +331,10 @@ room.registerElement('spacezone-spaceship', {
         this.shipcollider.pickable = true;
         this.shipcollider.collidable = false;
       }
+
+      // Reset orientation calibration
+      this.initialDevicePitch = null;
+      this.initialDeviceRoll = null;
     }
   },
   startRace() {
@@ -402,6 +416,10 @@ room.registerElement('spacezone-spaceship', {
     } else {
       console.warn('Parent not found. Cannot dispatch race_start event.');
     }
+
+    // Store initial device orientation for calibration
+    this.initialDevicePitch = this.devicePitch;
+    this.initialDeviceRoll = this.deviceRoll;
   },
   update(dt) {
     // Update ship stats overlay
@@ -491,6 +509,10 @@ room.registerElement('spacezone-spaceship', {
 
         // Hide the reticle when race is complete
         this.targetingReticle.hideReticle();
+
+        // Reset orientation calibration
+        this.initialDevicePitch = null;
+        this.initialDeviceRoll = null;
       }
 
       // Implement supply expiration logic
@@ -524,6 +546,10 @@ room.registerElement('spacezone-spaceship', {
           this.shipcollider.pickable = true;
           this.shipcollider.collidable = false;
         }
+
+        // Reset orientation calibration
+        this.initialDevicePitch = null;
+        this.initialDeviceRoll = null;
       }
 
       // Emit time_elapsed event with updated data
@@ -702,6 +728,10 @@ room.registerElement('spacezone-spaceship', {
       drone.pos.z = -9999;
     }
     console.log('All drones have been reset to z position -9999.');
+
+    // Reset orientation calibration
+    this.initialDevicePitch = null;
+    this.initialDeviceRoll = null;
   }
 });
     
