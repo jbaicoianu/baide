@@ -1344,6 +1344,7 @@ room.registerElement('spacezone-missile', {
       //zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
       rotation: V(90, 0, 0),
       collision_id: 'sphere',
+      collision_scale: V(1),
       mass: 50,
       visible: true
     });
@@ -1368,12 +1369,10 @@ room.registerElement('spacezone-missile', {
   },
 
   handleCollision(ev) {
-    if (ev.type === 'collision') {
-      console.log('missile explodes!', ev);
-      this.explode();
-      ev.other.dispatchEvent({ type: 'hit', data: this });
-      //this.die();
-    }
+    console.log('missile explodes!', ev);
+    this.explode();
+    ev.other.dispatchEvent({ type: 'hit', data: this });
+    //this.die();
   },
 
   explode() {
