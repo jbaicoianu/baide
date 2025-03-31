@@ -1352,8 +1352,8 @@ room.registerElement('spacezone-missile', {
       count: 2000,
       rate: 200,
       duration: 10,
-      pos: V(-0.5, -0.5, -0.5),
-      rand_pos: V(1, 1, 1),
+      pos: V(-0.5, -0.5, 0),
+      rand_pos: V(1, 1, -4),
       col: V(0.4, 0.4, 0.4),
       rand_col: V(0.4, 0.4, 0.4)
     });
