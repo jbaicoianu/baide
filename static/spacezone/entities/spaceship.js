@@ -480,8 +480,9 @@ room.registerElement('spacezone-spaceship', {
         this.dialog.showDialog('dialogs/failure-depleted.html');
         this.targetingReticle.hideReticle(); // Hide reticle when supplies are depleted
 
-        // Set shipcollider.collidable to false when race ends
+        // Set shipcollider.collidable to false and .pickable to true when race ends
         if (this.shipcollider) {
+          this.shipcollider.pickable = true;
           this.shipcollider.collidable = false;
         }
       }
