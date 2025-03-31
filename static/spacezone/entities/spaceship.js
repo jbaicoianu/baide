@@ -218,7 +218,7 @@ room.registerElement('spacezone-spaceship', {
     console.log('Afterburner deactivated!');
   },
   updatePositionAndDirection(currentPathPosition) {
-    const level = this.parent;
+    const level = this.parent.parent;
     if (level && level.getPositionAtTime) {
       const position = level.getPositionAtTime(Math.min(currentPathPosition, 0.999));
       const lookAheadT = Math.min(currentPathPosition + .001, 1.0);
@@ -372,7 +372,7 @@ room.registerElement('spacezone-spaceship', {
       if (t > 1) t = 1;
 
       // Assuming 'spacezone-level' is the parent element
-      const level = this.parent;
+      const level = this.parent.parent;
       if (level && level.getPositionAtTime) {
         this.updatePositionAndDirection(t);
 
@@ -578,8 +578,8 @@ room.registerElement('spacezone-spaceship', {
       }
     }
 
-    if (player && player.camera) {
-      player.camera.fov = this.currentFov;
+    if (this.parent && this.parent.parent && this.parent.parent.player && this.parent.parent.player.camera) {
+      this.parent.parent.player.camera.fov = this.currentFov;
     }
   }
 });
@@ -598,8 +598,8 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     }
 
     // Reference to the player and level
-    this.player = player; // Assuming 'player' is globally accessible
-    this.level = this.parent; // Assuming 'level' is the parent element
+    this.player = this.parent; // Changed to access player via this.parent
+    this.level = this.parent.parent; // Changed to access level via this.parent.parent
 
     if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
       console.warn('Level or getPositionAtTime method not found. Enemy Drone Controller may not function correctly.');
@@ -882,7 +882,7 @@ room.registerElement('spacezone-enemy-drone', {
     this.drone.addEventListener('collide', ev => this.handleCollision(ev));
 
     // Reference to player object
-    this.player = player; // Assuming 'player' is globally accessible
+    this.player = this.player; // Updated to reference via controller
   },
   update(dt) {
     if (!this.isActive) {
@@ -912,7 +912,7 @@ room.registerElement('spacezone-enemy-drone', {
   },
   moveAlongPath(dt) {
     // Implement movement logic to follow the level path
-    const level = this.parent;
+    const level = this.level;
     if (level && level.getPositionAtTime) {
       // Example: Move based on elapsed time and droneSpeed
       // You may need to implement a more sophisticated path-following mechanism
@@ -943,58 +943,6 @@ room.registerElement('spacezone-enemy-drone', {
     // Remove the drone from the scene
     this.drone.die();
     console.log('Enemy drone has been destroyed.');
-  }
-});
-
-room.registerElement('spacezone-enemy-dronecontroller', {
-  numdrones: 10, // Default number of drones
-
-  create() {
-    // Preallocate drones and store them in this.drones
-    this.drones = [];
-    for (let i = 0; i < this.numdrones; i++) {
-      let drone = this.createObject('spacezone-enemy-drone', {
-        pos: V(0, 0, 0) // Initialize at origin or desired spawn position
-      });
-      this.drones.push(drone);
-    }
-
-    // Reference to the player and level
-    this.player = player; // Assuming 'player' is globally accessible
-    this.level = this.parent; // Assuming 'level' is the parent element
-
-    if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
-      console.warn('Level or getPositionAtTime method not found. Enemy Drone Controller may not function correctly.');
-    }
-  },
-
-  update(dt) {
-    this.repositionDrones();
-  },
-
-  repositionDrones() {
-    if (!this.player || !this.level) return;
-
-    // Assume the player's current path position can be determined
-    // This requires that the player or level exposes a method/property for it
-    // For example, this.player.currentPathPosition
-
-    const currentPathPosition = this.player.currentPathPosition || 0; // Default to 0 if not available
-
-    // Iterate through all preallocated drones
-    for (let drone of this.drones) {
-      if (drone.pos.z > this.player.pos.z) { // Assuming 'behind' means having a greater z-position
-        // Calculate a new position
-        const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
-        const newT = currentPathPosition + randomOffset;
-        const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
-
-        const newPosition = this.level.getPositionAtTime(clampedT);
-
-        // Reposition the drone
-        drone.pos = newPosition;
-      }
-    }
   }
 });
 
