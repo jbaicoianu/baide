@@ -255,6 +255,7 @@ room.registerElement('spacezone-spaceship', {
       console.log('Race failed due to excessive damage!');
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
+      this.missileLauncher.disarm(); // Disarm missile launcher
       this.dialog.showDialog('dialogs/failure-destroyed.html'); // Show our failure-destroyed dialog
     }
   },
@@ -262,6 +263,13 @@ room.registerElement('spacezone-spaceship', {
     player.disable();
     this.activateControlContext('spacezone-spaceship');
     
+    // Arm the missile launcher
+    if (this.missileLauncher && typeof this.missileLauncher.arm === 'function') {
+      this.missileLauncher.arm();
+    } else {
+      console.warn('Missile Launcher not found or arm function unavailable.');
+    }
+
     // Reset the score at the start of the race
     if (this.score && typeof this.score.reset === 'function') {
       this.score.reset();
@@ -402,6 +410,13 @@ room.registerElement('spacezone-spaceship', {
           this.shipcollider.pickable = true;
         }
 
+        // Disarm the missile launcher
+        if (this.missileLauncher && typeof this.missileLauncher.disarm === 'function') {
+          this.missileLauncher.disarm();
+        } else {
+          console.warn('Missile Launcher not found or disarm function unavailable.');
+        }
+
         // Emit 'race_complete' event
         if(this.parent) {
           this.parent.dispatchEvent({type: 'race_complete'});
@@ -424,6 +439,12 @@ room.registerElement('spacezone-spaceship', {
       if(this.currentcargo <= 0){
         this.isRacing = false;
         console.log('All medical supplies have been lost!');
+        // Disarm the missile launcher
+        if (this.missileLauncher && typeof this.missileLauncher.disarm === 'function') {
+          this.missileLauncher.disarm();
+        } else {
+          console.warn('Missile Launcher not found or disarm function unavailable.');
+        }
         // Emit an event or handle game over state as needed
         this.dispatchEvent({ type: 'supplies_depleted' });
         this.deactivateControlContext('spacezone-spaceship');
@@ -993,7 +1014,7 @@ room.registerElement('spacezone-enemy-drone', {
     console.log('Enemy drone has been destroyed.');
   }
 });
-
+    
 // File: static/spacezone/entities/spacezone-score.js
 room.registerElement('spacezone-score', {
   scores: {
@@ -1079,6 +1100,7 @@ room.registerElement('spacezone-missile-launcher', {
   activetarget: null,
   locked: false,
   lockTimer: null,
+  armed: false, // Added armed attribute, defaulting to false
 
   create() {
     // Initialization code for missile launcher
@@ -1091,7 +1113,22 @@ room.registerElement('spacezone-missile-launcher', {
     });
   },
 
+  arm() {
+    this.armed = true;
+    console.log('Missile launcher armed.');
+  },
+
+  disarm() {
+    this.armed = false;
+    console.log('Missile launcher disarmed.');
+  },
+  
   scan() {
+    if (!this.armed) {
+      // Scanner is armed, do not scan
+      return;
+    }
+
     const enemies = room.getElementsByClassName('enemy');
     if (enemies.length === 0) {
       console.log('No enemies found within scan range.');
@@ -1143,6 +1180,7 @@ room.registerElement('spacezone-missile-launcher', {
         data: this.activetarget
       });
       console.log('Target locked:', this.activetarget);
+      this.fire();
     }
   },
 
@@ -1171,7 +1209,7 @@ room.registerElement('spacezone-missile-launcher', {
     }
   }
 });
-
+    
 // New Element: spacezone-missile
 room.registerElement('spacezone-missile', {
   target: null,
