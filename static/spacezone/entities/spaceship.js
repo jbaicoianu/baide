@@ -931,7 +931,7 @@ room.registerElement('spacezone-laserbeam', {
     }
   }
 });
-    
+
 // Added Enemy Drone Entity
 room.registerElement('spacezone-enemy-drone', {
   activationDistance: 1000, // Distance in meters to activate the drone
@@ -1031,7 +1031,7 @@ room.registerElement('spacezone-enemy-drone', {
     console.log('Enemy drone has been destroyed.');
   }
 });
-    
+
 // File: static/spacezone/entities/spacezone-score.js
 room.registerElement('spacezone-score', {
   scores: {
@@ -1168,24 +1168,37 @@ room.registerElement('spacezone-missile-launcher', {
     }
 
     if (closestEnemy) {
-      this.activetarget = closestEnemy;
-      this.locked = false;
-      this.dispatchEvent({
-        type: 'targetacquired',
-        data: this.activetarget
-      });
+      // Calculate angle between heading vector and target vector
+      const headingPoint = launcherPosition.clone().add(new THREE.Vector3(0, 0, 1)); // 1m in front on z-axis
+      const headingVector = headingPoint.clone().sub(launcherPosition).normalize();
+      const targetVector = closestEnemy.pos.clone().sub(launcherPosition).normalize();
+      const dotProduct = headingVector.dot(targetVector);
+      const angle = Math.acos(dotProduct) * (180 / Math.PI); // Convert to degrees
 
-      // Clear existing timer if any
-      if (this.lockTimer) {
-        clearTimeout(this.lockTimer);
-      }
+      if (angle <= 30) {
+        this.activetarget = closestEnemy;
+        this.locked = false;
+        this.dispatchEvent({
+          type: 'targetacquired',
+          data: this.activetarget
+        });
 
-      // Set timer to lock the target after scantime seconds
-      this.lockTimer = setTimeout(() => {
-        if (this.activetarget && !this.locked) {
-          this.lock();
+        // Clear existing timer if any
+        if (this.lockTimer) {
+          clearTimeout(this.lockTimer);
         }
-      }, this.scantime * 1000);
+
+        // Set timer to lock the target after scantime seconds
+        this.lockTimer = setTimeout(() => {
+          if (this.activetarget && !this.locked) {
+            this.lock();
+          }
+        }, this.scantime * 1000);
+      } else {
+        console.log('Target ignored due to angle > 30 degrees.');
+        this.activetarget = null;
+        this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
+      }
     } else {
       console.log('No enemies within scan range.');
       this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
@@ -1314,7 +1327,7 @@ room.registerElement('spacezone-missile', {
     }
   }
 });
-        
+
 // File: static/spacezone/entities/spacezone-score.js
 room.registerElement('spacezone-score', {
   scores: {
