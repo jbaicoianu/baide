@@ -1099,7 +1099,7 @@ room.registerElement('spacezone-missile-launcher', {
     // Find the closest enemy within scan range
     let closestEnemy = null;
     let minDistance = Infinity;
-    const launcherPosition = this.pos.clone();
+    const launcherPosition = this.getWorldPosition();
 
     for (let enemy of enemies) {
       const distance = launcherPosition.distanceTo(enemy.pos);
