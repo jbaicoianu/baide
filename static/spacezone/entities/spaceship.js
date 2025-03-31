@@ -1323,7 +1323,7 @@ room.registerElement('spacezone-missile', {
   target: null,
   speed: 300, // Missile speed in meters per second
   active: true,
-  turnrate: 10, // Added turnrate attribute with default value 10
+  turnrate: 30, // Added turnrate attribute with default value 10
 
   create() {
     // Initialize missile properties
@@ -1419,7 +1419,7 @@ room.registerElement('spacezone-missile', {
           } else {
             // Create a quaternion representing the rotation
             const quaternion = new THREE.Quaternion();
-            quaternion.setFromAxisAngle(rotationAxis, -THREE.MathUtils.degToRad(maxTurn));
+            quaternion.setFromAxisAngle(rotationAxis, THREE.MathUtils.degToRad(maxTurn));
             this.zdir.applyQuaternion(quaternion).normalize();
           }
         }
