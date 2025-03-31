@@ -639,6 +639,12 @@ room.registerElement('spacezone-spaceship', {
     if (player && player.camera) {
       player.camera.fov = this.currentFov;
     }
+  },
+  reset() {
+    for (let drone of this.drones) {
+      drone.pos.z = -9999;
+    }
+    console.log('All drones have been reset to z position -9999.');
   }
 });
     
@@ -709,6 +715,13 @@ room.registerElement('spacezone-enemy-dronecontroller', {
         drone.pos = newPosition;
       }
     }
+  },
+  
+  reset() {
+    for (let drone of this.drones) {
+      drone.pos.z = -9999;
+    }
+    console.log('All drones have been reset to z position -9999.');
   }
 });
     
