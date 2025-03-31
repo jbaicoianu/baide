@@ -913,19 +913,28 @@ room.registerElement('spacezone-cannon', {
         max: 20
       });
     }        
+    // Calculate zdir instead of using getWorldOrientation
+    this.zdir = this.localToWorld(V(0, 0, -1)).sub(this.getWorldPosition());
+
     // Get spawnPosition using ship's world coordinates
     const spawnPosition = this.getWorldPosition(); // Updated to use this.getWorldPosition()
 
+    // Pass zdir to missile
+    const missile = room.createObject('spacezone-missile', {
+      pos: spawnPosition,
+      zdir: this.zdir,
+      target: this.activetarget
+    });
+
     // Get forward position and compute direction
-    const forwardPosition = this.localToWorld(V(0, 0, 1));
-    const direction = new THREE.Vector3().subVectors(spawnPosition, forwardPosition).normalize();
+    // Removed since zdir is now used for velocity
 
     // Spawn a spacezone-laserbeam using the object pool
-    this.laserpool.grab({
-      pos: spawnPosition,
-      zdir: direction,
-      vel: direction.clone().multiplyScalar(this.muzzlespeed)
-    });
+    // this.laserpool.grab({
+    //   pos: spawnPosition,
+    //   zdir: direction,
+    //   vel: direction.clone().multiplyScalar(this.muzzlespeed)
+    // });
 
     if (this.muzzleflash) {
       // Trigger the flash light
@@ -1267,10 +1276,13 @@ room.registerElement('spacezone-missile-launcher', {
 
   fire() {
     if (this.locked && this.activetarget) {
-      // Spawn a new missile
+      // Calculate zdir instead of using getWorldOrientation
+      this.zdir = this.localToWorld(V(0, 0, -1)).sub(this.getWorldPosition());
+
+      // Spawn a new missile with zdir
       const missile = room.createObject('spacezone-missile', {
         pos: this.getWorldPosition(), // Using this.getWorldPosition() for current launcher position
-        orientation: this.getWorldOrientation(),
+        zdir: this.zdir,
         target: this.activetarget
       });
       console.log('Missile fired towards:', this.activetarget);
@@ -1317,16 +1329,14 @@ room.registerElement('spacezone-missile', {
       col: 'orange',
       scale: V(0.5, 2, 0.5),
       pos: this.properties.pos || V(0, 0, 0),
-      rotation: this.properties.orientation || '0 0 0',
+      zdir: this.properties.zdir || V(0, 0, 1),
       collision_id: 'missile',
       mass: 50,
-      zdir: new THREE.Vector3(0, 0, 1),
       visible: true
     });
 
-    // Add velocity towards the target
-    const direction = this.target.pos.clone().sub(this.missile.pos).normalize();
-    this.missile.vel = direction.multiplyScalar(this.speed);
+    // Add velocity based on zdir
+    this.missile.vel = this.zdir.clone().multiplyScalar(this.speed);
 
     // Add collision event listener
     this.missile.addEventListener('collide', (ev) => this.handleCollision(ev));
