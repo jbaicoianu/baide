@@ -1424,7 +1424,7 @@ room.registerElement('spacezone-missile', {
           }
         }
         // Update velocity based on new direction
-        this.vel.copy(this.zdir).multiplyScalar(this.speed));
+        this.vel.copy(this.zdir).multiplyScalar(this.speed);
       }
     }
 
