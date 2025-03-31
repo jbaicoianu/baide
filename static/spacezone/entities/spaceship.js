@@ -177,6 +177,11 @@ room.registerElement('spacezone-spaceship', {
     this.dialog = this.createObject('spacezone-dialog');
     this.dialog.showDialog('dialogs/intro.txt');
     this.dialog.addEventListener('continue', () => this.startRace());
+
+    // Initialize Enemy Drone Controller
+    this.enemyDroneController = this.createObject('spacezone-enemy-dronecontroller', {
+      numdrones: 10
+    });
   },
   createShipStatsOverlay() {
     // Create a div element for the overlay
@@ -245,7 +250,7 @@ room.registerElement('spacezone-spaceship', {
       console.log('Race failed due to excessive damage!');
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
-      this.dialog.showDialog('dialogs/failure-destroyed.html');
+      this.dialog.showDialog('dialogs/failure-deestroyed.html');
     }
   },
   startRace() {
@@ -579,6 +584,55 @@ room.registerElement('spacezone-spaceship', {
   }
 });
 
+room.registerElement('spacezone-enemy-dronecontroller', {
+  numdrones: 10, // Default number of drones
+
+  create() {
+    // Initialize the object pool for enemy drones
+    this.objectPool = this.createObject('objectpool', {
+      objecttype: 'spacezone-enemy-drone',
+      max: this.numdrones
+    });
+
+    // Reference to the player and level
+    this.player = player; // Assuming 'player' is globally accessible
+    this.level = this.parent; // Assuming 'level' is the parent element
+
+    if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
+      console.warn('Level or getPositionAtTime method not found. Enemy Drone Controller may not function correctly.');
+    }
+  },
+
+  update(dt) {
+    this.repositionDrones();
+  },
+
+  repositionDrones() {
+    if (!this.player || !this.level) return;
+
+    // Assume the player's current path position can be determined
+    // This requires that the player or level exposes a method/property for it
+    // For example, this.player.currentPathPosition
+
+    const currentPathPosition = this.player.currentPathPosition || 0; // Default to 0 if not available
+
+    // Iterate through all active drones
+    for (let drone of this.objectPool.activeObjects) {
+      if (drone.pos.z > this.player.pos.z) { // Assuming 'behind' means having a greater z-position
+        // Calculate a new position
+        const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
+        const newT = currentPathPosition + randomOffset;
+        const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
+
+        const newPosition = this.level.getPositionAtTime(clampedT);
+
+        // Reposition the drone
+        drone.pos = newPosition;
+      }
+    }
+  }
+});
+
 room.registerElement('spacezone-dialog', {
   create() {
     // Create the dialog container
@@ -886,6 +940,56 @@ room.registerElement('spacezone-enemy-drone', {
     // Remove the drone from the scene
     this.drone.die();
     console.log('Enemy drone has been destroyed.');
+  }
+});
+
+// Added Enemy Drone Controller
+room.registerElement('spacezone-enemy-dronecontroller', {
+  numdrones: 10, // Default number of drones
+
+  create() {
+    // Initialize the object pool for enemy drones
+    this.objectPool = this.createObject('objectpool', {
+      objecttype: 'spacezone-enemy-drone',
+      max: this.numdrones
+    });
+
+    // Reference to the player and level
+    this.player = player; // Assuming 'player' is globally accessible
+    this.level = this.parent; // Assuming 'level' is the parent element
+
+    if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
+      console.warn('Level or getPositionAtTime method not found. Enemy Drone Controller may not function correctly.');
+    }
+  },
+
+  update(dt) {
+    this.repositionDrones();
+  },
+
+  repositionDrones() {
+    if (!this.player || !this.level) return;
+
+    // Assume the player's current path position can be determined
+    // This requires that the player or level exposes a method/property for it
+    // For example, this.player.currentPathPosition
+
+    const currentPathPosition = this.player.currentPathPosition || 0; // Default to 0 if not available
+
+    // Iterate through all active drones
+    for (let drone of this.objectPool.activeObjects) {
+      if (drone.pos.z > this.player.pos.z) { // Assuming 'behind' means having a greater z-position
+        // Calculate a new position
+        const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
+        const newT = currentPathPosition + randomOffset;
+        const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
+
+        const newPosition = this.level.getPositionAtTime(clampedT);
+
+        // Reposition the drone
+        drone.pos = newPosition;
+      }
+    }
   }
 });
 
