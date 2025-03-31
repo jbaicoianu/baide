@@ -677,6 +677,7 @@ debugger;
         player: this.player, // Pass the player reference to each drone
         laserpool: this.laserpool,
       });
+      drone.laserpool = this.laserpool; // FIXME - shouldn't be needed
       this.drones.push(drone);
     }
 
