@@ -1569,7 +1569,7 @@ room.registerElement('explosion', {
       col: V(0.3),
       rand_col: V(0.5),
       vel: V(-50),
-      rand_vel: 100,
+      rand_vel: V(100),
       duration: 20
     });
   },
