@@ -261,10 +261,10 @@ room.registerElement('spacezone-spaceship', {
     window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
 
     // Initialize Kalman filters for smoothing device orientation
-    this.pitchFilter = new this.KalmanFilter(0.1, 0.1);
-    this.rollFilter = new this.KalmanFilter(0.1, 0.1);
-    this.offsetXFilter = new this.KalmanFilter(0.1, 0.1);
-    this.offsetYFilter = new this.KalmanFilter(0.1, 0.1);
+    this.pitchFilter = new this.KalmanFilter(0.2, 0.05);
+    this.rollFilter = new this.KalmanFilter(0.2, 0.05);
+    this.offsetXFilter = new this.KalmanFilter(0.2, 0.05);
+    this.offsetYFilter = new this.KalmanFilter(0.2, 0.05);
 
     // Set initial filter values if needed
     this.pitchFilter.setInitial(0);
@@ -1249,7 +1249,6 @@ room.registerElement('spacezone-missile', {
     }
   }
 });
-
 
 room.registerElement('spacezone-targeting-reticle', {
   create() {
