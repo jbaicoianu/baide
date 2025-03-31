@@ -1403,7 +1403,7 @@ room.registerElement('spacezone-missile', {
     // Optionally, track the target's movement
     if (this.target) {
       const newDirection = this.target.pos.clone().sub(this.missile.pos).normalize();
-      this.missile.vel = newDirection.multiplyScalar(this.speed);
+      this.vel = newDirection.multiplyScalar(this.speed);
     }
 
     // Optionally, check if missile is out of bounds
