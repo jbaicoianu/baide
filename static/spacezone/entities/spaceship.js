@@ -1285,7 +1285,7 @@ room.registerElement('spacezone-missile-launcher', {
       });
     }
 
-    if (/* this.locked && */ this.activetarget && this.missilePool) {
+    if (/* this.locked && this.activetarget && */ this.missilePool) {
       // Calculate zdir instead of using getWorldOrientation
       let missilezdir = this.localToWorld(V(0, 0, 1)).sub(this.getWorldPosition());
 
