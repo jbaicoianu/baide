@@ -1390,7 +1390,7 @@ room.registerElement('spacezone-missile', {
   },
 
   update(dt) {
-    console.log('missile!', this.pos, this.active, this.target);
+    //console.log('missile!', this.pos, this.active, this.target);
     if (!this.active) return;
 
     // Update smoke trail emitter position
