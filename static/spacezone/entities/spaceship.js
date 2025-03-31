@@ -1370,7 +1370,7 @@ room.registerElement('spacezone-missile', {
       console.log('Missile hit an enemy drone:', ev.other);
       this.explode();
       ev.other.dispatchEvent({ type: 'hit', data: this });
-      this.die();
+      //this.die();
     }
   },
 
@@ -1380,7 +1380,7 @@ room.registerElement('spacezone-missile', {
       id: 'explosion',
       col: 'red',
       scale: V(1, 1, 1),
-      pos: this.missile.pos.clone(),
+      pos: this.missile.getWorldPosition(),
       visible: true
     });
 
@@ -1392,9 +1392,6 @@ room.registerElement('spacezone-missile', {
   update(dt) {
       console.log('missile!', this.pos, this.active, this.target);
     if (!this.active) return;
-
-    // Move missile forward
-    this.missile.pos.add(this.missile.vel.clone().multiplyScalar(dt));
 
     // Update smoke trail emitter position
     if (this.smokeTrail) {
