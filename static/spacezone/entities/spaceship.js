@@ -1279,7 +1279,7 @@ room.registerElement('spacezone-missile-launcher', {
 
   fire() {
     if (!this.missilePool) {
-      this.missilePool = this.createObject('objectpool', {
+      this.missilePool = room.createObject('objectpool', {
         objecttype: 'spacezone-missile',
         max: 1
       });
