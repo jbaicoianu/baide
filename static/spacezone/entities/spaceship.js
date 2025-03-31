@@ -187,6 +187,18 @@ room.registerElement('spacezone-spaceship', {
       locktime: 2,
       scantime: 0.5 // Added scantime attribute with default value of 0.5 seconds
     });
+
+    // Create targeting reticle
+    this.targetingReticle = this.createObject('spacezone-targeting-reticle');
+
+    // Add event listeners for missile launcher to handle reticle position
+    this.missileLauncher.addEventListener('targetlocked', (event) => {
+      if (event.data) {
+        this.targetingReticle.setTargetPosition(event.data.pos.clone());
+      } else {
+        this.targetingReticle.hideReticle();
+      }
+    });
   },
   createShipStatsOverlay() {
     // Create a div element for the overlay
@@ -257,6 +269,7 @@ room.registerElement('spacezone-spaceship', {
       this.deactivateControlContext('spacezone-spaceship');
       this.missileLauncher.disarm(); // Disarm missile launcher
       this.dialog.showDialog('dialogs/failure-destroyed.html'); // Show our failure-destroyed dialog
+      this.targetingReticle.hideReticle(); // Hide reticle when race fails
     }
   },
   startRace() {
@@ -423,6 +436,9 @@ room.registerElement('spacezone-spaceship', {
         } else {
           console.warn('Parent not found. Cannot dispatch race_complete event.');
         }
+
+        // Hide the reticle when race is complete
+        this.targetingReticle.hideReticle();
       }
 
       // Implement supply expiration logic
@@ -449,6 +465,7 @@ room.registerElement('spacezone-spaceship', {
         this.dispatchEvent({ type: 'supplies_depleted' });
         this.deactivateControlContext('spacezone-spaceship');
         this.dialog.showDialog('dialogs/failure-depleted.html');
+        this.targetingReticle.hideReticle(); // Hide reticle when supplies are depleted
       }
 
       // Emit time_elapsed event with updated data
@@ -1121,6 +1138,7 @@ room.registerElement('spacezone-missile-launcher', {
   disarm() {
     this.armed = false;
     console.log('Missile launcher disarmed.');
+    this.hideReticle(); // Ensure reticle is hidden when disarmed
   },
   
   scan() {
@@ -1132,6 +1150,7 @@ room.registerElement('spacezone-missile-launcher', {
     const enemies = room.getElementsByClassName('enemy');
     if (enemies.length === 0) {
       console.log('No enemies found within scan range.');
+      this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
       return;
     }
 
@@ -1169,6 +1188,7 @@ room.registerElement('spacezone-missile-launcher', {
       }, this.scantime * 1000);
     } else {
       console.log('No enemies within scan range.');
+      this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
     }
   },
 
@@ -1195,6 +1215,10 @@ room.registerElement('spacezone-missile-launcher', {
     } else {
       console.log('Cannot fire: No target locked.');
     }
+  },
+
+  hideReticle() {
+    this.dispatchEvent({ type: 'targetlocked', data: null });
   },
 
   update(dt) {
