@@ -350,9 +350,6 @@ room.registerElement('spacezone-spaceship', {
     }
 
     if (this.isRacing) {
-      // Emit time_elapsed event every frame with dt as data
-      this.dispatchEvent({type: 'time_elapsed', data: dt});
-      
       // Quadratic ease for speed multiplier towards targetSpeedMultiplier
       const speedDifference = this.targetSpeedMultiplier - this.currentSpeedMultiplier;
       const acceleration = this.speedChangeRate * speedDifference * Math.abs(speedDifference);
@@ -579,9 +576,19 @@ room.registerElement('spacezone-spaceship', {
     if (player && player.camera) {
       player.camera.fov = this.currentFov;
     }
+
+    // Emit time_elapsed event at the end of the update function with updated data
+    this.dispatchEvent({
+      type: 'time_elapsed',
+      data: {
+        dt: dt,
+        pos: this.pos.clone(),
+        currentPathPosition: t
+      }
+    });
   }
 });
-
+    
 room.registerElement('spacezone-enemy-dronecontroller', {
   numdrones: 10, // Default number of drones
 
@@ -991,7 +998,7 @@ room.registerElement('spacezone-score', {
 
   addScore(event) {
     if(event.type === 'time_elapsed') {
-      const scoreChange = Math.round(event.data * this.scores[event.type]);
+      const scoreChange = Math.round(event.data.dt * this.scores[event.type]);
       this.totalScore += scoreChange;
       // console.log(`Event '${event.type}' occurred. Score change: ${scoreChange}. Total score: ${this.totalScore}`);
     } else if(this.scores.hasOwnProperty(event.type)) {
