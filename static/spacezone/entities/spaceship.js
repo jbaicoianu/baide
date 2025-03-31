@@ -1006,7 +1006,7 @@ room.registerElement('spacezone-enemy-drone', {
       scale: V(10, 10, 10), // Increased scale to 10
       pos: V(0, 0, 0), // Initial position; adjust as needed
       collision_id: 'enemy_drone',
-      collision_scale: V(1), // Sphere collider with radius 1m
+      collision_scale: V(10), // Sphere collider with radius 1m
       mass: 500, // Assign mass as appropriate
       zdir: V(0, 0, 1),
       visible: true,
