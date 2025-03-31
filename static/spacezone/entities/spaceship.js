@@ -1340,7 +1340,7 @@ room.registerElement('spacezone-missile', {
       id: 'capsule',
       col: 'orange',
       scale: V(1, 4, 1),
-      pos: this.properties.pos || V(0, 0, 0),
+      pos: V(0, 0, 0),
       //zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
       rotation: V(90, 0, 0),
       collision_id: 'sphere',
