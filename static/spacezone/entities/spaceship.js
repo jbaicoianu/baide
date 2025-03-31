@@ -1181,11 +1181,6 @@ room.registerElement('spacezone-missile-launcher', {
 
   create() {
     // Initialization code for missile launcher
-    this.missilePool = this.createObject('objectpool', {
-      objecttype: 'spacezone-missile',
-      max: 5
-    });
-
     this.scan();
     this.addEventListener('targetacquired', (event) => {
       //console.log('Target acquired:', event.data);
@@ -1283,6 +1278,13 @@ room.registerElement('spacezone-missile-launcher', {
   },
 
   fire() {
+    if (!this.missilePool) {
+      this.missilePool = this.createObject('objectpool', {
+        objecttype: 'spacezone-missile',
+        max: 5
+      });
+    }
+
     if (this.locked && this.activetarget && this.missilePool) {
       // Calculate zdir instead of using getWorldOrientation
       let missilezdir = this.localToWorld(V(0, 0, 1)).sub(this.getWorldPosition());
