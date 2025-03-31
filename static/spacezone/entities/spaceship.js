@@ -1560,3 +1560,25 @@ room.registerElement('spacezone-targeting-reticle', {
     // Additional update logic if needed
   }
 });
+
+// New Element: explosion
+room.registerElement('explosion', {
+  create() {
+    // Initialize the particle system for the explosion
+    this.particles = this.createObject('particle', {
+      count: 1000,
+      rate: 20000,
+      loop: false,
+      col: V(0.3),
+      rand_col: V(0.5),
+      vel: V(-50),
+      rand_vel: 100,
+      duration: 20
+    });
+  },
+  reset() {
+    // Reset and start the particle system
+    this.particles.resetParticles();
+    this.particles.start();
+  }
+});
