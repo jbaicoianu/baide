@@ -218,7 +218,7 @@ room.registerElement('spacezone-spaceship', {
     console.log('Afterburner deactivated!');
   },
   updatePositionAndDirection(currentPathPosition) {
-    const level = this.parent.parent;
+    const level = this.parent;
     if (level && level.getPositionAtTime) {
       const position = level.getPositionAtTime(Math.min(currentPathPosition, 0.999));
       const lookAheadT = Math.min(currentPathPosition + .001, 1.0);
@@ -578,8 +578,8 @@ room.registerElement('spacezone-spaceship', {
       }
     }
 
-    if (this.parent && this.parent.parent && this.parent.parent.player && this.parent.parent.player.camera) {
-      this.parent.parent.player.camera.fov = this.currentFov;
+    if (player && player.camera) {
+      player.camera.fov = this.currentFov;
     }
   }
 });
