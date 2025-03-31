@@ -1272,12 +1272,12 @@ room.registerElement('spacezone-missile-launcher', {
   fire() {
     if (this.locked && this.activetarget) {
       // Calculate zdir instead of using getWorldOrientation
-      this.zdir = this.localToWorld(V(0, 0, -1)).sub(this.getWorldPosition());
+      let missilezdir = this.localToWorld(V(0, 0, -1)).sub(this.getWorldPosition());
 
       // Spawn a new missile with zdir
       const missile = room.createObject('spacezone-missile', {
         pos: this.getWorldPosition(), // Using this.getWorldPosition() for current launcher position
-        zdir: this.zdir,
+        zdir: missilezdir,
         target: this.activetarget
       });
       console.log('Missile fired towards:', this.activetarget);
