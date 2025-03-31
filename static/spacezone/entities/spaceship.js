@@ -1046,6 +1046,3 @@ room.registerElement('spacezone-score', {
     }
   }
 });
-===
-END_CODE===
-Commit Summary: Added event listener for 'time_elapsed' in dronecontroller and modified repositionDrones to accept currentPathPosition as an argument.
