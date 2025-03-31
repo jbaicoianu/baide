@@ -277,8 +277,9 @@ room.registerElement('spacezone-spaceship', {
       this.dialog.showDialog('dialogs/failure-destroyed.html'); // Show our failure-destroyed dialog
       this.targetingReticle.hideReticle(); // Hide reticle when race fails
 
-      // Set shipcollider.collidable to false when race ends
+      // Set shipcollider.collidable to false and shipcollider.pickable to true when race ends
       if (this.shipcollider) {
+        this.shipcollider.pickable = true;
         this.shipcollider.collidable = false;
       }
     }
@@ -311,8 +312,9 @@ room.registerElement('spacezone-spaceship', {
       this.parent.textObject.visible = false;
     }
 
-    // Set shipcollider.collidable to true when race starts
+    // Set shipcollider.collidable to true and .pickable to false when race starts
     if (this.shipcollider) {
+      this.shipcollider.pickable = false;
       this.shipcollider.collidable = true;
     }
 
