@@ -682,6 +682,15 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     } else {
       console.warn('Player object not found. Cannot listen for time_elapsed events.');
     }
+
+    // Add listener for 'race_start' event to reset drone controller
+    if (this.level) {
+      this.level.addEventListener('race_start', () => {
+        this.reset();
+      });
+    } else {
+      console.warn('Level not found. Cannot listen for race_start event.');
+    }
   },
 
   update(dt) {
