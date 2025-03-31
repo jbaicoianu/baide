@@ -1323,6 +1323,7 @@ room.registerElement('spacezone-missile', {
   target: null,
   speed: 300, // Missile speed in meters per second
   active: true,
+  turnrate: 10, // Added turnrate attribute with default value 10
 
   create() {
     // Initialize missile properties
@@ -1339,8 +1340,8 @@ room.registerElement('spacezone-missile', {
       id: 'capsule',
       col: 'orange',
       scale: V(1, 4, 1),
-      //pos: this.properties.pos || V(0, 0, 0),
-      //zdir: this.properties.zdir || V(0, 0, 1),
+      pos: this.properties.pos || V(0, 0, 0),
+      zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
       rotation: V(90, 0, 0),
       collision_id: 'missile',
       mass: 50,
@@ -1367,7 +1368,6 @@ room.registerElement('spacezone-missile', {
 
   handleCollision(ev) {
     if (ev.type === 'collision' && ev.other.collision_id === 'enemy_drone') {
-      console.log('Missile hit an enemy drone:', ev.other);
       this.explode();
       ev.other.dispatchEvent({ type: 'hit', data: this });
       //this.die();
@@ -1390,7 +1390,7 @@ room.registerElement('spacezone-missile', {
   },
 
   update(dt) {
-      console.log('missile!', this.pos, this.active, this.target);
+    console.log('missile!', this.pos, this.active, this.target);
     if (!this.active) return;
 
     // Update smoke trail emitter position
@@ -1400,10 +1400,37 @@ room.registerElement('spacezone-missile', {
       this.smokeTrail.emitter_pos = missileWorldPos;
     }
 
+    // Adjust direction towards target
+    if (this.target) {
+      const currentVelocity = this.vel.clone().normalize();
+      const targetDirection = this.target.pos.clone().sub(this.missile.pos).normalize();
+      const angle = THREE.MathUtils.radToDeg(currentVelocity.angleTo(targetDirection));
+
+      if (angle > 0) {
+        const maxTurn = this.turnrate * dt;
+        if (angle <= maxTurn) {
+          this.zdir.copy(targetDirection);
+        } else {
+          // Calculate the axis to rotate around (cross product)
+          const rotationAxis = new THREE.Vector3().crossVectors(currentVelocity, targetDirection).normalize();
+          if (rotationAxis.length() === 0) {
+            // Vectors are parallel, no rotation needed
+            this.zdir.copy(targetDirection);
+          } else {
+            // Create a quaternion representing the rotation
+            const quaternion = new THREE.Quaternion();
+            quaternion.setFromAxisAngle(rotationAxis, THREE.MathUtils.degToRad(maxTurn));
+            this.zdir.applyQuaternion(quaternion).normalize();
+          }
+        }
+        // Update velocity based on new direction
+        this.vel.copy(this.zdir.clone().multiplyScalar(this.speed));
+      }
+    }
+
     // Optionally, track the target's movement
     if (this.target) {
-      const newDirection = this.target.pos.clone().sub(this.missile.pos).normalize();
-      //this.vel = newDirection.multiplyScalar(this.speed);
+      // Already handled above
     }
 
     // Optionally, check if missile is out of bounds
