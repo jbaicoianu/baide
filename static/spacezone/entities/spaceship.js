@@ -667,7 +667,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
       objecttype: 'spacezone-laserbeam',
       max: 20
     });
-
+debugger;
     // Preallocate drones and store them in this.drones
     this.drones = [];
     this.player = this.parent.getElementsByTagName('spacezone-spaceship')[0]; // Ensure player is retrieved here
