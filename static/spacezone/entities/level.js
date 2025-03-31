@@ -34,6 +34,13 @@ room.registerElement('spacezone-level', {
       font_scale: false
     });
 
+    // Create spacezone-enemy-dronecontroller object
+    this.droneController = this.createObject('spacezone-enemy-dronecontroller', {
+      pos: new THREE.Vector3(0, 0, 0),
+      rotation: '0 0 0',
+      scale: new THREE.Vector3(1, 1, 1)
+    });
+
     // // Generate 10 enemy drones positioned randomly along the path
     // this.enemyDrones = [];
     // for (let i = 0; i < 10; i++) {
