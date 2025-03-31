@@ -1075,8 +1075,7 @@ room.registerElement('spacezone-enemy-drone', {
   },
   explodeDrone() {
     // Create explosion effect
-    const explosion = this.createObject('object', {
-      id: 'explosion',
+    const explosion = this.createObject('explosion', {
       col: 'orange',
       scale: V(2, 2, 2),
       pos: this.drone.pos.clone(),
@@ -1379,9 +1378,7 @@ room.registerElement('spacezone-missile', {
 
   explode() {
     // Create explosion effect
-    const explosion = this.createObject('object', {
-      id: 'explosion',
-      col: 'red',
+    const explosion = this.createObject('explosion', {
       scale: V(1, 1, 1),
       pos: this.missile.getWorldPosition(),
       visible: true
