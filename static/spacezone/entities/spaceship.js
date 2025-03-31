@@ -15,6 +15,12 @@ room.registerElement('spacezone-spaceship', {
   maxPitch: 20, // Maximum pitch angle in degrees
   rollDecayDelay: 0.1, // Delay before starting roll decay in seconds
 
+  // New properties for device motion
+  devicePitch: 0,
+  deviceRoll: 0,
+  deviceOffsetX: 0,
+  deviceOffsetY: 0,
+
   create() {
     // Initialization code for spacezone-spaceship
 
@@ -207,6 +213,37 @@ room.registerElement('spacezone-spaceship', {
         this.targetingReticle.hideReticle();
       }
     });
+
+    // Add device motion event listener
+    window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+  },
+  handleDeviceMotion(event) {
+    // Map device orientation to ship's pitch and roll
+    if (event.rotationRate) {
+      // Optional: Use rotationRate to adjust orientation
+    }
+
+    if (event.accelerationIncludingGravity) {
+      const acc = event.accelerationIncludingGravity;
+      // Calculate pitch and roll based on acceleration
+      this.devicePitch = Math.atan2(acc.y, Math.sqrt(acc.x * acc.x + acc.z * acc.z)) * (180 / Math.PI);
+      this.deviceRoll = Math.atan2(acc.x, acc.z) * (180 / Math.PI);
+
+      // Clamp pitch and roll to prevent excessive tilting
+      this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch, this.maxPitch);
+      this.deviceRoll = THREE.MathUtils.clamp(this.deviceRoll, -90, 90);
+    }
+
+    if (event.acceleration) {
+      const acc = event.acceleration;
+      // Map left/right and up/down movements to offset
+      this.deviceOffsetX += acc.x * 0.1; // Adjust the multiplier as needed
+      this.deviceOffsetY += acc.y * 0.1;
+
+      // Clamp offsets within the configured range
+      this.deviceOffsetX = THREE.MathUtils.clamp(this.deviceOffsetX, -this.offsetRange, this.offsetRange);
+      this.deviceOffsetY = THREE.MathUtils.clamp(this.deviceOffsetY, -this.offsetRange, this.offsetRange);
+    }
   },
   createShipStatsOverlay() {
     // Create a div element for the overlay
@@ -415,11 +452,11 @@ room.registerElement('spacezone-spaceship', {
         this.updatePositionAndDirection(t);
 
         // Apply x and y offsets based on shuttle's rotation
-        const rollRad = THREE.MathUtils.degToRad(this.currentRoll);
-        const pitchRad = THREE.MathUtils.degToRad(this.currentPitch);
+        const rollRad = THREE.MathUtils.degToRad(this.currentRoll) + this.deviceRoll;
+        const pitchRad = THREE.MathUtils.degToRad(this.currentPitch) + this.devicePitch;
 
-        let offsetX = Math.sin(rollRad) * this.offsetRange;
-        let offsetY = Math.sin(pitchRad) * this.offsetRange;
+        let offsetX = Math.sin(rollRad) * this.offsetRange + this.deviceOffsetX;
+        let offsetY = Math.sin(pitchRad) * this.offsetRange + this.deviceOffsetY;
 
         // Clamp offsets within the configured range
         offsetX = Math.max(-this.offsetRange, Math.min(this.offsetRange, offsetX));
