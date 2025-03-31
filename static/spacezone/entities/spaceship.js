@@ -705,58 +705,6 @@ room.registerElement('spacezone-spaceship', {
   }
 });
     
-room.registerElement('spacezone-dialog', {
-  create() {
-    // Create the dialog container
-    this.dialogContainer = document.createElement('div');
-    this.dialogContainer.className = 'spacezone-dialog-container';
-    this.dialogContainer.style.display = 'none'; // Initially hidden
-
-    // Create the content area
-    this.contentArea = document.createElement('div');
-    this.dialogContainer.appendChild(this.contentArea);
-
-    // Create the "Continue" button
-    this.continueButton = document.createElement('button');
-    this.continueButton.textContent = 'Continue';
-    this.continueButton.className = 'spacezone-continue-button';
-    this.dialogContainer.appendChild(this.continueButton);
-
-    // Append the dialog to the document body
-    document.body.appendChild(this.dialogContainer);
-
-    // Add event listener to the "Continue" button
-    this.continueButton.addEventListener('click', () => {
-      this.emitContinueEvent();
-      this.hideDialog();
-    });
-  },
-  showDialog(dialogPath) {
-    fetch(dialogPath)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to load dialog file: ${response.statusText}`);
-        }
-        return response.text();
-      })
-      .then(htmlContent => {
-        this.contentArea.innerHTML = htmlContent;
-        this.dialogContainer.style.display = 'block';
-      })
-      .catch(error => {
-        console.error('Error loading dialog:', error);
-        this.contentArea.innerHTML = '<p>Error loading dialog.</p>';
-        this.dialogContainer.style.display = 'block';
-      });
-  },
-  hideDialog() {
-    this.dialogContainer.style.display = 'none';
-  },
-  emitContinueEvent() {
-    this.dispatchEvent(new Event('continue'));
-  }
-});
-    
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
