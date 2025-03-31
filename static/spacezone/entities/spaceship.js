@@ -1444,7 +1444,7 @@ room.registerElement('spacezone-targeting-reticle', {
       id: 'plane',
       col: 'green',
       scale: V(20, 20, .1), // Adjust scale as needed
-      //billboard: 'y',
+      billboard: 'y',
       opacity: 0.6,
       depth_test: false,
       render_order: 10,
