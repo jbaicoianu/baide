@@ -621,7 +621,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
 
     // Iterate through all preallocated drones
     for (let drone of this.drones) {
-      if (drone.pos.z > this.player.pos.z) { // Assuming 'behind' means having a greater z-position
+      if (drone.pos.z < this.player.pos.z - 100) { // Assuming 'behind' means having a lesser z-position
         // Calculate a new position
         const randomOffset = 0.1 + Math.random() * 0.1; // Random between 0.1 and 0.2
         const newT = currentPathPosition + randomOffset;
