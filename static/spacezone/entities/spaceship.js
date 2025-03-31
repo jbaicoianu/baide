@@ -1154,53 +1154,52 @@ room.registerElement('spacezone-missile-launcher', {
       return;
     }
 
-    // Find the closest enemy within scan range
+    // Find the closest enemy within scan range and within angle <= 30 degrees
     let closestEnemy = null;
     let minDistance = Infinity;
     const launcherPosition = this.getWorldPosition();
 
     for (let enemy of enemies) {
       const distance = launcherPosition.distanceTo(enemy.pos);
-      if (distance < minDistance && distance <= this.scanrange) {
-        minDistance = distance;
-        closestEnemy = enemy;
+      if (distance <= this.scanrange) {
+        // Calculate angle between heading vector and target vector
+        const headingPoint = launcherPosition.clone().add(new THREE.Vector3(0, 0, 1)); // 1m in front on z-axis
+        const headingVector = headingPoint.clone().sub(launcherPosition).normalize();
+        const targetVector = enemy.pos.clone().sub(launcherPosition).normalize();
+        const dotProduct = headingVector.dot(targetVector);
+        const angle = Math.acos(dotProduct) * (180 / Math.PI); // Convert to degrees
+
+        if (angle <= 30) {
+          if (distance < minDistance) {
+            minDistance = distance;
+            closestEnemy = enemy;
+          }
+        }
       }
     }
 
     if (closestEnemy) {
-      // Calculate angle between heading vector and target vector
-      const headingPoint = launcherPosition.clone().add(new THREE.Vector3(0, 0, 1)); // 1m in front on z-axis
-      const headingVector = headingPoint.clone().sub(launcherPosition).normalize();
-      const targetVector = closestEnemy.pos.clone().sub(launcherPosition).normalize();
-      const dotProduct = headingVector.dot(targetVector);
-      const angle = Math.acos(dotProduct) * (180 / Math.PI); // Convert to degrees
+      this.activetarget = closestEnemy;
+      this.locked = false;
+      this.dispatchEvent({
+        type: 'targetacquired',
+        data: this.activetarget
+      });
 
-      if (angle <= 30) {
-        this.activetarget = closestEnemy;
-        this.locked = false;
-        this.dispatchEvent({
-          type: 'targetacquired',
-          data: this.activetarget
-        });
-
-        // Clear existing timer if any
-        if (this.lockTimer) {
-          clearTimeout(this.lockTimer);
-        }
-
-        // Set timer to lock the target after scantime seconds
-        this.lockTimer = setTimeout(() => {
-          if (this.activetarget && !this.locked) {
-            this.lock();
-          }
-        }, this.scantime * 1000);
-      } else {
-        console.log('Target ignored due to angle > 30 degrees.');
-        this.activetarget = null;
-        this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
+      // Clear existing timer if any
+      if (this.lockTimer) {
+        clearTimeout(this.lockTimer);
       }
+
+      // Set timer to lock the target after scantime seconds
+      this.lockTimer = setTimeout(() => {
+        if (this.activetarget && !this.locked) {
+          this.lock();
+        }
+      }, this.scantime * 1000);
     } else {
-      console.log('No enemies within scan range.');
+      console.log('No suitable targets within angle restrictions.');
+      this.activetarget = null;
       this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
     }
   },
