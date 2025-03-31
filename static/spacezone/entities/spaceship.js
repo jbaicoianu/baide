@@ -1371,7 +1371,7 @@ room.registerElement('spacezone-missile', {
   handleCollision(ev) {
     console.log('missile explodes!', ev);
     this.explode();
-    ev.other.dispatchEvent({ type: 'hit', data: this });
+    ev.data.other.dispatchEvent({ type: 'hit', data: this });
     //this.die();
   },
 
