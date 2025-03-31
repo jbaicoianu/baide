@@ -226,8 +226,8 @@ room.registerElement('spacezone-spaceship', {
     if (event.accelerationIncludingGravity) {
       const acc = event.accelerationIncludingGravity;
       // Calculate pitch and roll based on acceleration
-      this.devicePitch = Math.atan2(acc.y, Math.sqrt(acc.x * acc.x + acc.z * acc.z)) * (180 / Math.PI);
-      this.deviceRoll = Math.atan2(acc.x, acc.z) * (180 / Math.PI);
+      this.devicePitch = Math.atan2(acc.y, Math.sqrt(acc.x * acc.x + acc.z * acc.z));
+      this.deviceRoll = Math.atan2(acc.x, acc.z);
 
       // Clamp pitch and roll to prevent excessive tilting
       this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch, this.maxPitch);
