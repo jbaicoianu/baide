@@ -609,20 +609,29 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     if (!this.level || typeof this.level.getPositionAtTime !== 'function') {
       console.warn('Level or getPositionAtTime method not found. Enemy Drone Controller may not function correctly.');
     }
+
+    // Listen for the player's time_elapsed event
+    if (this.player) {
+      this.player.addEventListener('time_elapsed', event => {
+        if (event.data && typeof event.data.currentPathPosition === 'number') {
+          this.repositionDrones(event.data.currentPathPosition);
+        } else {
+          console.warn('time_elapsed event does not contain currentPathPosition.');
+        }
+      });
+    } else {
+      console.warn('Player object not found. Cannot listen for time_elapsed events.');
+    }
   },
 
   update(dt) {
-    this.repositionDrones();
+    // Removed the direct call to repositionDrones to rely solely on the event handler
   },
 
-  repositionDrones() {
+  repositionDrones(currentPathPosition) {
     if (!this.player || !this.level) return;
 
-    // Assume the player's current path position can be determined
-    // This requires that the player or level exposes a method/property for it
-    // For example, this.player.currentPathPosition
-
-    const currentPathPosition = this.player.currentPathPosition || 0; // Default to 0 if not available
+    // Assume the player's current path position is provided as an argument
 
     // Iterate through all preallocated drones
     for (let drone of this.drones) {
@@ -1037,3 +1046,6 @@ room.registerElement('spacezone-score', {
     }
   }
 });
+===
+END_CODE===
+Commit Summary: Added event listener for 'time_elapsed' in dronecontroller and modified repositionDrones to accept currentPathPosition as an argument.
