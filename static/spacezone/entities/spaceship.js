@@ -1378,7 +1378,7 @@ room.registerElement('spacezone-missile', {
 
   explode() {
     // Create explosion effect
-    const explosion = this.createObject('explosion', {
+    const explosion = room.createObject('explosion', {
       scale: V(1, 1, 1),
       pos: this.missile.getWorldPosition(),
       visible: true
