@@ -1118,5 +1118,22 @@
     "branch": "main",
     "commit_hash": "f33118526735298384786726112d4277c0a5ba21",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "In our missile launcher's targeting code, let's figure out the angle between our heading vector and the target's position. We can do this by getting two vectors - one from our world position to the world position of a point 1m in front of us on the z axis, and another from our world position to the world position of our target. Normalize them and use the dot product to figure out their angle. If our angle is > 30 degrees, ignore it as a potential target.",
+    "timestamp": "2025-03-31T16:55:02.061719Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've implemented the angle calculation in the missile launcher's targeting system to ensure that only targets within 30 degrees of the spaceship's heading are considered valid. This enhancement helps in filtering out potential targets that are outside the effective firing arc.",
+    "timestamp": "2025-03-31T16:57:06.058299Z",
+    "branch": "main",
+    "commit_hash": "ec8a53a7313e5e36e8d425cc82531329bb1de015",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
