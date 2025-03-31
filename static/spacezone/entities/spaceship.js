@@ -192,9 +192,17 @@ room.registerElement('spacezone-spaceship', {
     this.targetingReticle = room.createObject('spacezone-targeting-reticle');
 
     // Add event listeners for missile launcher to handle reticle position
+    this.missileLauncher.addEventListener('targetacquired', (event) => {
+      if (event.data) {
+        this.targetingReticle.setTargetPosition(event.data.pos.clone(), false);
+      } else {
+        this.targetingReticle.hideReticle();
+      }
+    });
+
     this.missileLauncher.addEventListener('targetlocked', (event) => {
       if (event.data) {
-        this.targetingReticle.setTargetPosition(event.data.pos.clone());
+        this.targetingReticle.setTargetPosition(event.data.pos.clone(), true);
       } else {
         this.targetingReticle.hideReticle();
       }
@@ -1407,7 +1415,7 @@ room.registerElement('spacezone-score', {
 // New Element: spacezone-targeting-reticle
 room.registerElement('spacezone-targeting-reticle', {
   create() {
-    // Create a red plane object with billboard: 'y' and opacity 0.4
+    // Create a green plane object with billboard: 'y' and opacity 0.6
     this.reticle = this.createObject('object', {
       id: 'cube',
       col: 'green',
@@ -1420,10 +1428,13 @@ room.registerElement('spacezone-targeting-reticle', {
     });
   },
 
-  setTargetPosition(targetPosition) {
+  setTargetPosition(targetPosition, locked) {
     if (this.reticle) {
       this.pos = targetPosition;
       this.reticle.visible = true;
+      // You can use the 'locked' parameter to change reticle behavior or appearance
+      // Example:
+      // this.reticle.col = locked ? 'blue' : 'green';
     }
   },
 
