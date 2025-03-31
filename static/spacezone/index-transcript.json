@@ -613,5 +613,22 @@
     "commit_hash": "0e32489b284618c68343a6fdab64f441ccc31162",
     "model": "o1-mini",
     "file_name": "static/spacezone/index.html"
+  },
+  {
+    "role": "User",
+    "content": "Move the uiconfig parameter from room to janus-viewer",
+    "timestamp": "2025-03-31T21:18:16.013259Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/index.html"
+  },
+  {
+    "role": "Assistant",
+    "content": "The `uiconfig` parameter has been successfully moved from the `room` element to the `janus-viewer` element as per your request. Please review the updated file below and let me know if there are any further changes or questions.",
+    "timestamp": "2025-03-31T21:18:27.702112Z",
+    "branch": "main",
+    "commit_hash": "5b877fd7a96d6bac2fbe5eb05d6430635ff418de",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/index.html"
   }
 ]
