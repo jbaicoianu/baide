@@ -1347,6 +1347,7 @@ room.registerElement('spacezone-missile', {
       mass: 50,
       visible: true
     });
+    this.missile.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
 
     // Add smoke trail particle as a child of the room
     this.smokeTrail = room.createObject('particle', {
@@ -1367,7 +1368,8 @@ room.registerElement('spacezone-missile', {
   },
 
   handleCollision(ev) {
-    if (ev.type === 'collision' && ev.other.collision_id === 'enemy_drone') {
+    if (ev.type === 'collision') {
+      console.log('missile explodes!', ev);
       this.explode();
       ev.other.dispatchEvent({ type: 'hit', data: this });
       //this.die();
