@@ -79,6 +79,7 @@
 @media (max-width: 800px) {
   .spacezone-dialog-container {
     left: 2vw;
+    right: 2vw;
     top: 2vw;
     transform: none;
     border-radius: 0;
