@@ -1402,6 +1402,8 @@ room.registerElement('spacezone-targeting-reticle', {
       scale: V(10, 10, .1), // Adjust scale as needed
       billboard: 'y',
       opacity: 0.4,
+      depth_test: false,
+      render_order: 10,
       visible: false // Initially hidden
     });
   },
