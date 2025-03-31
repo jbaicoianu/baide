@@ -1305,7 +1305,7 @@ room.registerElement('spacezone-missile-launcher', {
 // New Element: spacezone-missile
 room.registerElement('spacezone-missile', {
   target: null,
-  speed: 100, // Missile speed in meters per second
+  speed: 500, // Missile speed in meters per second
   active: true,
 
   create() {
