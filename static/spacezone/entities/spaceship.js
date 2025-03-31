@@ -1331,7 +1331,7 @@ room.registerElement('spacezone-missile', {
       console.warn('Missile launched without a target.');
       //this.active = false;
       //this.die();
-      return;
+      //return;
     }
 
     // Create missile object
