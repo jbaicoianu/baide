@@ -1281,7 +1281,7 @@ room.registerElement('spacezone-missile-launcher', {
     if (!this.missilePool) {
       this.missilePool = this.createObject('objectpool', {
         objecttype: 'spacezone-missile',
-        max: 2
+        max: 1
       });
     }
 
@@ -1390,6 +1390,7 @@ room.registerElement('spacezone-missile', {
   },
 
   update(dt) {
+      console.log('missile!', this.pos, this.active, this.target);
     if (!this.active) return;
 
     // Move missile forward
