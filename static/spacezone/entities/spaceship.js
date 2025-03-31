@@ -1175,10 +1175,10 @@ room.registerElement('spacezone-missile-launcher', {
     // Initialization code for missile launcher
     this.scan();
     this.addEventListener('targetacquired', (event) => {
-      console.log('Target acquired:', event.data);
+      //console.log('Target acquired:', event.data);
     });
     this.addEventListener('targetlocked', (event) => {
-      console.log('Target locked:', event.data);
+      //console.log('Target locked:', event.data);
     });
   },
 
@@ -1201,7 +1201,7 @@ room.registerElement('spacezone-missile-launcher', {
 
     const enemies = room.getElementsByClassName('enemy');
     if (enemies.length === 0) {
-      console.log('No enemies found within scan range.');
+      //console.log('No enemies found within scan range.');
       this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
       return;
     }
@@ -1252,7 +1252,7 @@ room.registerElement('spacezone-missile-launcher', {
         }, this.locktime * 1000);
       }
     } else {
-      console.log('No suitable targets within angle restrictions.');
+      //console.log('No suitable targets within angle restrictions.');
       this.activetarget = null;
       this.dispatchEvent({ type: 'targetlocked', data: null }); // Emit event to hide reticle
     }
