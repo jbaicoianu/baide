@@ -781,20 +781,22 @@ room.registerElement('spacezone-cannon', {
     this.firing = false;
     this.cooldown = 0;
 
-    // Add dynamic light matching the laser beam color
-    this.flashLight = this.createObject('light', {
-      type: 'point', // Using point light; can be changed to spotlight if preferred
-      light_intensity: 0, // Initial light_intensity is 0 (off)
-      col: 'limegreen', // Same color as laser beam
-      light_range: 500, // Set light range to 500
-      decay: 1, // Light decay rate
-      pos: V(0, 0, 1),
-      light_shadow: true
-    });
+    if (this.muzzleflash) {
+      // Add dynamic light matching the laser beam color
+      this.flashLight = this.createObject('light', {
+        type: 'point', // Using point light; can be changed to spotlight if preferred
+        light_intensity: 0, // Initial light_intensity is 0 (off)
+        col: 'limegreen', // Same color as laser beam
+        light_range: 500, // Set light range to 500
+        decay: 1, // Light decay rate
+        pos: V(0, 0, 1),
+        light_shadow: true
+      });
 
-    // Flash light parameters
-    this.flashIntensity = 5; // Intensity when flashing
-    this.flashFadeRate = 20; // Rate at which the light fades per second
+      // Flash light parameters
+      this.flashIntensity = 5; // Intensity when flashing
+      this.flashFadeRate = 20; // Rate at which the light fades per second
+    }
   },
   startFiring() {
     this.firing = true;
@@ -803,7 +805,7 @@ room.registerElement('spacezone-cannon', {
     this.firing = false;
   },
   flashLightIntensity(dt) {
-    if (this.flashLight.light_intensity > 0) {
+    if (this.muzzleflash && this.flashLight.light_intensity > 0) {
       this.flashLight.light_intensity -= this.flashFadeRate * dt;
       if (this.flashLight.light_intensity < 0) {
         this.flashLight.light_intensity = 0;
@@ -832,8 +834,10 @@ room.registerElement('spacezone-cannon', {
       vel: direction.clone().multiplyScalar(this.muzzlespeed)
     });
 
-    // Trigger the flash light
-    this.flashLight.light_intensity = this.flashIntensity;
+    if (this.muzzleflash) {
+      // Trigger the flash light
+      this.flashLight.light_intensity = this.flashIntensity;
+    }
 
     // Dispatch "weapon_fire" event with bubbles: true
     this.dispatchEvent({ type: 'weapon_fire', bubbles: true });
