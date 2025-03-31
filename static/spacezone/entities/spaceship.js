@@ -1180,7 +1180,6 @@ room.registerElement('spacezone-missile-launcher', {
         data: this.activetarget
       });
       console.log('Target locked:', this.activetarget);
-      this.fire();
     }
   },
 
