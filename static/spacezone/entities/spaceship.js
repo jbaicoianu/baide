@@ -25,6 +25,45 @@ room.registerElement('spacezone-spaceship', {
   initialDevicePitch: null,
   initialDeviceRoll: null,
 
+  // Kalman filter instances for smoothing
+  pitchFilter: null,
+  rollFilter: null,
+  offsetXFilter: null,
+  offsetYFilter: null,
+
+  // Simple Kalman Filter class
+  KalmanFilter: class {
+    constructor(R = 0.01, Q = 0.01) {
+      this.R = R; // Measurement noise
+      this.Q = Q; // Process noise
+      this.A = 1;
+      this.B = 0;
+      this.C = 1;
+
+      this.cov = 1;
+      this.x = 0;
+    }
+
+    filter(z) {
+      // Prediction
+      const predX = this.A * this.x + this.B;
+      const predCov = this.A * this.cov * this.A + this.Q;
+
+      // Kalman Gain
+      const K = predCov * this.C / (this.C * predCov * this.C + this.R);
+
+      // Correction
+      this.x = predX + K * (z - this.C * predX);
+      this.cov = (1 - K * this.C) * predCov;
+
+      return this.x;
+    }
+
+    setInitial(value) {
+      this.x = value;
+    }
+  },
+
   create() {
     // Initialization code for spacezone-spaceship
 
@@ -220,6 +259,18 @@ room.registerElement('spacezone-spaceship', {
 
     // Add device motion event listener
     window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+
+    // Initialize Kalman filters for smoothing device orientation
+    this.pitchFilter = new this.KalmanFilter(0.1, 0.1);
+    this.rollFilter = new this.KalmanFilter(0.1, 0.1);
+    this.offsetXFilter = new this.KalmanFilter(0.1, 0.1);
+    this.offsetYFilter = new this.KalmanFilter(0.1, 0.1);
+
+    // Set initial filter values if needed
+    this.pitchFilter.setInitial(0);
+    this.rollFilter.setInitial(0);
+    this.offsetXFilter.setInitial(0);
+    this.offsetYFilter.setInitial(0);
   },
   handleDeviceMotion(event) {
     // Map device orientation to ship's pitch and roll
@@ -230,23 +281,31 @@ room.registerElement('spacezone-spaceship', {
     if (event.accelerationIncludingGravity) {
       const acc = event.accelerationIncludingGravity;
       // Calculate pitch and roll based on acceleration
-      this.devicePitch = Math.atan2(acc.y, Math.sqrt(acc.x * acc.x + acc.z * acc.z));
-      this.deviceRoll = Math.atan2(acc.x, acc.z);
+      let rawPitch = Math.atan2(acc.y, Math.sqrt(acc.x * acc.x + acc.z * acc.z));
+      let rawRoll = Math.atan2(acc.x, acc.z);
 
       // Clamp pitch and roll to prevent excessive tilting
-      this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
-      this.deviceRoll = THREE.MathUtils.clamp(this.deviceRoll, -Math.PI / 2, Math.PI / 2);
+      rawPitch = THREE.MathUtils.clamp(rawPitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
+      rawRoll = THREE.MathUtils.clamp(rawRoll, -Math.PI / 2, Math.PI / 2);
+
+      // Apply Kalman filter
+      this.devicePitch = this.pitchFilter.filter(rawPitch);
+      this.deviceRoll = this.rollFilter.filter(rawRoll);
     }
 
     if (event.acceleration) {
       const acc = event.acceleration;
       // Map left/right and up/down movements to offset
-      this.deviceOffsetX += acc.x * 0.1; // Adjust the multiplier as needed
-      this.deviceOffsetY += acc.y * 0.1;
+      let rawOffsetX = this.deviceOffsetX + acc.x * 0.1; // Adjust the multiplier as needed
+      let rawOffsetY = this.deviceOffsetY + acc.y * 0.1;
 
-      // Clamp offsets within the configured range
-      this.deviceOffsetX = THREE.MathUtils.clamp(this.deviceOffsetX, -this.offsetRange, this.offsetRange);
-      this.deviceOffsetY = THREE.MathUtils.clamp(this.deviceOffsetY, -this.offsetRange, this.offsetRange);
+      // Clamp raw offsets within the configured range
+      rawOffsetX = THREE.MathUtils.clamp(rawOffsetX, -this.offsetRange, this.offsetRange);
+      rawOffsetY = THREE.MathUtils.clamp(rawOffsetY, -this.offsetRange, this.offsetRange);
+
+      // Apply Kalman filter
+      this.deviceOffsetX = this.offsetXFilter.filter(rawOffsetX);
+      this.deviceOffsetY = this.offsetYFilter.filter(rawOffsetY);
     }
 
     // Handle orientation calibration
