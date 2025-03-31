@@ -1993,5 +1993,22 @@
     "commit_hash": "10a536e6c284d8241e76dbaf3461a5a8438efbfb",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "The kalman filter smoothing has helped, but let's increase the level of smoothing we're doing, it's still pretty jumpy on mobile",
+    "timestamp": "2025-03-31T23:30:25.623236Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've increased the Kalman filter smoothing by adjusting the filter parameters to further reduce jumpiness on mobile devices. This enhancement should provide a smoother experience by refining the device orientation data processing.",
+    "timestamp": "2025-03-31T23:32:19.831053Z",
+    "branch": "main",
+    "commit_hash": "2f6a468e48949433a55abe15caa3c37cf178ef19",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
