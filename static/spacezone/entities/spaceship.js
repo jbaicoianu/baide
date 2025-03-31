@@ -1399,9 +1399,9 @@ room.registerElement('spacezone-targeting-reticle', {
     this.reticle = this.createObject('object', {
       id: 'cube',
       col: 'green',
-      scale: V(10, 10, .1), // Adjust scale as needed
+      scale: V(20, 20, .1), // Adjust scale as needed
       billboard: 'y',
-      opacity: 0.4,
+      opacity: 0.6,
       depth_test: false,
       render_order: 10,
       visible: false // Initially hidden
