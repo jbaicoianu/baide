@@ -181,7 +181,7 @@ room.registerElement('spacezone-spaceship', {
 
     // Initialize Missile Launcher
     this.missileLauncher = this.taufighter.createObject('spacezone-missile-launcher', {
-      pos: V(0,0,5),
+      pos: V(0,0,6),
       scanrange: 1000,
       locktime: 1,
       scantime: 0.25 // Added scantime attribute with default value of 0.5 seconds
