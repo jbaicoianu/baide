@@ -879,6 +879,8 @@ room.registerElement('spacezone-enemy-drone', {
   activationDistance: 1000, // Distance in meters to activate the drone
   firingRate: 1, // Shots per second
   droneSpeed: 40, // Speed of the drone in meters per second
+  player: null,
+
   create() {
     // Create the enemy drone as a bright red sphere with 2m diameter
     this.drone = this.createObject('object', {
@@ -906,9 +908,6 @@ room.registerElement('spacezone-enemy-drone', {
 
     // Add event listener for collision with laserbolts
     this.drone.addEventListener('collide', ev => this.handleCollision(ev));
-
-    // Reference to player object
-    this.player = this.player; // Updated to reference via controller
   },
   update(dt) {
     if (!this.isActive) {
