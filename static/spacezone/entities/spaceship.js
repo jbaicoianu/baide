@@ -1341,7 +1341,7 @@ room.registerElement('spacezone-missile', {
       col: 'orange',
       scale: V(1, 4, 1),
       pos: this.properties.pos || V(0, 0, 0),
-      zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
+      //zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
       rotation: V(90, 0, 0),
       collision_id: 'missile',
       mass: 50,
@@ -1419,12 +1419,12 @@ room.registerElement('spacezone-missile', {
           } else {
             // Create a quaternion representing the rotation
             const quaternion = new THREE.Quaternion();
-            quaternion.setFromAxisAngle(rotationAxis, THREE.MathUtils.degToRad(maxTurn));
+            quaternion.setFromAxisAngle(rotationAxis, -THREE.MathUtils.degToRad(maxTurn));
             this.zdir.applyQuaternion(quaternion).normalize();
           }
         }
         // Update velocity based on new direction
-        this.vel.copy(this.zdir.clone().multiplyScalar(this.speed));
+        this.vel.copy(this.zdir).multiplyScalar(this.speed));
       }
     }
 
