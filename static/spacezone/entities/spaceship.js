@@ -650,6 +650,13 @@ room.registerElement('spacezone-spaceship', {
     if (player && player.camera) {
       player.camera.fov = this.currentFov;
     }
+
+    // Update smoke trail emitter position
+    if (this.smokeTrail) {
+      const missileWorldPos = new THREE.Vector3();
+      this.missile.getWorldPosition(missileWorldPos);
+      this.smokeTrail.emitter_pos = missileWorldPos;
+    }
   },
   reset() {
     for (let drone of this.drones) {
@@ -1331,6 +1338,17 @@ room.registerElement('spacezone-missile', {
       visible: true
     });
 
+    // Add smoke trail particle as a child of the room
+    this.smokeTrail = room.createObject('particle', {
+      count: 2000,
+      rate: 200,
+      duration: 10,
+      pos: V(-0.5, -0.5, -0.5),
+      rand_pos: V(1, 1, 1),
+      col: V(0.4, 0.4, 0.4),
+      rand_col: V(0.4, 0.4, 0.4)
+    });
+
     // Add velocity based on zdir
     this.vel = this.zdir.clone().multiplyScalar(this.speed);
 
@@ -1367,6 +1385,13 @@ room.registerElement('spacezone-missile', {
 
     // Move missile forward
     this.missile.pos.add(this.missile.vel.clone().multiplyScalar(dt));
+
+    // Update smoke trail emitter position
+    if (this.smokeTrail) {
+      const missileWorldPos = new THREE.Vector3();
+      this.missile.getWorldPosition(missileWorldPos);
+      this.smokeTrail.emitter_pos = missileWorldPos;
+    }
 
     // Optionally, track the target's movement
     if (this.target) {
