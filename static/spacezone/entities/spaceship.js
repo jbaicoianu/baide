@@ -1414,6 +1414,7 @@ room.registerElement('spacezone-score', {
   }
 });
 
+
 // New Element: spacezone-targeting-reticle
 room.registerElement('spacezone-targeting-reticle', {
   create() {
@@ -1426,6 +1427,7 @@ room.registerElement('spacezone-targeting-reticle', {
       opacity: 0.6,
       depth_test: false,
       render_order: 10,
+      lighting: false, // Set lighting to false
       visible: false // Initially hidden
     });
   },
