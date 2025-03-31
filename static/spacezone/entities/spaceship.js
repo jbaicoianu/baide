@@ -1413,7 +1413,7 @@ room.registerElement('spacezone-missile', {
     // For example, if too far from origin, deactivate
     const maxDistance = 2000;
     if (this.missile.pos.length() > maxDistance) {
-      this.die();
+      //this.die();
     }
   }
 });
