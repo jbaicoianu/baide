@@ -184,7 +184,7 @@ room.registerElement('spacezone-spaceship', {
     // Initialize Missile Launcher
     this.missileLauncher = this.createObject('spacezone-missile-launcher', {
       scanrange: 1000,
-      locktime: 1,
+      locktime: 2,
       scantime: 0.25 // Added scantime attribute with default value of 0.5 seconds
     });
 
