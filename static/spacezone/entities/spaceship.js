@@ -75,12 +75,10 @@ room.registerElement('spacezone-spaceship', {
       'fire': {
         defaultbindings: 'mouse_button_0',
         onactivate: () => {
-          this.cannonLeft.startFiring();
-          this.cannonRight.startFiring();
+          this.missileLauncher.fire();
         },
         ondeactivate: () => {
-          this.cannonLeft.stopFiring();
-          this.cannonRight.stopFiring();
+          // No action required on deactivation
         }
       },
       'roll_left': { 
