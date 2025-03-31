@@ -913,28 +913,19 @@ room.registerElement('spacezone-cannon', {
         max: 20
       });
     }        
-    // Calculate zdir instead of using getWorldOrientation
-    this.zdir = this.localToWorld(V(0, 0, -1)).sub(this.getWorldPosition());
 
     // Get spawnPosition using ship's world coordinates
     const spawnPosition = this.getWorldPosition(); // Updated to use this.getWorldPosition()
-
-    // Pass zdir to missile
-    const missile = room.createObject('spacezone-missile', {
-      pos: spawnPosition,
-      zdir: this.zdir,
-      target: this.activetarget
-    });
 
     // Get forward position and compute direction
     // Removed since zdir is now used for velocity
 
     // Spawn a spacezone-laserbeam using the object pool
-    // this.laserpool.grab({
-    //   pos: spawnPosition,
-    //   zdir: direction,
-    //   vel: direction.clone().multiplyScalar(this.muzzlespeed)
-    // });
+    this.laserpool.grab({
+      pos: spawnPosition,
+      zdir: direction,
+      vel: direction.clone().multiplyScalar(this.muzzlespeed)
+    });
 
     if (this.muzzleflash) {
       // Trigger the flash light
