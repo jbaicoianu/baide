@@ -1403,7 +1403,7 @@ room.registerElement('spacezone-missile', {
     // Adjust direction towards target
     if (this.target) {
       const currentVelocity = this.vel.clone().normalize();
-      const targetDirection = this.target.pos.clone().sub(this.missile.pos).normalize();
+      const targetDirection = this.target.getWorldPosition().sub(this.getWorldPosition()).normalize();
       const angle = THREE.MathUtils.radToDeg(currentVelocity.angleTo(targetDirection));
 
       if (angle > 0) {
