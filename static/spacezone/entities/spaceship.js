@@ -1187,24 +1187,26 @@ room.registerElement('spacezone-missile-launcher', {
     }
 
     if (closestEnemy) {
-      this.activetarget = closestEnemy;
-      this.locked = false;
-      this.dispatchEvent({
-        type: 'targetacquired',
-        data: this.activetarget
-      });
+      if (this.activetarget !== closestEnemy) {
+        this.activetarget = closestEnemy;
+        this.locked = false;
+        this.dispatchEvent({
+          type: 'targetacquired',
+          data: this.activetarget
+        });
 
-      // Clear existing timer if any
-      if (this.lockTimer) {
-        clearTimeout(this.lockTimer);
-      }
-
-      // Set timer to lock the target after scantime seconds
-      this.lockTimer = setTimeout(() => {
-        if (this.activetarget && !this.locked) {
-          this.lock();
+        // Clear existing timer if any
+        if (this.lockTimer) {
+          clearTimeout(this.lockTimer);
         }
-      }, this.scantime * 1000);
+
+        // Set timer to lock the target after scantime seconds
+        this.lockTimer = setTimeout(() => {
+          if (this.activetarget && !this.locked) {
+            this.lock();
+          }
+        }, this.scantime * 1000);
+      }
     } else {
       console.log('No suitable targets within angle restrictions.');
       this.activetarget = null;
