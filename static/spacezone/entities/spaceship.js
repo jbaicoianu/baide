@@ -925,6 +925,9 @@ room.registerElement('spacezone-enemy-drone', {
     // Initialize state
     this.isActive = false;
 
+    // Categorize this drone as an enemy
+    this.addClass('enemy');
+
     // Add event listener for collision with laserbolts
     this.drone.addEventListener('collide', ev => this.handleCollision(ev));
   },
