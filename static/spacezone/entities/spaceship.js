@@ -1432,9 +1432,7 @@ room.registerElement('spacezone-targeting-reticle', {
     if (this.reticle) {
       this.pos = targetPosition;
       this.reticle.visible = true;
-      // You can use the 'locked' parameter to change reticle behavior or appearance
-      // Example:
-      // this.reticle.col = locked ? 'blue' : 'green';
+      this.reticle.col = locked ? 'green' : 'yellow';
     }
   },
 
