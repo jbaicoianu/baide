@@ -662,13 +662,20 @@ room.registerElement('spacezone-enemy-dronecontroller', {
   numdrones: 10, // Default number of drones
 
   create() {
+    // Use a shared pool for our drone laser beams
+    this.laserpool = this.createObject('objectpool', {
+      objecttype: 'spacezone-laserbeam',
+      max: 20
+    });
+
     // Preallocate drones and store them in this.drones
     this.drones = [];
     this.player = this.parent.getElementsByTagName('spacezone-spaceship')[0]; // Ensure player is retrieved here
     for (let i = 0; i < this.numdrones; i++) {
       let drone = this.createObject('spacezone-enemy-drone', {
         pos: V(0, 0, 0), // Initialize at origin or desired spawn position
-        player: this.player // Pass the player reference to each drone
+        player: this.player, // Pass the player reference to each drone
+        laserpool: this.laserpool,
       });
       this.drones.push(drone);
     }
@@ -860,7 +867,9 @@ room.registerElement('spacezone-enginetrail', {
 room.registerElement('spacezone-cannon', {
   rate: 10, // Default rate: increased to 10 shots per second
   muzzlespeed: 400, // Default muzzle speed increased to 400
-  muzzleflash: false, // Added muzzleflash attribute with default value false
+  muzzleflash: false, // Added muzzleflash attribute with default value false,
+  laserpool: null,
+
   create() {
     // Initialization code for spacezone-cannon
     this.firing = false;
@@ -898,9 +907,9 @@ room.registerElement('spacezone-cannon', {
     }
   },
   fire() {
-    if (!this.pool) {
+    if (!this.laserpool) {
       // Initialize the object pool for laser beams
-      this.pool = this.createObject('objectpool', {
+      this.laserpool = this.createObject('objectpool', {
         objecttype: 'spacezone-laserbeam',
         max: 20
       });
@@ -913,7 +922,7 @@ room.registerElement('spacezone-cannon', {
     const direction = new THREE.Vector3().subVectors(spawnPosition, forwardPosition).normalize();
 
     // Spawn a spacezone-laserbeam using the object pool
-    this.pool.grab({
+    this.laserpool.grab({
       pos: spawnPosition,
       zdir: direction,
       vel: direction.clone().multiplyScalar(this.muzzlespeed)
