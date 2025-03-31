@@ -180,7 +180,7 @@ room.registerElement('spacezone-spaceship', {
     // Removed as drone controllers are now spawned by the level
 
     // Initialize Missile Launcher
-    this.missileLauncher = this.createObject('spacezone-missile-launcher', {
+    this.missileLauncher = this.taufighter.createObject('spacezone-missile-launcher', {
       scanrange: 1000,
       locktime: 1,
       scantime: 0.25 // Added scantime attribute with default value of 0.5 seconds
@@ -736,7 +736,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
         const newT = currentPathPosition + randomOffset;
         const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
 
-        const newPosition = this.level.getPositionAtTime(newT);
+        const newPosition = this.level.getPositionAtTime(clampedT);
 
         // Generate random offsetX and offsetY between -50 and 50
         const offsetX = Math.random() * 100 - 50;
@@ -1177,9 +1177,15 @@ room.registerElement('spacezone-missile-launcher', {
   locked: false,
   lockTimer: null,
   armed: false, // Added armed attribute, defaulting to false
+  missilePool: null, // Added missilePool property
 
   create() {
     // Initialization code for missile launcher
+    this.missilePool = this.createObject('objectpool', {
+      objecttype: 'spacezone-missile',
+      max: 5
+    });
+
     this.scan();
     this.addEventListener('targetacquired', (event) => {
       //console.log('Target acquired:', event.data);
@@ -1251,7 +1257,7 @@ room.registerElement('spacezone-missile-launcher', {
           clearTimeout(this.lockTimer);
         }
 
-        // Set timer to lock the target after scantime seconds
+        // Set timer to lock the target after locktime seconds
         this.lockTimer = setTimeout(() => {
           if (this.activetarget && !this.locked) {
             this.lock();
@@ -1277,19 +1283,19 @@ room.registerElement('spacezone-missile-launcher', {
   },
 
   fire() {
-    if (this.locked && this.activetarget) {
+    if (this.locked && this.activetarget && this.missilePool) {
       // Calculate zdir instead of using getWorldOrientation
       let missilezdir = this.localToWorld(V(0, 0, 1)).sub(this.getWorldPosition());
 
-      // Spawn a new missile with zdir
-      const missile = room.createObject('spacezone-missile', {
+      // Spawn a new missile with zdir using the object pool
+      this.missilePool.grab({
         pos: this.getWorldPosition(), // Using this.getWorldPosition() for current launcher position
         zdir: missilezdir,
         target: this.activetarget
       });
       console.log('Missile fired towards:', this.activetarget);
     } else {
-      console.log('Cannot fire: No target locked.');
+      console.log('Cannot fire: No target locked or missile pool unavailable.');
     }
   },
 
