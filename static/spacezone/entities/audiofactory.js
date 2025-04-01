@@ -21,14 +21,14 @@ room.registerElement('audio-factory', {
     this.laserbeam = new Tone.Oscillator({
       type: 'sawtooth',
       frequency: 5000, // Start frequency at 5000Hz
-      volume: 0
+      volume: -Infinity
     }).connect(this.laserDistortion);
     
     // Ensure the oscillator starts but is initially silent
     this.laserbeam.start();
     
     // Create a gain node to control the amplitude
-    this.laserGain = new Tone.Gain(0).connect(this.laserDistortion);
+    this.laserGain = new Tone.Gain(0.001).connect(this.laserDistortion);
     this.laserbeam.connect(this.laserGain);
 
     // Create a quadratic pitch shift
@@ -51,7 +51,7 @@ room.registerElement('audio-factory', {
       
       // Trigger the gain to make the sound audible
       this.laserGain.gain.setValueAtTime(1, Tone.now());
-      this.laserGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.5);
+      this.laserGain.gain.linearRampToValueAtTime(0, Tone.now() + 0.5);
     } else {
       console.warn('Laserbeam oscillator is not initialized yet.');
     }
