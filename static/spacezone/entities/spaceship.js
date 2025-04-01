@@ -194,12 +194,12 @@ room.registerElement('spacezone-spaceship', {
     // Add spacezone-cannons to the taufighterS
     this.cannonLeft = this.taufighter.createObject('spacezone-cannon', {
       pos: '6.5 0 6', // Moved position to 6.5, 0, 6
-      //rotation: '0 180 0' // Rotated 180 degrees on y-axis
+      rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
 
     this.cannonRight = this.taufighter.createObject('spacezone-cannon', {
       pos: '-6.5 0 6', // Moved position to -6.5, 0, 6
-      //rotation: '0 180 0' // Rotated 180 degrees on y-axis
+      rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
 
     // Add shipcollider object as a separate collider
@@ -865,7 +865,7 @@ room.registerElement('spacezone-enginetrail', {
     
 room.registerElement('spacezone-cannon', {
   rate: 10, // Default rate: increased to 10 shots per second
-  muzzlespeed: 12000, // Default muzzle speed increased to 400
+  muzzlespeed: 1200000, // Default muzzle speed increased to 400
   muzzleflash: false, // Added muzzleflash attribute with default value false,
   laserpool: null,
 
