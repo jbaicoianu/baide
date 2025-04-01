@@ -23,7 +23,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   background: linear-gradient(135deg, rgba(10,10,40,0.9), rgba(20,20,60,0.9));
-  color: #00FFEA;
+  color: white;
   padding: 25px 30px;
   border-radius: 12px 8px 20px 8px;
   box-shadow: 0 0 16px rgba(31,38,135,0.8);
