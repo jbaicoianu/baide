@@ -1,6 +1,6 @@
 room.registerElement('spacezone-spaceship', {
-  initialcargo: 100, // Configurable initial number of medical supplies
-  currentcargo: 100, // Current number of medical supplies
+  initialcargo: 1000, // Configurable initial number of medical supplies
+  currentcargo: 1000, // Current number of medical supplies
   shieldstrength: 100, // Current strength of the radiation shield
   supplyexpirationrate: 1, // Base rate at which supplies expire per second
   damage: 0, // Current damage sustained by the ship
