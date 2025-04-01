@@ -252,6 +252,10 @@ room.registerElement('spacezone-enemy-drone', {
     // Add explosion behavior (e.g., particles, sound)
     // This can be expanded based on the available asset scripts
 
+    // Reset drone object positions
+    this.drone.pos = V(0,0,0);
+    this.drone.vel = V(0,0,0);
+    this.drone.rotation = V(0,0,0);
     // Remove the drone by setting its z position to -9999
     this.pos.z = -9999;
   }
