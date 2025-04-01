@@ -188,17 +188,17 @@ room.registerElement('spacezone-enemy-drone', {
     if (level && level.getPositionAtTime) {
       // Example: Move based on elapsed time and droneSpeed
       // You may need to implement a more sophisticated path-following mechanism
-      const currentPosition = this.drone.pos;
-      const direction = this.drone.zdir.clone().normalize();
+      const currentPosition = this.getWorldPosition();
+      const direction = this.localToWorld(V(0,0,1)).sub(currentPosition).normalize();
       const newPosition = currentPosition.clone().add(direction.multiplyScalar(this.droneSpeed * dt));
-      this.drone.pos = newPosition;
+      this.pos = newPosition;
     }
   },
   facePlayer(dt) {
     if (!this.player) return;
 
     // Calculate direction vector from drone to player
-    const direction = new THREE.Vector3().subVectors(this.player.pos, this.drone.pos).normalize();
+    const direction = new THREE.Vector3().subVectors(this.player.getWorldPosition(), this.getWorldPosition()).normalize();
 
     // Calculate desired yaw and pitch in degrees
     let desiredYaw = Math.atan2(direction.x, direction.z) * (180 / Math.PI);
