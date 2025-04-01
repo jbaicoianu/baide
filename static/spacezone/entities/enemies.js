@@ -32,7 +32,9 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     if (this.player) {
       this.player.addEventListener('time_elapsed', event => {
         if (event.data && typeof event.data.currentPathPosition === 'number') {
-          this.repositionDrones(event.data.currentPathPosition);
+          if (this.player.isRacing) {
+            this.repositionDrones(event.data.currentPathPosition);
+          }
         } else {
           console.warn('time_elapsed event does not contain currentPathPosition.');
         }
@@ -57,6 +59,12 @@ room.registerElement('spacezone-enemy-dronecontroller', {
 
   repositionDrones(currentPathPosition) {
     if (!this.player || !this.level) return;
+
+    // Check if the player is racing
+    if (!this.player.isRacing) {
+      console.log('Player is not racing. Skipping drone repositioning.');
+      return;
+    }
 
     // Check if the level progress has reached or exceeded 90%
     if (currentPathPosition >= 0.9) {
