@@ -2480,5 +2480,13 @@
     "branch": "main",
     "commit_hash": "3cd2fa3bda00452f84ab5b3ce4f6f3d3e45ddea4",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Explosion color tweaks [Manual edit]",
+    "timestamp": "2025-04-01T08:22:56.935933Z",
+    "branch": "main",
+    "commit_hash": "507d6cee915cbe56ebaa90796b4757fc1b992d4c",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
