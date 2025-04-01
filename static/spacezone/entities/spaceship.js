@@ -1010,6 +1010,7 @@ room.registerElement('spacezone-missile-launcher', {
     this.addEventListener('targetacquired', (event) => {
       //console.log('Target acquired:', event.data);
       if (event.data && event.data.activetarget) {
+        room.objects['sounds'].stopSound('missile-target-locked');
       	room.objects['sounds'].playSound('missile-target-acquiring');
       }
     });
