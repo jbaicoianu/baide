@@ -904,7 +904,7 @@ room.registerElement('spacezone-cannon', {
   fire() {
     if (!this.laserpool) {
       // Initialize the object pool for laser beams
-      this.laserpool = this.createObject('objectpool', {
+      this.laserpool = room.createObject('objectpool', {
         objecttype: 'spacezone-laserbeam',
         max: 20
       });
