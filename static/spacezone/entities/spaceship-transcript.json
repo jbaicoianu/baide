@@ -2488,5 +2488,13 @@
     "branch": "main",
     "commit_hash": "507d6cee915cbe56ebaa90796b4757fc1b992d4c",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Explosion scale tweak [Manual edit]",
+    "timestamp": "2025-04-01T08:24:13.244047Z",
+    "branch": "main",
+    "commit_hash": "1c7bfdddd6a74f2c09ccb87a617fa9a933b6e54c",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
