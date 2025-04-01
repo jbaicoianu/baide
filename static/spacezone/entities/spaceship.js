@@ -935,7 +935,7 @@ room.registerElement('spacezone-cannon', {
       //vel: direction.clone().multiplyScalar(this.muzzlespeed)
     });
     laser.vel = direction.clone().multiplyScalar(this.muzzlespeed);
-console.log('pew', laser, laser.vel);
+console.log('pew', laser, this.muzzlespeed, direction, laser.vel);
     if (this.muzzleflash) {
       // Trigger the flash light
       this.flashLight.light_intensity = this.flashIntensity;
