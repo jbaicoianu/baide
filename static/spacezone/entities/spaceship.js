@@ -925,7 +925,7 @@ room.registerElement('spacezone-cannon', {
     const spawnPosition = this.getWorldPosition(); // Updated to use this.getWorldPosition()
 
     // Get forward position and compute direction
-    const forwardPosition = this.localToWorld(V(0, 0, 1));
+    const forwardPosition = this.localToWorld(V(0, 0, -1));
     const direction = new THREE.Vector3().subVectors(spawnPosition, forwardPosition).normalize()
 
     // Spawn a spacezone-laserbeam using the object pool
