@@ -1330,7 +1330,8 @@ room.registerElement('spacezone-missile', {
     // Adjust direction towards target
     if (this.target) {
       const currentVelocity = this.vel.clone().normalize();
-      const targetDirection = this.target.getWorldPosition().sub(this.getWorldPosition()).normalize();
+      let target = this.target.drone || this.target; // FIXME - hack to work around weird drone object placement
+      const targetDirection = target.getWorldPosition().sub(this.getWorldPosition()).normalize();
       const angle = THREE.MathUtils.radToDeg(currentVelocity.angleTo(targetDirection));
 
       if (angle > 0) {
