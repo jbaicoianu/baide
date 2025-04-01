@@ -27,8 +27,8 @@
   padding: 25px 30px;
   border-radius: 12px 8px 20px 8px;
   box-shadow: 0 0 16px rgba(31,38,135,0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  xbackdrop-filter: blur(8px);
+  -xwebkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(255, 255, 255, 0.18);
   z-index: 1000;
   font-family: 'Tektur', sans-serif;
