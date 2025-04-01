@@ -129,6 +129,9 @@ room.registerElement('spacezone-enemy-drone', {
 
     // Add event listener for collision with laserbolts
     this.drone.addEventListener('collide', ev => this.handleCollision(ev));
+
+    // Add event listener for 'hit' event
+    this.drone.addEventListener('hit', ev => this.explodeDrone());
   },
   update(dt) {
     if (!this.isActive) {
@@ -229,8 +232,8 @@ room.registerElement('spacezone-enemy-drone', {
     // Add explosion behavior (e.g., particles, sound)
     // This can be expanded based on the available asset scripts
 
-    // Remove the drone from the scene
-    this.drone.die();
-    console.log('Enemy drone has been destroyed.');
+    // Remove the drone by setting its z position to -9999
+    this.drone.pos.z = -9999;
+    console.log('Enemy drone has been deactivated by setting its z position to -9999.');
   }
 });
