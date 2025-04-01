@@ -17,39 +17,43 @@ room.registerElement('audio-factory', {
     // Create distortion effect for the laser
     this.laserDistortion = new Tone.Distortion(0.8).toDestination();
 
-    // Create a laser sound named "laserbeam" with aggressive attack and decay
-    this.laserbeam = new Tone.Synth({
-      oscillator: {
-        type: 'sawtooth' // Changed from 'sine' to 'sawtooth' for a more aggressive tone
-      },
-      envelope: {
-        attack: 0.02,   // Increased attack time for longer sound
-        decay: 0.1,     // Increased decay time for longer sound
-        sustain: 0.2,
-        release: 0.03   // Adjusted release time to fit the 250ms duration
-      }
+    // Create a laser sound named "laserbeam" using Tone.Oscillator
+    this.laserbeam = new Tone.Oscillator({
+      type: 'sawtooth',
+      frequency: 5000, // Start frequency at 5000Hz
+      volume: 0
     }).connect(this.laserDistortion);
     
-    // Ensure the synth is ready
-    this.laserbeam.toMaster();
+    // Ensure the oscillator starts but is initially silent
+    this.laserbeam.start();
+    
+    // Create a gain node to control the amplitude
+    this.laserGain = new Tone.Gain(0).connect(this.laserDistortion);
+    this.laserbeam.connect(this.laserGain);
 
-    // Create pitch shift envelope for the laser
-    this.pitchShiftEnvelope = new Tone.Envelope({
-      attack: 0.02,    // Increased attack time for more pronounced pitch shift
-      decay: 0.3,      // Increased decay time for sustained pitch effect
+    // Create a quadratic pitch shift
+    this.laserPitchAutomation = new Tone.FrequencyEnvelope({
+      attack: 0.02,
+      decay: 0.5,
       sustain: 0,
       release: 0
-    }).connect(this.laserbeam.detune);
+    }).toDestination();
+    
+    // Connect the pitch envelope to the oscillator's frequency
+    this.laserPitchAutomation.connect(this.laserbeam.frequency);
   },
   
   playLaser() {
     if (this.laserbeam) {
-      // Trigger the pitch shift envelope to start at higher pitch and shift to lower pitch
-      this.pitchShiftEnvelope.triggerAttackRelease(2000, "16n"); // Increased detune value and shortened duration
+      // Set up the frequency shift from 5000Hz to 100Hz quadratically
+      this.laserbeam.frequency.setValueAtTime(5000, Tone.now());
+      this.laserbeam.frequency.exponentialRampToValueAtTime(100, Tone.now() + 0.5);
       
-      this.laserbeam.triggerAttackRelease("C5", "16n"); // Adjusted duration to match the 250ms total
+      // Trigger the gain to make the sound audible
+      this.laserGain.gain.setValueAtTime(1, Tone.now());
+      this.laserGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.5);
     } else {
-      console.warn('Laserbeam sound is not initialized yet.');
+      console.warn('Laserbeam oscillator is not initialized yet.');
     }
   }
 });
