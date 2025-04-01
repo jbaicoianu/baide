@@ -1009,11 +1009,13 @@ room.registerElement('spacezone-missile-launcher', {
     this.scan();
     this.addEventListener('targetacquired', (event) => {
       //console.log('Target acquired:', event.data);
-      room.objects['sounds'].playSound('missile-target-acquiring');
+      if (event.data && event.data.activetarget) {
+      	room.objects['sounds'].playSound('missile-target-acquiring');
+      }
     });
     this.addEventListener('targetlocked', (event) => {
       //console.log('Target locked:', event.data);
-      if (event.data.activetarget) {
+      if (event.data && event.data.activetarget) {
       	room.objects['sounds'].playSound('missile-target-locked');
       } else {
       	room.objects['sounds'].stopSound('missile-target-locked');
