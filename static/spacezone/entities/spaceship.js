@@ -1393,7 +1393,7 @@ room.registerElement('spacezone-targeting-reticle', {
     const ctx = this.ctx;
     const size = 256;
     const radius = 128;
-    const lineWidth = 4;
+    const lineWidth = 8;
     ctx.clearRect(0, 0, size, size);
 
     const startAngles = [0, 90, 180, 270];
