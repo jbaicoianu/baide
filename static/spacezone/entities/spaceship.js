@@ -1006,7 +1006,6 @@ room.registerElement('spacezone-missile-launcher', {
   arm() {
     this.armed = true;
     console.log('Missile launcher armed.');
-    this.activate();
   },
 
   disarm() {
