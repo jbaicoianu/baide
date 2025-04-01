@@ -2050,5 +2050,22 @@
     "branch": "main",
     "commit_hash": "1f784162fb610ac81fe76ed872cf7df69bca7187",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Our device orientation pitch handling seems to have stopped working once we added the calibration step, make sure that we're not experiencing gimbal lock from being at 90 degrees from our gravity vector",
+    "timestamp": "2025-04-01T04:39:11.258251Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "Hello,\n\nI have addressed the issue with the device orientation pitch handling by ensuring that `devicePitch` and `deviceRoll` are properly clamped after applying the calibration step. This should help prevent gimbal lock when the device is oriented at 90 degrees from the gravity vector. Additionally, I recommend considering the use of quaternions for rotation handling to fully avoid gimbal lock in the future.",
+    "timestamp": "2025-04-01T04:43:21.026112Z",
+    "branch": "main",
+    "commit_hash": "c7aae620d334c33de22212faced6a156381db1ac",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
