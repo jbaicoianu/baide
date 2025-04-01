@@ -124,7 +124,9 @@ room.registerElement('spacezone-spaceship', {
       'fire': {
         defaultbindings: 'mouse_button_0',
         onactivate: () => {
-          this.missileLauncher.fire();
+          //this.missileLauncher.fire();
+          this.cannonLeft.fire();
+          this.cannonRight.fire();
         },
         ondeactivate: () => {
           // No action required on deactivation
@@ -186,7 +188,7 @@ room.registerElement('spacezone-spaceship', {
     if (player && player.camera) {
       player.camera.fov = this.currentFov;
     }
-/*
+
     // Add spacezone-cannons to the taufighterS
     this.cannonLeft = this.taufighter.createObject('spacezone-cannon', {
       pos: '6.5 0 6', // Moved position to 6.5, 0, 6
@@ -197,7 +199,7 @@ room.registerElement('spacezone-spaceship', {
       pos: '-6.5 0 6', // Moved position to -6.5, 0, 6
       rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
-*/
+
     // Add shipcollider object as a separate collider
     this.shipcollider = this.taufighter.createObject('object', {
       //id: 'capsule',
