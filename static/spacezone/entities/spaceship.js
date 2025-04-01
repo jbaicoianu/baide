@@ -1438,7 +1438,8 @@ room.registerElement('explosion', {
       rand_col: V(0.25),
       vel: V(-50),
       rand_vel: V(100),
-      duration: 20
+      duration: 20,
+      scale: V(2),
     });
   },
   reset() {
