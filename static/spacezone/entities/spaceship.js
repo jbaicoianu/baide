@@ -1224,7 +1224,6 @@ room.registerElement('spacezone-missile', {
       return;
     }
     console.log('missile explodes!', ev);
-    this.deactivate();
     this.explode();
     ev.data.other.dispatchEvent({ type: 'hit', data: this });
     //this.die();
@@ -1237,6 +1236,7 @@ room.registerElement('spacezone-missile', {
       pos: this.missile.getWorldPosition(),
       visible: true
     });
+    this.deactivate();
 
     // Optionally, add particle effects or sound here
 
@@ -1253,7 +1253,7 @@ room.registerElement('spacezone-missile', {
     // Check if activetime exceeds lifetime
     if (this.activetime >= this.lifetime) {
       this.deactivate();
-      this.explode();
+      //this.explode();
       return;
     }
 
