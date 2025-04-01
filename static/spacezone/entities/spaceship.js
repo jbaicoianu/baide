@@ -951,11 +951,13 @@ console.log('pew', laser, this.muzzlespeed, direction, laser.vel);
   },
   update(dt) {
     // Dynamically set muzzlespeed based on currentSpeedMultiplier
+      /*
     if (this.parent && this.parent.parent) {
       this.muzzlespeed = 800 * this.parent.parent.currentSpeedMultiplier;
     } else {
       console.warn('Unable to access currentSpeedMultiplier for muzzlespeed calculation.');
     }
+      */
 
     if (this.firing) {
       this.cooldown -= dt;
