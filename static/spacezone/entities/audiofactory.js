@@ -119,7 +119,7 @@ room.registerElement('audio-factory', {
           const now = Tone.now();
           this.missileTargetLockedGain.gain.cancelScheduledValues(now);
           this.missileTargetLockedGain.gain.setValueAtTime(1, now);
-          this.missileTargetLockedGain.gain.linearRampToValueAtTime(0.5, now + 0.5);
+          this.missileTargetLockedGain.gain.linearRampToValueAtTime(0.1, now + 0.5);
         } else {
           console.warn('MissileTargetLocked oscillator is not initialized yet.');
         }
