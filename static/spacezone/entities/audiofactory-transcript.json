@@ -165,5 +165,22 @@
     "branch": "main",
     "commit_hash": "c9f5e068050b7e5029d5dee3df4b20f78ed4d3c2",
     "file_name": "static/spacezone/entities/audiofactory.js"
+  },
+  {
+    "role": "User",
+    "content": "Something about this is completely preventing our existing sound handling in the engine from working, I'm not getting background music or anything. What could be wrong?",
+    "timestamp": "2025-04-01T17:19:15.980023Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/audiofactory.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "It seems the integration of ToneJS within the `audio-factory.js` might be conflicting with JanusXR's existing audio systems, preventing background music and other sounds from functioning correctly. To address this, I recommend ensuring that ToneJS's audio routing does not interfere with JanusXR's audio context. Additionally, it's important to verify that the ToneJS script is loaded only once to avoid multiple instances that could cause conflicts.",
+    "timestamp": "2025-04-01T17:19:27.119156Z",
+    "branch": "main",
+    "commit_hash": "a89f02843d50b9bc1b49dfff1e2d23794bf33e9d",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/audiofactory.js"
   }
 ]
