@@ -583,6 +583,9 @@ room.registerElement('spacezone-spaceship', {
         // Reset orientation calibration
         this.initialDevicePitch = null;
         this.initialDeviceRoll = null;
+
+        // Show success dialog
+        this.dialog.showDialog('dialogs/success.html');
       }
 
       // Implement supply expiration logic
