@@ -33,6 +33,8 @@
   z-index: 1000;
   font-family: 'Tektur', sans-serif;
   font-size: 1.2em;
+  max-height: calc(96vh - 60px);
+  overflow-y: auto;
 }
 
 .spacezone-dialog-container p {
