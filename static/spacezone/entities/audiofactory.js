@@ -76,6 +76,14 @@ room.registerElement('audio-factory', {
       volume: -10
     }).connect(this.missileTargetLockedGain);
     this.missileTargetLocked.start();
+
+    // Create missileFired sound effect using Noise generator
+    this.missileFiredGain = new Tone.Gain(0).connect(this.laserDistortion);
+    this.missileFired = new Tone.Noise({
+      type: 'white',
+      volume: -14
+    }).connect(this.missileFiredGain);
+    this.missileFired.start();
   },
   
   playSound(id) {
@@ -113,6 +121,16 @@ room.registerElement('audio-factory', {
           console.warn('MissileTargetLocked oscillator is not initialized yet.');
         }
         break;
+      case 'missile-fired':
+        if (this.missileFiredGain) {
+          // Trigger the gain to make the "fwooosh!" sound audible
+          this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
+          this.missileFiredGain.gain.setValueAtTime(1, Tone.now());
+          this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.5);
+        } else {
+          console.warn('MissileFired noise generator is not initialized yet.');
+        }
+        break;
       default:
         console.warn(`Sound with id "${id}" does not exist.`);
     }
@@ -146,6 +164,16 @@ room.registerElement('audio-factory', {
           this.missileTargetLockedGain.gain.setValueAtTime(0, Tone.now());
         } else {
           console.warn('MissileTargetLocked oscillator is not initialized yet.');
+        }
+        break;
+      case 'missile-fired':
+        if (this.missileFiredGain) {
+          // Fade out the missileFired sound
+          this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
+          this.missileFiredGain.gain.setValueAtTime(this.missileFiredGain.gain.value, Tone.now());
+          this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.5);
+        } else {
+          console.warn('MissileFired noise generator is not initialized yet.');
         }
         break;
       default:
