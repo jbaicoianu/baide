@@ -938,6 +938,11 @@ room.registerElement('spacezone-cannon', {
 
     // Dispatch "weapon_fire" event with bubbles: true
     this.dispatchEvent({ type: 'weapon_fire', bubbles: true });
+
+    // Store the last target after firing
+    if (this.activetarget) {
+      this.lasttarget = this.activetarget;
+    }
   },
   update(dt) {
     // Dynamically set muzzlespeed based on currentSpeedMultiplier
@@ -993,6 +998,7 @@ room.registerElement('spacezone-missile-launcher', {
   lockTimer: null,
   armed: false, // Added armed attribute, defaulting to false
   missilePool: null, // Added missilePool property
+  lasttarget: null, // Added lasttarget property
 
   create() {
     // Initialization code for missile launcher
@@ -1038,6 +1044,11 @@ room.registerElement('spacezone-missile-launcher', {
     const headingVector = headingPoint.clone().sub(launcherPosition).normalize();
 
     for (let enemy of enemies) {
+      // Skip the last target to ensure a new target is selected
+      if (this.lasttarget && enemy === this.lasttarget) {
+        continue;
+      }
+
       const distance = launcherPosition.distanceTo(enemy.pos);
       if (distance <= this.scanrange) {
         // Calculate angle between heading vector and target vector
@@ -1123,6 +1134,9 @@ room.registerElement('spacezone-missile-launcher', {
       }
 
       console.log('Missile fired towards:', this.activetarget);
+
+      // Store the last target after firing
+      this.lasttarget = this.activetarget;
     } else {
       console.log('Cannot fire: No target locked or missile pool unavailable.');
     }
