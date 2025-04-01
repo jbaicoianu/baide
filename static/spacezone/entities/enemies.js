@@ -136,7 +136,7 @@ room.registerElement('spacezone-enemy-drone', {
 
     // Add a cannon to the drone
     this.cannon = this.drone.createObject('spacezone-cannon', {
-      pos: '0 0 2', // Positioned at the front of the drone
+      pos: '0 0 -2', // Positioned at the front of the drone
       rotation: '0 0 0', // Facing forward
       rate: this.firingRate // One shot per second
     });
