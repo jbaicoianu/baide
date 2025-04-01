@@ -86,56 +86,123 @@ room.registerElement('audio-factory', {
     this.missileFired.start();
   },
   
-  playSound(id) {
-    switch(id) {
-      case 'laserbeam':
-        if (this.laserGain) {
-          // Set up the frequency shift from 5000Hz to 100Hz quadratically
-          this.laserbeam.frequency.cancelScheduledValues(Tone.now());
-          this.laserbeam.frequency.setValueAtTime(5000, Tone.now());
-          this.laserbeam.frequency.linearRampToValueAtTime(100, Tone.now() + 0.5);
-          
-          // Trigger the gain to make the sound audible
-          this.laserGain.gain.cancelScheduledValues(Tone.now());
-          this.laserGain.gain.setValueAtTime(1, Tone.now());
-          this.laserGain.gain.linearRampToValueAtTime(0, Tone.now() + 0.5);
-        } else {
-          console.warn('Laserbeam oscillator is not initialized yet.');
-        }
-        break;
-      case 'missile-target-acquiring':
-        if (this.missileTargetAcquiringGain) {
-          // Trigger the gain to make the sound audible
-          this.missileTargetAcquiringGain.gain.cancelScheduledValues(Tone.now());
-          this.missileTargetAcquiringGain.gain.setValueAtTime(1, Tone.now());
-          this.missileTargetAcquiringGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.1);
-        } else {
-          console.warn('MissileTargetAcquiring oscillator is not initialized yet.');
-        }
-        break;
-      case 'missile-target-locked':
-        if (this.missileTargetLockedGain) {
-          // Trigger the gain to make the sound audible and ramp down to 50% over 500ms
-          const now = Tone.now();
-          this.missileTargetLockedGain.gain.cancelScheduledValues(now);
-          this.missileTargetLockedGain.gain.setValueAtTime(1, now);
-          this.missileTargetLockedGain.gain.linearRampToValueAtTime(0.1, now + 0.5);
-        } else {
-          console.warn('MissileTargetLocked oscillator is not initialized yet.');
-        }
-        break;
-      case 'missile-fired':
-        if (this.missileFiredGain) {
-          // Trigger the gain to make the "fwooosh!" sound audible for 1500ms
-          this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
-          this.missileFiredGain.gain.setValueAtTime(1, Tone.now());
-          this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 1.5);
-        } else {
-          console.warn('MissileFired noise generator is not initialized yet.');
-        }
-        break;
-      default:
-        console.warn(`Sound with id "${id}" does not exist.`);
+  playSound(id, pos = null) {
+    if (pos) {
+      let sound = this.createObject('sound', { pos: pos, singleshot: true });
+      switch(id) {
+        case 'laserbeam':
+          if (this.laserGain) {
+            // Set up the frequency shift from 5000Hz to 100Hz quadratically
+            this.laserbeam.frequency.cancelScheduledValues(Tone.now());
+            this.laserbeam.frequency.setValueAtTime(5000, Tone.now());
+            this.laserbeam.frequency.linearRampToValueAtTime(100, Tone.now() + 0.5);
+            
+            // Trigger the gain to make the sound audible
+            this.laserGain.gain.cancelScheduledValues(Tone.now());
+            this.laserGain.gain.setValueAtTime(1, Tone.now());
+            this.laserGain.gain.linearRampToValueAtTime(0, Tone.now() + 0.5);
+            
+            sound.play().then(() => this.laserGain.connect(sound.audio.gain));
+            return sound;
+          } else {
+            console.warn('Laserbeam oscillator is not initialized yet.');
+            return null;
+          }
+        case 'missile-target-acquiring':
+          if (this.missileTargetAcquiringGain) {
+            // Trigger the gain to make the sound audible
+            this.missileTargetAcquiringGain.gain.cancelScheduledValues(Tone.now());
+            this.missileTargetAcquiringGain.gain.setValueAtTime(1, Tone.now());
+            this.missileTargetAcquiringGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.1);
+            
+            sound.play().then(() => this.missileTargetAcquiringGain.connect(sound.audio.gain));
+            return sound;
+          } else {
+            console.warn('MissileTargetAcquiring oscillator is not initialized yet.');
+            return null;
+          }
+        case 'missile-target-locked':
+          if (this.missileTargetLockedGain) {
+            // Trigger the gain to make the sound audible and ramp down to 50% over 500ms
+            const now = Tone.now();
+            this.missileTargetLockedGain.gain.cancelScheduledValues(now);
+            this.missileTargetLockedGain.gain.setValueAtTime(1, now);
+            this.missileTargetLockedGain.gain.linearRampToValueAtTime(0.1, now + 0.5);
+            
+            sound.play().then(() => this.missileTargetLockedGain.connect(sound.audio.gain));
+            return sound;
+          } else {
+            console.warn('MissileTargetLocked oscillator is not initialized yet.');
+            return null;
+          }
+        case 'missile-fired':
+          if (this.missileFiredGain) {
+            // Trigger the gain to make the "fwooosh!" sound audible for 1500ms
+            this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
+            this.missileFiredGain.gain.setValueAtTime(1, Tone.now());
+            this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 1.5);
+            
+            sound.play().then(() => this.missileFiredGain.connect(sound.audio.gain));
+            return sound;
+          } else {
+            console.warn('MissileFired noise generator is not initialized yet.');
+            return null;
+          }
+        default:
+          console.warn(`Sound with id "${id}" does not exist.`);
+          return null;
+      }
+    } else {
+      switch(id) {
+        case 'laserbeam':
+          if (this.laserGain) {
+            // Set up the frequency shift from 5000Hz to 100Hz quadratically
+            this.laserbeam.frequency.cancelScheduledValues(Tone.now());
+            this.laserbeam.frequency.setValueAtTime(5000, Tone.now());
+            this.laserbeam.frequency.linearRampToValueAtTime(100, Tone.now() + 0.5);
+            
+            // Trigger the gain to make the sound audible
+            this.laserGain.gain.cancelScheduledValues(Tone.now());
+            this.laserGain.gain.setValueAtTime(1, Tone.now());
+            this.laserGain.gain.linearRampToValueAtTime(0, Tone.now() + 0.5);
+          } else {
+            console.warn('Laserbeam oscillator is not initialized yet.');
+          }
+          break;
+        case 'missile-target-acquiring':
+          if (this.missileTargetAcquiringGain) {
+            // Trigger the gain to make the sound audible
+            this.missileTargetAcquiringGain.gain.cancelScheduledValues(Tone.now());
+            this.missileTargetAcquiringGain.gain.setValueAtTime(1, Tone.now());
+            this.missileTargetAcquiringGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.1);
+          } else {
+            console.warn('MissileTargetAcquiring oscillator is not initialized yet.');
+          }
+          break;
+        case 'missile-target-locked':
+          if (this.missileTargetLockedGain) {
+            // Trigger the gain to make the sound audible and ramp down to 50% over 500ms
+            const now = Tone.now();
+            this.missileTargetLockedGain.gain.cancelScheduledValues(now);
+            this.missileTargetLockedGain.gain.setValueAtTime(1, now);
+            this.missileTargetLockedGain.gain.linearRampToValueAtTime(0.1, now + 0.5);
+          } else {
+            console.warn('MissileTargetLocked oscillator is not initialized yet.');
+          }
+          break;
+        case 'missile-fired':
+          if (this.missileFiredGain) {
+            // Trigger the gain to make the "fwooosh!" sound audible for 1500ms
+            this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
+            this.missileFiredGain.gain.setValueAtTime(1, Tone.now());
+            this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 1.5);
+          } else {
+            console.warn('MissileFired noise generator is not initialized yet.');
+          }
+          break;
+        default:
+          console.warn(`Sound with id "${id}" does not exist.`);
+      }
     }
   },
   
