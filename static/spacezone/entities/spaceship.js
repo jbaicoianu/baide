@@ -1125,7 +1125,7 @@ room.registerElement('spacezone-missile-launcher', {
       this.locked = true;
       this.dispatchEvent({
         type: 'targetlocked',
-        data: this.activetarget
+        data: { activetarget: this.activetarget, percent_locked: 1 }
       });
       console.log('Target locked:', this.activetarget);
       this.lockStartTime = null; // Reset lockStartTime after locking
@@ -1387,6 +1387,7 @@ room.registerElement('spacezone-targeting-reticle', {
   hideReticle() {
     if (this.reticle) {
       this.reticle.visible = false;
+        debugger;
     }
   },
 
