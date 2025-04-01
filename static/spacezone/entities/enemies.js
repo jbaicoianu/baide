@@ -140,7 +140,7 @@ room.registerElement('spacezone-enemy-drone', {
       rotation: '0 0 0', // Facing forward
       rate: this.firingRate // One shot per second
     });
-
+this.cannon.createObject('object', { id: 'cube', scale: V(.2, .2, 1), col: 'purple' });
     // Initialize state
     this.isActive = false;
 
