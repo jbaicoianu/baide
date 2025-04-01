@@ -1364,7 +1364,8 @@ room.registerElement('spacezone-targeting-reticle', {
       image_id: 'reticle-image',
       scale: V(20, 20, 0.1), // Adjust scale as needed
       billboard: 'y',
-      opacity: 0.6,
+      opacity: 1,
+      transparent: true,
       depth_test: false,
       render_order: 10,
       lighting: false, // Set lighting to false
