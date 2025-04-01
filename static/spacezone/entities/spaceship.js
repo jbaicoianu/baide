@@ -1193,7 +1193,9 @@ room.registerElement('spacezone-missile', {
   },
 
   activate() {
-    this.missile.visible = true;
+    if (this.missile) {
+      this.missile.visible = true;
+    }
     if (this.smokeTrail) {
       this.smokeTrail.visible = true;
     }
@@ -1202,7 +1204,9 @@ room.registerElement('spacezone-missile', {
   },
 
   deactivate() {
-    this.missile.visible = false;
+    if (this.missile) {
+      this.missile.visible = false;
+    }
     if (this.smokeTrail) {
       this.smokeTrail.visible = false;
     }
