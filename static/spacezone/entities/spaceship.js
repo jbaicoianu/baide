@@ -194,12 +194,12 @@ room.registerElement('spacezone-spaceship', {
     // Add spacezone-cannons to the taufighterS
     this.cannonLeft = this.taufighter.createObject('spacezone-cannon', {
       pos: '6.5 0 6', // Moved position to 6.5, 0, 6
-      rotation: '0 180 0' // Rotated 180 degrees on y-axis
+      //rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
 
     this.cannonRight = this.taufighter.createObject('spacezone-cannon', {
       pos: '-6.5 0 6', // Moved position to -6.5, 0, 6
-      rotation: '0 180 0' // Rotated 180 degrees on y-axis
+      //rotation: '0 180 0' // Rotated 180 degrees on y-axis
     });
 
     // Add shipcollider object as a separate collider
