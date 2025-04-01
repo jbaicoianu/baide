@@ -943,9 +943,6 @@ room.registerElement('spacezone-cannon', {
     // Dispatch "weapon_fire" event with bubbles: true
     this.dispatchEvent({ type: 'weapon_fire', bubbles: true });
 
-    // Play 'missile-fired' sound
-    room.objects['sounds'].playSound('missile-fired');
-
     // Store the last target after firing
     if (this.activetarget) {
       this.lasttarget = this.activetarget;
