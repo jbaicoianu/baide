@@ -1401,15 +1401,15 @@ room.registerElement('spacezone-targeting-reticle', {
 
     ctx.lineWidth = lineWidth;
     ctx.strokeStyle = color;
-    ctx.beginPath();
 
     startAngles.forEach(start => {
+      ctx.beginPath();
       const startRad = THREE.MathUtils.degToRad(start);
       const endRad = THREE.MathUtils.degToRad(start + 90 * endFactor);
       ctx.arc(size / 2, size / 2, radius - lineWidth / 2, startRad, endRad);
+      ctx.stroke();
     });
 
-    ctx.stroke();
 
     // Dispatch asset update event
     elation.events.fire(this.canvas, 'asset_update');
