@@ -164,6 +164,7 @@ room.registerElement('audio-factory', {
     }
     //toneJSsound.connect(sound.audio.panner || sound.audio.gain);
     sound.audio.setNodeSource(toneJSsound);
+        console.log('bleh', toneJSsound);
         toneJSsound.start();
     });
     return sound;
