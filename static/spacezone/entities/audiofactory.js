@@ -14,18 +14,21 @@ room.registerElement('audio-factory', {
   },
   
   createSounds() {
-    // Create a simple laser sound named "laserbeam"
+    // Create distortion effect for the laser
+    this.laserDistortion = new Tone.Distortion(0.8).toDestination();
+
+    // Create a laser sound named "laserbeam" with aggressive attack and decay
     this.laserbeam = new Tone.Synth({
       oscillator: {
-        type: 'sine'
+        type: 'sawtooth' // Changed from 'sine' to 'sawtooth' for a more aggressive tone
       },
       envelope: {
-        attack: 0.01,
-        decay: 0.2,
+        attack: 0.005,   // Increased aggression by reducing attack time
+        decay: 0.05,     // Increased aggression by reducing decay time
         sustain: 0.1,
         release: 0.1
       }
-    }).toDestination();
+    }).connect(this.laserDistortion);
     
     // Ensure the synth is ready
     this.laserbeam.toMaster();
