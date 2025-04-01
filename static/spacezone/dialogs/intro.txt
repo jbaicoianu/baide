@@ -1,17 +1,17 @@
 <h1>Galactic Viberunner</h1>
 <h2>Mission Briefing</h2>
 
-<img src="assets/galactic-viberunner.png" class="intro-frame-1">
+<img src="assets/galactic-viberunner.png" class="intro-frame-1" />
 
 <p>An alarm sounds, and a warning sign flashes up on your ship's dashboard. The red light blares against the dim interior, casting eerie shadows as you glance at the rapidly approaching asteroid field. The van Allen belts' high radiation zone looms ahead, a treacherous path riddled with unpredictable dangers. You've flown this route before, but rumors of enemy turrets and hidden mines have taken their toll on even the most seasoned pilots.</p>
 
-<img src="assets/galactic-viberunner.png" class="intro-frame-2">
+<img src="assets/galactic-viberunner.png" class="intro-frame-2" />
 
 <p>Your ship, the <em>Galactic Viberunner</em>, hums steadily as you adjust the navigation systems, eyes fixed on the blinking radar dots that represent potential threats. Sweat beads on your forehead despite the ship's climate control—these medical supplies are vital. The Mars colony's need is urgent, and every second spent in this radiation-soaked gauntlet reduces their efficacy.</p>
 
 <p>Without warning, a series of explosions rock the vessel. Fragments of asteroid debris slam against the hull, sending alarms into overload. Your training kicks in; you maneuver deftly, swerving to avoid the incoming threats. Precision is key—one wrong move could mean the end of the mission, or worse, your life.</p>
 
-<img src="assets/galactic-viberunner.png" class="intro-frame-3">
+<img src="assets/galactic-viberunner.png" class="intro-frame-3" />
 
 <p>The radio crackles with static, messages from other pilots swallowed by the chaos. You push forward, ignoring the mounting anxiety. The lives of countless colonists depend on the swift delivery of these lifesaving supplies. As you navigate through the relentless barrage of obstacles, the pressure mounts, but so does your resolve.</p>
 
