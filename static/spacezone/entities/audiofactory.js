@@ -21,7 +21,7 @@ room.registerElement('audio-factory', {
     this.laserbeam = new Tone.Oscillator({
       type: 'sawtooth',
       frequency: 5000, // Start frequency at 5000Hz
-      volume: -Infinity
+      volume: 1
     }).connect(this.laserDistortion);
     
     // Ensure the oscillator starts but is initially silent
