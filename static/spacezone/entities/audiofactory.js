@@ -32,10 +32,21 @@ room.registerElement('audio-factory', {
     
     // Ensure the synth is ready
     this.laserbeam.toMaster();
+
+    // Create pitch shift envelope for the laser
+    this.pitchShiftEnvelope = new Tone.Envelope({
+      attack: 0.01,
+      decay: 0.2,
+      sustain: 0,
+      release: 0
+    }).connect(this.laserbeam.detune);
   },
   
   playLaser() {
     if (this.laserbeam) {
+      // Trigger the pitch shift envelope to start at higher pitch and shift to lower pitch
+      this.pitchShiftEnvelope.triggerAttackRelease(1200, "8n");
+      
       this.laserbeam.triggerAttackRelease("C5", "8n");
     } else {
       console.warn('Laserbeam sound is not initialized yet.');
