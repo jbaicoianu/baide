@@ -154,7 +154,7 @@ room.registerElement('audio-factory', {
     new Tone.Noise({
       type: 'white',
       volume: -14
-    }).connect(toneJSsound
+    }).connect(toneJSsound);
     toneJSsound.gain.cancelScheduledValues(Tone.now());
     toneJSsound.gain.setValueAtTime(1, Tone.now());
     toneJSsound.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 1.5);
