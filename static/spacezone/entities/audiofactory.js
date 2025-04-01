@@ -115,8 +115,11 @@ room.registerElement('audio-factory', {
         break;
       case 'missile-target-locked':
         if (this.missileTargetLockedGain) {
-          // Trigger the gain to make the sound audible continuously
-          this.missileTargetLockedGain.gain.setValueAtTime(1, Tone.now());
+          // Trigger the gain to make the sound audible and ramp down to 50% over 500ms
+          const now = Tone.now();
+          this.missileTargetLockedGain.gain.cancelScheduledValues(now);
+          this.missileTargetLockedGain.gain.setValueAtTime(1, now);
+          this.missileTargetLockedGain.gain.linearRampToValueAtTime(0.5, now + 0.5);
         } else {
           console.warn('MissileTargetLocked oscillator is not initialized yet.');
         }
