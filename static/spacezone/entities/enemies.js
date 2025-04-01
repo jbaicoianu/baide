@@ -68,7 +68,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
 
     // Check if the level progress has reached or exceeded 90%
     if (currentPathPosition >= 0.9) {
-      console.log('Level progress is 90% or more. Stopping drone respawning.');
+      //console.log('Level progress is 90% or more. Stopping drone respawning.');
       return; // Stop respawning drones
     }
 
