@@ -3,7 +3,7 @@ room.registerElement('audio-factory', {
     // Check if ToneJS is already loaded to prevent multiple script injections
     if (!window.Tone) {
       const script = document.createElement('script');
-      script.src = 'https://unpkg.com/tone';
+      script.src = 'https://unpkg.com/tone@15.0.4/build/Tone.js';
       script.onload = () => {
         this.initializeTone();
       };
