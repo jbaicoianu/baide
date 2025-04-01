@@ -1006,6 +1006,7 @@ room.registerElement('spacezone-missile-launcher', {
   arm() {
     this.armed = true;
     console.log('Missile launcher armed.');
+    this.activate();
   },
 
   disarm() {
@@ -1091,6 +1092,11 @@ room.registerElement('spacezone-missile-launcher', {
   },
 
   fire() {
+    if (!this.armed) {
+      console.warn('Cannot fire: Missile launcher is not armed.');
+      return;
+    }
+
     if (!this.missilePool) {
       this.missilePool = room.createObject('objectpool', {
         objecttype: 'spacezone-missile',
@@ -1103,12 +1109,17 @@ room.registerElement('spacezone-missile-launcher', {
       let missilezdir = this.localToWorld(V(0, 0, 1)).sub(this.getWorldPosition());
 
       // Spawn a new missile with zdir using the object pool
-      this.missilePool.grab({
+      let missile = this.missilePool.grab({
         pos: this.getWorldPosition(), // Using this.getWorldPosition() for current launcher position
         zdir: missilezdir,
         vel: missilezdir.clone().multiplyScalar(400), 
         target: this.activetarget
       });
+
+      if (missile && typeof missile.activate === 'function') {
+        missile.activate();
+      }
+
       console.log('Missile fired towards:', this.activetarget);
     } else {
       console.log('Cannot fire: No target locked or missile pool unavailable.');
@@ -1159,7 +1170,7 @@ room.registerElement('spacezone-missile', {
       collision_id: 'sphere',
       collision_scale: V(1),
       mass: 50,
-      visible: true
+      visible: false // Initially invisible; will be activated upon firing
     });
     this.missile.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
 
@@ -1171,7 +1182,8 @@ room.registerElement('spacezone-missile', {
       pos: V(-0.5, -0.5, 0),
       rand_pos: V(1, 1, -4),
       col: V(0.4, 0.4, 0.4),
-      rand_col: V(0.4, 0.4, 0.4)
+      rand_col: V(0.4, 0.4, 0.4),
+      visible: false // Initially invisible; will be activated upon firing
     });
 
     // Add velocity based on zdir
@@ -1181,12 +1193,31 @@ room.registerElement('spacezone-missile', {
     this.missile.addEventListener('collide', (ev) => this.handleCollision(ev));
   },
 
+  activate() {
+    this.missile.visible = true;
+    if (this.smokeTrail) {
+      this.smokeTrail.visible = true;
+    }
+    this.active = true;
+    console.log('Missile activated.');
+  },
+
+  deactivate() {
+    this.missile.visible = false;
+    if (this.smokeTrail) {
+      this.smokeTrail.visible = false;
+    }
+    this.active = false;
+    console.log('Missile deactivated.');
+  },
+
   handleCollision(ev) {
     if (ev.data.other.hasClass('nomissile')) {
       // Do not explode if colliding with an object that has the 'nomissile' class
       return;
     }
     console.log('missile explodes!', ev);
+    this.deactivate();
     this.explode();
     ev.data.other.dispatchEvent({ type: 'hit', data: this });
     //this.die();
@@ -1253,7 +1284,419 @@ room.registerElement('spacezone-missile', {
     // For example, if too far from origin, deactivate
     const maxDistance = 2000;
     if (this.missile.pos.length() > maxDistance) {
+      this.deactivate();
+    }
+  }
+});
+
+room.registerElement('spacezone-targeting-reticle', {
+  create() {
+    // Create a green plane object with billboard: 'y' and opacity 0.6
+    this.reticle = this.createObject('object', {
+      id: 'plane',
+      col: 'green',
+      scale: V(20, 20, .1), // Adjust scale as needed
+      billboard: 'y',
+      opacity: 0.6,
+      depth_test: false,
+      render_order: 10,
+      lighting: false, // Set lighting to false
+      visible: false, // Initially hidden
+      cull_face: 'none',
+      rotate_deg_per_sec: 90,
+      rotate_axis: V(0, 0, 1),
+    });
+  },
+
+  setTargetPosition(targetPosition, locked) {
+    if (this.reticle) {
+      this.pos = targetPosition;
+      this.reticle.visible = true;
+      this.reticle.col = locked ? 'green' : 'yellow';
+    }
+  },
+
+  hideReticle() {
+    if (this.reticle) {
+      this.reticle.visible = false;
+    }
+  },
+
+  update(dt) {
+    // Additional update logic if needed
+  }
+});
+
+// New Element: explosion
+room.registerElement('explosion', {
+  create() {
+    // Initialize the particle system for the explosion
+    this.particles = this.createObject('particle', {
+      count: 50,
+      rate: 20000,
+      loop: false,
+      col: V(0.3),
+      rand_col: V(0.5),
+      vel: V(-50),
+      rand_vel: V(100),
+      duration: 20
+    });
+  },
+  reset() {
+    // Reset and start the particle system
+    this.particles.resetParticles();
+    this.particles.start();
+  }
+});
+    
+room.registerElement('spacezone-missile', {
+  target: null,
+  speed: 300, // Missile speed in meters per second
+  active: true,
+  turnrate: 30, // Added turnrate attribute with default value 10
+
+  create() {
+    // Initialize missile properties
+    this.target = this.properties.target;
+    if (!this.target) {
+      console.warn('Missile launched without a target.');
+      //this.active = false;
       //this.die();
+      //return;
+    }
+
+    // Create missile object
+    this.missile = this.createObject('object', {
+      id: 'capsule',
+      col: 'orange',
+      scale: V(1, 4, 1),
+      pos: V(0, 0, 0),
+      //zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
+      rotation: V(90, 0, 0),
+      collision_id: 'sphere',
+      collision_scale: V(1),
+      mass: 50,
+      visible: false // Initially invisible; will be activated upon firing
+    });
+    this.missile.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
+
+    // Add smoke trail particle as a child of the room
+    this.smokeTrail = room.createObject('particle', {
+      count: 2000,
+      rate: 200,
+      duration: 10,
+      pos: V(-0.5, -0.5, 0),
+      rand_pos: V(1, 1, -4),
+      col: V(0.4, 0.4, 0.4),
+      rand_col: V(0.4, 0.4, 0.4),
+      visible: false // Initially invisible; will be activated upon firing
+    });
+
+    // Add velocity based on zdir
+    this.vel = this.zdir.clone().multiplyScalar(this.speed);
+
+    // Add collision event listener
+    this.missile.addEventListener('collide', (ev) => this.handleCollision(ev));
+  },
+
+  activate() {
+    this.missile.visible = true;
+    if (this.smokeTrail) {
+      this.smokeTrail.visible = true;
+    }
+    this.active = true;
+    console.log('Missile activated.');
+  },
+
+  deactivate() {
+    this.missile.visible = false;
+    if (this.smokeTrail) {
+      this.smokeTrail.visible = false;
+    }
+    this.active = false;
+    console.log('Missile deactivated.');
+  },
+
+  handleCollision(ev) {
+    if (ev.data.other.hasClass('nomissile')) {
+      // Do not explode if colliding with an object that has the 'nomissile' class
+      return;
+    }
+    console.log('missile explodes!', ev);
+    this.deactivate();
+    this.explode();
+    ev.data.other.dispatchEvent({ type: 'hit', data: this });
+    //this.die();
+  },
+
+  explode() {
+    // Create explosion effect
+    const explosion = room.createObject('explosion', {
+      scale: V(1, 1, 1),
+      pos: this.missile.getWorldPosition(),
+      visible: true
+    });
+
+    // Optionally, add particle effects or sound here
+
+    console.log('Missile exploded at:', this.missile.pos);
+  },
+
+  update(dt) {
+    //console.log('missile!', this.pos, this.active, this.target);
+    if (!this.active) return;
+
+    // Update smoke trail emitter position
+    if (this.smokeTrail) {
+      const missileWorldPos = new THREE.Vector3();
+      this.missile.getWorldPosition(missileWorldPos);
+      this.smokeTrail.emitter_pos = missileWorldPos;
+    }
+
+    // Adjust direction towards target
+    if (this.target) {
+      const currentVelocity = this.vel.clone().normalize();
+      const targetDirection = this.target.getWorldPosition().sub(this.getWorldPosition()).normalize();
+      const angle = THREE.MathUtils.radToDeg(currentVelocity.angleTo(targetDirection));
+
+      if (angle > 0) {
+        const maxTurn = this.turnrate * dt;
+        if (angle <= maxTurn) {
+          this.zdir.copy(targetDirection);
+        } else {
+          // Calculate the axis to rotate around (cross product)
+          const rotationAxis = new THREE.Vector3().crossVectors(currentVelocity, targetDirection).normalize();
+          if (rotationAxis.length() === 0) {
+            // Vectors are parallel, no rotation needed
+            this.zdir.copy(targetDirection);
+          } else {
+            // Create a quaternion representing the rotation
+            const quaternion = new THREE.Quaternion();
+            quaternion.setFromAxisAngle(rotationAxis, THREE.MathUtils.degToRad(maxTurn));
+            this.zdir.applyQuaternion(quaternion).normalize();
+          }
+        }
+        // Update velocity based on new direction
+        this.vel.copy(this.zdir).multiplyScalar(this.speed);
+      }
+    }
+
+    // Optionally, track the target's movement
+    if (this.target) {
+      // Already handled above
+    }
+
+    // Optionally, check if missile is out of bounds
+    // For example, if too far from origin, deactivate
+    const maxDistance = 2000;
+    if (this.missile.pos.length() > maxDistance) {
+      this.deactivate();
+    }
+  }
+});
+
+room.registerElement('spacezone-targeting-reticle', {
+  create() {
+    // Create a green plane object with billboard: 'y' and opacity 0.6
+    this.reticle = this.createObject('object', {
+      id: 'plane',
+      col: 'green',
+      scale: V(20, 20, .1), // Adjust scale as needed
+      billboard: 'y',
+      opacity: 0.6,
+      depth_test: false,
+      render_order: 10,
+      lighting: false, // Set lighting to false
+      visible: false, // Initially hidden
+      cull_face: 'none',
+      rotate_deg_per_sec: 90,
+      rotate_axis: V(0, 0, 1),
+    });
+  },
+
+  setTargetPosition(targetPosition, locked) {
+    if (this.reticle) {
+      this.pos = targetPosition;
+      this.reticle.visible = true;
+      this.reticle.col = locked ? 'green' : 'yellow';
+    }
+  },
+
+  hideReticle() {
+    if (this.reticle) {
+      this.reticle.visible = false;
+    }
+  },
+
+  update(dt) {
+    // Additional update logic if needed
+  }
+});
+
+// New Element: explosion
+room.registerElement('explosion', {
+  create() {
+    // Initialize the particle system for the explosion
+    this.particles = this.createObject('particle', {
+      count: 50,
+      rate: 20000,
+      loop: false,
+      col: V(0.3),
+      rand_col: V(0.5),
+      vel: V(-50),
+      rand_vel: V(100),
+      duration: 20
+    });
+  },
+  reset() {
+    // Reset and start the particle system
+    this.particles.resetParticles();
+    this.particles.start();
+  }
+});
+        
+room.registerElement('spacezone-missile', {
+  target: null,
+  speed: 300, // Missile speed in meters per second
+  active: true,
+  turnrate: 30, // Added turnrate attribute with default value 10
+
+  create() {
+    // Initialize missile properties
+    this.target = this.properties.target;
+    if (!this.target) {
+      console.warn('Missile launched without a target.');
+      //this.active = false;
+      //this.die();
+      //return;
+    }
+
+    // Create missile object
+    this.missile = this.createObject('object', {
+      id: 'capsule',
+      col: 'orange',
+      scale: V(1, 4, 1),
+      pos: V(0, 0, 0),
+      //zdir: this.properties.zdir || V(0, 0, 1), // Ensure zdir is initialized
+      rotation: V(90, 0, 0),
+      collision_id: 'sphere',
+      collision_scale: V(1),
+      mass: 50,
+      visible: false // Initially invisible; will be activated upon firing
+    });
+    this.missile.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
+
+    // Add smoke trail particle as a child of the room
+    this.smokeTrail = room.createObject('particle', {
+      count: 2000,
+      rate: 200,
+      duration: 10,
+      pos: V(-0.5, -0.5, 0),
+      rand_pos: V(1, 1, -4),
+      col: V(0.4, 0.4, 0.4),
+      rand_col: V(0.4, 0.4, 0.4),
+      visible: false // Initially invisible; will be activated upon firing
+    });
+
+    // Add velocity based on zdir
+    this.vel = this.zdir.clone().multiplyScalar(this.speed);
+
+    // Add collision event listener
+    this.missile.addEventListener('collide', (ev) => this.handleCollision(ev));
+  },
+
+  activate() {
+    this.missile.visible = true;
+    if (this.smokeTrail) {
+      this.smokeTrail.visible = true;
+    }
+    this.active = true;
+    console.log('Missile activated.');
+  },
+
+  deactivate() {
+    this.missile.visible = false;
+    if (this.smokeTrail) {
+      this.smokeTrail.visible = false;
+    }
+    this.active = false;
+    console.log('Missile deactivated.');
+  },
+
+  handleCollision(ev) {
+    if (ev.data.other.hasClass('nomissile')) {
+      // Do not explode if colliding with an object that has the 'nomissile' class
+      return;
+    }
+    console.log('missile explodes!', ev);
+    this.deactivate();
+    this.explode();
+    ev.data.other.dispatchEvent({ type: 'hit', data: this });
+    //this.die();
+  },
+
+  explode() {
+    // Create explosion effect
+    const explosion = room.createObject('explosion', {
+      scale: V(1, 1, 1),
+      pos: this.missile.getWorldPosition(),
+      visible: true
+    });
+
+    // Optionally, add particle effects or sound here
+
+    console.log('Missile exploded at:', this.missile.pos);
+  },
+
+  update(dt) {
+    //console.log('missile!', this.pos, this.active, this.target);
+    if (!this.active) return;
+
+    // Update smoke trail emitter position
+    if (this.smokeTrail) {
+      const missileWorldPos = new THREE.Vector3();
+      this.missile.getWorldPosition(missileWorldPos);
+      this.smokeTrail.emitter_pos = missileWorldPos;
+    }
+
+    // Adjust direction towards target
+    if (this.target) {
+      const currentVelocity = this.vel.clone().normalize();
+      const targetDirection = this.target.getWorldPosition().sub(this.getWorldPosition()).normalize();
+      const angle = THREE.MathUtils.radToDeg(currentVelocity.angleTo(targetDirection));
+
+      if (angle > 0) {
+        const maxTurn = this.turnrate * dt;
+        if (angle <= maxTurn) {
+          this.zdir.copy(targetDirection);
+        } else {
+          // Calculate the axis to rotate around (cross product)
+          const rotationAxis = new THREE.Vector3().crossVectors(currentVelocity, targetDirection).normalize();
+          if (rotationAxis.length() === 0) {
+            // Vectors are parallel, no rotation needed
+            this.zdir.copy(targetDirection);
+          } else {
+            // Create a quaternion representing the rotation
+            const quaternion = new THREE.Quaternion();
+            quaternion.setFromAxisAngle(rotationAxis, THREE.MathUtils.degToRad(maxTurn));
+            this.zdir.applyQuaternion(quaternion).normalize();
+          }
+        }
+        // Update velocity based on new direction
+        this.vel.copy(this.zdir).multiplyScalar(this.speed);
+      }
+    }
+
+    // Optionally, track the target's movement
+    if (this.target) {
+      // Already handled above
+    }
+
+    // Optionally, check if missile is out of bounds
+    // For example, if too far from origin, deactivate
+    const maxDistance = 2000;
+    if (this.missile.pos.length() > maxDistance) {
+      this.deactivate();
     }
   }
 });
