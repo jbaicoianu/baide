@@ -1,5 +1,6 @@
 room.registerElement('audio-factory', {
   create() {
+     return;
     // Dynamically load ToneJS library
     const script = document.createElement('script');
     script.src = 'https://unpkg.com/tone';
