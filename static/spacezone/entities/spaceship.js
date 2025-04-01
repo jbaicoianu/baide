@@ -939,7 +939,7 @@ room.registerElement('spacezone-cannon', {
   update(dt) {
     // Dynamically set muzzlespeed based on currentSpeedMultiplier
     if (this.parent && this.parent.parent) {
-      this.muzzlespeed = 400 * this.parent.parent.currentSpeedMultiplier;
+      this.muzzlespeed = 1200 * this.parent.parent.currentSpeedMultiplier;
     } else {
       console.warn('Unable to access currentSpeedMultiplier for muzzlespeed calculation.');
     }
