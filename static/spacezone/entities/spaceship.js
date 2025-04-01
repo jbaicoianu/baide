@@ -962,7 +962,7 @@ room.registerElement('spacezone-laserbeam', {
     // Create a bright lime green 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 4, 0.25)
     this.laserBeam = this.createObject('object', {
       id: 'capsule',
-      collision_id: 'capsule', // Added collision_id for collision detection
+      //collision_id: 'capsule', // Added collision_id for collision detection
       col: 'limegreen', // Changed laser beam color to lime green
       scale: '0.25 4 0.25', // Updated scale to .25, 4, .25
       rotation: '90 0 0',
