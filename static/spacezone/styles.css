@@ -79,10 +79,7 @@
 }
 
 .spacezone-dialog-container .intro-frame-1 {
-  clip-path: polygon(0 0, 100% 0, 100% 51%, 0 51%);
-  shape-outside: polygon(0 0, 100% 0, 100% 51%, 0 51%);
   width: 100%;
-  float: left;
 }
 .spacezone-dialog-container .intro-frame-2 {
     float: right;
