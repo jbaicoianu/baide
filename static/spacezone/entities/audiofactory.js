@@ -23,10 +23,10 @@ room.registerElement('audio-factory', {
         type: 'sawtooth' // Changed from 'sine' to 'sawtooth' for a more aggressive tone
       },
       envelope: {
-        attack: 0.005,   // Increased aggression by reducing attack time
-        decay: 0.05,     // Increased aggression by reducing decay time
-        sustain: 0.1,
-        release: 0.1
+        attack: 0.02,   // Increased attack time for longer sound
+        decay: 0.1,     // Increased decay time for longer sound
+        sustain: 0.2,
+        release: 0.03   // Adjusted release time to fit the 250ms duration
       }
     }).connect(this.laserDistortion);
     
@@ -35,8 +35,8 @@ room.registerElement('audio-factory', {
 
     // Create pitch shift envelope for the laser
     this.pitchShiftEnvelope = new Tone.Envelope({
-      attack: 0.01,
-      decay: 0.2,
+      attack: 0.02,    // Increased attack time for more pronounced pitch shift
+      decay: 0.3,      // Increased decay time for sustained pitch effect
       sustain: 0,
       release: 0
     }).connect(this.laserbeam.detune);
@@ -45,9 +45,9 @@ room.registerElement('audio-factory', {
   playLaser() {
     if (this.laserbeam) {
       // Trigger the pitch shift envelope to start at higher pitch and shift to lower pitch
-      this.pitchShiftEnvelope.triggerAttackRelease(1200, "8n");
+      this.pitchShiftEnvelope.triggerAttackRelease(2000, "16n"); // Increased detune value and shortened duration
       
-      this.laserbeam.triggerAttackRelease("C5", "8n");
+      this.laserbeam.triggerAttackRelease("C5", "16n"); // Adjusted duration to match the 250ms total
     } else {
       console.warn('Laserbeam sound is not initialized yet.');
     }
