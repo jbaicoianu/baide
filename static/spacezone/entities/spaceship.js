@@ -290,6 +290,7 @@ room.registerElement('spacezone-spaceship', {
 
       // Clamp pitch and roll to prevent excessive tilting
       rawPitch = THREE.MathUtils.clamp(rawPitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
+      rawRoll = Math.atan2(acc.x, acc.z);
       rawRoll = THREE.MathUtils.clamp(rawRoll, -Math.PI / 2, Math.PI / 2);
 
       // Apply Kalman filter
@@ -942,6 +943,9 @@ room.registerElement('spacezone-cannon', {
     // Dispatch "weapon_fire" event with bubbles: true
     this.dispatchEvent({ type: 'weapon_fire', bubbles: true });
 
+    // Play 'missile-fired' sound
+    room.objects['sounds'].playSound('missile-fired');
+
     // Store the last target after firing
     if (this.activetarget) {
       this.lasttarget = this.activetarget;
@@ -1011,15 +1015,15 @@ room.registerElement('spacezone-missile-launcher', {
       //console.log('Target acquired:', event.data);
       if (event.data && event.data.activetarget) {
         room.objects['sounds'].stopSound('missile-target-locked');
-      	room.objects['sounds'].playSound('missile-target-acquiring');
+        room.objects['sounds'].playSound('missile-target-acquiring');
       }
     });
     this.addEventListener('targetlocked', (event) => {
       //console.log('Target locked:', event.data);
       if (event.data && event.data.activetarget) {
-      	room.objects['sounds'].playSound('missile-target-locked');
+        room.objects['sounds'].playSound('missile-target-locked');
       } else {
-      	room.objects['sounds'].stopSound('missile-target-locked');
+        room.objects['sounds'].stopSound('missile-target-locked');
       }
     });
     this.createObject('object', { id: 'cube', col: 'purple' });
@@ -1174,6 +1178,9 @@ room.registerElement('spacezone-missile-launcher', {
       }
 
       console.log('Missile fired towards:', this.activetarget);
+
+      // Play 'missile-fired' sound
+      room.objects['sounds'].playSound('missile-fired');
 
       // Store the last target after firing
       this.lasttarget = this.activetarget;
@@ -1345,6 +1352,8 @@ room.registerElement('spacezone-missile', {
             quaternion.setFromAxisAngle(rotationAxis, THREE.MathUtils.degToRad(maxTurn));
             this.zdir.applyQuaternion(quaternion).normalize();
           }
+          // Update velocity based on new direction
+          this.vel.copy(this.zdir).multiplyScalar(this.speed);
         }
         // Update velocity based on new direction
         this.vel.copy(this.zdir).multiplyScalar(this.speed);
