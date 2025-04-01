@@ -28,7 +28,7 @@ room.registerElement('audio-factory', {
     this.laserbeam.start();
     
     // Create a gain node to control the amplitude
-    this.laserGain = new Tone.Gain(0.001).connect(this.laserDistortion);
+    this.laserGain = new Tone.Gain(1).connect(this.laserDistortion);
     this.laserbeam.connect(this.laserGain);
 
     // Create a quadratic pitch shift
