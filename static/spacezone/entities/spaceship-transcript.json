@@ -2236,5 +2236,13 @@
     "branch": "main",
     "commit_hash": "dc424a56818eb1cd6cb7d43f03aa8218ec9ee878",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Missile components visible by default [Manual edit]",
+    "timestamp": "2025-04-01T05:47:12.932402Z",
+    "branch": "main",
+    "commit_hash": "e9edb99019aec698592a71e9c0649593727139c3",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
