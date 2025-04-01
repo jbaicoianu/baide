@@ -1359,7 +1359,7 @@ room.registerElement('spacezone-targeting-reticle', {
     this.loadNewAsset('image', { id: 'reticle-image', canvas: this.canvas, hasalpha: true });
 
     // Create the reticle object using the new image asset
-    this.reticle = this.createObject('image', {
+    this.reticle = this.createObject('object', {
       id: 'cube',
       image_id: 'reticle-image',
       scale: V(20, 20, 0.1), // Adjust scale as needed
