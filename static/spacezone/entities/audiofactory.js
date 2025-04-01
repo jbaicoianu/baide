@@ -151,14 +151,15 @@ room.registerElement('audio-factory', {
         }*/
             // Create missileFired sound effect using Noise generator
     toneJSsound = new Tone.Gain(1).connect(this.laserDistortion);
-    new Tone.Noise({
+    let noise = new Tone.Noise({
       type: 'white',
       volume: -14
-    }).connect(toneJSsound);
+    });
+    noise.connect(toneJSsound);
     toneJSsound.gain.cancelScheduledValues(Tone.now());
     toneJSsound.gain.setValueAtTime(1, Tone.now());
     toneJSsound.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 1.5);
-    //this.missileFired.start();
+    noise.start();
 
         break;
       default:
@@ -168,7 +169,7 @@ room.registerElement('audio-factory', {
     //toneJSsound.connect(sound.audio.panner || sound.audio.gain);
     sound.audio.setNodeSource(toneJSsound);
         console.log('bleh', toneJSsound);
-        toneJSsound.start();
+        //toneJSsound.start();
     });
     return sound;
   },
