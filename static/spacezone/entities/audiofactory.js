@@ -123,7 +123,7 @@ room.registerElement('audio-factory', {
         break;
       case 'missile-fired':
         if (this.missileFiredGain) {
-          // Trigger the gain to make the "fwooosh!" sound audible
+          // Trigger the gain to make the "fwooosh!" sound audible for 500ms
           this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
           this.missileFiredGain.gain.setValueAtTime(1, Tone.now());
           this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.5);
