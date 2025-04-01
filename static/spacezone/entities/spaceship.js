@@ -1169,7 +1169,7 @@ room.registerElement('spacezone-missile', {
       collision_id: 'sphere',
       collision_scale: V(1),
       mass: 50,
-      visible: false // Initially invisible; will be activated upon firing
+      visible: true // Initially invisible; will be activated upon firing
     });
     this.missile.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
 
@@ -1182,7 +1182,7 @@ room.registerElement('spacezone-missile', {
       rand_pos: V(1, 1, -4),
       col: V(0.4, 0.4, 0.4),
       rand_col: V(0.4, 0.4, 0.4),
-      visible: false // Initially invisible; will be activated upon firing
+      visible: true // Initially invisible; will be activated upon firing
     });
 
     // Add velocity based on zdir
