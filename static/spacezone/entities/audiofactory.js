@@ -150,7 +150,7 @@ room.registerElement('audio-factory', {
             return null;
         }*/
             // Create missileFired sound effect using Noise generator
-    toneJSsound = new Tone.Gain(1.connect(this.laserDistortion);
+    toneJSsound = new Tone.Gain(1).connect(this.laserDistortion);
     new Tone.Noise({
       type: 'white',
       volume: -14
