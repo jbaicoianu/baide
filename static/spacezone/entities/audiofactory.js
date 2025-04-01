@@ -88,6 +88,8 @@ room.registerElement('audio-factory', {
   
   playSound(id, pos = null) {
     let toneJSsound = false;
+    let sound = this.createObject('sound', { pos: pos, singleshot: true });
+    sound.play().then(() => {
     switch(id) {
       case 'laserbeam':
         if (this.laserGain) {
@@ -151,11 +153,9 @@ room.registerElement('audio-factory', {
         console.warn(`Sound with id "${id}" does not exist.`);
         return null;
     }
-    if (toneJSsound) {
-      let sound = this.createObject('sound', { pos: pos, singleshot: true });
-      sound.play().then(() => toneJSsound.connect(sound.audio.gain));
-      return sound;
-    }
+    toneJSsound.connect(sound.audio.panner || sound.audio.gain);
+    });
+    return sound;
   },
   
   stopSound(id) {
