@@ -157,7 +157,7 @@ room.registerElement('spacezone-enemy-drone', {
     if (!this.isActive) {
       // Check distance to player
       if (this.player) {
-        const distance = this.drone.pos.distanceTo(this.player.pos);
+        const distance = this.distanceTo(this.player);
         if (distance <= this.activationDistance) {
           this.isActive = true;
           this.activateDrone();
@@ -205,7 +205,7 @@ room.registerElement('spacezone-enemy-drone', {
     let desiredPitch = Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z)) * (180 / Math.PI);
 
     // Get current rotation
-    let currentRotation = this.drone.rotation.clone();
+    let currentRotation = this.rotation.clone();
 
     // Calculate the difference
     let deltaYaw = desiredYaw - currentRotation.y;
@@ -233,7 +233,7 @@ room.registerElement('spacezone-enemy-drone', {
     }
 
     // Update drone rotation
-    this.drone.rotation = currentRotation;
+    this.rotation = currentRotation;
   },
   handleCollision(ev) {
     if (ev.type === 'collision' && ev.data.other.collision_id === 'capsule') {
