@@ -47,7 +47,7 @@ room.registerElement('audio-factory', {
     if (this.laserbeam) {
       // Set up the frequency shift from 5000Hz to 100Hz quadratically
       this.laserbeam.frequency.setValueAtTime(5000, Tone.now());
-      this.laserbeam.frequency.exponentialRampToValueAtTime(100, Tone.now() + 0.5);
+      this.laserbeam.frequency.linearRampToValueAtTime(100, Tone.now() + 0.5);
       
       // Trigger the gain to make the sound audible
       this.laserGain.gain.setValueAtTime(1, Tone.now());
