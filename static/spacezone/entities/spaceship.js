@@ -1387,7 +1387,6 @@ room.registerElement('spacezone-targeting-reticle', {
   hideReticle() {
     if (this.reticle) {
       this.reticle.visible = false;
-        debugger;
     }
   },
 
