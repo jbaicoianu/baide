@@ -929,12 +929,13 @@ room.registerElement('spacezone-cannon', {
     const direction = new THREE.Vector3().subVectors(spawnPosition, forwardPosition).normalize()
 
     // Spawn a spacezone-laserbeam using the object pool
-    this.laserpool.grab({
+    let laser = this.laserpool.grab({
       pos: spawnPosition,
       zdir: direction,
-      vel: direction.clone().multiplyScalar(this.muzzlespeed)
+      //vel: direction.clone().multiplyScalar(this.muzzlespeed)
     });
-
+    laser.vel = direction.clone().multiplyScalar(this.muzzlespeed);
+console.log('pew', laser, laser.vel);
     if (this.muzzleflash) {
       // Trigger the flash light
       this.flashLight.light_intensity = this.flashIntensity;
