@@ -234,6 +234,8 @@ room.registerElement('spacezone-enemy-drone', {
 
     // Update drone rotation
     //this.rotation = currentRotation;
+    this.cannon.zdir = direction;
+    this.cannon.pos = direction.clone().multiplyScalar(2);
   },
   handleCollision(ev) {
     if (ev.type === 'collision' && ev.data.other.collision_id === 'capsule') {
