@@ -1,4 +1,3 @@
-
 room.registerElement('spacezone-enemy-dronecontroller', {
   numdrones: 10, // Default number of drones
 
@@ -97,6 +96,7 @@ room.registerElement('spacezone-enemy-drone', {
   activationDistance: 1000, // Distance in meters to activate the drone
   firingRate: 1, // Shots per second
   droneSpeed: 40, // Speed of the drone in meters per second
+  rotationSpeed: 120, // Degrees per second
   player: null,
 
   create() {
@@ -144,6 +144,9 @@ room.registerElement('spacezone-enemy-drone', {
       // Move along the path at the same speed as the player
       this.moveAlongPath(dt);
 
+      // Rotate to face the player
+      this.facePlayer(dt);
+
       // Fire at the player
       this.cannon.firingRate = this.firingRate;
       if (this.cannon) {
@@ -167,6 +170,47 @@ room.registerElement('spacezone-enemy-drone', {
       const newPosition = currentPosition.clone().add(direction.multiplyScalar(this.droneSpeed * dt));
       this.drone.pos = newPosition;
     }
+  },
+  facePlayer(dt) {
+    if (!this.player) return;
+
+    // Calculate direction vector from drone to player
+    const direction = new THREE.Vector3().subVectors(this.player.pos, this.drone.pos).normalize();
+
+    // Calculate desired yaw and pitch in degrees
+    let desiredYaw = Math.atan2(direction.x, direction.z) * (180 / Math.PI);
+    let desiredPitch = Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z)) * (180 / Math.PI);
+
+    // Get current rotation
+    let currentRotation = this.drone.rotation.clone();
+
+    // Calculate the difference
+    let deltaYaw = desiredYaw - currentRotation.y;
+    let deltaPitch = desiredPitch - currentRotation.x;
+
+    // Normalize angles
+    deltaYaw = ((deltaYaw + 180) % 360) - 180;
+    deltaPitch = ((deltaPitch + 180) % 360) - 180;
+
+    // Calculate rotation step
+    let stepYaw = this.rotationSpeed * dt;
+    let stepPitch = this.rotationSpeed * dt;
+
+    // Apply rotation steps
+    if (Math.abs(deltaYaw) < stepYaw) {
+      currentRotation.y = desiredYaw;
+    } else {
+      currentRotation.y += stepYaw * Math.sign(deltaYaw);
+    }
+
+    if (Math.abs(deltaPitch) < stepPitch) {
+      currentRotation.x = desiredPitch;
+    } else {
+      currentRotation.x += stepPitch * Math.sign(deltaPitch);
+    }
+
+    // Update drone rotation
+    this.drone.rotation = currentRotation;
   },
   handleCollision(ev) {
     if (ev.type === 'collision' && ev.data.other.collision_id === 'capsule') {
