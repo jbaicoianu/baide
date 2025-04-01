@@ -102,11 +102,11 @@ room.registerElement('spacezone-enemy-drone', {
   create() {
     // Create the enemy drone as a bright red sphere with 2m diameter
     this.drone = this.createObject('object', {
-      id: 'sphere',
+      id: 'cone',
       col: 'red', // Changed color to bright red
       scale: V(10, 10, 10), // Increased scale to 10
       pos: V(0, 0, 0), // Initial position; adjust as needed
-      collision_id: 'enemy_drone',
+      collision_id: 'sphere',
       collision_scale: V(10), // Sphere collider with radius 1m
       mass: 500, // Assign mass as appropriate
       zdir: V(0, 0, 1),
