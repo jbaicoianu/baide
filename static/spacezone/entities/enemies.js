@@ -1,5 +1,5 @@
 room.registerElement('spacezone-enemy-dronecontroller', {
-  numdrones: 10, // Default number of drones
+  numdrones: 5, // Default number of drones
 
   create() {
     // Use a shared pool for our drone laser beams
