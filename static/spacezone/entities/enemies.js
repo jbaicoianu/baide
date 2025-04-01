@@ -244,8 +244,7 @@ room.registerElement('spacezone-enemy-drone', {
     // Add explosion behavior (e.g., particles, sound)
     // This can be expanded based on the available asset scripts
 
-    // Remove the drone by setting its x position to 9999
-    this.drone.pos.x = 9999;
-    console.log('Enemy drone has been deactivated by setting its x position to 9999.');
+    // Remove the drone by setting its z position to -9999
+    this.pos.z = -9999;
   }
 });
