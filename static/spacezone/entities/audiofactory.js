@@ -137,6 +137,7 @@ room.registerElement('audio-factory', {
         }
         break;
       case 'missile-fired':
+        /*
         if (this.missileFiredGain) {
             // Trigger the gain to make the "fwooosh!" sound audible for 1500ms
             this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
@@ -147,7 +148,15 @@ room.registerElement('audio-factory', {
         } else {
             console.warn('MissileFired noise generator is not initialized yet.');
             return null;
-        }
+        }*/
+            // Create missileFired sound effect using Noise generator
+    //toneJSsound = new Tone.Gain(0).connect(this.laserDistortion);
+    toneJSsound = new Tone.Noise({
+      type: 'white',
+      volume: -14
+    })//.connect(this.missileFiredGain);
+    //this.missileFired.start();
+
         break;
       default:
         console.warn(`Sound with id "${id}" does not exist.`);
