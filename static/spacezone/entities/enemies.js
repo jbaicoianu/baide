@@ -58,7 +58,11 @@ room.registerElement('spacezone-enemy-dronecontroller', {
   repositionDrones(currentPathPosition) {
     if (!this.player || !this.level) return;
 
-    // Assume the player's current path position is provided as an argument
+    // Check if the level progress has reached or exceeded 90%
+    if (currentPathPosition >= 0.9) {
+      console.log('Level progress is 90% or more. Stopping drone respawning.');
+      return; // Stop respawning drones
+    }
 
     // Iterate through all preallocated drones
     for (let drone of this.drones) {
@@ -66,7 +70,15 @@ room.registerElement('spacezone-enemy-dronecontroller', {
         // Calculate a new position
         const randomOffset = 0.1 + Math.random() * 0.2; // Random between 0.1 and 0.3
         const newT = currentPathPosition + randomOffset;
-        const clampedT = Math.min(newT, 1.0); // Ensure t does not exceed 1.0
+
+        if (newT >= 0.9) {
+          // Remove drone from playing field
+          drone.pos.x = 9999;
+          console.log(`Drone repositioned to ${newT * 100}% of the level. Removing from play.`);
+          continue;
+        }
+
+        const clampedT = Math.min(newT, 0.9); // Ensure t does not exceed 0.9
 
         const newPosition = this.level.getPositionAtTime(clampedT);
 
@@ -232,8 +244,8 @@ room.registerElement('spacezone-enemy-drone', {
     // Add explosion behavior (e.g., particles, sound)
     // This can be expanded based on the available asset scripts
 
-    // Remove the drone by setting its z position to -9999
-    this.pos.z = -9999;
-    console.log('Enemy drone has been deactivated by setting its z position to -9999.');
+    // Remove the drone by setting its x position to 9999
+    this.drone.pos.x = 9999;
+    console.log('Enemy drone has been deactivated by setting its x position to 9999.');
   }
 });
