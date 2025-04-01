@@ -1413,7 +1413,7 @@ room.registerElement('spacezone-targeting-reticle', {
 
 
     // Dispatch asset update event
-    elation.events.fire(this.canvas, 'asset_update');
+    elation.events.fire({ element: this.canvas, type: 'asset_update'});
   },
 
   update(dt) {
