@@ -233,7 +233,7 @@ room.registerElement('spacezone-enemy-drone', {
     }
 
     // Update drone rotation
-    this.rotation = currentRotation;
+    //this.rotation = currentRotation;
   },
   handleCollision(ev) {
     if (ev.type === 'collision' && ev.data.other.collision_id === 'capsule') {
