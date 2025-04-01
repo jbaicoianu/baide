@@ -1360,6 +1360,7 @@ room.registerElement('spacezone-targeting-reticle', {
 
     // Create the reticle object using the new image asset
     this.reticle = this.createObject('image', {
+      id: 'plane',
       image_id: 'reticle-image',
       scale: V(20, 20, 0.1), // Adjust scale as needed
       billboard: 'y',
