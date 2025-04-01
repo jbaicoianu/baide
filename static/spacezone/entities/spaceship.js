@@ -1147,6 +1147,8 @@ room.registerElement('spacezone-missile', {
   speed: 300, // Missile speed in meters per second
   active: true,
   turnrate: 30, // Added turnrate attribute with default value 10
+  lifetime: 5, // Added lifetime attribute with default value 5 seconds
+  activetime: 0, // Initialized activetime
 
   create() {
     // Initialize missile properties
@@ -1200,6 +1202,7 @@ room.registerElement('spacezone-missile', {
       this.smokeTrail.visible = true;
     }
     this.active = true;
+    this.activetime = 0; // Set activetime to 0 upon activation
     console.log('Missile activated.');
   },
 
@@ -1243,6 +1246,16 @@ room.registerElement('spacezone-missile', {
     //console.log('missile!', this.pos, this.active, this.target);
     if (!this.active) return;
 
+    // Increment activetime
+    this.activetime += dt;
+
+    // Check if activetime exceeds lifetime
+    if (this.activetime >= this.lifetime) {
+      this.deactivate();
+      this.explode();
+      return;
+    }
+
     // Update smoke trail emitter position
     if (this.smokeTrail) {
       const missileWorldPos = new THREE.Vector3();
@@ -1283,12 +1296,7 @@ room.registerElement('spacezone-missile', {
       // Already handled above
     }
 
-    // Optionally, check if missile is out of bounds
-    // For example, if too far from origin, deactivate
-    const maxDistance = 2000;
-    if (this.missile.pos.length() > maxDistance) {
-      this.deactivate();
-    }
+    // Removed distance-based deactivation logic
   }
 });
 
