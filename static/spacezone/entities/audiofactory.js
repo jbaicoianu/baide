@@ -153,7 +153,8 @@ room.registerElement('audio-factory', {
         console.warn(`Sound with id "${id}" does not exist.`);
         return null;
     }
-    toneJSsound.connect(sound.audio.panner || sound.audio.gain);
+    //toneJSsound.connect(sound.audio.panner || sound.audio.gain);
+    sound.audio.setNodeSource(toneJSsound);
     });
     return sound;
   },
