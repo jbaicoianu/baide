@@ -113,5 +113,13 @@
     "branch": "main",
     "commit_hash": "84f68b91a57bed4122d2d5174ba2d267e7ff9639",
     "file_name": "static/spacezone/entities/enemies.js"
+  },
+  {
+    "role": "User",
+    "content": "Spawn explosions in world position [Manual edit]",
+    "timestamp": "2025-04-01T08:19:36.493386Z",
+    "branch": "main",
+    "commit_hash": "9a8a7da498da244e63b8424ddd105fa0566f0a24",
+    "file_name": "static/spacezone/entities/enemies.js"
   }
 ]
