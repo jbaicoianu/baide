@@ -251,8 +251,9 @@ this.cannon.createObject('object', { id: 'cube', scale: V(.2, .2, 1), col: 'purp
       visible: true
     });
 
-    // Add explosion behavior (e.g., particles, sound)
-    // This can be expanded based on the available asset scripts
+    if (this.cannon) {
+      this.cannon.stopFiring();
+    }
 
     // Reset drone object positions
     this.drone.pos = V(0,0,0);
