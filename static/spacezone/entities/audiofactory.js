@@ -41,6 +41,15 @@ room.registerElement('audio-factory', {
     
     // Connect the pitch envelope to the oscillator's frequency
     this.laserPitchAutomation.connect(this.laserbeam.frequency);
+    
+    // Create missileTargetAcquiring sound effect
+    this.missileTargetAcquiringGain = new Tone.Gain(0).toDestination();
+    this.missileTargetAcquiring = new Tone.Oscillator({
+      type: 'sine',
+      frequency: 600,
+      volume: -12
+    }).connect(this.missileTargetAcquiringGain);
+    this.missileTargetAcquiring.start();
   },
   
   playLaser() {
@@ -54,6 +63,16 @@ room.registerElement('audio-factory', {
       this.laserGain.gain.linearRampToValueAtTime(0, Tone.now() + 0.5);
     } else {
       console.warn('Laserbeam oscillator is not initialized yet.');
+    }
+  },
+  
+  playMissileTargetAcquiring() {
+    if (this.missileTargetAcquiring) {
+      // Trigger the gain to make the sound audible
+      this.missileTargetAcquiringGain.gain.setValueAtTime(1, Tone.now());
+      this.missileTargetAcquiringGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.1);
+    } else {
+      console.warn('MissileTargetAcquiring oscillator is not initialized yet.');
     }
   }
 });
