@@ -1349,11 +1349,19 @@ room.registerElement('spacezone-missile', {
 
 room.registerElement('spacezone-targeting-reticle', {
   create() {
-    // Create a green plane object with billboard: 'y' and opacity 0.6
-    this.reticle = this.createObject('object', {
-      id: 'plane',
-      col: 'green',
-      scale: V(20, 20, .1), // Adjust scale as needed
+    // Allocate a square canvas element of size 256x256
+    this.canvas = document.createElement('canvas');
+    this.canvas.width = 256;
+    this.canvas.height = 256;
+    this.ctx = this.canvas.getContext('2d');
+
+    // Define a new image asset using the canvas
+    this.loadNewAsset('image', { id: 'reticle-image', canvas: this.canvas, hasalpha: true });
+
+    // Create the reticle object using the new image asset
+    this.reticle = this.createObject('image', {
+      image_id: 'reticle-image',
+      scale: V(20, 20, 0.1), // Adjust scale as needed
       billboard: 'y',
       opacity: 0.6,
       depth_test: false,
@@ -1366,11 +1374,11 @@ room.registerElement('spacezone-targeting-reticle', {
     });
   },
 
-  setTargetPosition(targetPosition, locked) {
+  setTargetPosition(targetPosition, lockedPercent) {
     if (this.reticle) {
       this.pos = targetPosition;
       this.reticle.visible = true;
-      this.reticle.col = locked ? 'green' : 'yellow';
+      this.updateReticleTexture(lockedPercent);
     }
   },
 
@@ -1378,6 +1386,33 @@ room.registerElement('spacezone-targeting-reticle', {
     if (this.reticle) {
       this.reticle.visible = false;
     }
+  },
+
+  updateReticleTexture(lockpercent) {
+    const ctx = this.ctx;
+    const size = 256;
+    const radius = 128;
+    const lineWidth = 4;
+    ctx.clearRect(0, 0, size, size);
+
+    const startAngles = [0, 90, 180, 270];
+    const endFactor = Math.min(Math.max(lockpercent, 0), 1); // Clamp between 0 and 1
+    const color = lockpercent < 1 ? 'yellow' : 'red';
+
+    ctx.lineWidth = lineWidth;
+    ctx.strokeStyle = color;
+    ctx.beginPath();
+
+    startAngles.forEach(start => {
+      const startRad = THREE.MathUtils.degToRad(start);
+      const endRad = THREE.MathUtils.degToRad(start + 90 * endFactor);
+      ctx.arc(size / 2, size / 2, radius - lineWidth / 2, startRad, endRad);
+    });
+
+    ctx.stroke();
+
+    // Dispatch asset update event
+    elation.events.fire(this.canvas, 'asset_update');
   },
 
   update(dt) {
