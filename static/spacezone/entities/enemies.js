@@ -13,7 +13,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
     this.player = this.parent.getElementsByTagName('spacezone-spaceship')[0]; // Ensure player is retrieved here
     for (let i = 0; i < this.numdrones; i++) {
       let drone = this.createObject('spacezone-enemy-drone', {
-        pos: V(0, 0, 0), // Initialize at origin or desired spawn position
+        pos: V(0, 0, -9999), // Initialize at origin or desired spawn position
         player: this.player, // Pass the player reference to each drone
         laserpool: this.laserpool,
       });
