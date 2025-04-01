@@ -80,6 +80,8 @@
 
 .spacezone-dialog-container .intro-frame-1 {
   width: 100%;
+  display: block;
+  max-width: 50em;
 }
 .spacezone-dialog-container .intro-frame-2 {
     float: right;
