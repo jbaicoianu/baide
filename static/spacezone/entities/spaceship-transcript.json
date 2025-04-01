@@ -2261,5 +2261,13 @@
     "commit_hash": "f5c868dee81ef42e0757e7f74e0d06aa4ce3186b",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Reset particles when missile is activated [Manual edit]",
+    "timestamp": "2025-04-01T06:00:03.932453Z",
+    "branch": "main",
+    "commit_hash": "c8a0c2c90b96c3256c1e792e9aef5cb873c684cc",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
