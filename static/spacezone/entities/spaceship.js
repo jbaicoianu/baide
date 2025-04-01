@@ -372,6 +372,9 @@ room.registerElement('spacezone-spaceship', {
   handleCollide(ev) {
     console.log(ev);
 
+    // Don't let the player's weapons hurt themselves
+    if (ev.data.other.hasClass('playerweapon')) return;
+      
     // Implement damage model
     const damageAmount = 10; // Configurable damage per collision
     this.damage += damageAmount;
@@ -1174,7 +1177,7 @@ room.registerElement('spacezone-missile', {
       visible: true // Initially invisible; will be activated upon firing
     });
     this.missile.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
-
+    this.missile.addClass('playerweapon');
     // Add smoke trail particle as a child of the room
     this.smokeTrail = room.createObject('particle', {
       count: 2000,
