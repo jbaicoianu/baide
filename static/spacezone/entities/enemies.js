@@ -233,7 +233,7 @@ room.registerElement('spacezone-enemy-drone', {
     // This can be expanded based on the available asset scripts
 
     // Remove the drone by setting its z position to -9999
-    this.drone.pos.z = -9999;
+    this.pos.z = -9999;
     console.log('Enemy drone has been deactivated by setting its z position to -9999.');
   }
 });
