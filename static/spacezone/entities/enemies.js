@@ -234,10 +234,10 @@ room.registerElement('spacezone-enemy-drone', {
   },
   explodeDrone() {
     // Create explosion effect
-    const explosion = this.createObject('explosion', {
+    const explosion = room.createObject('explosion', {
       col: 'orange',
       scale: V(2, 2, 2),
-      pos: this.drone.pos.clone(),
+      pos: this.getWorldPosition(),
       visible: true
     });
 
