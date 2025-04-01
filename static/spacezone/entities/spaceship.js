@@ -247,7 +247,7 @@ room.registerElement('spacezone-spaceship', {
     // Add event listeners for missile launcher to handle reticle position
     this.missileLauncher.addEventListener('targetacquired', (event) => {
       if (event.data && event.data.activetarget) {
-        this.targetingReticle.setTargetPosition(event.data.activetarget.pos.clone(), event.data.percent_locked >= 1);
+        this.targetingReticle.setTargetPosition(event.data.activetarget.pos.clone(), event.data.percent_locked);
       } else {
         this.targetingReticle.hideReticle();
       }
@@ -255,7 +255,7 @@ room.registerElement('spacezone-spaceship', {
 
     this.missileLauncher.addEventListener('targetlocked', (event) => {
       if (event.data && event.data.activetarget) {
-        this.targetingReticle.setTargetPosition(event.data.activetarget.pos.clone(), true);
+        this.targetingReticle.setTargetPosition(event.data.activetarget.pos.clone(), 1);
       } else {
         this.targetingReticle.hideReticle();
       }
