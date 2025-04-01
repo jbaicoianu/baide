@@ -33,7 +33,7 @@ room.registerElement('audio-factory', {
     this.laserbeam = new Tone.Oscillator({
       type: 'sawtooth',
       frequency: 5000, // Start frequency at 5000Hz
-      volume: 1
+      volume: 0
     }).connect(this.laserDistortion);
     
     // Connect distortion effect to the existing listener's destination
