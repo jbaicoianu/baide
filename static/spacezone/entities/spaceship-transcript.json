@@ -2083,5 +2083,13 @@
     "branch": "main",
     "commit_hash": "565cd0259e1f3d3590e6f69d31ec78eb103dc3fa",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Re-enable ship lasers for testing [Manual edit]",
+    "timestamp": "2025-04-01T04:53:32.110935Z",
+    "branch": "main",
+    "commit_hash": "f1e14e774e2c43a998dc0fafe0e060703d9a036b",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
