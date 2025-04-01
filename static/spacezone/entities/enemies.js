@@ -128,7 +128,7 @@ room.registerElement('spacezone-enemy-drone', {
       pos: V(0, 0, 0), // Initial position; adjust as needed
       collision_id: 'sphere',
       //collision_scale: V(1), // Sphere collider with radius 1m
-      mass: 500, // Assign mass as appropriate
+      mass: 0,
       zdir: V(0, 0, 1),
       visible: true,
       player: this.player // Store the player reference
