@@ -75,6 +75,20 @@
   margin-bottom: 0.5em;
 }
 
+.spacezone-dialog-container .intro-frame-1 {
+    float: left;
+    clip-path: polygon(0 0, 52% 0, 63% 51%, 0 51%);
+}
+.spacezone-dialog-container .intro-frame-2 {
+    float: right;
+    clip-path: polygon(50% 0, 100% 0, 100% 51%, 61% 51%);
+}
+.spacezone-dialog-container .intro-frame-3 {
+    float: right;
+    clip-path: polygon(0 50%, 100% 50%, 100% 99%, 0 99%);
+}
+
+
 /* Responsive CSS for mobile devices */
 @media (max-width: 800px) {
   .spacezone-dialog-container {
