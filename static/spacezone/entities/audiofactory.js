@@ -171,8 +171,8 @@ room.registerElement('audio-factory', {
     sound.audio.setNodeSource(toneJSsound);
         console.log('bleh', toneJSsound);
         //toneJSsound.start();
-    });
       */
+    });
     return sound;
   },
   
