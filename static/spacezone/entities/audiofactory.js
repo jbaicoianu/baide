@@ -126,7 +126,7 @@ room.registerElement('audio-factory', {
           // Trigger the gain to make the "fwooosh!" sound audible for 500ms
           this.missileFiredGain.gain.cancelScheduledValues(Tone.now());
           this.missileFiredGain.gain.setValueAtTime(1, Tone.now());
-          this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.5);
+          this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 2);
         } else {
           console.warn('MissileFired noise generator is not initialized yet.');
         }
