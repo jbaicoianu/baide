@@ -106,6 +106,7 @@ room.registerElement('audio-factory', {
             console.warn('Laserbeam oscillator is not initialized yet.');
             return null;
         }
+        break;
       case 'missile-target-acquiring':
         if (this.missileTargetAcquiringGain) {
             // Trigger the gain to make the sound audible
@@ -118,6 +119,7 @@ room.registerElement('audio-factory', {
             console.warn('MissileTargetAcquiring oscillator is not initialized yet.');
             return null;
         }
+        break;
       case 'missile-target-locked':
         if (this.missileTargetLockedGain) {
             // Trigger the gain to make the sound audible and ramp down to 50% over 500ms
@@ -131,6 +133,7 @@ room.registerElement('audio-factory', {
             console.warn('MissileTargetLocked oscillator is not initialized yet.');
             return null;
         }
+        break;
       case 'missile-fired':
         if (this.missileFiredGain) {
             // Trigger the gain to make the "fwooosh!" sound audible for 1500ms
@@ -143,6 +146,7 @@ room.registerElement('audio-factory', {
             console.warn('MissileFired noise generator is not initialized yet.');
             return null;
         }
+        break;
       default:
         console.warn(`Sound with id "${id}" does not exist.`);
         return null;
