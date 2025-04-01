@@ -1200,6 +1200,7 @@ room.registerElement('spacezone-missile', {
     }
     if (this.smokeTrail) {
       this.smokeTrail.visible = true;
+      this.smokeTrail.resetParticles();
     }
     this.active = true;
     this.activetime = 0; // Set activetime to 0 upon activation
