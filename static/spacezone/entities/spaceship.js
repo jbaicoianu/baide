@@ -1433,7 +1433,7 @@ room.registerElement('explosion', {
       count: 50,
       rate: 20000,
       loop: false,
-      col: V(0.3),
+      col: this.col,
       rand_col: V(0.5),
       vel: V(-50),
       rand_vel: V(100),
