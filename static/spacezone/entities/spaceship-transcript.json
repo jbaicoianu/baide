@@ -2805,5 +2805,13 @@
     "branch": "main",
     "commit_hash": "9acf233bc0586486c9960a6951c56aa7acfdef57",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Use a shared global objectpool for all lasers in the scene [Manual edit]",
+    "timestamp": "2025-04-02T21:14:31.247294Z",
+    "branch": "main",
+    "commit_hash": "6f1930469c5d03543f5f33c082be1acb00fd8821",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
