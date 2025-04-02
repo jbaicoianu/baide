@@ -104,7 +104,6 @@
           rotation: '0 180 0',
           font_size: 2,
           font_scale: false,
-          visible: false
         });
     
         this.portalRightLabel = this.createObject('text', {
@@ -115,7 +114,6 @@
           rotation: '0 180 0',
           font_size: 2,
           font_scale: false,
-          visible: false
         });
     
         // Listen for cargo ship dispatch event to show portals and labels
