@@ -922,10 +922,14 @@ room.registerElement('spacezone-cannon', {
   fire() {
     if (!this.laserpool) {
       // Initialize the object pool for laser beams
-      this.laserpool = room.createObject('objectpool', {
-        objecttype: 'spacezone-laserbeam',
-        max: 20
-      });
+      let laserpool = window.laserPool;
+      if (!laserpool) 
+        window.laserPool = room.createObject('objectpool', {
+          objecttype: 'spacezone-laserbeam',
+          max: 20
+        });
+      }
+      this.laserpool = window.laserPool;
     }        
 
     // Get spawnPosition using ship's world coordinates
