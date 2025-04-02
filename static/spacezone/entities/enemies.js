@@ -151,9 +151,10 @@ room.registerElement('spacezone-enemy-drone', {
 
     // Add event listener for 'hit' event
     this.drone.addEventListener('hit', ev => this.explodeDrone());
-      
+    /*
     this.createObject('object', { id: 'sphere', col: 'yellow', opacity: .8, depth_test: false, renderorder: 100, lighting: false });
     this.drone.createObject('object', { id: 'sphere', col: 'purple', opacity: .8, depth_test: false, renderorder: 101, scale: V(.75), lighting: false });
+    */
   },
   update(dt) {
     if (!this.isActive) {
