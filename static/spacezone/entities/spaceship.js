@@ -1010,6 +1010,7 @@ room.registerElement('spacezone-laserbeam', {
   },
   handleCollide(ev) {
     console.log('laser hit', ev);
+    this.pos.y = -9999;
   }
 });
 
