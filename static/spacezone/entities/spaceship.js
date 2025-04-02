@@ -75,8 +75,8 @@ room.registerElement('spacezone-spaceship', {
     this.shieldstrength = 100; // Fully shielded at start
     this.damage = 0;
 
-    // Initialize timeElapsedTimer for tracking time_elapsed events
-    // this.timeElapsedTimer = 0; // Removed as not needed anymore
+    // Add spacezone-budget object
+    this.budget = this.createObject('spacezone-budget');
 
     // Add child object 'taufighter' with specified metalness and roughness
     this.taufighter = this.createObject('object', {
@@ -1448,7 +1448,6 @@ room.registerElement('spacezone-targeting-reticle', {
   }
 });
 
-// New Element: explosion
 room.registerElement('explosion', {
   create() {
     // Initialize the particle system for the explosion
