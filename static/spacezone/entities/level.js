@@ -513,7 +513,7 @@
         setTimeout(() => {
           this.accel = this.zdir.clone().multiplyScalar(150);
           // Emit cargo_dispatched event
-          this.dispatchEvent(new Event('cargo_dispatched'));
+          this.dispatchEvent({type: 'cargo_dispatched'});
         }, 1000);
       },
       update(dt) {
