@@ -76,7 +76,8 @@ room.registerElement('spacezone-spaceship', {
     this.damage = 0;
 
     // Add spacezone-budget object
-    this.budget = this.createObject('spacezone-budget');
+    let currentbudget = localStorage['current-budget'] ?? -156293;
+    this.budget = this.createObject('spacezone-budget', { currentbudget: currentbudget });
 
     // Add child object 'taufighter' with specified metalness and roughness
     this.taufighter = this.createObject('object', {
