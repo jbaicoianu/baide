@@ -213,6 +213,7 @@ room.registerElement('spacezone-dialog', {
         .then(htmlContent => {
           this.contentArea.innerHTML = htmlContent;
           this.dialogContainer.style.display = 'block';
+          this.contentArea.scrollTop = 0; // Scroll to top when dialog is shown
           
           const onContinue = (event) => {
             resolve();
@@ -225,6 +226,7 @@ room.registerElement('spacezone-dialog', {
           console.error('Error loading dialog:', error);
           this.contentArea.innerHTML = '<p>Error loading dialog.</p>';
           this.dialogContainer.style.display = 'block';
+          this.contentArea.scrollTop = 0; // Scroll to top even on error
           reject(error);
         });
     });
