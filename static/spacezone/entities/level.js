@@ -123,7 +123,7 @@
             this.portalRight.visible = true;
             this.portalLeftLabel.visible = true;
             this.portalRightLabel.visible = true;
-          }, 4000);
+          }, 3000);
         });
     
         // // Generate 10 enemy drones positioned randomly along the path
