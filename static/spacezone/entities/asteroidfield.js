@@ -201,7 +201,7 @@ room.registerElement('spacezone-asteroidfield', {
 
         // Generate new random offsetX and offsetY based on configurable attributes
         let offsetX;
-        if (originalT > 0.95) {
+        if (originalT > 0.98) {
           offsetX = 9999;
         } else {
           offsetX = (Math.random() * this.offsetX * 2) - this.offsetX;
