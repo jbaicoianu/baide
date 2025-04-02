@@ -81,6 +81,11 @@ room.registerElement('spacezone-level', {
       external: true,
     });
 
+    // Add event listener for race_start event
+    this.addEventListener('race_start', () => {
+      this.resetCargoShip();
+    });
+
     // // Generate 10 enemy drones positioned randomly along the path
     // this.enemyDrones = [];
     // for (let i = 0; i < 10; i++) {
