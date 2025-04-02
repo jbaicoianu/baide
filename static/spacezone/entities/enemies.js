@@ -164,7 +164,7 @@ room.registerElement('spacezone-enemy-drone', {
       }
     } else {
       // Move along the path at the same speed as the player
-      this.moveAlongPath(dt);
+      //this.moveAlongPath(dt);
 
       // Rotate to face the player
       this.facePlayer(dt);
@@ -178,7 +178,7 @@ room.registerElement('spacezone-enemy-drone', {
   },
   activateDrone() {
     // Add thrust to move the drone forward at the specified speed
-    this.drone.addForce('thrust', { direction: this.drone.zdir, magnitude: this.droneSpeed });
+    //this.drone.addForce('thrust', { direction: this.drone.zdir, magnitude: this.droneSpeed });
     console.log('Enemy drone activated and started moving.');
   },
   moveAlongPath(dt) {
@@ -190,15 +190,16 @@ room.registerElement('spacezone-enemy-drone', {
       const currentPosition = this.getWorldPosition();
       const direction = this.localToWorld(V(0,0,1)).sub(currentPosition).normalize();
       const newPosition = currentPosition.clone().add(direction.multiplyScalar(this.droneSpeed * dt));
-      this.pos = newPosition;
+      //this.pos = newPosition;
     }
   },
   facePlayer(dt) {
     if (!this.player) return;
 
     // Calculate direction vector from drone to player
-    const direction = new THREE.Vector3().subVectors(this.player.taufighter.getWorldPosition(), this.getWorldPosition()).normalize();
+    const direction = new THREE.Vector3().subVectors(this.player.taufighter.getWorldPosition(), this.drone.getWorldPosition()).normalize();
 
+    /*
     // Calculate desired yaw and pitch in degrees
     let desiredYaw = Math.atan2(direction.x, direction.z) * (180 / Math.PI);
     let desiredPitch = Math.atan2(direction.y, Math.sqrt(direction.x * direction.x + direction.z * direction.z)) * (180 / Math.PI);
@@ -230,7 +231,7 @@ room.registerElement('spacezone-enemy-drone', {
     } else {
       currentRotation.x += stepPitch * Math.sign(deltaPitch);
     }
-
+    */
     // Update drone rotation
     //this.rotation = currentRotation;
     this.cannon.zdir = direction;
