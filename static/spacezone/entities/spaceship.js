@@ -224,8 +224,8 @@ room.registerElement('spacezone-spaceship', {
 
     // Create spacezone-dialog element and initialize dialog
     this.dialog = this.createObject('spacezone-dialog');
-    this.dialog.showDialog('dialogs/intro.txt');
-    this.dialog.addEventListener('continue', () => this.startRace());
+    this.dialog.showDialog('dialogs/intro.txt').then(() => this.startRace());
+    //this.dialog.addEventListener('continue', () => this.startRace());
 
     // Initialize Enemy Drone Controller
     // Removed as drone controllers are now spawned by the level
