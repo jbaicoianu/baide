@@ -315,12 +315,36 @@ room.registerElement('spacezone-budget', {
     // Removed obsolete scoring logic
   },
   
+  addBudgetItem(type, scoreChange) {
+    if(this.budgetItemsContainer) {
+      const budgetItem = document.createElement('div');
+      budgetItem.className = 'budget_item';
+      budgetItem.innerHTML = `<span class="budget_item_type">${type}</span>: <span class="budget_item_value">${Math.abs(scoreChange)}₿</span>`;
+      this.budgetItemsContainer.appendChild(budgetItem);
+
+      // Add 'budget_item_removing' class after 250ms
+      setTimeout(() => {
+        budgetItem.classList.add('budget_item_removing');
+      }, 1000);
+
+      // Remove the budget item from DOM after 1500ms
+      setTimeout(() => {
+        this.budgetItemsContainer.removeChild(budgetItem);
+      }, 6000);
+    }
+  },
+
   apply(type, quantity = 1) {
     if(this.scores.hasOwnProperty(type)) {
       const scoreChange = this.scores[type] * quantity;
       this.currentbalance += scoreChange;
       if(this.balanceSpan) {
         this.balanceSpan.textContent = `${this.currentbalance}₿`;
+      }
+
+      this.addBudgetItem(type, scoreChange);
+
+      if(this.balanceSpan) {
         if(scoreChange > 0) {
           this.balanceSpan.classList.add('budget_credit');
           setTimeout(() => {
@@ -334,28 +358,41 @@ room.registerElement('spacezone-budget', {
         }
       }
 
-      // Append new budget item
-      if(this.budgetItemsContainer) {
-        const budgetItem = document.createElement('div');
-        budgetItem.className = 'budget_item';
-        budgetItem.innerHTML = `<span class="budget_item_type">${type}</span>: <span class="budget_item_value">${Math.abs(scoreChange)}₿</span>`;
-        this.budgetItemsContainer.appendChild(budgetItem);
-
-        // Add 'budget_item_removing' class after 250ms
-        setTimeout(() => {
-          budgetItem.classList.add('budget_item_removing');
-        }, 1000);
-
-        // Remove the budget item from DOM after 1500ms
-        setTimeout(() => {
-          this.budgetItemsContainer.removeChild(budgetItem);
-        }, 6000);
-      }
-
       console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
     } else {
       console.warn(`Unknown budget type '${type}'.`);
     }
+  },
+
+  applyMultiple(budgetChanges) {
+    let totalChange = 0;
+    for (let [type, quantity] of Object.entries(budgetChanges)) {
+      if(this.scores.hasOwnProperty(type)) {
+        const scoreChange = this.scores[type] * quantity;
+        this.currentbalance += scoreChange;
+        totalChange += scoreChange;
+        this.addBudgetItem(type, scoreChange);
+      } else {
+        console.warn(`Unknown budget type '${type}'.`);
+      }
+    }
+
+    if(this.balanceSpan) {
+      this.balanceSpan.textContent = `${this.currentbalance}₿`;
+      if(totalChange > 0) {
+        this.balanceSpan.classList.add('budget_credit');
+        setTimeout(() => {
+          this.balanceSpan.classList.remove('budget_credit');
+        }, 150);
+      } else if(totalChange < 0) {
+        this.balanceSpan.classList.add('budget_debit');
+        setTimeout(() => {
+          this.balanceSpan.classList.remove('budget_debit');
+        }, 150);
+      }
+    }
+
+    console.log(`Applied multiple budget changes. Total balance change: ${totalChange}. New balance: ${this.currentbalance}`);
   },
   
   updateSupplies() {
