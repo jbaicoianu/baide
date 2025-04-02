@@ -985,7 +985,7 @@ room.registerElement('spacezone-laserbeam', {
     this.laserBeam = this.createObject('object', {
       id: 'capsule',
       collision_id: 'sphere', // Added collision_id for collision detection
-      collision_scale: V(.5),
+      collision_scale: V(1),
       col: 'limegreen', // Changed laser beam color to lime green
       scale: '0.5 6 0.5',
       rotation: '90 0 0',
@@ -1001,6 +1001,9 @@ room.registerElement('spacezone-laserbeam', {
     if (this.lifetime <= 0) {
       // this.die(); // Removed this as pool handles recycling
     }
+  },
+  handleCollide(ev) {
+    console.log('laser hit', ev);
   }
 });
 
