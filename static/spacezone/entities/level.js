@@ -1,5 +1,5 @@
 // File: static/spacezone/entities/level.js
-    
+        
     room.registerElement('spacezone-level', {
       create() {
         // Initialization code for spacezone-level
@@ -118,10 +118,12 @@
     
         // Listen for cargo ship dispatch event to show portals and labels
         this.cargoShip.addEventListener('cargo_dispatched', () => {
-          this.portalLeft.visible = true;
-          this.portalRight.visible = true;
-          this.portalLeftLabel.visible = true;
-          this.portalRightLabel.visible = true;
+          setTimeout(() => {
+            this.portalLeft.visible = true;
+            this.portalRight.visible = true;
+            this.portalLeftLabel.visible = true;
+            this.portalRightLabel.visible = true;
+          }, 2000);
         });
     
         // // Generate 10 enemy drones positioned randomly along the path
