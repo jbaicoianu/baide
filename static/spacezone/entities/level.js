@@ -87,7 +87,7 @@
         });
     
         // Create labels for portals
-        const labelOffset = new THREE.Vector3(0, -100, 0);
+        const labelOffset = new THREE.Vector3(0, -50, 0);
     
         this.portalLeftLabel = this.createObject('text', {
           text: 'Explore the Vibeverse',
