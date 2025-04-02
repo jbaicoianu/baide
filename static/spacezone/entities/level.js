@@ -53,6 +53,32 @@ room.registerElement('spacezone-level', {
       mass: 10000,
     });
 
+    // Add four spacezone-enginetrail objects and corresponding spheres to the cargo ship
+    this.cargoShip.engineglow = [];
+    const enginePositions = [
+      V(-25, -35, -185),
+      V(25, -35, -185),
+      V(-25, 10, -185),
+      V(25, 10, -185)
+    ];
+
+    enginePositions.forEach(pos => {
+      // Create spacezone-enginetrail object
+      this.createObject('spacezone-enginetrail', {
+        pos: pos.clone().add(this.cargoShip.pos),
+        parent: this.cargoShip
+      });
+
+      // Create sphere with scale V(20) and store reference
+      const sphere = this.createObject('object', {
+        id: 'sphere',
+        pos: pos.clone().add(this.cargoShip.pos),
+        scale: V(20),
+        col: 'blue', // Optional: set color for visibility
+      });
+      this.cargoShip.engineglow.push(sphere);
+    });
+
     // Add two large portals behind the cargo ship
     this.portalRight = this.createObject('link', {
       pos: cargoShipPosition.clone().add(V(-200, 0, 200)),
@@ -321,6 +347,35 @@ room.registerElement('spacezone-cargoship', {
       pos: V(0, 0, 0), // Default position; adjust as needed
       rotation: '0 0 0',
       scale: V(1, 1, 1),
+    });
+
+    // Initialize engineglow array
+    this.engineglow = [];
+
+    // Define engine positions
+    const enginePositions = [
+      V(-25, -35, -185),
+      V(25, -35, -185),
+      V(-25, 10, -185),
+      V(25, 10, -185)
+    ];
+
+    // Add spacezone-enginetrail objects and corresponding spheres
+    enginePositions.forEach(pos => {
+      // Create spacezone-enginetrail object
+      this.createObject('spacezone-enginetrail', {
+        pos: pos.clone().add(this.hull.pos),
+        parent: this.hull
+      });
+
+      // Create sphere with scale V(20) and store reference
+      const sphere = this.createObject('object', {
+        id: 'sphere',
+        pos: pos.clone().add(this.hull.pos),
+        scale: V(20),
+        col: 'blue', // Optional: set color for visibility
+      });
+      this.engineglow.push(sphere);
     });
   },
   dispatch() {
