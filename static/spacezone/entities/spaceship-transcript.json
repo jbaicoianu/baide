@@ -2845,5 +2845,13 @@
     "branch": "main",
     "commit_hash": "b14afa5dbac52accbfd2171e2d9b90f19752b1ec",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Disable collider for 250ms after taking damage [Manual edit]",
+    "timestamp": "2025-04-02T22:49:27.064198Z",
+    "branch": "main",
+    "commit_hash": "c910abb5d9656e29b3ab013b8298d915858c61e0",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
