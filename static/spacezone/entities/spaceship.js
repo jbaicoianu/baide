@@ -122,6 +122,7 @@ room.registerElement('spacezone-spaceship', {
         defaultbindings: 'mouse_button_0',
         onactivate: () => {
           this.missileLauncher.fire();
+          this.budget.apply("missile restocking fee", 1); // Added missile restocking fee
           //this.cannonLeft.startFiring();
           //this.cannonRight.startFiring();
         },
@@ -241,6 +242,7 @@ room.registerElement('spacezone-spaceship', {
     // Add touchstart event listener to fire missile launcher
     window.addEventListener('touchstart', () => {
       this.missileLauncher.fire();
+      this.budget.apply("missile restocking fee", 1); // Added missile restocking fee
     });
 
     // Create targeting reticle
@@ -308,14 +310,27 @@ room.registerElement('spacezone-spaceship', {
   handleCollide(ev) {
     // Existing handleCollide code
     // ...
+    if (this.damage >= this.shieldstrength) {
+      // User is destroyed
+      this.budget.apply("surrogate replacement fee", 1); // Added surrogate replacement fee
+      // Additional destruction handling code
+    }
   },
   startRace() {
     // Existing startRace code
     // ...
+    this.budget.apply("neuralink rental", 1); // Added neuralink rental
   },
   update(dt) {
     // Existing update code
     // ...
+    this.raceTime += dt;
+    if (this.isRacing && this.raceTime >= this.totalracetime) {
+      this.isRacing = false;
+      // Level completed
+      this.budget.applyMultiple({"completion bonus": 1, "medical supply delivery": this.currentcargo}); // Added completion bonus and medical supply delivery
+      // Additional level completion handling code
+    }
   },
   reset() {
     // Existing reset code
