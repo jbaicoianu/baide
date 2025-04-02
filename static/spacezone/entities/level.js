@@ -45,7 +45,7 @@ room.registerElement('spacezone-level', {
 
     // Spawn the cargo-ship object
     const cargoShipPosition = this.getPositionAtTime(1).clone().add(new THREE.Vector3(-30, 0, 400));
-    this.cargoShip = this.createObject('object', {
+    this.cargoShip = this.createObject('spacezone-cargoship', {
       id: 'cargo-ship',
       js_id: 'cargo-ship',
       pos: cargoShipPosition,
