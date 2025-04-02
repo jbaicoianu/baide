@@ -496,5 +496,13 @@
     "branch": "main",
     "commit_hash": "7abc208cba6a1b77fb1ace3dde0ca54fe5cfd152",
     "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "User",
+    "content": "Don't reset balance on init [Manual edit]",
+    "timestamp": "2025-04-02T09:32:38.293834Z",
+    "branch": "main",
+    "commit_hash": "9bf95778d2dc42e6b2217851c406979287b1e497",
+    "file_name": "static/spacezone/entities/level.js"
   }
 ]
