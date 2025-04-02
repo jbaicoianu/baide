@@ -65,7 +65,7 @@ room.registerElement('spacezone-level', {
       pos: cargoShipPosition.clone().add(V(200, 0, 200)),
       scale: V(100),
       round: true,
-      shader_id: 'defaultportal'
+      shader_id: 'defaultportal',
       url: 'https://portal.pieter.com/',
       external: true,
     });
