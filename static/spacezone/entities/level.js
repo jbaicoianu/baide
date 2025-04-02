@@ -239,23 +239,24 @@ room.registerElement('spacezone-dialog', {
     this.dispatchEvent(event);
   }
 });
-// File: static/spacezone/entities/spacezone-score.js
-room.registerElement('spacezone-score', {
+// File: static/spacezone/entities/spacezone-budget.js
+room.registerElement('spacezone-budget', {
+  currentbalance: 0,
   scores: {
-    time_elapsed: 100,
-    weapon_fire: -5,
-    race_complete: 10000,
-    supplies_lost: -10 // Added score for supplies lost
+    'neuralink rental': -250,
+    'surrogate replacement fee': -26384,
+    'medical supply delivery': 20,
+    'missile restocking fee': -150,
+    'completion bonus': 2500,
+    'drone destruction bonus': 250
   },
-  totalScore: 0,
-
   create() {
-    // Initialize totalScore and set up event listeners
+    // Initialize currentbalance and set up event listeners
     this.reset();
 
-    // Create text object for displaying the score
-    this.scoreLabel = this.createObject('text', {
-      text: `Score: ${this.totalScore}`,
+    // Create text object for displaying the budget
+    this.budgetLabel = this.createObject('text', {
+      text: `Balance: ${this.currentbalance}`,
       pos: new THREE.Vector3(22, 12, 0),
       rotation: '0 180 0',
       font_scale: false,
@@ -265,54 +266,46 @@ room.registerElement('spacezone-score', {
 
     // Event handlers bound to the parent
     if(this.parent) {
-      this.parent.addEventListener('time_elapsed', (e) => this.addScore(e));
-      this.parent.addEventListener('weapon_fire', (e) => this.addScore(e));
-      this.parent.addEventListener('race_complete', (e) => this.addScore(e));
-      this.parent.addEventListener('supplies_lost', (e) => this.addScore(e)); // Listen for supplies_lost
+      this.parent.addEventListener('neuralink_rental', (e) => this.apply('neuralink rental', e.quantity));
+      this.parent.addEventListener('surrogate_replacement_fee', (e) => this.apply('surrogate replacement fee', e.quantity));
+      this.parent.addEventListener('medical_supply_delivery', (e) => this.apply('medical supply delivery', e.quantity));
+      this.parent.addEventListener('missile_restocking_fee', (e) => this.apply('missile restocking fee', e.quantity));
+      this.parent.addEventListener('completion_bonus', (e) => this.apply('completion bonus', e.quantity));
+      this.parent.addEventListener('drone_destruction_bonus', (e) => this.apply('drone destruction bonus', e.quantity));
     } else {
       console.warn('Parent not found. Cannot bind event listeners.');
     }
 
-    // console.log('Spacezone-score element created and event listeners attached.');
+    // console.log('Spacezone-budget element created and event listeners attached.');
   },
 
   reset() {
-    this.totalScore = 0;
-    if(this.scoreLabel) {
-      this.scoreLabel.text = `Score: ${this.totalScore}`;
+    this.currentbalance = 0;
+    if(this.budgetLabel) {
+      this.budgetLabel.text = `Balance: ${this.currentbalance}`;
     }
-    // console.log('Score has been reset to 0.');
+    // console.log('Budget has been reset to 0.');
   },
 
   addScore(event) {
-    if(event.type === 'time_elapsed') {
-      const scoreChange = Math.round(event.data.dt * this.scores[event.type]);
-      this.totalScore += scoreChange;
-      // console.log(`Event '${event.type}' occurred. Score change: ${scoreChange}. Total score: ${this.totalScore}`);
-    } else if(this.scores.hasOwnProperty(event.type)) {
-      this.totalScore += this.scores[event.type];
-      // console.log(`Event '${event.type}' occurred. Score change: ${this.scores[event.type]}. Total score: ${this.totalScore}`);
+    // Removed obsolete scoring logic
+  },
+  
+  apply(type, quantity = 1) {
+    if(this.scores.hasOwnProperty(type)) {
+      const scoreChange = this.scores[type] * quantity;
+      this.currentbalance += scoreChange;
+      if(this.budgetLabel) {
+        this.budgetLabel.text = `Balance: ${this.currentbalance}`;
+      }
+      console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
     } else {
-      console.warn(`Unknown event type '${event.type}' for scoring.`);
-    }
-
-    if(this.scoreLabel) {
-      this.scoreLabel.text = `Score: ${this.totalScore}`;
+      console.warn(`Unknown budget type '${type}'.`);
     }
   },
   
   updateSupplies() {
-    if(this.parent && typeof this.parent.initialcargo === 'number' && typeof this.parent.currentcargo === 'number') {
-      const lostSupplies = this.parent.initialcargo - this.parent.currentcargo;
-      const scoreChange = this.scores.supplies_lost * lostSupplies;
-      this.totalScore += scoreChange;
-      if(this.scoreLabel) {
-        this.scoreLabel.text = `Score: ${this.totalScore}`;
-      }
-      console.log(`Supplies lost: ${lostSupplies}. Score changed by: ${scoreChange}. Total score: ${this.totalScore}`);
-    } else {
-      console.warn('Parent initialcargo or currentcargo is not accessible.');
-    }
+    // Removed obsolete supply update logic
   }
 });
 room.registerElement('spacezone-cargoship', {
