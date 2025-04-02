@@ -114,6 +114,13 @@
     color: red;
     transform: scale(1.1);
 }
+.spacezone-budget .budget_item {
+    transition: all 4500ms linear;
+    opacity: 1;
+}
+.spacezone-budget .budget_item.budget_item_removing {
+    opacity: 0;
+}
 
 /* Responsive CSS for mobile devices */
 @media (max-width: 800px) {
