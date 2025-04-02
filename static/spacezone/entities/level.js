@@ -44,7 +44,7 @@ room.registerElement('spacezone-level', {
     }, 3000);
 
     // Spawn the cargo-ship object
-    const cargoShipPosition = this.getPositionAtTime(1).clone().add(new THREE.Vector3(0, 0, 100));
+    const cargoShipPosition = this.getPositionAtTime(1).clone().add(new THREE.Vector3(0, 0, 0));
     this.cargoShip = this.createObject('object', {
       id: 'cargo-ship',
       js_id: 'cargo-ship',
@@ -53,14 +53,14 @@ room.registerElement('spacezone-level', {
 
     // Add two large portals behind the cargo ship
     this.portalLeft = this.createObject('link', {
-      pos: cargoShipPosition.clone().add(V(-100, 0, 100)),
+      pos: cargoShipPosition.clone().add(V(-100, 0, 0)),
       scale: V(100),
       round: true,
       shader_id: 'defaultportal'
     });
 
     this.portalRight = this.createObject('link', {
-      pos: cargoShipPosition.clone().add(V(100, 0, 100)),
+      pos: cargoShipPosition.clone().add(V(100, 0, 0)),
       scale: V(100),
       round: true,
       shader_id: 'defaultportal'
