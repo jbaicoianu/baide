@@ -194,6 +194,11 @@ room.registerElement('spacezone-asteroidfield', {
 
     for (let asteroid of this.asteroids) {
       if (asteroid.pos.z < currentPos.z - 100) {
+        // Generate a random t value between currentPathPosition and currentPathPosition + 0.1 plus pathPositionOffset
+        let newT = Math.random() * 0.1 + currentPathPosition + pathPositionOffset;
+        const originalT = newT;
+        if (newT > 1) newT = 1;
+
         // Generate new random offsetX and offsetY based on configurable attributes
         let offsetX;
         if (originalT > 0.95) {
@@ -202,11 +207,6 @@ room.registerElement('spacezone-asteroidfield', {
           offsetX = (Math.random() * this.offsetX * 2) - this.offsetX;
         }
         const offsetY = (Math.random() * this.offsetY * 2) - this.offsetY;
-
-        // Generate a random t value between currentPathPosition and currentPathPosition + 0.1 plus pathPositionOffset
-        let newT = Math.random() * 0.1 + currentPathPosition + pathPositionOffset;
-        const originalT = newT;
-        if (newT > 1) newT = 1;
 
         // Get new position along the curve
         const basePos = level.getPositionAtTime(newT);
