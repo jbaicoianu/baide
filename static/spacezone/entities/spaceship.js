@@ -416,6 +416,9 @@ room.registerElement('spacezone-spaceship', {
       // Reset orientation calibration
       this.initialDevicePitch = null;
       this.initialDeviceRoll = null;
+    } else {
+      this.shipcollider.collidable = false;
+      setTimeout(() => this.shipcollider.collidable = true, 250);
     }
   },
   startRace() {
