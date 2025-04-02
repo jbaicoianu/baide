@@ -275,7 +275,7 @@ room.registerElement('spacezone-budget', {
 
     this.balanceSpan = document.createElement('span');
     this.balanceSpan.className = 'budget_balance';
-    this.balanceSpan.textContent = `₿${this.currentbalance}`;
+    this.balanceSpan.textContent = `${this.currentbalance}₿`;
 
     this.budgetItemsContainer = document.createElement('div');
     this.budgetItemsContainer.className = 'budget_items_container';
@@ -320,7 +320,7 @@ room.registerElement('spacezone-budget', {
       const scoreChange = this.scores[type] * quantity;
       this.currentbalance += scoreChange;
       if(this.balanceSpan) {
-        this.balanceSpan.textContent = `₿${this.currentbalance}`;
+        this.balanceSpan.textContent = `${this.currentbalance}₿`;
         if(scoreChange > 0) {
           this.balanceSpan.classList.add('budget_credit');
           setTimeout(() => {
