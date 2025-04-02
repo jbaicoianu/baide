@@ -449,7 +449,9 @@ room.registerElement('spacezone-cargoship', {
         id: 'sphere',
         pos: pos,
         scale: V(20),
-        col: trail.col,
+        col: 'black',
+        emissive: 'cyan',
+        emissive_strength: 0
       });
       this.trails.push(trail);
       this.engineglow.push(sphere);
