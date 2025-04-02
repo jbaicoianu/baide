@@ -2877,5 +2877,13 @@
     "branch": "main",
     "commit_hash": "3c40e546a37fb76576c53b2a5e171a4bb56bd12e",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Make missile uncollidable when deactivated [Manual edit]",
+    "timestamp": "2025-04-02T23:42:06.462183Z",
+    "branch": "main",
+    "commit_hash": "d01268ccd2c686a08b55f185604df0b06ef4eaa7",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
