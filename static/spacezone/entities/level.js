@@ -1,3 +1,30 @@
+// File: static/spacezone/entities/level.js
+
+/* 
+CSS for budget HTML element:
+
+.budget_credit {
+    transition: all 0.5s ease;
+    color: green;
+    transform: scale(1.1);
+}
+
+.budget_debit {
+    transition: all 0.5s ease;
+    color: red;
+    transform: scale(1.1);
+}
+
+.spacezone-budget-credits {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    font-size: 20px;
+    color: white;
+    z-index: 1000;
+}
+*/
+
 room.registerElement('spacezone-level', {
   create() {
     // Initialization code for spacezone-level
@@ -24,15 +51,15 @@ room.registerElement('spacezone-level', {
       this.tubeObject = this.createObject('object', { object: this.tubeMesh, collidable: false, pickable: false, visible: false });
     }
 
-    // Add the text object above the start point
-    this.textObject = this.createObject('text', {
-      id: 'startText', // Added ID for easier reference
-      text: 'Click ship to start',
-      pos: new THREE.Vector3(0, 5, 0),
-      rotation: '0 90 0',
-      col: 'white', // Optional: set text color
-      font_scale: false
-    });
+    // Removed budgetLabel text object
+    // this.textObject = this.createObject('text', {
+    //   id: 'startText', // Added ID for easier reference
+    //   text: 'Click ship to start',
+    //   pos: new THREE.Vector3(0, 5, 0),
+    //   rotation: '0 90 0',
+    //   col: 'white', // Optional: set text color
+    //   font_scale: false
+    // });
 
     // Create spacezone-enemy-dronecontroller object
     setTimeout(() => {
@@ -254,15 +281,21 @@ room.registerElement('spacezone-budget', {
     // Initialize currentbalance and set up event listeners
     this.reset();
 
-    // Create text object for displaying the budget
-    this.budgetLabel = this.createObject('text', {
-      text: `Balance: ${this.currentbalance}`,
-      pos: new THREE.Vector3(22, 12, 0),
-      rotation: '0 180 0',
-      font_scale: false,
-      col: 'white',
-      font_size: 2
-    });
+    // Removed text object for displaying the budget
+    // this.budgetLabel = this.createObject('text', {
+    //   text: `Balance: ${this.currentbalance}`,
+    //   pos: new THREE.Vector3(22, 12, 0),
+    //   rotation: '0 180 0',
+    //   font_scale: false,
+    //   col: 'white',
+    //   font_size: 2
+    // });
+
+    // Create HTML element for displaying credits
+    this.creditsElement = document.createElement('div');
+    this.creditsElement.className = 'spacezone-budget-credits';
+    this.creditsElement.textContent = `Credits: ₿${this.currentbalance}`;
+    document.body.appendChild(this.creditsElement);
 
     // Event handlers bound to the parent
     if(this.parent) {
@@ -281,8 +314,8 @@ room.registerElement('spacezone-budget', {
 
   reset() {
     this.currentbalance = 0;
-    if(this.budgetLabel) {
-      this.budgetLabel.text = `Balance: ${this.currentbalance}`;
+    if(this.creditsElement) {
+      this.creditsElement.textContent = `Credits: ₿${this.currentbalance}`;
     }
     // console.log('Budget has been reset to 0.');
   },
@@ -295,8 +328,19 @@ room.registerElement('spacezone-budget', {
     if(this.scores.hasOwnProperty(type)) {
       const scoreChange = this.scores[type] * quantity;
       this.currentbalance += scoreChange;
-      if(this.budgetLabel) {
-        this.budgetLabel.text = `Balance: ${this.currentbalance}`;
+      if(this.creditsElement) {
+        this.creditsElement.textContent = `Credits: ₿${this.currentbalance}`;
+        if(scoreChange > 0) {
+          this.creditsElement.classList.add('budget_credit');
+          setTimeout(() => {
+            this.creditsElement.classList.remove('budget_credit');
+          }, 10);
+        } else if(scoreChange < 0) {
+          this.creditsElement.classList.add('budget_debit');
+          setTimeout(() => {
+            this.creditsElement.classList.remove('budget_debit');
+          }, 10);
+        }
       }
       console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
     } else {
