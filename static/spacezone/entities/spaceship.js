@@ -391,7 +391,7 @@ room.registerElement('spacezone-spaceship', {
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
       this.missileLauncher.disarm(); // Disarm missile launcher
-      this.dialog.showDialog('dialogs/failure-destroyed.html'); // Show our failure-destroyed dialog
+      this.dialog.showDialog('dialogs/failure-destroyed.html').then(() => this.startRace()); // Show our failure-destroyed dialog
       this.targetingReticle.hideReticle(); // Hide reticle when race fails
 
       // Set shipcollider.collidable to false and shipcollider.pickable to true when race ends
@@ -601,7 +601,7 @@ room.registerElement('spacezone-spaceship', {
         // Emit an event or handle game over state as needed
         this.dispatchEvent({ type: 'supplies_depleted' });
         this.deactivateControlContext('spacezone-spaceship');
-        this.dialog.showDialog('dialogs/failure-depleted.html');
+        this.dialog.showDialog('dialogs/failure-depleted.html').then(() => this.startRace());
         this.targetingReticle.hideReticle(); // Hide reticle when supplies are depleted
 
         // Set shipcollider.collidable to false and .pickable to true when race ends
