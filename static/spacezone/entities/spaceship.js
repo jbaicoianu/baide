@@ -75,9 +75,6 @@ room.registerElement('spacezone-spaceship', {
     this.shieldstrength = 100; // Fully shielded at start
     this.damage = 0;
 
-    // Create spacezone-score element
-    this.score = this.createObject('spacezone-score');
-
     // Initialize timeElapsedTimer for tracking time_elapsed events
     // this.timeElapsedTimer = 0; // Removed as not needed anymore
 
@@ -419,13 +416,6 @@ room.registerElement('spacezone-spaceship', {
       console.warn('Missile Launcher not found or arm function unavailable.');
     }
 
-    // Reset the score at the start of the race
-    if (this.score && typeof this.score.reset === 'function') {
-      this.score.reset();
-    } else {
-      console.warn('Score object not found or reset method is unavailable.');
-    }
-    
     // Reset medical supplies and shield strength at the start of the race
     this.currentcargo = this.initialcargo;
     this.shieldstrength = 100;
@@ -596,9 +586,6 @@ room.registerElement('spacezone-spaceship', {
       this.currentcargo = Math.max(0, this.currentcargo - suppliesLost);
       this.dispatchEvent({ type: 'supplies_lost', data: suppliesLost });
 
-      // Update score based on remaining supplies
-      // Removed the call to this.score.updateSupplies(this.currentcargo);
-      
       // Check if all supplies are lost
       if(this.currentcargo <= 0){
         this.isRacing = false;
@@ -1205,7 +1192,7 @@ room.registerElement('spacezone-missile-launcher', {
     }
   }
 });
-    
+
 // New Element: spacezone-missile
 room.registerElement('spacezone-missile', {
   target: null,
