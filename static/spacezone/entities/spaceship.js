@@ -576,7 +576,9 @@ room.registerElement('spacezone-spaceship', {
         this.initialDeviceRoll = null;
 
         // Show success dialog
-        this.dialog.showDialog('dialogs/success.html');
+        this.dialog.showDialog('dialogs/success.html').then(() => {
+            this.parent.cargoShip.dispatch();
+        });
       }
 
       // Implement supply expiration logic
