@@ -265,6 +265,8 @@ room.registerElement('spacezone-spaceship', {
       }
     });
 
+    this.parent.addEventListener('dronedestroyed', ev => this.budget.apply("drone destruction bonus", 1));
+
     // Add device motion event listener
     window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
 
