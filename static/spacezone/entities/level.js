@@ -321,11 +321,10 @@ room.registerElement('spacezone-cargoship', {
       pos: V(0, 0, 0), // Default position; adjust as needed
       rotation: '0 0 0',
       scale: V(1, 1, 1),
-      col: 'blue' // Optional: set color for visibility
     });
   },
   dispatch() {
     // Set acceleration based on z-direction
-    this.accel = this.zdir.clone().multiplyScalar(300);
+    this.accel = this.zdir.clone().multiplyScalar(150);
   }
 });
