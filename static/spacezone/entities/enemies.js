@@ -120,9 +120,9 @@ room.registerElement('spacezone-enemy-drone', {
   player: null,
 
   create() {
-    // Create the enemy drone as a bright red sphere with 2m diameter
+    // Create the enemy drone as a bright red drone with 2m diameter
     this.drone = this.createObject('object', {
-      id: 'cone',
+      id: 'drone',
       col: 'red', // Changed color to bright red
       scale: V(10, 10, 10), // Increased scale to 10
       pos: V(0, 0, 0), // Initial position; adjust as needed
@@ -140,7 +140,7 @@ room.registerElement('spacezone-enemy-drone', {
       rotation: '0 0 0', // Facing forward
       rate: this.firingRate // One shot per second
     });
-this.cannon.createObject('object', { id: 'cube', scale: V(.2, .2, 1), col: 'purple' });
+    this.cannon.createObject('object', { id: 'cube', scale: V(.2, .2, 1), col: 'purple' });
     // Initialize state
     this.isActive = false;
 
