@@ -1045,7 +1045,6 @@ room.registerElement('spacezone-missile-launcher', {
         room.objects['sounds'].stopSound('missile-target-locked');
       }
     });
-    this.createObject('object', { id: 'cube', col: 'purple' });
   },
 
   arm() {
