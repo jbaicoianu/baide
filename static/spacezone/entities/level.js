@@ -315,11 +315,11 @@ room.registerElement('spacezone-budget', {
     // Removed obsolete scoring logic
   },
   
-  addBudgetItem(type, scoreChange) {
+  addBudgetItem(type, scoreChange, quantity = 1) {
     if(this.budgetItemsContainer) {
       const budgetItem = document.createElement('div');
       budgetItem.className = 'budget_item';
-      budgetItem.innerHTML = `<span class="budget_item_type">${type}</span>: <span class="budget_item_value">${Math.abs(scoreChange)}₿</span>`;
+      budgetItem.innerHTML = `<span class="budget_item_type">${quantity}x ${type}</span>: <span class="budget_item_value">${Math.abs(scoreChange)}₿</span>`;
       this.budgetItemsContainer.appendChild(budgetItem);
 
       // Add 'budget_item_removing' class after 250ms
@@ -342,7 +342,7 @@ room.registerElement('spacezone-budget', {
         this.balanceSpan.textContent = `${this.currentbalance}₿`;
       }
 
-      this.addBudgetItem(type, scoreChange);
+      this.addBudgetItem(type, scoreChange, quantity);
 
       if(this.balanceSpan) {
         if(scoreChange > 0) {
@@ -371,7 +371,7 @@ room.registerElement('spacezone-budget', {
         const scoreChange = this.scores[type] * quantity;
         this.currentbalance += scoreChange;
         totalChange += scoreChange;
-        this.addBudgetItem(type, scoreChange);
+        this.addBudgetItem(type, scoreChange, quantity);
       } else {
         console.warn(`Unknown budget type '${type}'.`);
       }
