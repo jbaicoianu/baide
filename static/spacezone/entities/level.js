@@ -477,7 +477,7 @@ room.registerElement('spacezone-cargoship', {
   update(dt) {
     if (this.dispatching) {
       this.engineglow.forEach(glow => {
-        if (glow.emissive_strength < 1) glow.emissive_strength += dt;
+        if (glow.emissive_intensity < 1) glow.emissive_intensity += dt;
       });
     }
   }
