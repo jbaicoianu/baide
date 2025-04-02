@@ -92,7 +92,7 @@
         this.portalLeftLabel = this.createObject('text', {
           text: 'Explore the Vibeverse',
           pos: this.portalLeft.pos.clone().add(labelOffset),
-          scale: V(25),
+          scale: V(10),
           col: 'white',
           rotation: '0 180 0',
           font_size: 2,
@@ -102,7 +102,7 @@
         this.portalRightLabel = this.createObject('text', {
           text: 'Play again',
           pos: this.portalRight.pos.clone().add(labelOffset),
-          scale: V(25),
+          scale: V(10),
           col: 'white',
           rotation: '0 180 0',
           font_size: 2,
