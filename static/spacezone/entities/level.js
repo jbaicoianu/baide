@@ -449,7 +449,7 @@ room.registerElement('spacezone-cargoship', {
         scale: V(20),
         col: 'black',
         emissive: 'cyan',
-        emissive_strength: 0
+        emissive_intensity: 0
       });
       this.trails.push(trail);
       this.engineglow.push(sphere);
@@ -459,10 +459,12 @@ room.registerElement('spacezone-cargoship', {
     this.dispatching = false;
     this.accel = V(0);
     this.vel = V(0);
-    this.pos.copy(newPosition);
+    if (newPosition) {
+      this.pos.copy(newPosition);
+    }
 
     this.engineglow.forEach(glow => {
-      glow.emissive_strength = 0;
+      glow.emissive_intensity = 0;
     });
   },
   dispatch() {
