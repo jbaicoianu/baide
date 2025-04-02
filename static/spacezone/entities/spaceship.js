@@ -565,7 +565,7 @@ room.registerElement('spacezone-spaceship', {
         this.isRacing = false;
         console.log('Race completed!');
         
-        this.budget.applyMultiple({"completion bonus": 1, "medical supply delivery": this.currentcargo});
+        this.budget.applyMultiple({"completion bonus": 1, "medical supply delivery": Math.floor(this.currentcargo)});
         
         // Set shipcollider.collidable to false when race ends
         if (this.shipcollider) {
