@@ -179,28 +179,39 @@ room.registerElement('spacezone-dialog', {
     });
   },
   showDialog(dialogPath) {
-    fetch(dialogPath)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to load dialog file: ${response.statusText}`);
-        }
-        return response.text();
-      })
-      .then(htmlContent => {
-        this.contentArea.innerHTML = htmlContent;
-        this.dialogContainer.style.display = 'block';
-      })
-      .catch(error => {
-        console.error('Error loading dialog:', error);
-        this.contentArea.innerHTML = '<p>Error loading dialog.</p>';
-        this.dialogContainer.style.display = 'block';
-      });
+    return new Promise((resolve, reject) => {
+      fetch(dialogPath)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Failed to load dialog file: ${response.statusText}`);
+          }
+          return response.text();
+        })
+        .then(htmlContent => {
+          this.contentArea.innerHTML = htmlContent;
+          this.dialogContainer.style.display = 'block';
+          
+          const onContinue = (event) => {
+            resolve();
+            this.removeEventListener('continue', onContinue);
+          };
+
+          this.addEventListener('continue', onContinue);
+        })
+        .catch(error => {
+          console.error('Error loading dialog:', error);
+          this.contentArea.innerHTML = '<p>Error loading dialog.</p>';
+          this.dialogContainer.style.display = 'block';
+          reject(error);
+        });
+    });
   },
   hideDialog() {
     this.dialogContainer.style.display = 'none';
   },
   emitContinueEvent() {
-    this.dispatchEvent(new Event('continue'));
+    const event = new Event('continue', { bubbles: true });
+    this.dispatchEvent(event);
   }
 });
 // File: static/spacezone/entities/spacezone-score.js
