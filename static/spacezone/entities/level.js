@@ -455,12 +455,11 @@ room.registerElement('spacezone-cargoship', {
       this.engineglow.push(sphere);
     });
   },
-  reset() {
+  reset(newPosition) {
     this.dispatching = false;
-    this.cargoShip.accel = V(0);
-    this.cargoShip.vel = V(0);
-    this.cargoShip.reset(newPosition);
-    this.cargoShip.pos.copy(newPosition);
+    this.accel = V(0);
+    this.vel = V(0);
+    this.pos.copy(newPosition);
 
     this.engineglow.forEach(glow => {
       glow.emissive_strength = 0;
