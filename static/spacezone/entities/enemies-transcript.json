@@ -276,5 +276,13 @@
     "commit_hash": "a890165a185bd98c1fe502ec0a2c7b9f630d2dc9",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities/enemies.js"
+  },
+  {
+    "role": "User",
+    "content": "Fire event when drone is destroyed [Manual edit]",
+    "timestamp": "2025-04-02T09:25:09.996728Z",
+    "branch": "main",
+    "commit_hash": "7710ac4a95d5ef45828ef40dcd5318e22b94e59a",
+    "file_name": "static/spacezone/entities/enemies.js"
   }
 ]
