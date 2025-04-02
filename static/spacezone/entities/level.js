@@ -54,19 +54,20 @@ room.registerElement('spacezone-level', {
     });
 
     // Add two large portals behind the cargo ship
-    this.portalLeft = this.createObject('link', {
+    this.portalRight = this.createObject('link', {
       pos: cargoShipPosition.clone().add(V(-200, 0, 200)),
       scale: V(100),
       round: true,
       shader_id: 'defaultportal',
-      url: 'https://portal.pieter.com/',
     });
 
-    this.portalRight = this.createObject('link', {
+    this.portalLeft = this.createObject('link', {
       pos: cargoShipPosition.clone().add(V(200, 0, 200)),
       scale: V(100),
       round: true,
       shader_id: 'defaultportal'
+      url: 'https://portal.pieter.com/',
+      external: true,
     });
 
     // // Generate 10 enemy drones positioned randomly along the path
