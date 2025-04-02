@@ -114,5 +114,22 @@
     "branch": "main",
     "commit_hash": "cf36c37e715722490015f7afa53ca8213972031a",
     "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "User",
+    "content": "In our level's create function, let's spawn a new object, id of \"cargo-ship', js_id 'cargo-ship', positioned at getPositionAtTime(1) plus a z offset of 100.",
+    "timestamp": "2025-04-02T04:49:18.979098Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added the code to spawn a new object with the ID and `js_id` of \"cargo-ship\" positioned at `getPositionAtTime(1)` with an additional z offset of 100. Please ensure that the \"cargo-ship\" asset is defined in your assets section to avoid any loading issues.",
+    "timestamp": "2025-04-02T04:49:44.519196Z",
+    "branch": "main",
+    "commit_hash": "ea242285d60fe77a692ee4f6ba4039240c2c095f",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/level.js"
   }
 ]
