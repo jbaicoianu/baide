@@ -1305,6 +1305,7 @@ room.registerElement('spacezone-missile', {
     }
     this.active = false;
     console.log('Missile deactivated.');
+    this.pos.y = -9999;
   },
 
   handleCollision(ev) {
