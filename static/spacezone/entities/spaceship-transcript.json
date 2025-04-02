@@ -2650,5 +2650,13 @@
     "branch": "main",
     "commit_hash": "f4e9e7256286058a93780503cf48f93db6b7042d",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Don't handle collisions if we aren't racing [Manual edit]",
+    "timestamp": "2025-04-02T06:57:33.549128Z",
+    "branch": "main",
+    "commit_hash": "db4a24789d1f1a316092a77f40083c3b3248de2e",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
