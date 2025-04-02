@@ -384,12 +384,12 @@ room.registerElement('spacezone-spaceship', {
     if (ev.data.other.hasClass('playerweapon')) return;
       
     // Implement damage model
-    const damageAmount = 10; // Configurable damage per collision
+    const damageAmount = Math.floor(5 + Math.random() * 5); // Random damage between 5 and 10
     this.damage += damageAmount;
     console.log(`Ship damaged! Total damage: ${this.damage}`);
 
     // Decrease shield strength based on damage
-    this.shieldstrength = Math.max(0, 100 - this.damage * 2); // Example: each damage reduces shield by 2
+    this.shieldstrength = Math.max(0, 100 - this.damage);
     console.log(`Shield strength: ${this.shieldstrength}`);
 
     // Apply surrogate replacement fee when the user is destroyed
