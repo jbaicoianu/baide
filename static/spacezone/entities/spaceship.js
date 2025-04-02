@@ -369,6 +369,7 @@ room.registerElement('spacezone-spaceship', {
   },
   handleCollide(ev) {
     console.log(ev);
+    if (!this.isRacing) return;
 
     // Don't let the player's weapons hurt themselves
     if (ev.data.other.hasClass('playerweapon')) return;
