@@ -344,12 +344,12 @@ room.registerElement('spacezone-budget', {
         // Add 'budget_item_removing' class after 250ms
         setTimeout(() => {
           budgetItem.classList.add('budget_item_removing');
-        }, 500);
+        }, 1000);
 
         // Remove the budget item from DOM after 1500ms
         setTimeout(() => {
           this.budgetItemsContainer.removeChild(budgetItem);
-        }, 5000);
+        }, 6000);
       }
 
       console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
