@@ -301,7 +301,7 @@ room.registerElement('spacezone-budget', {
   },
 
   reset() {
-    this.currentbalance = 0;
+    //this.currentbalance = 0;
     if(this.balanceSpan) {
       this.balanceSpan.textContent = `₿${this.currentbalance}`;
     }
