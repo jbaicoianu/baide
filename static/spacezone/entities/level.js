@@ -49,7 +49,8 @@ room.registerElement('spacezone-level', {
       id: 'cargo-ship',
       js_id: 'cargo-ship',
       pos: cargoShipPosition,
-      rotation: V(20, 20, 0),
+      rotation: V(20, 24, 0),
+      mass: 10000,
     });
 
     // Add two large portals behind the cargo ship
