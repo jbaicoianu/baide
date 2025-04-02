@@ -113,10 +113,8 @@ room.registerElement('spacezone-level', {
     return new THREE.Vector3(0, 0, 0);
   },
   resetCargoShip() {
-    this.cargoShip.accel = V(0);
-    this.cargoShip.vel = V(0);
     const newPosition = this.getPositionAtTime(1).clone().add(new THREE.Vector3(-30, 0, 400));
-    this.cargoShip.pos.copy(newPosition);
+    this.cargoShip.reset(newPosition);
   }
 });
 room.registerElement('spacezone-obstacle', {
@@ -457,8 +455,29 @@ room.registerElement('spacezone-cargoship', {
       this.engineglow.push(sphere);
     });
   },
+  reset() {
+    this.dispatching = false;
+    this.cargoShip.accel = V(0);
+    this.cargoShip.vel = V(0);
+    this.cargoShip.reset(newPosition);
+    this.cargoShip.pos.copy(newPosition);
+
+    this.engineglow.forEach(glow => {
+      glow.emissive_strength = 0;
+    });
+  },
   dispatch() {
     // Set acceleration based on z-direction
-    this.accel = this.zdir.clone().multiplyScalar(150);
+    this.dispatching = true;
+    setTimeout(() => {
+      this.accel = this.zdir.clone().multiplyScalar(150);
+    }, 1000);
+  },
+  update(dt) {
+    if (this.dispatching) {
+      this.engineglow.forEach(glow => {
+        if (glow.emissive_strength < 1) glow.emissive_strength += dt;
+      });
+    }
   }
 });
