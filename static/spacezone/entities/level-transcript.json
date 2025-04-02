@@ -322,5 +322,22 @@
     "branch": "main",
     "commit_hash": "b438470561822d0a3795f2ec6e49918a8c05684e",
     "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "User",
+    "content": "In our dialog's showDialog function, make sure we scroll our container to the top whenever we the dialog is shown",
+    "timestamp": "2025-04-02T07:40:30.435341Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `showDialog` function within the `spacezone-dialog` element to ensure that the dialog container scrolls to the top each time the dialog is displayed. Please review the changes below and let me know if you have any questions or need further modifications.",
+    "timestamp": "2025-04-02T07:40:59.912233Z",
+    "branch": "main",
+    "commit_hash": "bb139b123591b3056e6ed039d2a5812d4d7c87c3",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/level.js"
   }
 ]
