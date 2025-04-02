@@ -2861,5 +2861,13 @@
     "branch": "main",
     "commit_hash": "a1021c6fade6a7af262244ba09ea055edcf33407",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Reset missile position and rotation when activated [Manual edit]",
+    "timestamp": "2025-04-02T23:38:29.368660Z",
+    "branch": "main",
+    "commit_hash": "d951c73b19a7d9f33d0285dcfe2a2715d28f57dc",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
