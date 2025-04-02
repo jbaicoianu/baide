@@ -94,9 +94,14 @@ room.registerElement('spacezone-level', {
       return this.curve.getPoint(clampedT);
     }
     return new THREE.Vector3(0, 0, 0);
+  },
+  resetCargoShip() {
+    this.cargoShip.accel = V(0);
+    this.cargoShip.vel = V(0);
+    const newPosition = this.getPositionAtTime(1).clone().add(new THREE.Vector3(-30, 0, 400));
+    this.cargoShip.pos.copy(newPosition);
   }
 });
-
 room.registerElement('spacezone-obstacle', {
   create() {
     // Initialization code for spacezone-obstacle
@@ -105,7 +110,6 @@ room.registerElement('spacezone-obstacle', {
     // Update logic for spacezone-obstacle
   }
 });
-
 room.registerElement('spacezone-waypoint', {
   create() {
     // Initialization code for spacezone-waypoint
