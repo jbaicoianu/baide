@@ -105,7 +105,7 @@
     z-index: 1000;
 }
 .spacezone-budget-credits .budget_balance {
-    transition: all 0.150ms linear;
+    transition: all 150ms linear;
 }
 .spacezone-budget-credits .budget_balance.budget_credit {
     color: lime;
