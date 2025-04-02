@@ -105,12 +105,12 @@
     z-index: 1000;
     transition: all 0.1s ease;
 }
-.spacezone-budget-credits.budget_credit {
+.spacezone-budget-credits .budget_balance.budget_credit {
     color: lime;
     transform: scale(1.1);
 }
 
-.spacezone-budget-credits.budget_debit {
+.spacezone-budget-credits .budget_balance.budget_debit {
     color: red;
     transform: scale(1.1);
 }
