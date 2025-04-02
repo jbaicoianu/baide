@@ -2658,5 +2658,13 @@
     "branch": "main",
     "commit_hash": "db4a24789d1f1a316092a77f40083c3b3248de2e",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Disable collision debug log [Manual edit]",
+    "timestamp": "2025-04-02T06:58:58.206782Z",
+    "branch": "main",
+    "commit_hash": "93c893332cdf09db2fa8c3b6f77b524a73e81936",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
