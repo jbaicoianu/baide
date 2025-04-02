@@ -1,30 +1,5 @@
 // File: static/spacezone/entities/level.js
 
-/* 
-CSS for budget HTML element:
-
-.budget_credit {
-    transition: all 0.5s ease;
-    color: green;
-    transform: scale(1.1);
-}
-
-.budget_debit {
-    transition: all 0.5s ease;
-    color: red;
-    transform: scale(1.1);
-}
-
-.spacezone-budget-credits {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    font-size: 20px;
-    color: white;
-    z-index: 1000;
-}
-*/
-
 room.registerElement('spacezone-level', {
   create() {
     // Initialization code for spacezone-level
