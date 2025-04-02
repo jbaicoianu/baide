@@ -86,6 +86,27 @@ room.registerElement('spacezone-level', {
       this.resetCargoShip();
     });
 
+    // Create labels for portals
+    const labelOffset = new THREE.Vector3(0, -100, 0);
+
+    this.portalLeftLabel = this.createObject('text', {
+      text: 'Explore the Vibeverse',
+      pos: this.portalLeft.pos.clone().add(labelOffset),
+      scale: V(100),
+      col: 'white',
+      rotation: '0 0 0',
+      font_size: 2
+    });
+
+    this.portalRightLabel = this.createObject('text', {
+      text: 'Play again',
+      pos: this.portalRight.pos.clone().add(labelOffset),
+      scale: V(100),
+      col: 'white',
+      rotation: '0 0 0',
+      font_size: 2
+    });
+
     // // Generate 10 enemy drones positioned randomly along the path
     // this.enemyDrones = [];
     // for (let i = 0; i < 10; i++) {
