@@ -991,6 +991,8 @@ room.registerElement('spacezone-laserbeam', {
       rotation: '90 0 0',
       lighting: false
     });
+    this.laserBeam.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
+
 
     // Set a lifetime for the laser beam
     this.lifetime = 2; // seconds
