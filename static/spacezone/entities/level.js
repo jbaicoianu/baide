@@ -362,6 +362,7 @@ room.registerElement('spacezone-budget', {
     } else {
       console.warn(`Unknown budget type '${type}'.`);
     }
+    localStorage['currentbalance'] = this.currentbalance;
   },
 
   applyMultiple(budgetChanges) {
@@ -393,6 +394,7 @@ room.registerElement('spacezone-budget', {
     }
 
     console.log(`Applied multiple budget changes. Total balance change: ${totalChange}. New balance: ${this.currentbalance}`);
+    localStorage['currentbalance'] = this.currentbalance;
   },
   
   updateSupplies() {
