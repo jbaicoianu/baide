@@ -349,8 +349,9 @@ room.registerElement('spacezone-cargoship', {
       scale: V(1, 1, 1),
     });
 
-    // Initialize engineglow array
+    // Initialize engineglow and trailsarrays
     this.engineglow = [];
+    this.trails = [];
 
     // Define engine positions
     const enginePositions = [
@@ -363,18 +364,18 @@ room.registerElement('spacezone-cargoship', {
     // Add spacezone-enginetrail objects and corresponding spheres
     enginePositions.forEach(pos => {
       // Create spacezone-enginetrail object
-      this.createObject('spacezone-enginetrail', {
-        pos: pos.clone().add(this.hull.pos),
-        parent: this.hull
+      let trail = this.createObject('spacezone-enginetrail', {
+        pos: pos,
       });
 
       // Create sphere with scale V(20) and store reference
       const sphere = this.createObject('object', {
         id: 'sphere',
-        pos: pos.clone().add(this.hull.pos),
+        pos: pos,
         scale: V(20),
-        col: 'blue', // Optional: set color for visibility
+        col: trail.col,
       });
+      this.trails.push(trail);
       this.engineglow.push(sphere);
     });
   },
