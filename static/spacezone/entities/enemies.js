@@ -197,7 +197,7 @@ room.registerElement('spacezone-enemy-drone', {
     if (!this.player) return;
 
     // Calculate direction vector from drone to player
-    const direction = new THREE.Vector3().subVectors(this.player.getWorldPosition(), this.getWorldPosition()).normalize();
+    const direction = new THREE.Vector3().subVectors(this.player.taufighter.getWorldPosition(), this.getWorldPosition()).normalize();
 
     // Calculate desired yaw and pitch in degrees
     let desiredYaw = Math.atan2(direction.x, direction.z) * (180 / Math.PI);
