@@ -95,17 +95,6 @@
     clip-path: polygon(0 50%, 100% 50%, 100% 99%, 0 99%);
 }
 /* CSS for budget HTML element */
-.budget_credit {
-    transition: all 0.5s ease;
-    color: green;
-    transform: scale(1.1);
-}
-
-.budget_debit {
-    transition: all 0.5s ease;
-    color: red;
-    transform: scale(1.1);
-}
 
 .spacezone-budget-credits {
     position: fixed;
@@ -114,6 +103,16 @@
     font-size: 20px;
     color: white;
     z-index: 1000;
+    transition: all 0.2s ease;
+}
+.spacezone-budget-credits.budget_credit {
+    color: green;
+    transform: scale(1.1);
+}
+
+.spacezone-budget-credits.budget_debit {
+    color: red;
+    transform: scale(1.1);
 }
 
 /* Responsive CSS for mobile devices */
