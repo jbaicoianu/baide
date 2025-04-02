@@ -238,6 +238,11 @@ room.registerElement('spacezone-spaceship', {
       scantime: 0.25 // Added scantime attribute with default value of 0.5 seconds
     });
 
+    // Add touchstart event listener to fire missile launcher
+    this.addEventListener('touchstart', () => {
+      this.missileLauncher.fire();
+    });
+
     // Create targeting reticle
     this.targetingReticle = room.createObject('spacezone-targeting-reticle');
 
