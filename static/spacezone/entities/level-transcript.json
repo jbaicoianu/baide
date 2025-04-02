@@ -703,5 +703,13 @@
     "branch": "main",
     "commit_hash": "8de15e82c08c0e1b42f2cdc6898ad49b32b5d10c",
     "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "User",
+    "content": "Show portals a bit sooner [Manual edit]",
+    "timestamp": "2025-04-02T23:50:33.003947Z",
+    "branch": "main",
+    "commit_hash": "0f2551fe919199d7475469c1fc265a4edba65c2b",
+    "file_name": "static/spacezone/entities/level.js"
   }
 ]
