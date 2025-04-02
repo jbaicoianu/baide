@@ -239,7 +239,7 @@ room.registerElement('spacezone-spaceship', {
     });
 
     // Add touchstart event listener to fire missile launcher
-    this.addEventListener('touchstart', () => {
+    window.addEventListener('touchstart', () => {
       this.missileLauncher.fire();
     });
 
