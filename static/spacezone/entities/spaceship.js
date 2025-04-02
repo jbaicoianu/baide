@@ -1282,6 +1282,8 @@ room.registerElement('spacezone-missile', {
   activate() {
     if (this.missile) {
       this.missile.visible = true;
+      this.missile.pos.set(0,0,0);
+      this.missile.rotation.set(90,0,0);
     }
     if (this.smokeTrail) {
       this.smokeTrail.visible = true;
