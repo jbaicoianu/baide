@@ -269,7 +269,20 @@ room.registerElement('spacezone-budget', {
     // Create HTML element for displaying credits
     this.creditsElement = document.createElement('div');
     this.creditsElement.className = 'spacezone-budget-credits';
-    this.creditsElement.textContent = `Credits: ₿${this.currentbalance}`;
+
+    const label = document.createElement('span');
+    label.textContent = 'Credits: ';
+
+    this.balanceSpan = document.createElement('span');
+    this.balanceSpan.className = 'budget_balance';
+    this.balanceSpan.textContent = `₿${this.currentbalance}`;
+
+    this.budgetItemsContainer = document.createElement('div');
+    this.budgetItemsContainer.className = 'budget_items_container';
+
+    this.creditsElement.appendChild(label);
+    this.creditsElement.appendChild(this.balanceSpan);
+    this.creditsElement.appendChild(this.budgetItemsContainer);
     document.body.appendChild(this.creditsElement);
 
     // Event handlers bound to the parent
@@ -289,8 +302,11 @@ room.registerElement('spacezone-budget', {
 
   reset() {
     this.currentbalance = 0;
-    if(this.creditsElement) {
-      this.creditsElement.textContent = `Credits: ₿${this.currentbalance}`;
+    if(this.balanceSpan) {
+      this.balanceSpan.textContent = `₿${this.currentbalance}`;
+    }
+    if(this.budgetItemsContainer) {
+      this.budgetItemsContainer.innerHTML = '';
     }
     // console.log('Budget has been reset to 0.');
   },
@@ -303,20 +319,39 @@ room.registerElement('spacezone-budget', {
     if(this.scores.hasOwnProperty(type)) {
       const scoreChange = this.scores[type] * quantity;
       this.currentbalance += scoreChange;
-      if(this.creditsElement) {
-        this.creditsElement.textContent = `Credits: ₿${this.currentbalance}`;
+      if(this.balanceSpan) {
+        this.balanceSpan.textContent = `₿${this.currentbalance}`;
         if(scoreChange > 0) {
-          this.creditsElement.classList.add('budget_credit');
+          this.balanceSpan.classList.add('budget_credit');
           setTimeout(() => {
-            this.creditsElement.classList.remove('budget_credit');
+            this.balanceSpan.classList.remove('budget_credit');
           }, 100);
         } else if(scoreChange < 0) {
-          this.creditsElement.classList.add('budget_debit');
+          this.balanceSpan.classList.add('budget_debit');
           setTimeout(() => {
-            this.creditsElement.classList.remove('budget_debit');
+            this.balanceSpan.classList.remove('budget_debit');
           }, 100);
         }
       }
+
+      // Append new budget item
+      if(this.budgetItemsContainer) {
+        const budgetItem = document.createElement('div');
+        budgetItem.className = 'budget_item';
+        budgetItem.innerHTML = `<span class="budget_item_type">${type}</span>: <span class="budget_item_value">${Math.abs(scoreChange)}₿</span>`;
+        this.budgetItemsContainer.appendChild(budgetItem);
+
+        // Add 'budget_item_removing' class after 250ms
+        setTimeout(() => {
+          budgetItem.classList.add('budget_item_removing');
+        }, 250);
+
+        // Remove the budget item from DOM after 1500ms
+        setTimeout(() => {
+          this.budgetItemsContainer.removeChild(budgetItem);
+        }, 1500);
+      }
+
       console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
     } else {
       console.warn(`Unknown budget type '${type}'.`);
