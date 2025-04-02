@@ -131,5 +131,22 @@
     "commit_hash": "ea242285d60fe77a692ee4f6ba4039240c2c095f",
     "model": "o1-mini",
     "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "User",
+    "content": "In our dialog element, let's make showDialog() return a promise. The promise will be resolved when the 'continue' event is fired by any element inside of our dialog. Make sure that our 'continue' custom event is set to bubble.",
+    "timestamp": "2025-04-02T04:57:55.943620Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have updated the `spacezone-dialog` element to make the `showDialog()` function return a promise that resolves when the 'continue' event is fired. Additionally, the 'continue' event is now set to bubble to ensure it can be handled by parent elements.\n\n```javascript",
+    "timestamp": "2025-04-02T04:58:17.976032Z",
+    "branch": "main",
+    "commit_hash": "c2345888aeb482a38ac2a80cb41b90b30e25c57b",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/level.js"
   }
 ]
