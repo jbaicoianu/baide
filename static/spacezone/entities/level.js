@@ -61,6 +61,7 @@
           scale: V(100),
           round: true,
           shader_id: 'defaultportal',
+          visible: false
         });
     
         // Add click event handler to portalRight
@@ -79,11 +80,17 @@
           shader_id: 'defaultportal',
           url: 'https://portal.pieter.com/',
           external: true,
+          visible: false
         });
     
         // Add event listener for race_start event
         this.addEventListener('race_start', () => {
           this.resetCargoShip();
+          // Set portals and labels to invisible when race starts again
+          this.portalLeft.visible = false;
+          this.portalRight.visible = false;
+          this.portalLeftLabel.visible = false;
+          this.portalRightLabel.visible = false;
         });
     
         // Create labels for portals
@@ -96,7 +103,8 @@
           col: 'white',
           rotation: '0 180 0',
           font_size: 2,
-          font_scale: false
+          font_scale: false,
+          visible: false
         });
     
         this.portalRightLabel = this.createObject('text', {
@@ -106,7 +114,16 @@
           col: 'white',
           rotation: '0 180 0',
           font_size: 2,
-          font_scale: false
+          font_scale: false,
+          visible: false
+        });
+    
+        // Listen for cargo ship dispatch event to show portals and labels
+        this.cargoShip.addEventListener('cargo_dispatched', () => {
+          this.portalLeft.visible = true;
+          this.portalRight.visible = true;
+          this.portalLeftLabel.visible = true;
+          this.portalRightLabel.visible = true;
         });
     
         // // Generate 10 enemy drones positioned randomly along the path
@@ -495,6 +512,8 @@
         this.dispatching = true;
         setTimeout(() => {
           this.accel = this.zdir.clone().multiplyScalar(150);
+          // Emit cargo_dispatched event
+          this.dispatchEvent(new Event('cargo_dispatched'));
         }, 1000);
       },
       update(dt) {
