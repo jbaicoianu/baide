@@ -2781,5 +2781,13 @@
     "branch": "main",
     "commit_hash": "08b363fb2217e47f9c6ade4e903c195f71b14ba1",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Reenabled collider for laserbeams [Manual edit]",
+    "timestamp": "2025-04-02T20:42:11.505940Z",
+    "branch": "main",
+    "commit_hash": "eb406ed4f46397980017216e70d4549a27108a37",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
