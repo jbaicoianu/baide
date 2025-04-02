@@ -325,12 +325,12 @@ room.registerElement('spacezone-budget', {
           this.balanceSpan.classList.add('budget_credit');
           setTimeout(() => {
             this.balanceSpan.classList.remove('budget_credit');
-          }, 100);
+          }, 250);
         } else if(scoreChange < 0) {
           this.balanceSpan.classList.add('budget_debit');
           setTimeout(() => {
             this.balanceSpan.classList.remove('budget_debit');
-          }, 100);
+          }, 250);
         }
       }
 
