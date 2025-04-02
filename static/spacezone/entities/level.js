@@ -94,8 +94,9 @@ room.registerElement('spacezone-level', {
       pos: this.portalLeft.pos.clone().add(labelOffset),
       scale: V(100),
       col: 'white',
-      rotation: '0 0 0',
-      font_size: 2
+      rotation: '0 180 0',
+      font_size: 2,
+      font_scale: false
     });
 
     this.portalRightLabel = this.createObject('text', {
@@ -103,8 +104,9 @@ room.registerElement('spacezone-level', {
       pos: this.portalRight.pos.clone().add(labelOffset),
       scale: V(100),
       col: 'white',
-      rotation: '0 0 0',
-      font_size: 2
+      rotation: '0 180 0',
+      font_size: 2,
+      font_scale: false
     });
 
     // // Generate 10 enemy drones positioned randomly along the path
