@@ -260,5 +260,6 @@ room.registerElement('spacezone-enemy-drone', {
     this.drone.rotation = V(0,0,0);
     // Remove the drone by setting its z position to -9999
     this.pos.z = -9999;
+    this.dispatchEvent({type: 'dronedestroyed', bubbles: true});
   }
 });
