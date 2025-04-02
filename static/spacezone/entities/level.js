@@ -43,6 +43,14 @@ room.registerElement('spacezone-level', {
       });
     }, 3000);
 
+    // Spawn the cargo-ship object
+    const cargoShipPosition = this.getPositionAtTime(1).clone().add(new THREE.Vector3(0, 0, 100));
+    this.cargoShip = this.createObject('object', {
+      id: 'cargo-ship',
+      js_id: 'cargo-ship',
+      pos: cargoShipPosition
+    });
+
     // // Generate 10 enemy drones positioned randomly along the path
     // this.enemyDrones = [];
     // for (let i = 0; i < 10; i++) {
@@ -271,4 +279,3 @@ room.registerElement('spacezone-score', {
     }
   }
 });
-
