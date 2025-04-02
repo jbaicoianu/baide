@@ -392,11 +392,6 @@ room.registerElement('spacezone-spaceship', {
     this.shieldstrength = Math.max(0, 100 - this.damage);
     console.log(`Shield strength: ${this.shieldstrength}`);
 
-    // Apply surrogate replacement fee when the user is destroyed
-    if (this.shieldstrength <= 0) {
-      this.budget.apply("surrogate replacement fee", 1);
-    }
-
     // Optionally, update score or trigger events based on damage
     this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
 
@@ -406,7 +401,10 @@ room.registerElement('spacezone-spaceship', {
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
       this.missileLauncher.disarm(); // Disarm missile launcher
-      this.dialog.showDialog('dialogs/failure-destroyed.html').then(() => this.startRace()); // Show our failure-destroyed dialog
+      this.dialog.showDialog('dialogs/failure-destroyed.html').then(() => {
+        this.budget.apply("surrogate replacement fee", 1);
+        this.startRace()
+      }); // Show our failure-destroyed dialog
       this.targetingReticle.hideReticle(); // Hide reticle when race fails
 
       // Set shipcollider.collidable to false and shipcollider.pickable to true when race ends
