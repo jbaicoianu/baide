@@ -309,12 +309,12 @@ room.registerElement('spacezone-budget', {
           this.creditsElement.classList.add('budget_credit');
           setTimeout(() => {
             this.creditsElement.classList.remove('budget_credit');
-          }, 200);
+          }, 100);
         } else if(scoreChange < 0) {
           this.creditsElement.classList.add('budget_debit');
           setTimeout(() => {
             this.creditsElement.classList.remove('budget_debit');
-          }, 200);
+          }, 100);
         }
       }
       console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
