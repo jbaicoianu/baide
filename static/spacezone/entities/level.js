@@ -63,6 +63,15 @@ room.registerElement('spacezone-level', {
       shader_id: 'defaultportal',
     });
 
+    // Add click event handler to portalRight
+    this.portalRight.addEventListener('click', () => {
+      if (room.objects['player-ship'] && typeof room.objects['player-ship'].startRace === 'function') {
+        room.objects['player-ship'].startRace();
+      } else {
+        console.warn("player-ship object or startRace method not found.");
+      }
+    });
+
     this.portalLeft = this.createObject('link', {
       pos: cargoShipPosition.clone().add(V(200, 0, 200)),
       scale: V(100),
