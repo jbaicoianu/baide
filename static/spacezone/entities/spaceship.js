@@ -816,9 +816,10 @@ room.registerElement('spacezone-spaceship', {
       this.smokeTrail.emitter_pos = missileWorldPos;
     }
     // shield shader uniform hack
+      console.log('?', this.shield.shader);
     if (this.shield && this.shield.shader) {
-        this.shield.shader.uniforms.color.set(1,0,0);
-        this.shield.shader.uniforms.resolution.set(512,512,1);
+        this.shield.shader.uniforms.color.value.set(1,0,0);
+        this.shield.shader.uniforms.resolution.value.set(512,512,1);
     }
   },
   reset() {
