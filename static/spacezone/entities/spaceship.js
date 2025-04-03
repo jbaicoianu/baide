@@ -89,6 +89,15 @@ room.registerElement('spacezone-spaceship', {
       collidable: false, // Collider has been disabled
     });
     
+    // Spawn a new shield element on the taufighter ship
+    this.shield = this.taufighter.createObject('object', {
+      pos: V(0, 0, 2),
+      scale: V(16, 3.5, 18),
+      col: 'red',
+      opacity: 0.6,
+      renderorder: 10
+    });
+    
     // Instantiate multiple engine trails as children of the player
     this.enginetrails = [];
     const trailPositions = [
