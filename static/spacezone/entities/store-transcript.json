@@ -182,5 +182,13 @@
     "branch": "main",
     "commit_hash": "13045fcc54f0139c5bce059c936fbf3ea366bccf",
     "file_name": "static/spacezone/entities/store.js"
+  },
+  {
+    "role": "User",
+    "content": "Fixed budget attribute name [Manual edit]",
+    "timestamp": "2025-04-03T23:52:52.832378Z",
+    "branch": "main",
+    "commit_hash": "bde5ed0bcabd4bda575a4a1aec97d15411f6b4c3",
+    "file_name": "static/spacezone/entities/store.js"
   }
 ]
