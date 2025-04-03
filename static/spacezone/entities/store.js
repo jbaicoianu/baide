@@ -49,7 +49,7 @@ room.registerElement('spacezone-store', {
       const itemDiv = document.createElement('div');
       itemDiv.className = 'store-item';
       
-      if (item.price > budget.currentbudget) {
+      if (item.price > budget.currentbalance) {
         itemDiv.classList.add('over-budget');
       }
 
