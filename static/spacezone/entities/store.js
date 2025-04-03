@@ -59,6 +59,12 @@ room.registerElement('spacezone-store', {
       nameDiv.textContent = item.name;
       itemDiv.appendChild(nameDiv);
 
+      // Create Price Element
+      const priceDiv = document.createElement('div');
+      priceDiv.className = 'store-item-price';
+      priceDiv.textContent = `Price: $${item.price.toFixed(2)}`;
+      itemDiv.appendChild(priceDiv);
+
       itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
       grid.appendChild(itemDiv);
     });
@@ -101,6 +107,12 @@ room.registerElement('spacezone-store', {
       nameDiv.className = 'store-item-name';
       nameDiv.textContent = item.name;
       itemDiv.appendChild(nameDiv);
+
+      // Create Price Element
+      const priceDiv = document.createElement('div');
+      priceDiv.className = 'store-item-price';
+      priceDiv.textContent = `Price: $${item.price.toFixed(2)}`;
+      itemDiv.appendChild(priceDiv);
 
       itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
       grid.appendChild(itemDiv);
