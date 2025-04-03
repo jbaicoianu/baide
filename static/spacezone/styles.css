@@ -225,6 +225,12 @@ CSS for spacezone-store
   border-radius: 4px;
 }
 
+.item-details .details-item-image {
+  width: 256px;
+  height: 256px;
+  float: right;
+}
+
 .buy-button {
   margin-top: 10px;
   padding: 10px 20px;
