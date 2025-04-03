@@ -53,12 +53,6 @@ room.registerElement('spacezone-store', {
       img.className = 'store-item-image';
       itemDiv.appendChild(img);
 
-      // Create Description Div
-      const descriptionDiv = document.createElement('div');
-      descriptionDiv.className = 'store-item-description';
-      descriptionDiv.textContent = item.description ? item.description : 'No description available.';
-      itemDiv.appendChild(descriptionDiv);
-
       // Create Name Element
       const nameDiv = document.createElement('div');
       nameDiv.className = 'store-item-name';
@@ -101,12 +95,6 @@ room.registerElement('spacezone-store', {
       img.alt = item.name;
       img.className = 'store-item-image';
       itemDiv.appendChild(img);
-
-      // Create Description Div
-      const descriptionDiv = document.createElement('div');
-      descriptionDiv.className = 'store-item-description';
-      descriptionDiv.textContent = item.description ? item.description : 'No description available.';
-      itemDiv.appendChild(descriptionDiv);
 
       // Create Name Element
       const nameDiv = document.createElement('div');
