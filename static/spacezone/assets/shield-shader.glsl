@@ -22,7 +22,7 @@ float noise(vec2 p) {
 }
 
 void main() {
-    vec3 tempcolor = vec3(1.0,0,0);
+    vec3 tmpcolor = vec3(1.0,0,0);
     // Throbs and hums with dynamic noise patterns
     float n = noise(vUv * 10.0 + time * 2.0);
     float idle = 0.5 + 0.5 * sin(time * 1.5) * n;
