@@ -184,14 +184,14 @@ CSS for spacezone-store
   padding: 10px;
   border-radius: 4px;
   cursor: pointer;
-  flex: 1 1 calc(33% - 20px);
+  width: 150px; /* Fixed width */
   box-sizing: border-box;
   aspect-ratio: 1 / 1;
   border: 1px solid #ccc;
   transition: box-shadow 0.3s;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -204,11 +204,20 @@ CSS for spacezone-store
 }
 
 .store-item img {
-  width: 256px;
-  height: 256px;
-  float: right;
+  width: 128px;
+  height: 128px;
+  object-fit: cover;
+  margin: 0; /* Remove default margin */
+  padding: 0; /* Remove default padding */
 }
 
+.store-item-name {
+  margin-top: 5px; /* Minimal space above the text */
+  text-align: center;
+  font-size: 14px;
+}
+
+/* Adjusted item-details to accommodate changes */
 .item-details {
   margin-top: 20px;
   background-color: #333;
