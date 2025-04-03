@@ -822,7 +822,7 @@ room.registerElement('spacezone-spaceship', {
         this.shield.shader.uniforms.color.value.set(1,0,0);
         this.shield.shader.uniforms.resolution.value.set(512,512,1);
       } else {
-          this.shield.assighTextures();
+          this.shield.assignTextures();
       }
     }
   },
