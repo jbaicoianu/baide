@@ -204,8 +204,9 @@ CSS for spacezone-store
 }
 
 .store-item img {
-  width: 150px;
-  height: 150px;
+  width: 256px;
+  height: 256px;
+  float: right;
 }
 
 .item-details {
