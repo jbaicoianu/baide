@@ -804,5 +804,22 @@
     "commit_hash": "fbd84be74b21f5f36f72e1472f8d1d2ae460d33f",
     "model": "o1-mini",
     "file_name": "static/spacezone/index.html"
+  },
+  {
+    "role": "User",
+    "content": "Make sure we're set to use the summary_large_image twitter card type",
+    "timestamp": "2025-04-03T01:48:34.420401Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/index.html"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added the `twitter:card` meta tag with the value `summary_large_image` to ensure Twitter displays the appropriate card type.",
+    "timestamp": "2025-04-03T01:48:52.012366Z",
+    "branch": "main",
+    "commit_hash": "0032bc8e561f871cef5c822975773022268fbcf3",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/index.html"
   }
 ]
