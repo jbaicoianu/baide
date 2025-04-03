@@ -1,5 +1,5 @@
 // File: static/spacezone/entities/level.js
-        
+
     room.registerElement('spacezone-level', {
       create() {
         // Initialization code for spacezone-level
@@ -267,6 +267,7 @@
             .then(htmlContent => {
               this.contentArea.innerHTML = htmlContent;
               this.dialogContainer.style.display = 'block';
+              this.continueButton.focus(); // Focus on the continue button
               this.contentArea.scrollTop = 0; // Scroll to top when dialog is shown
               
               const onContinue = (event) => {
