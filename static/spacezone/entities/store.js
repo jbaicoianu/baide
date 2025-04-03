@@ -129,7 +129,7 @@ room.registerElement('spacezone-store', {
     content.appendChild(this.details);
 
     this.root.appendChild(content);
-    return root;
+    return this.root;
   },
 
   switchCategory(category, tabElement, root) {
