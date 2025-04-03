@@ -223,6 +223,7 @@ CSS for spacezone-store
   background-color: #333;
   padding: 15px;
   border-radius: 4px;
+  min-height: 286px;
 }
 
 .item-details .details-item-image {
