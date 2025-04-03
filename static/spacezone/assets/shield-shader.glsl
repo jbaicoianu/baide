@@ -28,21 +28,12 @@ void main() {
 
     // Fresnel effect for edge glow
     float fresnel = pow(1.0 - dot(normalize(vec2(vUv.x - 0.5, vUv.y - 0.5)), vec2(0.0, 0.0)), 3.0);
-    
-    // Hit effect: rippling electrical activity
-    float dist = distance(vUv, hitUV);
-    float ripple = 0.0;
-    
-    if(hitTrigger > 0.5) {
-        float rippleEffect = sin((dist * 20.0) - (time * 5.0)) * exp(-dist * 5.0);
-        ripple = smoothstep(0.02, 0.0, rippleEffect) * rippleEffect;
-    }
-    
+
     // Combine effects with Fresnel
-    vec3 shieldColor = color * idle + vec3(ripple) + vec3(fresnel);
-    
+    vec3 shieldColor = color * idle + vec3(fresnel);
+
     // Adjust transparency
     float alpha = 0.3 + 0.2 * idle + 0.1 * fresnel;
-    
+
     gl_FragColor = vec4(shieldColor, alpha);
 }
