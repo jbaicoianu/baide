@@ -1,0 +1,15 @@
+{
+  "Engines": [
+    { "name": "Impeller v1", "price": 2500.0, "params": { "thrust": 1200 } },
+    { "name": "Impeller v2", "price": 5500.0, "params": { "thrust": 1750 } },
+    { "name": "Fusion Drive v1", "price": 15500.0, "params": { "thrust": 3550 } }
+  ],
+  "Shields": [
+    { "name": "Defender v1", "price": 1450.0, "description": "The basic model engine, the Defender v1 provides adequate power to get your ship where it needs to go", "params": { "shieldstrength": 120 } },
+    { "name": "Defender v2", "price": 2560.0, "description": "A slight improvement over the v1, the Defender v2 will give you a little extra push to get where you're going a little faster", "params": { "shieldstrength": 160 } }
+  ],
+  "Cargo": [
+    { "name": "Small Cargo Hold", "price": 525, "params": { "cargocapacity": 120 } },
+    { "name": "Medium Cargo Hold", "price": 1025, "params": { "cargocapacity": 180 } }
+  ]
+}
