@@ -26,14 +26,11 @@ void main() {
     float n = noise(vUv * 10.0 + time * 2.0);
     float idle = 0.5 + 0.5 * sin(time * 1.5) * n;
 
-    // Fresnel effect for edge glow
-    float fresnel = pow(1.0 - dot(normalize(vec2(vUv.x - 0.5, vUv.y - 0.5)), vec2(0.0, 0.0)), 3.0);
-
-    // Combine effects with Fresnel
-    vec3 shieldColor = color * idle + vec3(fresnel);
+    // Combine effects without Fresnel
+    vec3 shieldColor = color * idle;
 
     // Adjust transparency
-    float alpha = 0.3 + 0.2 * idle + 0.1 * fresnel;
+    float alpha = 0.3 + 0.2 * idle;
 
     gl_FragColor = vec4(shieldColor, alpha);
 }
