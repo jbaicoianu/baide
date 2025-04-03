@@ -203,6 +203,11 @@ CSS for spacezone-store
   border: 2px solid #00ff00;
 }
 
+.store-item img {
+  width: 150px;
+  height: 150px;
+}
+
 .item-details {
   margin-top: 20px;
   background-color: #333;
