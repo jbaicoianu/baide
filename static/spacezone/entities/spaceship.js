@@ -95,9 +95,9 @@ room.registerElement('spacezone-spaceship', {
       pos: V(0, 0, 2),
       scale: V(16, 3.5, 18),
       col: 'red',
-      opacity: 0.6,
+      opacity: 0.4,
       renderorder: 10,
-      shader_id: 'shield-shader'
+      //shader_id: 'shield-shader'
     });
     
     // Instantiate multiple engine trails as children of the player
