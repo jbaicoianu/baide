@@ -4,33 +4,45 @@ uniform vec3 color;
 uniform float time;
 uniform vec2 hitUV;
 uniform float hitTrigger;
+uniform vec2 resolution;
 
 varying vec2 vUv;
 
-// Simple noise function
+// Improved noise function using multiple octaves
 float noise(vec2 p) {
-    return fract(sin(dot(p, vec2(12.9898,78.233))) * 43758.5453);
+    float total = 0.0;
+    float frequency = 1.0;
+    float amplitude = 0.5;
+    for(int i = 0; i < 4; i++) {
+        total += amplitude * fract(sin(dot(p * frequency, vec2(12.9898,78.233))) * 43758.5453);
+        frequency *= 2.0;
+        amplitude *= 0.5;
+    }
+    return total;
 }
 
 void main() {
-    // Idle effect: gently swirling clouds
-    float idle = 0.5 + 0.5 * sin((vUv.x + time * 0.1) * 10.0) * sin((vUv.y + time * 0.1) * 10.0);
+    // Throbs and hums with dynamic noise patterns
+    float n = noise(vUv * 10.0 + time * 2.0);
+    float idle = 0.5 + 0.5 * sin(time * 1.5) * n;
+
+    // Fresnel effect for edge glow
+    float fresnel = pow(1.0 - dot(normalize(vec2(vUv.x - 0.5, vUv.y - 0.5)), vec2(0.0, 0.0)), 3.0);
     
-    // Hit effect: lightning bolt
+    // Hit effect: rippling electrical activity
     float dist = distance(vUv, hitUV);
-    float lightning = 0.0;
+    float ripple = 0.0;
     
     if(hitTrigger > 0.5) {
-        float angle = atan(vUv.y - hitUV.y, vUv.x - hitUV.x);
-        float angleDiff = abs(mod(angle, 3.14159 / 4.0) - 0.0);
-        lightning = smoothstep(0.01, 0.0, angleDiff) * exp(-dist * 20.0) * sin(dist * 40.0 - time * 5.0);
+        float rippleEffect = sin((dist * 20.0) - (time * 5.0)) * exp(-dist * 5.0);
+        ripple = smoothstep(0.02, 0.0, rippleEffect) * rippleEffect;
     }
     
-    // Combine effects
-    vec3 shieldColor = color * idle + vec3(lightning);
+    // Combine effects with Fresnel
+    vec3 shieldColor = color * idle + vec3(ripple) + vec3(fresnel);
     
     // Adjust transparency
-    float alpha = 0.3 + 0.2 * idle;
+    float alpha = 0.3 + 0.2 * idle + 0.1 * fresnel;
     
     gl_FragColor = vec4(shieldColor, alpha);
 }
