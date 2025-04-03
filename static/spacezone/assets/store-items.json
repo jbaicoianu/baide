@@ -1,7 +1,8 @@
 {
   "Engines": [
-    { "name": "Impeller v1", "price": 2500.0, "params": { "thrust": 1200 } },
-    { "name": "Impeller v2", "price": 5500.0, "params": { "thrust": 1750 } },
+    { "name": "Impeller v1", "price": 2500.0, "image": "assets/store/engines/impeller-v1.png", "params": { "thrust": 1200 } },
+    { "name": "Impeller v2", "price": 5500.0, "image": "assets/store/engines/impeller-v2.png", "params": { "thrust": 1750 } },
+    { "name": "Impeller v3", "price": 8750.0, "image": "assets/store/engines/impeller-v3.png", "params": { "thrust": 2250 } },
     { "name": "Fusion Drive v1", "price": 15500.0, "params": { "thrust": 3550 } }
   ],
   "Shields": [
