@@ -267,10 +267,8 @@ room.registerElement('spacezone-dialog', {
         .then(htmlContent => {
           this.contentArea.innerHTML = htmlContent;
           this.dialogContainer.style.display = 'block';
-          this.continueButton.focus(); // Focus on the continue button
-          setTimeout(() => {
-            this.contentArea.scrollTop = 0; // Scroll to top when dialog is shown
-          }, 0);
+          this.continueButton.focus({preventScroll: true}); // Focus on the continue button
+          this.contentArea.scrollTop = 0; // Scroll to top when dialog is shown
           
           const onContinue = (event) => {
             resolve();
