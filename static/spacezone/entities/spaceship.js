@@ -31,6 +31,10 @@ room.registerElement('spacezone-spaceship', {
   offsetXFilter: null,
   offsetYFilter: null,
 
+  // Properties for shield flicker effect
+  shieldFlickerTimer: 0, // Timer for shield flicker
+  shieldFlickerDuration: 0.2, // Duration of the shield flicker in seconds
+
   // Simple Kalman Filter class
   KalmanFilter: class {
     constructor(R = 0.01, Q = 0.01) {
@@ -404,6 +408,12 @@ room.registerElement('spacezone-spaceship', {
     this.shieldstrength = Math.max(0, 100 - this.damage);
     console.log(`Shield strength: ${this.shieldstrength}`);
 
+    // Initiate shield flicker
+    if (this.shield) {
+      this.shield.opacity = 0.1;
+      this.shieldFlickerTimer = this.shieldFlickerDuration;
+    }
+
     // Optionally, update score or trigger events based on damage
     this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
 
@@ -514,6 +524,13 @@ room.registerElement('spacezone-spaceship', {
   update(dt) {
     // Update ship stats overlay
     this.updateShipStatsOverlay();
+
+    // Handle shield flicker decay
+    if (this.shieldFlickerTimer > 0) {
+      const decay = dt / this.shieldFlickerDuration;
+      this.shield.opacity = Math.max(this.shield.opacity - 0.1 * decay, 0);
+      this.shieldFlickerTimer -= dt;
+    }
 
     if (this.countdown) {
       this.countdownTime += dt;
