@@ -1,3 +1,15 @@
+/* 
+/* CSS for over-budget items and disabled buy button */
+.store-item.over-budget {
+  opacity: 0.5;
+}
+
+.buy-button.disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
+*/
+
 room.registerElement('spacezone-store', {
   storeData: {},
   currentCategory: '',
@@ -7,16 +19,19 @@ room.registerElement('spacezone-store', {
     let root = this.root = document.createElement('div');
     root.className = 'spacezone-store';
     
+    // Example budget object
+    this.budget = { currentbudget: 100 }; // You can update this as needed
+
     fetch('assets/store-items.json')
       .then(response => response.json())
       .then(data => {
         this.storeData = data;
-        this.showItems();
+        this.showItems(this.budget);
       })
       .catch(err => console.error('Failed to load store items:', err));
   },
 
-  showItems() {
+  showItems(budget) {
     this.root.innerHTML = ''; // Clear existing content
 
     // Create Tabs
@@ -30,7 +45,7 @@ room.registerElement('spacezone-store', {
         tab.classList.add('active');
         this.currentCategory = category;
       }
-      tab.addEventListener('click', () => this.switchCategory(category, tab, this.root));
+      tab.addEventListener('click', () => this.switchCategory(category, tab, this.root, budget));
       tabs.appendChild(tab);
     });
     this.root.appendChild(tabs);
@@ -45,6 +60,10 @@ room.registerElement('spacezone-store', {
     this.storeData[this.currentCategory].forEach(item => {
       const itemDiv = document.createElement('div');
       itemDiv.className = 'store-item';
+      
+      if (item.price > budget.currentbudget) {
+        itemDiv.classList.add('over-budget');
+      }
 
       // Create Image Element
       const img = document.createElement('img');
@@ -66,7 +85,7 @@ room.registerElement('spacezone-store', {
       priceDiv.textContent = `${formattedPrice}₿`;
       itemDiv.appendChild(priceDiv);
 
-      itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
+      itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root, budget));
       grid.appendChild(itemDiv);
     });
     content.appendChild(grid);
@@ -80,7 +99,7 @@ room.registerElement('spacezone-store', {
     return this.root;
   },
 
-  switchCategory(category, tabElement, root) {
+  switchCategory(category, tabElement, root, budget) {
     // Update active tab
     const activeTab = root.querySelector('.store-tab.active');
     if (activeTab) activeTab.classList.remove('active');
@@ -95,6 +114,10 @@ room.registerElement('spacezone-store', {
     this.storeData[category].forEach(item => {
       const itemDiv = document.createElement('div');
       itemDiv.className = 'store-item';
+      
+      if (item.price > budget.currentbudget) {
+        itemDiv.classList.add('over-budget');
+      }
 
       // Create Image Element
       const img = document.createElement('img');
@@ -116,12 +139,12 @@ room.registerElement('spacezone-store', {
       priceDiv.textContent = `${formattedPrice}₿`;
       itemDiv.appendChild(priceDiv);
 
-      itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
+      itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root, budget));
       grid.appendChild(itemDiv);
     });
   },
 
-  selectItem(itemElement, itemData, root) {
+  selectItem(itemElement, itemData, root, budget) {
     // Deselect previous
     const previousSelected = root.querySelector('.store-item.selected');
     if (previousSelected) previousSelected.classList.remove('selected');
@@ -160,14 +183,22 @@ room.registerElement('spacezone-store', {
     const buyButton = document.createElement('button');
     buyButton.className = 'buy-button';
     buyButton.textContent = 'Buy';
-    buyButton.addEventListener('click', () => this.purchaseItem(root));
+    
+    if (itemData.price > budget.currentbudget) {
+      buyButton.classList.add('disabled');
+      buyButton.disabled = true;
+    } else {
+      buyButton.addEventListener('click', () => this.purchaseItem(root));
+    }
+
     this.details.appendChild(buyButton);
   },
 
   purchaseItem(root) {
     if (this.selectedItem) {
-      // Implement purchase logic here
-      alert(`Purchased ${this.selectedItem.name}!`);
+      // Dispatch purchase event
+      this.dispatchEvent({ type: 'purchased', data: this.selectedItem });
+      
       this.details.innerHTML = '<div>Purchase successful!</div>';
       this.selectedItem = null;
       
