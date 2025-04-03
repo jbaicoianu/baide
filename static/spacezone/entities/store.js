@@ -7,9 +7,6 @@ room.registerElement('spacezone-store', {
     let root = this.root = document.createElement('div');
     root.className = 'spacezone-store';
     
-    // Example budget object
-    this.budget = { currentbudget: 100 }; // You can update this as needed
-
     fetch('assets/store-items.json')
       .then(response => response.json())
       .then(data => {
@@ -103,7 +100,7 @@ room.registerElement('spacezone-store', {
       const itemDiv = document.createElement('div');
       itemDiv.className = 'store-item';
       
-      if (item.price > budget.currentbudget) {
+      if (item.price > budget.currentbalance) {
         itemDiv.classList.add('over-budget');
       }
 
@@ -172,7 +169,7 @@ room.registerElement('spacezone-store', {
     buyButton.className = 'buy-button';
     buyButton.textContent = 'Buy';
     
-    if (itemData.price > budget.currentbudget) {
+    if (itemData.price > budget.currentbalance) {
       buyButton.classList.add('disabled');
       buyButton.disabled = true;
     } else {
