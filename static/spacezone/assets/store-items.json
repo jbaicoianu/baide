@@ -9,7 +9,7 @@
   ],
   "Shields": [
     { "name": "Defender Mk1", "price": 1450.0, "image": "assets/store/shields/defender-mk1.png", "description": "The basic model engine, the Defender Mk1 provides adequate power to get your ship where it needs to go", "image": "assets/store/shields/defender-mk1.png", "params": { "shieldstrength": 120 } },
-    { "name": "Defender Mk2", "price": 2560.0, "image": "assets/store/shields/defender-mk2.png", "description": "A slight improvement over the Mk1, the Defender Mk2 will give you a little extra push to get where you're going a little faster", "params": { "shieldstrength": 160 } }
+    { "name": "Defender Mk2", "price": 2560.0, "image": "assets/store/shields/defender-mk2.png", "description": "A slight improvement over the Mk1, the Defender Mk2 will give you a little extra push to get where you're going a little faster", "params": { "shieldstrength": 160 } },
     { "name": "Defender Mk3", "price": 2560.0, "image": "assets/store/shields/defender-mk2.png", "description": "Our top of the line model, the Defender Mk3 will keep you safe no matter what dangers you're facing down", "params": { "shieldstrength": 160 } }
   ],
   "Cargo": [
