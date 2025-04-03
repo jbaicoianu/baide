@@ -76,21 +76,20 @@ room.registerElement('spacezone-store', {
   selectedItem: null,
 
   create() {
-    const root = document.createElement('div');
+    let root = this.root = document.createElement('div');
     root.className = 'spacezone-store';
-    this.appendChild(root);
     
     fetch('assets/store-items.json')
       .then(response => response.json())
       .then(data => {
         this.storeData = data;
-        this.showItems(root);
+        this.showItems();
       })
       .catch(err => console.error('Failed to load store items:', err));
   },
 
-  showItems(root) {
-    root.innerHTML = ''; // Clear existing content
+  showItems() {
+    this.root.innerHTML = ''; // Clear existing content
 
     // Create Tabs
     const tabs = document.createElement('div');
@@ -106,7 +105,7 @@ room.registerElement('spacezone-store', {
       tab.addEventListener('click', () => this.switchCategory(category, tab, root));
       tabs.appendChild(tab);
     });
-    root.appendChild(tabs);
+    this.root.appendChild(tabs);
 
     // Create Content Area
     const content = document.createElement('div');
@@ -129,7 +128,8 @@ room.registerElement('spacezone-store', {
     this.details.className = 'item-details';
     content.appendChild(this.details);
 
-    root.appendChild(content);
+    this.root.appendChild(content);
+    return root;
   },
 
   switchCategory(category, tabElement, root) {
