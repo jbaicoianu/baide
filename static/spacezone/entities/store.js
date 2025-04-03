@@ -62,7 +62,8 @@ room.registerElement('spacezone-store', {
       // Create Price Element
       const priceDiv = document.createElement('div');
       priceDiv.className = 'store-item-price';
-      priceDiv.textContent = `Price: $${item.price.toFixed(2)}`;
+      const formattedPrice = new Intl.NumberFormat().format(item.price);
+      priceDiv.textContent = `${formattedPrice}₿`;
       itemDiv.appendChild(priceDiv);
 
       itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
@@ -111,7 +112,8 @@ room.registerElement('spacezone-store', {
       // Create Price Element
       const priceDiv = document.createElement('div');
       priceDiv.className = 'store-item-price';
-      priceDiv.textContent = `Price: $${item.price.toFixed(2)}`;
+      const formattedPrice = new Intl.NumberFormat().format(item.price);
+      priceDiv.textContent = `${formattedPrice}₿`;
       itemDiv.appendChild(priceDiv);
 
       itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
@@ -151,7 +153,8 @@ room.registerElement('spacezone-store', {
 
     const price = document.createElement('div');
     price.className = 'details-item-price';
-    price.textContent = `Price: $${itemData.price.toFixed(2)}`;
+    const formattedPrice = new Intl.NumberFormat().format(itemData.price);
+    price.textContent = `Price: ${formattedPrice}₿`;
     this.details.appendChild(price);
 
     const buyButton = document.createElement('button');
