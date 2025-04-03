@@ -76,93 +76,123 @@ room.registerElement('spacezone-store', {
   selectedItem: null,
 
   create() {
+    const root = document.createElement('div');
+    root.className = 'spacezone-store';
+    this.appendChild(root);
+    
     fetch('assets/store-items.json')
       .then(response => response.json())
       .then(data => {
         this.storeData = data;
-        this.showItems();
+        this.showItems(root);
       })
       .catch(err => console.error('Failed to load store items:', err));
   },
 
-  showItems() {
-    this.clearChildren();
+  showItems(root) {
+    root.innerHTML = ''; // Clear existing content
 
     // Create Tabs
-    const tabs = this.createObject('object', { classname: 'store-tabs' });
+    const tabs = document.createElement('div');
+    tabs.className = 'store-tabs';
     Object.keys(this.storeData).forEach((category, index) => {
-      const tab = this.createObject('object', { classname: 'store-tab', text: category });
+      const tab = document.createElement('div');
+      tab.className = 'store-tab';
+      tab.textContent = category;
       if (index === 0) {
         tab.classList.add('active');
         this.currentCategory = category;
       }
-      tab.addEventListener('click', () => this.switchCategory(category, tab));
+      tab.addEventListener('click', () => this.switchCategory(category, tab, root));
       tabs.appendChild(tab);
     });
+    root.appendChild(tabs);
 
     // Create Content Area
-    const content = this.createObject('object', { classname: 'store-content' });
+    const content = document.createElement('div');
+    content.className = 'store-content';
     
     // Create Item Grid
-    const grid = this.createObject('object', { classname: 'item-grid' });
+    const grid = document.createElement('div');
+    grid.className = 'item-grid';
     this.storeData[this.currentCategory].forEach(item => {
-      const itemObj = this.createObject('object', { classname: 'store-item', text: item.name });
-      itemObj.addEventListener('click', () => this.selectItem(itemObj, item));
-      grid.appendChild(itemObj);
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'store-item';
+      itemDiv.textContent = item.name;
+      itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, root));
+      grid.appendChild(itemDiv);
     });
     content.appendChild(grid);
 
     // Create Item Details Area
-    this.details = this.createObject('object', { classname: 'item-details' });
+    this.details = document.createElement('div');
+    this.details.className = 'item-details';
     content.appendChild(this.details);
 
-    this.appendChild(tabs);
-    this.appendChild(content);
+    root.appendChild(content);
   },
 
-  switchCategory(category, tabElement) {
+  switchCategory(category, tabElement, root) {
     // Update active tab
-    this.querySelector('.store-tab.active')?.classList.remove('active');
+    const activeTab = root.querySelector('.store-tab.active');
+    if (activeTab) activeTab.classList.remove('active');
     tabElement.classList.add('active');
 
     this.currentCategory = category;
     this.selectedItem = null;
-    this.details.clearChildren();
+    this.details.innerHTML = '';
 
-    const grid = this.querySelector('.item-grid');
-    grid.clearChildren();
+    const grid = root.querySelector('.item-grid');
+    grid.innerHTML = '';
     this.storeData[category].forEach(item => {
-      const itemObj = this.createObject('object', { classname: 'store-item', text: item.name });
-      itemObj.addEventListener('click', () => this.selectItem(itemObj, item));
-      grid.appendChild(itemObj);
+      const itemDiv = document.createElement('div');
+      itemDiv.className = 'store-item';
+      itemDiv.textContent = item.name;
+      itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, root));
+      grid.appendChild(itemDiv);
     });
   },
 
-  selectItem(itemElement, itemData) {
+  selectItem(itemElement, itemData, root) {
     // Deselect previous
-    this.querySelector('.store-item.selected')?.classList.remove('selected');
+    const previousSelected = root.querySelector('.store-item.selected');
+    if (previousSelected) previousSelected.classList.remove('selected');
     // Select new
     itemElement.classList.add('selected');
     this.selectedItem = itemData;
 
     // Update details
-    this.details.clearChildren();
-    this.details.createObject('object', { text: `Name: ${itemData.name}` });
-    this.details.createObject('object', { text: `Price: $${itemData.price.toFixed(2)}` });
+    this.details.innerHTML = '';
+    const name = document.createElement('div');
+    name.textContent = `Name: ${itemData.name}`;
+    this.details.appendChild(name);
+
+    const price = document.createElement('div');
+    price.textContent = `Price: $${itemData.price.toFixed(2)}`;
+    this.details.appendChild(price);
+
     if (itemData.description) {
-      this.details.createObject('object', { text: `Description: ${itemData.description}` });
+      const description = document.createElement('div');
+      description.textContent = `Description: ${itemData.description}`;
+      this.details.appendChild(description);
     }
-    const buyButton = this.details.createObject('object', { classname: 'buy-button', text: 'Buy' });
-    buyButton.addEventListener('click', () => this.purchaseItem());
+
+    const buyButton = document.createElement('button');
+    buyButton.className = 'buy-button';
+    buyButton.textContent = 'Buy';
+    buyButton.addEventListener('click', () => this.purchaseItem(root));
+    this.details.appendChild(buyButton);
   },
 
-  purchaseItem() {
+  purchaseItem(root) {
     if (this.selectedItem) {
-      this.dispatchEvent('purchased', { item: this.selectedItem });
-      // Optionally, provide feedback to user
-      this.details.createObject('object', { text: 'Purchase successful!' });
+      // Implement purchase logic here
+      alert(`Purchased ${this.selectedItem.name}!`);
+      this.details.innerHTML = '<div>Purchase successful!</div>';
       this.selectedItem = null;
-      this.querySelector('.store-item.selected')?.classList.remove('selected');
+      
+      const selectedElement = root.querySelector('.store-item.selected');
+      if (selectedElement) selectedElement.classList.remove('selected');
     }
   }
 });
