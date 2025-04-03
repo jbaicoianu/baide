@@ -95,7 +95,8 @@ room.registerElement('spacezone-spaceship', {
       pos: V(0, 0, 2),
       scale: V(16, 3.5, 18),
       col: 'red',
-      opacity: 0.4,
+      lighting: false,
+      opacity: 0.2,
       renderorder: 10,
       //shader_id: 'shield-shader'
     });
