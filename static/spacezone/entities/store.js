@@ -45,7 +45,26 @@ room.registerElement('spacezone-store', {
     this.storeData[this.currentCategory].forEach(item => {
       const itemDiv = document.createElement('div');
       itemDiv.className = 'store-item';
-      itemDiv.textContent = item.name;
+
+      // Create Image Element
+      const img = document.createElement('img');
+      img.src = item.image ? item.image : 'assets/store/noimage.png';
+      img.alt = item.name;
+      img.className = 'store-item-image';
+      itemDiv.appendChild(img);
+
+      // Create Description Div
+      const descriptionDiv = document.createElement('div');
+      descriptionDiv.className = 'store-item-description';
+      descriptionDiv.textContent = item.description ? item.description : 'No description available.';
+      itemDiv.appendChild(descriptionDiv);
+
+      // Create Name Element
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'store-item-name';
+      nameDiv.textContent = item.name;
+      itemDiv.appendChild(nameDiv);
+
       itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
       grid.appendChild(itemDiv);
     });
@@ -75,7 +94,26 @@ room.registerElement('spacezone-store', {
     this.storeData[category].forEach(item => {
       const itemDiv = document.createElement('div');
       itemDiv.className = 'store-item';
-      itemDiv.textContent = item.name;
+
+      // Create Image Element
+      const img = document.createElement('img');
+      img.src = item.image ? item.image : 'assets/store/noimage.png';
+      img.alt = item.name;
+      img.className = 'store-item-image';
+      itemDiv.appendChild(img);
+
+      // Create Description Div
+      const descriptionDiv = document.createElement('div');
+      descriptionDiv.className = 'store-item-description';
+      descriptionDiv.textContent = item.description ? item.description : 'No description available.';
+      itemDiv.appendChild(descriptionDiv);
+
+      // Create Name Element
+      const nameDiv = document.createElement('div');
+      nameDiv.className = 'store-item-name';
+      nameDiv.textContent = item.name;
+      itemDiv.appendChild(nameDiv);
+
       itemDiv.addEventListener('click', () => this.selectItem(itemDiv, item, this.root));
       grid.appendChild(itemDiv);
     });
@@ -91,16 +129,27 @@ room.registerElement('spacezone-store', {
 
     // Update details
     this.details.innerHTML = '';
+
+    // Create Image Element
+    const detailImg = document.createElement('img');
+    detailImg.src = itemData.image ? itemData.image : 'assets/store/noimage.png';
+    detailImg.alt = itemData.name;
+    detailImg.className = 'details-item-image';
+    this.details.appendChild(detailImg);
+
     const name = document.createElement('div');
+    name.className = 'details-item-name';
     name.textContent = `Name: ${itemData.name}`;
     this.details.appendChild(name);
 
     const price = document.createElement('div');
+    price.className = 'details-item-price';
     price.textContent = `Price: $${itemData.price.toFixed(2)}`;
     this.details.appendChild(price);
 
     if (itemData.description) {
       const description = document.createElement('div');
+      description.className = 'details-item-description';
       description.textContent = `Description: ${itemData.description}`;
       this.details.appendChild(description);
     }
