@@ -1,15 +1,3 @@
-/* 
-/* CSS for over-budget items and disabled buy button */
-.store-item.over-budget {
-  opacity: 0.5;
-}
-
-.buy-button.disabled {
-  background-color: grey;
-  cursor: not-allowed;
-}
-*/
-
 room.registerElement('spacezone-store', {
   storeData: {},
   currentCategory: '',
