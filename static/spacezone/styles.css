@@ -245,6 +245,14 @@ CSS for spacezone-store
 .buy-button:hover {
   background-color: #218838;
 }
+.store-item.over-budget {
+  opacity: 0.5;
+}
+
+.buy-button.disabled {
+  background-color: grey;
+  cursor: not-allowed;
+}
 /* Responsive CSS for mobile devices */
 @media (max-width: 800px) {
   .spacezone-dialog-container {
