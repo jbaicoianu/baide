@@ -22,12 +22,13 @@ float noise(vec2 p) {
 }
 
 void main() {
+    vec3 tempcolor = vec3(1.0,0,0);
     // Throbs and hums with dynamic noise patterns
     float n = noise(vUv * 10.0 + time * 2.0);
     float idle = 0.5 + 0.5 * sin(time * 1.5) * n;
 
     // Combine effects without Fresnel
-    vec3 shieldColor = color * idle;
+    vec3 shieldColor = tmpcolor * idle;
 
     // Adjust transparency
     float alpha = 0.3 + 0.2 * idle;
