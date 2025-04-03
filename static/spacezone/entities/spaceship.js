@@ -91,6 +91,7 @@ room.registerElement('spacezone-spaceship', {
     
     // Spawn a new shield element on the taufighter ship
     this.shield = this.taufighter.createObject('object', {
+      id: 'sphere',
       pos: V(0, 0, 2),
       scale: V(16, 3.5, 18),
       col: 'red',
