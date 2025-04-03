@@ -1,13 +1,15 @@
 {
   "Engines": [
-    { "name": "Impeller v1", "price": 2500.0, "image": "assets/store/engines/impeller-v1.png", "params": { "thrust": 1200 } },
-    { "name": "Impeller v2", "price": 5500.0, "image": "assets/store/engines/impeller-v2.png", "params": { "thrust": 1750 } },
-    { "name": "Impeller v3", "price": 8750.0, "image": "assets/store/engines/impeller-v3.png", "params": { "thrust": 2250 } },
-    { "name": "Fusion Drive v1", "price": 15500.0, "params": { "thrust": 3550 } }
+    { "name": "Impeller Mk1", "price": 2500.0, "image": "assets/store/engines/impeller-v1.png", "params": { "thrust": 1200 } },
+    { "name": "Impeller Mk2", "price": 5500.0, "image": "assets/store/engines/impeller-v2.png", "params": { "thrust": 1750 } },
+    { "name": "Impeller Mk3", "price": 8750.0, "image": "assets/store/engines/impeller-v3.png", "params": { "thrust": 2250 } },
+    { "name": "Fusion Drive Mk1", "price": 15500.0, "image": "assets/store/engines/fusion-drive-v1.png", "params": { "thrust": 3550 } },
+    { "name": "Fusion Drive Mk2", "price": 25900.0, "image": "assets/store/engines/fusion-drive-v2.png", "params": { "thrust": 5250 } },
+    { "name": "Fusion Drive Mk3", "price": 36000.0, "image": "assets/store/engines/fusion-drive-v3.png", "params": { "thrust": 7050 } }
   ],
   "Shields": [
-    { "name": "Defender v1", "price": 1450.0, "description": "The basic model engine, the Defender v1 provides adequate power to get your ship where it needs to go", "params": { "shieldstrength": 120 } },
-    { "name": "Defender v2", "price": 2560.0, "description": "A slight improvement over the v1, the Defender v2 will give you a little extra push to get where you're going a little faster", "params": { "shieldstrength": 160 } }
+    { "name": "Defender Mk1", "price": 1450.0, "description": "The basic model engine, the Defender v1 provides adequate power to get your ship where it needs to go", "params": { "shieldstrength": 120 } },
+    { "name": "Defender Mk2", "price": 2560.0, "description": "A slight improvement over the v1, the Defender v2 will give you a little extra push to get where you're going a little faster", "params": { "shieldstrength": 160 } }
   ],
   "Cargo": [
     { "name": "Small Cargo Hold", "price": 525, "params": { "cargocapacity": 120 } },
