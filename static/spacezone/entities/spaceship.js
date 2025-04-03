@@ -818,7 +818,7 @@ room.registerElement('spacezone-spaceship', {
     // shield shader uniform hack
       console.log('?', this.shield.shader);
     if (this.shield) {
-      if (!this.shield.shader) {
+      if (this.shield.shader) {
         this.shield.shader.uniforms.color.value.set(1,0,0);
         this.shield.shader.uniforms.resolution.value.set(512,512,1);
       } else {
