@@ -33,5 +33,5 @@ void main() {
     // Adjust transparency
     float alpha = 0.3 + 0.2 * idle;
 
-    gl_FragColor = vec4(shieldColor, alpha);
+    gl_FragColor = vec4(vUv,0, alpha);
 }
