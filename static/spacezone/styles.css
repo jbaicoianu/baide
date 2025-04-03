@@ -146,6 +146,8 @@ CSS for spacezone-store
 .spacezone-store {
   font-family: Arial, sans-serif;
   color: #ffffff;
+  min-width: 40em;
+  min-height: 40em;
 }
 
 .store-tabs {
@@ -184,6 +186,17 @@ CSS for spacezone-store
   cursor: pointer;
   flex: 1 1 calc(33% - 20px);
   box-sizing: border-box;
+  aspect-ratio: 1 / 1;
+  border: 1px solid #ccc;
+  transition: box-shadow 0.3s;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.store-item:hover {
+  box-shadow: 0 0 10px #00ffea;
 }
 
 .store-item.selected {
