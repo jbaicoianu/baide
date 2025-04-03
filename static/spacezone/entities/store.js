@@ -1,7 +1,7 @@
 room.registerElement('spacezone-store', {
   storeData: {},
   currentCategory: '',
-  budget: null.
+  budget: null,
   selectedItem: null,
 
   create() {
