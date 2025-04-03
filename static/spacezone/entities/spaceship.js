@@ -815,6 +815,11 @@ room.registerElement('spacezone-spaceship', {
       this.missile.getWorldPosition(missileWorldPos);
       this.smokeTrail.emitter_pos = missileWorldPos;
     }
+    // shield shader uniform hack
+    if (this.shield && this.shield.shader) {
+        this.shield.shader.uniforms.color.set(1,0,0);
+        this.shield.shader.uniforms.resolution.set(512,512,1);
+    }
   },
   reset() {
     for (let drone of this.drones) {
