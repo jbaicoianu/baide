@@ -1,6 +1,6 @@
 {
   "Engines": [
-    { "name": "Impeller Mk1", "price": 2500.0, "image": "assets/store/engines/impeller-v1.png", "params": { "thrust": 1200 } },
+    { "name": "Impeller Mk1", "price": 2500.0, "image": "assets/store/engines/impeller-v1.png", "description": "Our entry-level model, the Impeller Mk1 generates an adequate amount of thrust.", "params": { "thrust": 1200 } },
     { "name": "Impeller Mk2", "price": 5500.0, "image": "assets/store/engines/impeller-v2.png", "description": "A slight improvement over the Mk1, the Impeller Mk2 will give you a little extra push to get where you're going a little faster", "params": { "thrust": 1750 } },
     { "name": "Impeller Mk3", "price": 8750.0, "image": "assets/store/engines/impeller-v3.png", "description": "The top of the Impeller line, the Mk3 will have you zooming through space faster than you thought possible.", "params": { "thrust": 2250 } },
     { "name": "Fusion Drive Mk1", "price": 15500.0, "image": "assets/store/engines/fusion-drive-v1.png", "description": "Representing a breakthrough in propulsion technology, the Fusion Drive Mk1 uses all-new fusion pulse technology to send you to the farthest reaches of the galaxy in style.", "params": { "thrust": 3550 } },
@@ -15,5 +15,6 @@
   "Cargo": [
     { "name": "Small Cargo Hold", "price": 525,  "image": "assets/store/cargo/small-cargo-hold.png", "description": "So smol. It fits a few things, but not much more than your basic ship.", "params": { "cargocapacity": 120 } },
     { "name": "Medium Cargo Hold", "price": 1025, "image": "assets/store/cargo/medium-cargo-hold.png", "description": "Ok, now we're getting somewhere. With improved carrying capacity, the medium cargo hold will let you handle...well...medium-sized jobs.", "params": { "cargocapacity": 180 } },
-    { "name": "Large Cargo Hold", "price": 5250, "image": "assets/store/cargo/large-cargo-hold.png", "description": "If we could fit any more space into the large cargo hold, we'd be arrested for violating the fundamental laws of spacetime. This baby will hold so much cargo, you'll have your debt paid off in no time! ", "params": { "cargocapacity": 260 } },  ]
+    { "name": "Large Cargo Hold", "price": 5250, "image": "assets/store/cargo/large-cargo-hold.png", "description": "If we could fit any more space into the large cargo hold, we'd be arrested for violating the fundamental laws of spacetime. This baby will hold so much cargo, you'll have your debt paid off in no time! ", "params": { "cargocapacity": 260 } }
+  ]
 }
