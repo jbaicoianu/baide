@@ -822,11 +822,6 @@ room.registerElement('spacezone-spaceship', {
     }
   },
   reset() {
-    for (let drone of this.drones) {
-      drone.pos.z = -9999;
-    }
-    console.log('All drones have been reset to z position -9999.');
-
     // Reset orientation calibration
     this.initialDevicePitch = null;
     this.initialDeviceRoll = null;
