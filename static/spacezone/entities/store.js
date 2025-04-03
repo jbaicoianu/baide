@@ -130,17 +130,17 @@ room.registerElement('spacezone-store', {
     name.textContent = `Name: ${itemData.name}`;
     this.details.appendChild(name);
 
-    const price = document.createElement('div');
-    price.className = 'details-item-price';
-    price.textContent = `Price: $${itemData.price.toFixed(2)}`;
-    this.details.appendChild(price);
-
     if (itemData.description) {
       const description = document.createElement('div');
       description.className = 'details-item-description';
       description.textContent = `Description: ${itemData.description}`;
       this.details.appendChild(description);
     }
+
+    const price = document.createElement('div');
+    price.className = 'details-item-price';
+    price.textContent = `Price: $${itemData.price.toFixed(2)}`;
+    this.details.appendChild(price);
 
     const buyButton = document.createElement('button');
     buyButton.className = 'buy-button';
