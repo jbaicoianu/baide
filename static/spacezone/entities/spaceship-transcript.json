@@ -3320,5 +3320,13 @@
     "branch": "main",
     "commit_hash": "adc75a7819cc909f779c215afcc59c4a4d6d6687",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Add keyboard and gamepad bindings for pitch and yaw [Manual edit]",
+    "timestamp": "2025-04-04T20:02:23.420769Z",
+    "branch": "main",
+    "commit_hash": "d4a8a4c1efdc120aec76a8eefbf72e1e43ff155f",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
