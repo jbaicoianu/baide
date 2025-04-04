@@ -853,16 +853,6 @@ room.registerElement('spacezone-spaceship', {
       this.userControlledRoll += 360;
     }
 
-    // Clamp currentPitch to the maximum allowed pitch
-    this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
-
-    // Calculate combined roll
-    let combinedRoll = this.currentRoll + this.userControlledRoll;
-
-    // Clamp combined roll to ±90 degrees
-    combinedRoll = THREE.MathUtils.clamp(combinedRoll, -90, 90);
-
-
     // Handle yaw inputs
     const yawLeftInput = this.controlstate.yaw_left || 0.0; // 0..1
     const yawRightInputRaw = this.controlstate.yaw_right || 0.0; // Might be -1..1
@@ -885,6 +875,15 @@ room.registerElement('spacezone-spaceship', {
     const pitchInput = pitchUpInput - pitchDownInput; // -1..1
     const pitchAdjustment = pitchInput * this.pitchSpeed * dt;
     this.currentPitch += pitchAdjustment;
+
+    // Clamp currentPitch to the maximum allowed pitch
+    this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
+
+    // Calculate combined roll
+    let combinedRoll = this.currentRoll + this.userControlledRoll;
+
+    // Clamp combined roll to ±90 degrees
+    combinedRoll = THREE.MathUtils.clamp(combinedRoll, -90, 90);
 
     // Apply the combined roll, yaw, and pitch to the taufighter's orientation
     this.taufighter.rotation.set(
