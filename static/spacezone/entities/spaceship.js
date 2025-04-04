@@ -153,7 +153,7 @@ room.registerElement('spacezone-spaceship', {
       '1.25 -0.2 -3'
     ];
     for (const pos of trailPositions) {
-      let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos, color: this.equipmentstatus.engine.color }); // Passed engine color
+      let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos, col: this.equipmentstatus.engine.color }); // Passed engine color
       this.enginetrails.push(trail);
     }
 
@@ -964,7 +964,7 @@ room.registerElement('spacezone-enginetrail', {
       opacity: 0.2,
       vel: V(0, 0, -10), // Set vel to V(0,0,-10)
       rand_vel: V(0,0,-20), // Set rand_vel to V(0,0,-20)
-      col: this.properties.color, // Use color from properties
+      col: this.col, // Use color from properties
       image_id: 'spark' // Set image_id to 'spark'
     });
 
@@ -994,7 +994,7 @@ room.registerElement('spacezone-enginetrail', {
       if (player.afterburner) {
         this.particle.col = '#FFAA00'; // Changed to brighter yellowish orange
       } else {
-        this.particle.col = this.properties.color; // Use engine's color when not afterburning
+        this.particle.col = this.col; // Use engine's color when not afterburning
       }
 
       // Emit time_elapsed event with updated data
