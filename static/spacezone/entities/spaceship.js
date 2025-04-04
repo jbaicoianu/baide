@@ -86,8 +86,9 @@ room.registerElement('spacezone-spaceship', {
     // Add spacezone-store object
     this.store = this.createObject('spacezone-store', { budget: this.budget });
     this.store.addEventListener('purchased', (ev) => {
-      console.log(ev.data);
-      this.budget.currentbalance -= ev.data.price;
+      let item = ev.data;
+      console.log(price);
+      this.budget.apply(item.type, 1, item.price);
     });
 
     // Add child object 'taufighter' with specified metalness and roughness
