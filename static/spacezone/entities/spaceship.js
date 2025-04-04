@@ -91,6 +91,7 @@ room.registerElement('spacezone-spaceship', {
 
     // Load saved equipment from localStorage
     this.loadEquipment();
+    this.resetEquipment(); // Reset equipment after loading
 
     // Initialize equipment status tracking
     this.equipmentstatus = {
@@ -121,6 +122,7 @@ room.registerElement('spacezone-spaceship', {
       if (item.type) {
         this.equipment[item.type] = item;
         this.saveEquipment(); // Save equipment after purchase
+        this.resetEquipment(); // Reset equipment after loading new equipment
       }
     });
 
@@ -495,10 +497,8 @@ room.registerElement('spacezone-spaceship', {
       console.warn('Missile Launcher not found or arm function unavailable.');
     }
 
-    // Reset medical supplies and shield strength at the start of the race
-    this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
-    this.equipmentstatus.shield.strength = this.equipment.shield.params.strength;
-    this.damage = 0;
+    // Reset equipment using the new resetEquipment function
+    this.resetEquipment();
 
     // Hide the "Click ship to start" text
     if (this.parent && this.parent.textObject) {
@@ -887,6 +887,18 @@ room.registerElement('spacezone-spaceship', {
     this.initialDeviceRoll = null;
   },
 
+  // New function: resetEquipment
+  resetEquipment() {
+    try {
+      this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
+      this.equipmentstatus.shield.strength = this.equipment.shield.params.strength;
+      this.damage = 0;
+      console.log('Equipment has been reset.');
+    } catch (error) {
+      console.error('Error resetting equipment:', error);
+    }
+  },
+
   // New function: visitStore
   visitStore() {
     if (!this.store) {
@@ -928,6 +940,7 @@ room.registerElement('spacezone-spaceship', {
       } else {
         console.log('No saved equipment found in localStorage.');
       }
+      this.resetEquipment(); // Reset equipment after loading
     } catch (error) {
       console.error('Error loading equipment from localStorage:', error);
     }
