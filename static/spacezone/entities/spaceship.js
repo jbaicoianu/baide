@@ -636,7 +636,7 @@ room.registerElement('spacezone-spaceship', {
         this.updatePositionAndDirection(t);
 
         // Apply x and y offsets based on shuttle's rotation
-        const rollRad = THREE.MathUtils.degToRad(this.currentRoll) + (this.deviceRoll * 0.25); // Adjusted sensitivity
+        const rollRad = THREE.MathUtils.degToRad(this.currentRoll) + (this.deviceRoll * 0.5); // Adjusted sensitivity
         const pitchRad = THREE.MathUtils.degToRad(this.currentPitch) + this.devicePitch;
 
         let offsetX = Math.sin(rollRad) * this.offsetRange + this.deviceOffsetX;
