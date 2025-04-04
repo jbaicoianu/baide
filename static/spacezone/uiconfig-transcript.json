@@ -38,5 +38,13 @@
     "branch": "main",
     "commit_hash": "ebd1fa21e7c011a0109d5932da4eb91a182a7a3a",
     "file_name": "static/spacezone/uiconfig.cfg"
+  },
+  {
+    "role": "User",
+    "content": "Absolute path for ui layout [Manual edit]",
+    "timestamp": "2025-04-04T20:54:59.687620Z",
+    "branch": "main",
+    "commit_hash": "2b0c66900db92df72c36f93cc1032c38fddf2166",
+    "file_name": "static/spacezone/uiconfig.cfg"
   }
 ]
