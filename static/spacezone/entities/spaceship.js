@@ -403,7 +403,7 @@ room.registerElement('spacezone-spaceship', {
 
       // Clamp devicePitch and deviceRoll to prevent gimbal lock
       this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
-      this.deviceRoll = THREE.MathUtils.clamp(this.deviceRoll, -Math.PI / 2, Math.PI / 2);
+      this.deviceRoll = THREE.MathUtils.clamp(this.deviceRoll * .5, -Math.PI / 2, Math.PI / 2);
     }
   },
   createShipStatsOverlay() {
@@ -636,7 +636,7 @@ room.registerElement('spacezone-spaceship', {
         this.updatePositionAndDirection(t);
 
         // Apply x and y offsets based on shuttle's rotation
-        const rollRad = THREE.MathUtils.degToRad(this.currentRoll) + (this.deviceRoll * 0.5); // Adjusted sensitivity
+        const rollRad = THREE.MathUtils.degToRad(this.currentRoll) + this.deviceRoll;
         const pitchRad = THREE.MathUtils.degToRad(this.currentPitch) + this.devicePitch;
 
         let offsetX = Math.sin(rollRad) * this.offsetRange + this.deviceOffsetX;
