@@ -783,7 +783,7 @@ room.registerElement('spacezone-spaceship', {
     const pitchInput = pitchUpInput - pitchDownInput; // -1..1
     const pitchAdjustment = pitchInput * this.pitchSpeed * dt;
     // Replace updating currentPitch with reticle position adjustment
-    this.reticle.pos.y -= pitchAdjustment;
+    this.reticle.pos.y += pitchAdjustment;
 
     // Clamp reticle position to prevent it from moving out of bounds
     const maxOffset = 20; // Increased movement limit to 20
