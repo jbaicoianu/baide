@@ -111,6 +111,9 @@ room.registerElement('spacezone-spaceship', {
       let item = ev.data;
       console.log(item);
       this.budget.apply(item.name, 1, item.price);
+      if (item.type) {
+        this.equipment[item.type] = item;
+      }
     });
 
     // Add child object 'taufighter' with specified metalness and roughness
