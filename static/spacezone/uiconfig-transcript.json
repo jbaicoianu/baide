@@ -30,5 +30,13 @@
     "branch": "main",
     "commit_hash": "a640b012befda3818e1bd034567acd74545559c8",
     "file_name": "static/spacezone/uiconfig.cfg"
+  },
+  {
+    "role": "User",
+    "content": "Point to dev version virtual joystick [Manual edit]",
+    "timestamp": "2025-04-04T20:51:16.258232Z",
+    "branch": "main",
+    "commit_hash": "ebd1fa21e7c011a0109d5932da4eb91a182a7a3a",
+    "file_name": "static/spacezone/uiconfig.cfg"
   }
 ]
