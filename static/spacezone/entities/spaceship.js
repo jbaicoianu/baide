@@ -20,6 +20,9 @@ room.registerElement('spacezone-spaceship', {
   deviceOffsetX: 0,
   deviceOffsetY: 0,
   
+  // Flag to control device motion controls
+  deviceMotionEnabled: false, // Default to false
+
   // Properties for orientation calibration
   initialDevicePitch: null,
   initialDeviceRoll: null,
@@ -310,7 +313,7 @@ room.registerElement('spacezone-spaceship', {
         // iOS requires permission to access device motion
         DeviceMotionEvent.requestPermission()
           .then(response => {
-            if (response === 'granted') {
+            if (response === 'granted' && this.deviceMotionEnabled) {
               window.addEventListener('devicemotion', ev => this.handleDeviceMotion(ev));
             }
             this.startRace();
@@ -321,7 +324,9 @@ room.registerElement('spacezone-spaceship', {
           });
       } else {
         // Non iOS devices or permission not required
-        window.addEventListener('devicemotion', ev => this.handleDeviceMotion(ev));
+        if (this.deviceMotionEnabled) {
+          window.addEventListener('devicemotion', ev => this.handleDeviceMotion(ev));
+        }
         this.startRace();
       }
     });
