@@ -829,5 +829,13 @@
     "branch": "main",
     "commit_hash": "480058b224c61574fb646fced5e0f1a02171080b",
     "file_name": "static/spacezone/entities/level.js"
+  },
+  {
+    "role": "User",
+    "content": "Move store portal up [Manual edit]",
+    "timestamp": "2025-04-04T17:42:11.084011Z",
+    "branch": "main",
+    "commit_hash": "d3b0ef644b87b343d75fd764d2815eb6cf1b0800",
+    "file_name": "static/spacezone/entities/level.js"
   }
 ]
