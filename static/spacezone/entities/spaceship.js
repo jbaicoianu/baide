@@ -348,6 +348,7 @@ room.registerElement('spacezone-spaceship', {
     // Add touchstart event listener to fire missile launcher
     window.addEventListener('touchstart', () => {
       this.missileLauncher.fire();
+      player.disable();
     });
 
     // Create targeting reticle
