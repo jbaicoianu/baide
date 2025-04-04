@@ -223,7 +223,6 @@ room.registerElement('spacezone-spaceship', {
       'pitch_down': {
         defaultbindings: 'keyboard_down,gamepad_any_axis_1', 
       },
-      '
     });
 
     // Add targeting reticle as a sphere placeholder
