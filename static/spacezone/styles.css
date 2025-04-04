@@ -285,4 +285,9 @@ CSS for spacezone-store
       background-color: rgba(0, 255, 234, 0.5);
       border-radius: 3px;
   }
+
+  .spacezone-store {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
 }
