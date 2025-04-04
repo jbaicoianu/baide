@@ -89,6 +89,9 @@ room.registerElement('spacezone-spaceship', {
       }
     };
 
+    // Load saved equipment from localStorage
+    this.loadEquipment();
+
     // Initialize equipment status tracking
     this.equipmentstatus = {
       shield: {
@@ -98,9 +101,6 @@ room.registerElement('spacezone-spaceship', {
         current: this.equipment.cargo.params.current
       }
     };
-
-    // Load saved equipment from localStorage
-    this.loadEquipment();
 
     // Create HTML overlay for ship stats
     this.createShipStatsOverlay();
