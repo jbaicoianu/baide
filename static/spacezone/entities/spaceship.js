@@ -486,6 +486,7 @@ room.registerElement('spacezone-spaceship', {
   startRace() {
     this.budget.apply("neuralink rental", 1);
     player.disable();
+    player.collidable = false;
     this.activateControlContext('spacezone-spaceship');
     
     // Arm the missile launcher
