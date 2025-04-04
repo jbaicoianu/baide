@@ -3238,5 +3238,13 @@
     "branch": "main",
     "commit_hash": "b4ce6a8547cdf25865ab6027587946382091c5bf",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Make the default janus player uncollidable [Manual edit]",
+    "timestamp": "2025-04-04T17:45:08.015795Z",
+    "branch": "main",
+    "commit_hash": "ee622694cdac5c290a5395f23f0d2f2813d920c7",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
