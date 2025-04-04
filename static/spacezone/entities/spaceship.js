@@ -289,7 +289,7 @@ room.registerElement('spacezone-spaceship', {
         DeviceMotionEvent.requestPermission()
           .then(response => {
             if (response === 'granted') {
-              window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+              window.addEventListener('devicemotion', ev => this.handleDeviceMotion(ev));
             }
             this.startRace();
           })
@@ -299,7 +299,7 @@ room.registerElement('spacezone-spaceship', {
           });
       } else {
         // Non iOS devices or permission not required
-        window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+        window.addEventListener('devicemotion', ev => this.handleDeviceMotion(ev));
         this.startRace();
       }
     });
