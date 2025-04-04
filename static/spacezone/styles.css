@@ -203,6 +203,10 @@ CSS for spacezone-store
   border: 2px solid #00ff00;
 }
 
+.store-item.over-budget.selected {
+  border: 2px solid red;
+}
+
 .store-item img {
   width: 128px;
   height: 128px;
