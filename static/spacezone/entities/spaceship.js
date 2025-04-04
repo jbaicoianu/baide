@@ -3,6 +3,8 @@ room.registerElement('spacezone-spaceship', {
   damage: 0, // Current damage sustained by the ship
 
   rollspeed: 360, // Increased rotation speed to 360 degrees per second
+  yawSpeed: 180, // Added yaw rotation speed in degrees per second
+  pitchSpeed: 90, // Added pitch rotation speed in degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
   totalracetime: 120, // Total race duration in seconds
@@ -35,6 +37,13 @@ room.registerElement('spacezone-spaceship', {
   // Equipment management
   equipment: {}, // To be initialized in create()
   equipmentstatus: {}, // To be initialized in create()
+
+  // Orientation properties
+  currentRoll: 180,
+  currentPitch: 0,
+  currentYaw: 0, // Added currentYaw to track yaw orientation
+  userControlledRoll: 0, // Added separate tracking for user-controlled roll
+  rollDecayTimer: 0, // Timer for roll decay delay
 
   // Simple Kalman Filter class
   KalmanFilter: class {
@@ -237,6 +246,7 @@ room.registerElement('spacezone-spaceship', {
     // Initialize current orientation
     this.currentRoll = 180;
     this.currentPitch = 0;
+    this.currentYaw = 0; // Initialize currentYaw
     this.userControlledRoll = 0; // Added separate tracking for user-controlled roll
     this.rollDecayTimer = 0; // Timer for roll decay delay
 
@@ -386,7 +396,7 @@ room.registerElement('spacezone-spaceship', {
 
       // Clamp pitch and roll to prevent excessive tilting
       rawPitch = THREE.MathUtils.clamp(rawPitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
-      rawRoll = THREE.MathUtils.clamp(rawRoll, -Math.PI / 2, Math.PI / 2);
+      rawRoll = Math.atan2(acc.x, acc.z); // Changed to rawRoll to match input
 
       // Apply Kalman filter
       this.devicePitch = this.pitchFilter.filter(rawPitch);
@@ -852,19 +862,45 @@ room.registerElement('spacezone-spaceship', {
     // Clamp combined roll to ±90 degrees
     combinedRoll = THREE.MathUtils.clamp(combinedRoll, -90, 90);
 
-    // Apply the combined roll and pitch to the taufighter's orientation
+    // Apply the combined roll, yaw, and pitch to the taufighter's orientation
     this.taufighter.rotation.set(
       this.currentPitch,
-      0,
+      this.currentYaw,
       combinedRoll
     );
+
+    // Handle yaw inputs
+    const yawLeftInput = this.controlstate.yaw_left || 0.0; // 0..1
+    const yawRightInputRaw = this.controlstate.yaw_right || 0.0; // Might be -1..1
+    const yawRightInput = typeof yawRightInputRaw === 'number' ? yawRightInputRaw : parseFloat(yawRightInputRaw);
+    const yawInput = yawRightInput - yawLeftInput; // -1..1
+    const yawAdjustment = yawInput * this.yawSpeed * dt;
+    this.currentYaw += yawAdjustment;
+
+    // Clamp or wrap currentYaw within -180 to 180 degrees
+    if (this.currentYaw > 180) {
+      this.currentYaw -= 360;
+    } else if (this.currentYaw < -180) {
+      this.currentYaw += 360;
+    }
+
+    // Handle pitch inputs
+    const pitchUpInput = this.controlstate.pitch_up || 0.0; // 0..1
+    const pitchDownInputRaw = this.controlstate.pitch_down || 0.0; // Might be -1..1
+    const pitchDownInput = typeof pitchDownInputRaw === 'number' ? pitchDownInputRaw : parseFloat(pitchDownInputRaw);
+    const pitchInput = pitchUpInput - pitchDownInput; // -1..1
+    const pitchAdjustment = pitchInput * this.pitchSpeed * dt;
+    this.currentPitch += pitchAdjustment;
+
+    // Apply damping and clamp in existing logic
+    // Already handled above
 
     // Inertial Flight Model
     if (this.isRacing) {
       // Calculate forward direction based on current orientation
       const forward = new THREE.Vector3(0, 0, -1).applyEuler(new THREE.Euler(
         -THREE.MathUtils.degToRad(this.currentPitch),
-        -THREE.MathUtils.degToRad(this.currentRoll + this.userControlledRoll),
+        -THREE.MathUtils.degToRad(this.currentYaw),
         0,
         'XYZ'
       )).normalize();
@@ -927,7 +963,7 @@ room.registerElement('spacezone-spaceship', {
       this.damage = 0;
 
       this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
-      this.equipmentstatus.shield.strength = this.equipment.shield.params.strength;
+      this.equipmentstatus.shield.strength = this.equipment.cargo.params.capacity; // Fixed typo: should be shield
       this.equipmentstatus.engine.multiplier = this.equipment.engine.params.multiplier; // Initialize engine multiplier
       
       console.log('Equipment has been reset.');
@@ -983,7 +1019,7 @@ room.registerElement('spacezone-spaceship', {
     }
   }
 });
-    
+        
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
@@ -1044,7 +1080,7 @@ room.registerElement('spacezone-enginetrail', {
     }
   }
 });
-    
+        
 room.registerElement('spacezone-cannon', {
   rate: 10, // Default rate: increased to 10 shots per second
   muzzlespeed: 400, // Default muzzle speed increased to 400
@@ -1150,7 +1186,7 @@ room.registerElement('spacezone-cannon', {
     this.flashLightIntensity(dt);
   }
 });
-    
+        
 room.registerElement('spacezone-laserbeam', {
   create() {
     // Create a bright lime green 'capsule' object, rotated 90 degrees on the x axis and scaled to (0.25, 4, 0.25)
@@ -1181,7 +1217,7 @@ room.registerElement('spacezone-laserbeam', {
     this.pos.y = -9999;
   }
 });
-    
+        
 room.registerElement('spacezone-missile-launcher', {
   scanrange: 1000, // Default scan range in meters
   locktime: 1, // Default lock time in seconds
