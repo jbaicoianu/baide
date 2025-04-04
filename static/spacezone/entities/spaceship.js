@@ -420,7 +420,7 @@ room.registerElement('spacezone-spaceship', {
 
     // Handle orientation calibration
     if (this.isRacing && this.initialDevicePitch !== null && this.initialDeviceRoll !== null) {
-      this.devicePitch -= this.initialDevicePitch;
+      this.devicePitch += this.initialDevicePitch;
       this.deviceRoll -= this.initialDeviceRoll;
 
       // Clamp devicePitch and deviceRoll to prevent gimbal lock
