@@ -13,8 +13,8 @@
     { "name": "Defender Mk3", "type": "shield", "price": 2560.0, "image": "assets/store/shields/defender-mk3.png", "description": "Our top of the line model, the Defender Mk3 will keep you safe no matter what dangers you're facing down", "params": { "strength": 160 } }
   ],
   "Cargo": [
-    { "name": "Small Cargo Hold", "type": "cargo", "price": 525,  "image": "assets/store/cargo/small-cargo-hold.png", "description": "So smol. It fits a few things, but not much more than your basic ship.", "params": { "cargocapacity": 120 } },
-    { "name": "Medium Cargo Hold", "type": "cargo", "price": 1025, "image": "assets/store/cargo/medium-cargo-hold.png", "description": "Ok, now we're getting somewhere. With improved carrying capacity, the medium cargo hold will let you handle...well...medium-sized jobs.", "params": { "cargocapacity": 180 } },
-    { "name": "Large Cargo Hold", "type": "cargo", "price": 5250, "image": "assets/store/cargo/large-cargo-hold.png", "description": "If we could fit any more space into the large cargo hold, we'd be arrested for violating the fundamental laws of spacetime. This baby will hold so much cargo, you'll have your debt paid off in no time! ", "params": { "cargocapacity": 260 } }
+    { "name": "Small Cargo Hold", "type": "cargo", "price": 525,  "image": "assets/store/cargo/small-cargo-hold.png", "description": "So smol. It fits a few things, but not much more than your basic ship.", "params": { "capacity": 120 } },
+    { "name": "Medium Cargo Hold", "type": "cargo", "price": 1025, "image": "assets/store/cargo/medium-cargo-hold.png", "description": "Ok, now we're getting somewhere. With improved carrying capacity, the medium cargo hold will let you handle...well...medium-sized jobs.", "params": { "capacity": 180 } },
+    { "name": "Large Cargo Hold", "type": "cargo", "price": 5250, "image": "assets/store/cargo/large-cargo-hold.png", "description": "If we could fit any more space into the large cargo hold, we'd be arrested for violating the fundamental laws of spacetime. This baby will hold so much cargo, you'll have your debt paid off in no time! ", "params": { "capacity": 260 } }
   ]
 }
