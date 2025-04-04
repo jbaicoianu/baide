@@ -289,35 +289,50 @@ room.registerElement('spacezone-dialog', {
   },
   showDialog(dialogPath) {
     return new Promise((resolve, reject) => {
-      fetch(dialogPath)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`Failed to load dialog file: ${response.statusText}`);
-          }
-          return response.text();
-        })
-        .then(htmlContent => {
-          this.contentArea.innerHTML = htmlContent;
-          this.dialogContainer.style.display = 'block';
-          this.continueButton.focus({preventScroll: true}); // Focus on the continue button
-          this.contentArea.scrollTop = 0; // Scroll to top when dialog is shown
-          
-          const onContinue = (event) => {
-            resolve();
-            this.removeEventListener('continue', onContinue);
-          };
+      if (dialogPath instanceof HTMLElement) {
+        this.contentArea.innerHTML = '';
+        this.contentArea.appendChild(dialogPath);
+        this.dialogContainer.style.display = 'block';
+        this.continueButton.focus({ preventScroll: true }); // Focus on the continue button
+        this.contentArea.scrollTop = 0; // Scroll to top when dialog is shown
 
-          this.addEventListener('continue', onContinue);
-        })
-        .catch(error => {
-          console.error('Error loading dialog:', error);
-          this.contentArea.innerHTML = '<p>Error loading dialog.</p>';
-          this.dialogContainer.style.display = 'block';
-          setTimeout(() => {
-            this.contentArea.scrollTop = 0; // Scroll to top even on error
-          }, 0);
-          reject(error);
-        });
+        const onContinue = (event) => {
+          resolve();
+          this.removeEventListener('continue', onContinue);
+        };
+
+        this.addEventListener('continue', onContinue);
+      } else {
+        fetch(dialogPath)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`Failed to load dialog file: ${response.statusText}`);
+            }
+            return response.text();
+          })
+          .then(htmlContent => {
+            this.contentArea.innerHTML = htmlContent;
+            this.dialogContainer.style.display = 'block';
+            this.continueButton.focus({ preventScroll: true }); // Focus on the continue button
+            this.contentArea.scrollTop = 0; // Scroll to top when dialog is shown
+            
+            const onContinue = (event) => {
+              resolve();
+              this.removeEventListener('continue', onContinue);
+            };
+
+            this.addEventListener('continue', onContinue);
+          })
+          .catch(error => {
+            console.error('Error loading dialog:', error);
+            this.contentArea.innerHTML = '<p>Error loading dialog.</p>';
+            this.dialogContainer.style.display = 'block';
+            setTimeout(() => {
+              this.contentArea.scrollTop = 0; // Scroll to top even on error
+            }, 0);
+            reject(error);
+          });
+      }
     });
   },
   hideDialog() {
