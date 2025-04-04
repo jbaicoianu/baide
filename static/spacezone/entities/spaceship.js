@@ -450,7 +450,7 @@ room.registerElement('spacezone-spaceship', {
 
     // Initiate shield flicker
     if (this.shield) {
-      this.shield.opacity = 0.3;
+      this.shield.opacity = 0.2;
       this.shieldFlickerTimer = this.shieldFlickerDuration;
     }
 
@@ -564,7 +564,7 @@ room.registerElement('spacezone-spaceship', {
     this.updateShipStatsOverlay();
 
     // Handle shield flicker decay
-    if (this.shieldFlickerTimer > 0) {
+    if (this.shield.opacity > 0) {
       const decay = dt / this.shieldFlickerDuration;
       this.shield.opacity = Math.max(this.shield.opacity - 0.1 * decay, 0);
       this.shieldFlickerTimer -= dt;
