@@ -768,6 +768,28 @@ room.registerElement('spacezone-spaceship', {
       this.reticle.pos.y = Math.max(-maxOffset, Math.min(maxOffset, this.reticle.pos.y));
     }
 
+    // Handle yaw and pitch inputs by adjusting reticle position
+    const yawLeftInput = this.controlstate.yaw_left || 0.0; // 0..1
+    const yawRightInputRaw = this.controlstate.yaw_right || 0.0; // Might be -1..1
+    const yawRightInput = typeof yawRightInputRaw === 'number' ? yawRightInputRaw : parseFloat(yawRightInputRaw);
+    const yawInput = yawRightInput - yawLeftInput; // -1..1
+    const yawAdjustment = yawInput * this.yawSpeed * dt;
+    // Replace updating currentYaw with reticle position adjustment
+    this.reticle.pos.x += yawAdjustment;
+
+    const pitchUpInput = this.controlstate.pitch_up || 0.0; // 0..1
+    const pitchDownInputRaw = this.controlstate.pitch_down || 0.0; // Might be -1..1
+    const pitchDownInput = typeof pitchDownInputRaw === 'number' ? pitchDownInputRaw : parseFloat(pitchDownInputRaw);
+    const pitchInput = pitchUpInput - pitchDownInput; // -1..1
+    const pitchAdjustment = pitchInput * this.pitchSpeed * dt;
+    // Replace updating currentPitch with reticle position adjustment
+    this.reticle.pos.y += pitchAdjustment;
+
+    // Clamp reticle position to prevent it from moving out of bounds
+    const maxOffset = 20; // Increased movement limit to 20
+    this.reticle.pos.x = THREE.MathUtils.clamp(this.reticle.pos.x, -maxOffset, maxOffset);
+    this.reticle.pos.y = THREE.MathUtils.clamp(this.reticle.pos.y, -maxOffset, maxOffset);
+
     // Steering logic towards the reticle
     const reticlePos = this.reticle.pos.clone();
     const directionToReticle = reticlePos.sub(this.taufighter.pos).normalize();
@@ -854,31 +876,23 @@ room.registerElement('spacezone-spaceship', {
     }
 
     // Handle yaw inputs
-    const yawLeftInput = this.controlstate.yaw_left || 0.0; // 0..1
-    const yawRightInputRaw = this.controlstate.yaw_right || 0.0; // Might be -1..1
-    const yawRightInput = typeof yawRightInputRaw === 'number' ? yawRightInputRaw : parseFloat(yawRightInputRaw);
-    const yawInput = yawRightInput - yawLeftInput; // -1..1
-    const yawAdjustment = yawInput * this.yawSpeed * dt;
-    this.currentYaw += yawAdjustment;
-
-    // Clamp or wrap currentYaw within -180 to 180 degrees
-    if (this.currentYaw > 180) {
-      this.currentYaw -= 360;
-    } else if (this.currentYaw < -180) {
-      this.currentYaw += 360;
-    }
+    const yawLeftInputOld = this.controlstate.yaw_left || 0.0; // 0..1
+    const yawRightInputOldRaw = this.controlstate.yaw_right || 0.0; // Might be -1..1
+    const yawRightInputOld = typeof yawRightInputOldRaw === 'number' ? yawRightInputOldRaw : parseFloat(yawRightInputOldRaw);
+    const yawInputOld = yawRightInputOld - yawLeftInputOld; // -1..1
+    const yawAdjustmentOld = yawInputOld * this.yawSpeed * dt;
+    // this.currentYaw += yawAdjustmentOld; // Removed direct yaw update
 
     // Handle pitch inputs
-    const pitchUpInput = this.controlstate.pitch_up || 0.0; // 0..1
-    const pitchDownInputRaw = this.controlstate.pitch_down || 0.0; // Might be -1..1
-    const pitchDownInput = typeof pitchDownInputRaw === 'number' ? pitchDownInputRaw : parseFloat(pitchDownInputRaw);
-    const pitchInput = pitchUpInput - pitchDownInput; // -1..1
-    const pitchAdjustment = pitchInput * this.pitchSpeed * dt;
-    this.currentPitch += pitchAdjustment;
-      console.log(this.currentPitch, pitchAdjustment);
+    const pitchUpInputOld = this.controlstate.pitch_up || 0.0; // 0..1
+    const pitchDownInputOldRaw = this.controlstate.pitch_down || 0.0; // Might be -1..1
+    const pitchDownInputOld = typeof pitchDownInputOldRaw === 'number' ? pitchDownInputOldRaw : parseFloat(pitchDownInputOldRaw);
+    const pitchInputOld = pitchUpInputOld - pitchDownInputOld; // -1..1
+    const pitchAdjustmentOld = pitchInputOld * this.pitchSpeed * dt;
+    // this.currentPitch += pitchAdjustmentOld; // Removed direct pitch update
 
     // Clamp currentPitch to the maximum allowed pitch
-    this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
+    // this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch); // Removed clamp
 
     // Calculate combined roll
     let combinedRoll = this.currentRoll + this.userControlledRoll;
