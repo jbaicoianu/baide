@@ -257,6 +257,9 @@ CSS for spacezone-store
   background-color: grey;
   cursor: not-allowed;
 }
+janus-controls-analog[axes="2,3"] {
+  display: none;
+}
 /* Responsive CSS for mobile devices */
 @media (max-width: 800px) {
   .spacezone-dialog-container {
