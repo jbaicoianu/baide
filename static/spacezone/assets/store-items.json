@@ -8,9 +8,9 @@
     { "name": "Fusion Drive Mk3", "type": "engine", "price": 36000.0, "image": "assets/store/engines/fusion-drive-v3.png", "description": "Just when we thought we couldn't improve on the Mk2, our scientists stumbled upon another breakthrough! The best propulsion system money can buy.", "params": { "thrust": 7050 } }
   ],
   "Shields": [
-    { "name": "Defender Mk1", "type": "shield", "price": 1450.0, "image": "assets/store/shields/defender-mk1.png", "description": "Our entry level shield generator, the Defender Mk1 provides basic protection from light laser fire and navigational hazards.", "image": "assets/store/shields/defender-mk1.png", "params": { "shieldstrength": 120 } },
-    { "name": "Defender Mk2", "type": "shield", "price": 2560.0, "image": "assets/store/shields/defender-mk2.png", "description": "A slight improvement over the Mk1, the Defender Mk2 will give you a little extra push to get where you're going a little faster", "params": { "shieldstrength": 160 } },
-    { "name": "Defender Mk3", "type": "shield", "price": 2560.0, "image": "assets/store/shields/defender-mk3.png", "description": "Our top of the line model, the Defender Mk3 will keep you safe no matter what dangers you're facing down", "params": { "shieldstrength": 160 } }
+    { "name": "Defender Mk1", "type": "shield", "price": 1450.0, "image": "assets/store/shields/defender-mk1.png", "description": "Our entry level shield generator, the Defender Mk1 provides basic protection from light laser fire and navigational hazards.", "image": "assets/store/shields/defender-mk1.png", "params": { "strength": 120 } },
+    { "name": "Defender Mk2", "type": "shield", "price": 2560.0, "image": "assets/store/shields/defender-mk2.png", "description": "A slight improvement over the Mk1, the Defender Mk2 will give you a little extra push to get where you're going a little faster", "params": { "strength": 160 } },
+    { "name": "Defender Mk3", "type": "shield", "price": 2560.0, "image": "assets/store/shields/defender-mk3.png", "description": "Our top of the line model, the Defender Mk3 will keep you safe no matter what dangers you're facing down", "params": { "strength": 160 } }
   ],
   "Cargo": [
     { "name": "Small Cargo Hold", "type": "cargo", "price": 525,  "image": "assets/store/cargo/small-cargo-hold.png", "description": "So smol. It fits a few things, but not much more than your basic ship.", "params": { "cargocapacity": 120 } },
