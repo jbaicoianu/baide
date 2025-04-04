@@ -1,7 +1,4 @@
 room.registerElement('spacezone-spaceship', {
-  initialcargo: 1000, // Configurable initial number of medical supplies
-  currentcargo: 1000, // Current number of medical supplies
-  shieldstrength: 100, // Current strength of the radiation shield
   supplyexpirationrate: 1, // Base rate at which supplies expire per second
   damage: 0, // Current damage sustained by the ship
 
@@ -71,12 +68,27 @@ room.registerElement('spacezone-spaceship', {
   create() {
     // Initialization code for spacezone-spaceship
 
+    // Initialize equipment tracking
+    this.equipment = {
+      shield: {
+        name: "Standard Equipment",
+        params: {
+          strength: 100 // Current strength of the radiation shield
+        }
+      },
+      cargo: {
+        name: "Standard Equipment",
+        params: {
+          capacity: 1000, // Configurable initial number of medical supplies
+          current: 1000   // Current number of medical supplies
+        }
+      }
+    };
+
     // Create HTML overlay for ship stats
     this.createShipStatsOverlay();
 
-    // Initialize medical supplies and shield attributes
-    this.currentcargo = this.initialcargo;
-    this.shieldstrength = 100; // Fully shielded at start
+    // Initialize damage attribute
     this.damage = 0;
 
     // Add spacezone-budget object
@@ -260,7 +272,7 @@ room.registerElement('spacezone-spaceship', {
       pos: V(0,0,6),
       scanrange: 1000,
       locktime: 1,
-      scantime: 0.25 // Added scantime attribute with default value of 0.5 seconds
+      scantime: 0.25 // Added scantime attribute with default value of 0.25 seconds
     });
     this.missileLauncher.addEventListener('missilefired', ev => {
       this.budget.apply("missile restocking fee", 1);
@@ -321,7 +333,6 @@ room.registerElement('spacezone-spaceship', {
 
       // Clamp pitch and roll to prevent excessive tilting
       rawPitch = THREE.MathUtils.clamp(rawPitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
-      rawRoll = Math.atan2(acc.x, acc.z);
       rawRoll = THREE.MathUtils.clamp(rawRoll, -Math.PI / 2, Math.PI / 2);
 
       // Apply Kalman filter
@@ -359,8 +370,8 @@ room.registerElement('spacezone-spaceship', {
     this.shipStatsOverlay = document.createElement('div');
     this.shipStatsOverlay.className = 'ship-stats-overlay';
     this.shipStatsOverlay.innerHTML = `
-      <div>Shield Strength: <span id="shield-strength">100</span>%</div>
-      <div>Cargo Remaining: <span id="cargo-remaining">100</span></div>
+      <div>Shield Strength: <span id="shield-strength">${this.equipment.shield.params.strength}</span>%</div>
+      <div>Cargo Remaining: <span id="cargo-remaining">${this.equipment.cargo.params.current}</span></div>
     `;
     document.body.appendChild(this.shipStatsOverlay);
   },
@@ -368,8 +379,8 @@ room.registerElement('spacezone-spaceship', {
     if (this.shipStatsOverlay) {
       const shieldElement = this.shipStatsOverlay.querySelector('#shield-strength');
       const cargoElement = this.shipStatsOverlay.querySelector('#cargo-remaining');
-      if (shieldElement) shieldElement.textContent = Math.round(this.shieldstrength);
-      if (cargoElement) cargoElement.textContent = Math.round(this.currentcargo);
+      if (shieldElement) shieldElement.textContent = Math.round(this.equipment.shield.params.strength);
+      if (cargoElement) cargoElement.textContent = Math.round(this.equipment.cargo.params.current);
     }
   },
   activateAfterburner() {
@@ -413,8 +424,8 @@ room.registerElement('spacezone-spaceship', {
     console.log(`Ship damaged! Total damage: ${this.damage}`);
 
     // Decrease shield strength based on damage
-    this.shieldstrength = Math.max(0, 100 - this.damage);
-    console.log(`Shield strength: ${this.shieldstrength}`);
+    this.equipment.shield.params.strength = Math.max(0, 100 - this.damage);
+    console.log(`Shield strength: ${this.equipment.shield.params.strength}`);
 
     // Initiate shield flicker
     if (this.shield) {
@@ -426,7 +437,7 @@ room.registerElement('spacezone-spaceship', {
     this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
 
     // Check for race failure due to excessive damage
-    if (this.shieldstrength <= 0) {
+    if (this.equipment.shield.params.strength <= 0) {
       console.log('Race failed due to excessive damage!');
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
@@ -464,8 +475,8 @@ room.registerElement('spacezone-spaceship', {
     }
 
     // Reset medical supplies and shield strength at the start of the race
-    this.currentcargo = this.initialcargo;
-    this.shieldstrength = 100;
+    this.equipment.cargo.params.current = this.equipment.cargo.params.capacity;
+    this.equipment.shield.params.strength = 100;
     this.damage = 0;
 
     // Hide the "Click ship to start" text
@@ -603,7 +614,7 @@ room.registerElement('spacezone-spaceship', {
         this.isRacing = false;
         console.log('Race completed!');
         
-        this.budget.applyMultiple({"completion bonus": 1, "medical supply delivery": Math.floor(this.currentcargo)});
+        this.budget.applyMultiple({"completion bonus": 1, "medical supply delivery": Math.floor(this.equipment.cargo.params.current)});
         
         // Set shipcollider.collidable to false when race ends
         if (this.shipcollider) {
@@ -638,14 +649,14 @@ room.registerElement('spacezone-spaceship', {
       }
 
       // Implement supply expiration logic
-      const effectiveShield = Math.max(0, this.shieldstrength);
+      const effectiveShield = Math.max(0, this.equipment.shield.params.strength);
       const supplyRate = this.supplyexpirationrate * (1 / (effectiveShield / 100 + 0.1)); // Prevent division by zero
       const suppliesLost = supplyRate * dt;
-      this.currentcargo = Math.max(0, this.currentcargo - suppliesLost);
+      this.equipment.cargo.params.current = Math.max(0, this.equipment.cargo.params.current - suppliesLost);
       this.dispatchEvent({ type: 'supplies_lost', data: suppliesLost });
 
       // Check if all supplies are lost
-      if(this.currentcargo <= 0){
+      if(this.equipment.cargo.params.current <= 0){
         this.isRacing = false;
         console.log('All medical supplies have been lost!');
         // Disarm the missile launcher
@@ -1069,7 +1080,7 @@ room.registerElement('spacezone-laserbeam', {
 room.registerElement('spacezone-missile-launcher', {
   scanrange: 1000, // Default scan range in meters
   locktime: 1, // Default lock time in seconds
-  scantime: 0.25, // Added scantime attribute with default value of 0.5 seconds
+  scantime: 0.25, // Added scantime attribute with default value of 0.25 seconds
   activetarget: null,
   locked: false,
   lockTimer: null,
@@ -1117,7 +1128,7 @@ room.registerElement('spacezone-missile-launcher', {
   
   scan() {
     if (!this.armed) {
-      // Scanner is armed, do not scan
+      // Scanner is not armed, do not scan
       return;
     }
 
@@ -1282,7 +1293,7 @@ room.registerElement('spacezone-missile', {
   target: null,
   speed: 300, // Missile speed in meters per second
   active: true,
-  turnrate: 30, // Added turnrate attribute with default value 10
+  turnrate: 30, // Added turnrate attribute with default value 30
   lifetime: 5, // Added lifetime attribute with default value 5 seconds
   activetime: 0, // Initialized activetime
 
@@ -1307,7 +1318,7 @@ room.registerElement('spacezone-missile', {
       collision_id: 'sphere',
       collision_scale: V(1),
       mass: 50,
-      visible: true // Initially invisible; will be activated upon firing
+      visible: true // Initially visible; will be activated upon firing
     });
     this.missile.addForce('drag', 0); // hack to keep object from sleeping and being uncollidable
     this.missile.addClass('playerweapon');
@@ -1320,7 +1331,7 @@ room.registerElement('spacezone-missile', {
       rand_pos: V(1, 1, -4),
       col: V(0.4, 0.4, 0.4),
       rand_col: V(0.4, 0.4, 0.4),
-      visible: true // Initially invisible; will be activated upon firing
+      visible: true // Initially visible; will be activated upon firing
     });
 
     // Add velocity based on zdir
@@ -1446,6 +1457,7 @@ room.registerElement('spacezone-missile', {
   }
 });
     
+// New Element: spacezone-targeting-reticle
 room.registerElement('spacezone-targeting-reticle', {
   create() {
     // Allocate a square canvas element of size 256x256
