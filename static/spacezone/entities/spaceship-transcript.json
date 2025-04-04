@@ -3491,5 +3491,13 @@
     "branch": "main",
     "commit_hash": "2e17f7a2c0ef0343630fd2cc51728146fd3ca05f",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "motion device calibration tweak [Manual edit]",
+    "timestamp": "2025-04-04T22:30:47.661959Z",
+    "branch": "main",
+    "commit_hash": "a1f35eb76c8ccf5315bba87ea0064a5ec1937439",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
