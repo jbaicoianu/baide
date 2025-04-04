@@ -884,6 +884,10 @@ room.registerElement('spacezone-spaceship', {
         this.equipmentstatus[type] = { ...equipment.params };
       }
       this.damage = 0;
+
+      this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
+      this.equipmentstatus.shield.strength = this.equipment.shield.params.strength;
+     
       console.log('Equipment has been reset.');
     } catch (error) {
       console.error('Error resetting equipment:', error);
