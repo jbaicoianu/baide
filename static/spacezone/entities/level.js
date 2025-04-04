@@ -436,34 +436,40 @@ room.registerElement('spacezone-budget', {
     }
   },
 
-  apply(type, quantity = 1) {
-    if(this.scores.hasOwnProperty(type)) {
-      const scoreChange = this.scores[type] * quantity;
-      this.currentbalance += scoreChange;
-      if(this.balanceSpan) {
-        this.balanceSpan.textContent = `${this.currentbalance}₿`;
+  apply(type, quantity = 1, price) {
+    let effectivePrice = price;
+    if (effectivePrice === undefined) {
+      if(this.scores.hasOwnProperty(type)) {
+        effectivePrice = this.scores[type];
+      } else {
+        console.warn(`Unknown budget type '${type}'. Cannot apply without a price.`);
+        return;
       }
-
-      this.addBudgetItem(type, scoreChange, quantity);
-
-      if(this.balanceSpan) {
-        if(scoreChange > 0) {
-          this.balanceSpan.classList.add('budget_credit');
-          setTimeout(() => {
-            this.balanceSpan.classList.remove('budget_credit');
-          }, 150);
-        } else if(scoreChange < 0) {
-          this.balanceSpan.classList.add('budget_debit');
-          setTimeout(() => {
-            this.balanceSpan.classList.remove('budget_debit');
-          }, 150);
-        }
-      }
-
-      console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
-    } else {
-      console.warn(`Unknown budget type '${type}'.`);
     }
+
+    const scoreChange = effectivePrice * quantity;
+    this.currentbalance += scoreChange;
+    if(this.balanceSpan) {
+      this.balanceSpan.textContent = `${this.currentbalance}₿`;
+    }
+
+    this.addBudgetItem(type, scoreChange, quantity);
+
+    if(this.balanceSpan) {
+      if(scoreChange > 0) {
+        this.balanceSpan.classList.add('budget_credit');
+        setTimeout(() => {
+          this.balanceSpan.classList.remove('budget_credit');
+        }, 150);
+      } else if(scoreChange < 0) {
+        this.balanceSpan.classList.add('budget_debit');
+        setTimeout(() => {
+          this.balanceSpan.classList.remove('budget_debit');
+        }, 150);
+      }
+    }
+
+    console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
     localStorage['currentbalance'] = this.currentbalance;
   },
 
