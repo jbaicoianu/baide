@@ -3,8 +3,8 @@ room.registerElement('spacezone-spaceship', {
   damage: 0, // Current damage sustained by the ship
 
   rollspeed: 360, // Increased rotation speed to 360 degrees per second
-  yawSpeed: 180, // Added yaw rotation speed in degrees per second
-  pitchSpeed: 90, // Added pitch rotation speed in degrees per second
+  yawSpeed: 90, // Added yaw rotation speed in degrees per second
+  pitchSpeed: 45, // Added pitch rotation speed in degrees per second
   offsetRange: 20, // Configurable range for x and y offsets
   thrust: 40, // Thrust force applied when moving forward
   totalracetime: 120, // Total race duration in seconds
@@ -775,7 +775,7 @@ room.registerElement('spacezone-spaceship', {
     const yawInput = yawRightInput - yawLeftInput; // -1..1
     const yawAdjustment = yawInput * this.yawSpeed * dt;
     // Replace updating currentYaw with reticle position adjustment
-    this.reticle.pos.x += yawAdjustment;
+    this.reticle.pos.x -= yawAdjustment;
 
     const pitchUpInput = this.controlstate.pitch_up || 0.0; // 0..1
     const pitchDownInputRaw = this.controlstate.pitch_down || 0.0; // Might be -1..1
@@ -783,7 +783,7 @@ room.registerElement('spacezone-spaceship', {
     const pitchInput = pitchUpInput - pitchDownInput; // -1..1
     const pitchAdjustment = pitchInput * this.pitchSpeed * dt;
     // Replace updating currentPitch with reticle position adjustment
-    this.reticle.pos.y += pitchAdjustment;
+    this.reticle.pos.y -= pitchAdjustment;
 
     // Clamp reticle position to prevent it from moving out of bounds
     const maxOffset = 20; // Increased movement limit to 20
