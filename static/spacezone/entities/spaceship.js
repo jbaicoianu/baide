@@ -87,7 +87,7 @@ room.registerElement('spacezone-spaceship', {
     this.store = this.createObject('spacezone-store', { budget: this.budget });
     this.store.addEventListener('purchased', (ev) => {
       let item = ev.data;
-      console.log(price);
+      console.log(item);
       this.budget.apply(item.type, 1, item.price);
     });
 
