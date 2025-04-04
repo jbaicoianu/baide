@@ -32,6 +32,10 @@ room.registerElement('spacezone-spaceship', {
   shieldFlickerTimer: 0, // Timer for shield flicker
   shieldFlickerDuration: 0.2, // Duration of the shield flicker in seconds
 
+  // Equipment management
+  equipment: {}, // To be initialized in create()
+  equipmentstatus: {}, // To be initialized in create()
+
   // Simple Kalman Filter class
   KalmanFilter: class {
     constructor(R = 0.01, Q = 0.01) {
@@ -95,6 +99,9 @@ room.registerElement('spacezone-spaceship', {
       }
     };
 
+    // Load saved equipment from localStorage
+    this.loadEquipment();
+
     // Create HTML overlay for ship stats
     this.createShipStatsOverlay();
 
@@ -113,6 +120,7 @@ room.registerElement('spacezone-spaceship', {
       this.budget.apply(item.name, 1, item.price);
       if (item.type) {
         this.equipment[item.type] = item;
+        this.saveEquipment(); // Save equipment after purchase
       }
     });
 
@@ -889,6 +897,40 @@ room.registerElement('spacezone-spaceship', {
       });
     }
     this.dialog.showDialog(this.store.showItems());
+  },
+
+  // New function: saveEquipment
+  saveEquipment() {
+    try {
+      const equipmentJSON = JSON.stringify(this.equipment);
+      localStorage.setItem('spacezone_spaceship_equipment', equipmentJSON);
+      console.log('Equipment saved to localStorage.');
+    } catch (error) {
+      console.error('Error saving equipment to localStorage:', error);
+    }
+  },
+
+  // New function: loadEquipment
+  loadEquipment() {
+    try {
+      const equipmentJSON = localStorage.getItem('spacezone_spaceship_equipment');
+      if (equipmentJSON) {
+        const savedEquipment = JSON.parse(equipmentJSON);
+        // Merge savedEquipment into this.equipment, overriding defaults
+        for (const [type, data] of Object.entries(savedEquipment)) {
+          if (this.equipment[type]) {
+            this.equipment[type] = { ...this.equipment[type], ...data };
+          } else {
+            this.equipment[type] = data;
+          }
+        }
+        console.log('Equipment loaded from localStorage.');
+      } else {
+        console.log('No saved equipment found in localStorage.');
+      }
+    } catch (error) {
+      console.error('Error loading equipment from localStorage:', error);
+    }
   }
 });
         
