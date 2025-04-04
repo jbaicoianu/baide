@@ -890,8 +890,9 @@ room.registerElement('spacezone-spaceship', {
   // New function: resetEquipment
   resetEquipment() {
     try {
-      this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
-      this.equipmentstatus.shield.strength = this.equipment.shield.params.strength;
+      for (const [type, equipment] of Object.entries(this.equipment)) {
+        this.equipmentstatus[type] = { ...equipment.params };
+      }
       this.damage = 0;
       console.log('Equipment has been reset.');
     } catch (error) {
@@ -946,7 +947,7 @@ room.registerElement('spacezone-spaceship', {
     }
   }
 });
-        
+
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
