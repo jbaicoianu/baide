@@ -19,7 +19,7 @@ room.registerElement('spacezone-store', {
 
   showItems(budget) {
     this.root.innerHTML = ''; // Clear existing content
-	this.budget = budget;
+	if (budget) this.budget = budget;
 
     // Create Tabs
     const tabs = document.createElement('div');
