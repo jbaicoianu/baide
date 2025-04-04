@@ -359,7 +359,7 @@ room.registerElement('spacezone-budget', {
 
     this.balanceSpan = document.createElement('span');
     this.balanceSpan.className = 'budget_balance';
-    this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
+    this.balanceSpan.textContent = `${this.currentbalance.toLocaleString()}₿`;
 
     this.budgetItemsContainer = document.createElement('div');
     this.budgetItemsContainer.className = 'budget_items_container';
@@ -387,7 +387,7 @@ room.registerElement('spacezone-budget', {
   reset() {
     //this.currentbalance = 0;
     if(this.balanceSpan) {
-      this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
+      this.balanceSpan.textContent = `${this.currentbalance.toLocaleString()}₿`;
     }
     if(this.budgetItemsContainer) {
       this.budgetItemsContainer.innerHTML = '';
@@ -432,7 +432,7 @@ room.registerElement('spacezone-budget', {
     const scoreChange = effectivePrice * quantity;
     this.currentbalance += scoreChange;
     if(this.balanceSpan) {
-      this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
+      this.balanceSpan.textContent = `${this.currentbalance.toLocaleString()}₿`;
     }
 
     this.addBudgetItem(type, scoreChange, quantity);
@@ -451,7 +451,7 @@ room.registerElement('spacezone-budget', {
       }
     }
 
-    console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}`);
+    console.log(`Applied '${type}' with quantity ${quantity}. Balance changed by: ${scoreChange}. Total balance: ${this.currentbalance}₿`);
     localStorage['currentbalance'] = this.currentbalance;
   },
 
@@ -469,7 +469,7 @@ room.registerElement('spacezone-budget', {
     }
 
     if(this.balanceSpan) {
-      this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
+      this.balanceSpan.textContent = `${this.currentbalance.toLocaleString()}₿`;
       if(totalChange > 0) {
         this.balanceSpan.classList.add('budget_credit');
         setTimeout(() => {
@@ -483,7 +483,7 @@ room.registerElement('spacezone-budget', {
       }
     }
 
-    console.log(`Applied multiple budget changes. Total balance change: ${totalChange}. New balance: ${this.currentbalance}`);
+    console.log(`Applied multiple budget changes. Total balance change: ${totalChange}. New balance: ${this.currentbalance}₿`);
     localStorage['currentbalance'] = this.currentbalance;
   },
   
