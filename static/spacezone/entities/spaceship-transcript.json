@@ -3304,5 +3304,13 @@
     "branch": "main",
     "commit_hash": "d06209d08de89f353488b301d5db7250cd3ef78f",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Adjust mobile sensitivity [Manual edit]",
+    "timestamp": "2025-04-04T19:46:30.418588Z",
+    "branch": "main",
+    "commit_hash": "763beeb7865c799defc540ae755bf0318279de87",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
