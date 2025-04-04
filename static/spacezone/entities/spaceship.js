@@ -282,7 +282,27 @@ room.registerElement('spacezone-spaceship', {
 
     // Create spacezone-dialog element and initialize dialog
     this.dialog = this.createObject('spacezone-dialog');
-    this.dialog.showDialog('dialogs/intro.txt').then(() => this.startRace());
+    this.dialog.showDialog('dialogs/intro.txt').then(() => {
+      // Detect if DeviceMotionEvent and requestPermission are available (iOS 13+)
+      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+        // iOS requires permission to access device motion
+        DeviceMotionEvent.requestPermission()
+          .then(response => {
+            if (response === 'granted') {
+              window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+            }
+            this.startRace();
+          })
+          .catch(err => {
+            console.error('DeviceMotionEvent permission error:', err);
+            this.startRace();
+          });
+      } else {
+        // Non iOS devices or permission not required
+        window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+        this.startRace();
+      }
+    });
     //this.dialog.addEventListener('continue', () => this.startRace());
 
     // Initialize Enemy Drone Controller
@@ -326,7 +346,7 @@ room.registerElement('spacezone-spaceship', {
     this.parent.addEventListener('dronedestroyed', ev => this.budget.apply("drone destruction bonus", 1));
 
     // Add device motion event listener
-    window.addEventListener('devicemotion', this.handleDeviceMotion.bind(this));
+    // Moved to conditional binding after permission is granted
 
     // Initialize Kalman filters for smoothing device orientation
     this.pitchFilter = new this.KalmanFilter(0.99, 0.4);
