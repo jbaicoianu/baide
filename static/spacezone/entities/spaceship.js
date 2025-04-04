@@ -978,7 +978,7 @@ room.registerElement('spacezone-spaceship', {
       this.damage = 0;
 
       this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
-      this.equipmentstatus.shield.strength = this.equipment.cargo.params.capacity; // Fixed typo: should be shield
+      this.equipmentstatus.shield.strength = this.equipment.shield.params.strength; // Fixed typo: should be shield
       this.equipmentstatus.engine.multiplier = this.equipment.engine.params.multiplier; // Initialize engine multiplier
       
       console.log('Equipment has been reset.');
