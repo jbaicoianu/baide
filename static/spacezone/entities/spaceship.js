@@ -93,16 +93,6 @@ room.registerElement('spacezone-spaceship', {
     this.loadEquipment();
     this.resetEquipment(); // Reset equipment after loading
 
-    // Initialize equipment status tracking
-    this.equipmentstatus = {
-      shield: {
-        strength: this.equipment.shield.params.strength
-      },
-      cargo: {
-        current: this.equipment.cargo.params.current
-      }
-    };
-
     // Create HTML overlay for ship stats
     this.createShipStatsOverlay();
 
