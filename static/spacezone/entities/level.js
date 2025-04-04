@@ -89,8 +89,10 @@ room.registerElement('spacezone-level', {
       // Set portals and labels to invisible when race starts again
       this.portalLeft.visible = false;
       this.portalRight.visible = false;
+      this.portalStore.visible = false;
       this.portalLeftLabel.visible = false;
       this.portalRightLabel.visible = false;
+      this.portalStoreLabel.visible = false;
     });
 
     // Create labels for portals
@@ -116,13 +118,43 @@ room.registerElement('spacezone-level', {
       font_scale: false,
     });
 
+    // Add the new portalStore and its label
+    this.portalStore = this.createObject('link', {
+      pos: cargoShipPosition.clone().add(V(0, -100, 200)),
+      scale: V(100),
+      round: true,
+      shader_id: 'defaultportal',
+      visible: false
+    });
+
+    // Add click event handler to portalStore
+    this.portalStore.addEventListener('click', () => {
+      if (room.objects['player-ship'] && typeof room.objects['player-ship'].visitStore === 'function') {
+        room.objects['player-ship'].visitStore();
+      } else {
+        console.warn("player-ship object or visitStore method not found.");
+      }
+    });
+
+    this.portalStoreLabel = this.createObject('text', {
+      text: 'Visit Store',
+      pos: this.portalStore.pos.clone().add(labelOffset),
+      scale: V(10),
+      col: 'white',
+      rotation: '0 180 0',
+      font_size: 2,
+      font_scale: false,
+    });
+
     // Listen for cargo ship dispatch event to show portals and labels
     this.cargoShip.addEventListener('cargo_dispatched', () => {
       setTimeout(() => {
         this.portalLeft.visible = true;
         this.portalRight.visible = true;
+        this.portalStore.visible = true;
         this.portalLeftLabel.visible = true;
         this.portalRightLabel.visible = true;
+        this.portalStoreLabel.visible = true;
       }, 3000);
     });
 
