@@ -530,7 +530,8 @@ room.registerElement('spacezone-spaceship', {
     player.disable();
     player.collidable = false;
     this.activateControlContext('spacezone-spaceship');
-    
+    for (let s of document.getElementsByTagName('janus-controls-gamepad')) { s.show(); s.reset(); }
+      
     // Arm the missile launcher
     if (this.missileLauncher && typeof this.missileLauncher.arm === 'function') {
       this.missileLauncher.arm();
