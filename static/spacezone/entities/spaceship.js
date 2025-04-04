@@ -77,7 +77,8 @@ room.registerElement('spacezone-spaceship', {
       shield: {
         name: "Standard Equipment",
         params: {
-          strength: 100 // Current strength of the radiation shield
+          strength: 100, // Current strength of the radiation shield
+          color: 'red'    // Color of the shield
         }
       },
       cargo: {
@@ -85,6 +86,13 @@ room.registerElement('spacezone-spaceship', {
         params: {
           capacity: 1000, // Configurable initial number of medical supplies
           current: 1000   // Current number of medical supplies
+        }
+      },
+      engine: {
+        name: "Standard Equipment",
+        params: {
+          color: 'cyan',      // Color of the engine trails
+          multiplier: 1.0     // Multiplier for raceTime increment
         }
       }
     };
@@ -131,7 +139,7 @@ room.registerElement('spacezone-spaceship', {
       id: 'sphere',
       pos: V(0, 0, 2),
       scale: V(16, 3.5, 18),
-      col: 'red',
+      col: this.equipmentstatus.shield.color, // Updated to use shield color from equipment
       lighting: false,
       opacity: 0,
       renderorder: 10,
@@ -145,7 +153,7 @@ room.registerElement('spacezone-spaceship', {
       '1.25 -0.2 -3'
     ];
     for (const pos of trailPositions) {
-      let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos });
+      let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos, color: this.equipmentstatus.engine.color }); // Passed engine color
       this.enginetrails.push(trail);
     }
 
@@ -408,7 +416,7 @@ room.registerElement('spacezone-spaceship', {
     this.afterburner = false;
     this.targetSpeedMultiplier = 1.0;
     for (let trail of this.enginetrails) {
-      trail.particle.col = 'cyan';
+      trail.particle.col = this.equipmentstatus.engine.color; // Reset to engine's color
     }
     console.log('Afterburner deactivated!');
   },
@@ -596,8 +604,8 @@ room.registerElement('spacezone-spaceship', {
         this.currentSpeedMultiplier = this.targetSpeedMultiplier;
       }
 
-      // Apply speed multiplier based on currentSpeedMultiplier
-      this.raceTime += dt * this.currentSpeedMultiplier;
+      // Apply speed multiplier based on currentSpeedMultiplier and engine multiplier
+      this.raceTime += dt * this.currentSpeedMultiplier * this.equipmentstatus.engine.multiplier;
       let t = this.raceTime / this.totalracetime;
       if (t > 1) t = 1;
 
@@ -887,7 +895,8 @@ room.registerElement('spacezone-spaceship', {
 
       this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
       this.equipmentstatus.shield.strength = this.equipment.shield.params.strength;
-     
+      this.equipmentstatus.engine.multiplier = this.equipment.engine.params.multiplier; // Initialize engine multiplier
+      
       console.log('Equipment has been reset.');
     } catch (error) {
       console.error('Error resetting equipment:', error);
@@ -955,7 +964,7 @@ room.registerElement('spacezone-enginetrail', {
       opacity: 0.2,
       vel: V(0, 0, -10), // Set vel to V(0,0,-10)
       rand_vel: V(0,0,-20), // Set rand_vel to V(0,0,-20)
-      col: 'limegreen', // Set particle color to lime green
+      col: this.properties.color, // Use color from properties
       image_id: 'spark' // Set image_id to 'spark'
     });
 
@@ -985,7 +994,7 @@ room.registerElement('spacezone-enginetrail', {
       if (player.afterburner) {
         this.particle.col = '#FFAA00'; // Changed to brighter yellowish orange
       } else {
-        this.particle.col = 'cyan';
+        this.particle.col = this.properties.color; // Use engine's color when not afterburning
       }
 
       // Emit time_elapsed event with updated data
