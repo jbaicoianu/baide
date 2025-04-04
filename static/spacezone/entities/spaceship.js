@@ -375,7 +375,7 @@ room.registerElement('spacezone-spaceship', {
     this.afterburner = true;
     this.targetSpeedMultiplier = this.maxspeedmultiplier; // Use maxspeedmultiplier
     for (let trail of this.enginetrails) {
-      trail.particle.col = '#FFAA00'; // Set to brighter yellowish orange
+      trail.particle.col = '#FFFF00'; // Set to brighter yellowish orange
     }
     console.log('Afterburner activated!');
   },
