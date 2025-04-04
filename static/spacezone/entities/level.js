@@ -115,7 +115,7 @@ room.registerElement('spacezone-level', {
 
     // Add the new portalStore and its label
     this.portalStore = this.createObject('link', {
-      pos: cargoShipPosition.clone().add(V(0, -100, 200)),
+      pos: cargoShipPosition.clone().add(V(0, 100, 200)),
       scale: V(100),
       round: true,
       shader_id: 'defaultportal',
