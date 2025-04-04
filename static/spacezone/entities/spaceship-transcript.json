@@ -3499,5 +3499,22 @@
     "branch": "main",
     "commit_hash": "a1f35eb76c8ccf5315bba87ea0064a5ec1937439",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Add a flag on our spaceship which controls whether or not device motion controls are enabled. Default it to false. If they're not enabled, don't attach any of the event handlers.",
+    "timestamp": "2025-04-04T22:36:57.560647Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added a `deviceMotionEnabled` flag to control whether device motion controls are enabled on the spaceship. By default, it's set to `false`. When this flag is `false`, the device motion event handlers are not attached, ensuring that device motion controls remain disabled unless explicitly enabled.",
+    "timestamp": "2025-04-04T22:39:43.735471Z",
+    "branch": "main",
+    "commit_hash": "6e6bdceb7f8297f4a4c4dad3b40a0c22d4b8686e",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
