@@ -309,7 +309,7 @@ room.registerElement('spacezone-spaceship', {
     this.dialog = this.createObject('spacezone-dialog');
     this.dialog.showDialog('dialogs/intro.txt').then(() => {
       // Detect if DeviceMotionEvent and requestPermission are available (iOS 13+)
-      if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+      if (this.deviceMotionEnabled && typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
         // iOS requires permission to access device motion
         DeviceMotionEvent.requestPermission()
           .then(response => {
