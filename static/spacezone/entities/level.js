@@ -28,12 +28,7 @@ room.registerElement('spacezone-level', {
 
     // Removed budgetLabel text object
     // this.textObject = this.createObject('text', {
-    //   id: 'startText', // Added ID for easier reference
-    //   text: 'Click ship to start',
-    //   pos: new THREE.Vector3(0, 5, 0),
-    //   rotation: '0 90 0',
-    //   col: 'white', // Optional: set text color
-    //   font_scale: false
+    //   ...
     // });
 
     // Create spacezone-enemy-dronecontroller object
@@ -161,15 +156,7 @@ room.registerElement('spacezone-level', {
     // // Generate 10 enemy drones positioned randomly along the path
     // this.enemyDrones = [];
     // for (let i = 0; i < 10; i++) {
-    //   const t = Math.random(); // Random value between 0 and 1
-    //   const pos = this.curve.getPoint(t);
-    //   const drone = this.createObject('spacezone-enemy-drone', {
-    //     pos: pos,
-    //     rotation: '0 0 0',
-    //     scale: new THREE.Vector3(1, 1, 1),
-    //     col: 'red'
-    //   });
-    //   this.enemyDrones.push(drone);
+    //   ...
     // }
   },
   update(dt) {
@@ -360,12 +347,7 @@ room.registerElement('spacezone-budget', {
 
     // Removed text object for displaying the budget
     // this.budgetLabel = this.createObject('text', {
-    //   text: `Balance: ${this.currentbalance}`,
-    //   pos: new THREE.Vector3(22, 12, 0),
-    //   rotation: '0 180 0',
-    //   font_scale: false,
-    //   col: 'white',
-    //   font_size: 2
+    //   ...
     // });
 
     // Create HTML element for displaying credits
@@ -377,7 +359,7 @@ room.registerElement('spacezone-budget', {
 
     this.balanceSpan = document.createElement('span');
     this.balanceSpan.className = 'budget_balance';
-    this.balanceSpan.textContent = `${this.currentbalance}₿`;
+    this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
 
     this.budgetItemsContainer = document.createElement('div');
     this.budgetItemsContainer.className = 'budget_items_container';
@@ -405,7 +387,7 @@ room.registerElement('spacezone-budget', {
   reset() {
     //this.currentbalance = 0;
     if(this.balanceSpan) {
-      this.balanceSpan.textContent = `₿${this.currentbalance}`;
+      this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
     }
     if(this.budgetItemsContainer) {
       this.budgetItemsContainer.innerHTML = '';
@@ -450,7 +432,7 @@ room.registerElement('spacezone-budget', {
     const scoreChange = effectivePrice * quantity;
     this.currentbalance += scoreChange;
     if(this.balanceSpan) {
-      this.balanceSpan.textContent = `${this.currentbalance}₿`;
+      this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
     }
 
     this.addBudgetItem(type, scoreChange, quantity);
@@ -487,7 +469,7 @@ room.registerElement('spacezone-budget', {
     }
 
     if(this.balanceSpan) {
-      this.balanceSpan.textContent = `${this.currentbalance}₿`;
+      this.balanceSpan.textContent = `₿${this.currentbalance.toLocaleString()}`;
       if(totalChange > 0) {
         this.balanceSpan.classList.add('budget_credit');
         setTimeout(() => {
