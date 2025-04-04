@@ -3189,5 +3189,13 @@
     "branch": "main",
     "commit_hash": "ba593269f1a003c9eb85e7262aa5aaf65389b4d7",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Restored old equipmentstatus code [Manual edit]",
+    "timestamp": "2025-04-04T08:35:36.602210Z",
+    "branch": "main",
+    "commit_hash": "78f6ddab6581a88ce080ee6b5cfd22fe3a82c7b8",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
