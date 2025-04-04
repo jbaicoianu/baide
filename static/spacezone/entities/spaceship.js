@@ -790,6 +790,28 @@ room.registerElement('spacezone-spaceship', {
     this.reticle.pos.x = THREE.MathUtils.clamp(this.reticle.pos.x, -maxOffset, maxOffset);
     this.reticle.pos.y = THREE.MathUtils.clamp(this.reticle.pos.y, -maxOffset, maxOffset);
 
+    // Map device orientation offsets to reticle position
+    if (this.isRacing && this.initialDevicePitch !== null && this.initialDeviceRoll !== null) {
+      // Calculate angular differences
+      const angularDiffPitch = this.devicePitch; // Already adjusted in handleDeviceMotion
+      const angularDiffRoll = this.deviceRoll;
+
+      // Define a scaling factor to convert angular difference to linear offset
+      const angularToLinearScale = this.offsetRange / (Math.PI / 4); // Example: map ±45 degrees to ±20 units
+
+      // Map angular differences to linear offsets
+      const deviceOffsetX = angularDiffRoll * angularToLinearScale;
+      const deviceOffsetY = angularDiffPitch * angularToLinearScale;
+
+      // Apply the device offsets to reticle position
+      this.reticle.pos.x += deviceOffsetX;
+      this.reticle.pos.y += deviceOffsetY;
+
+      // Clamp reticle position after applying device offsets
+      this.reticle.pos.x = THREE.MathUtils.clamp(this.reticle.pos.x, -maxOffset, maxOffset);
+      this.reticle.pos.y = THREE.MathUtils.clamp(this.reticle.pos.y, -maxOffset, maxOffset);
+    }
+
     // Steering logic towards the reticle
     const reticlePos = this.reticle.pos.clone();
     const directionToReticle = reticlePos.sub(this.taufighter.pos).normalize();
