@@ -875,6 +875,7 @@ room.registerElement('spacezone-spaceship', {
     const pitchInput = pitchUpInput - pitchDownInput; // -1..1
     const pitchAdjustment = pitchInput * this.pitchSpeed * dt;
     this.currentPitch += pitchAdjustment;
+      console.log(this.currentPitch, pitchAdjustment);
 
     // Clamp currentPitch to the maximum allowed pitch
     this.currentPitch = THREE.MathUtils.clamp(this.currentPitch, -this.maxPitch, this.maxPitch);
