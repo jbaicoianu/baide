@@ -186,7 +186,7 @@ room.registerElement('spacezone-spaceship', {
         ondeactivate: () => this.deactivateAfterburner()
       },
       'fire': {
-        defaultbindings: 'mouse_button_0',
+        defaultbindings: 'mouse_button_0,keyboard_space',
         onactivate: () => {
           this.missileLauncher.fire();
           //this.cannonLeft.startFiring();
