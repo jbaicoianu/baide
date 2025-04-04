@@ -210,7 +210,20 @@ room.registerElement('spacezone-spaceship', {
           this.isRollingRight = false; 
           this.rollDecayTimer = 0; // Start decay timer on deactivation
         }
-      }
+      },
+      'yaw_left': {
+        defaultbindings: 'keyboard_left', 
+      },
+      'yaw_right': {
+          defaultbindings: 'keyboard_right,gamepad_any_axis_0'
+      },
+      'pitch_up': {
+        defaultbindings: 'keyboard_up', 
+      },
+      'pitch_down': {
+        defaultbindings: 'keyboard_down,gamepad_any_axis_1', 
+      },
+      '
     });
 
     // Add targeting reticle as a sphere placeholder
