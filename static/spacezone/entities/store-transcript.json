@@ -214,5 +214,13 @@
     "branch": "main",
     "commit_hash": "469d384bddcb7cae671f193b3772a2a6cdc6655c",
     "file_name": "static/spacezone/entities/store.js"
+  },
+  {
+    "role": "User",
+    "content": "showItems budget argument is optional [Manual edit]",
+    "timestamp": "2025-04-04T06:00:47.520918Z",
+    "branch": "main",
+    "commit_hash": "d0776b67191121155ff9febcf9ccba7790f73bbe",
+    "file_name": "static/spacezone/entities/store.js"
   }
 ]
