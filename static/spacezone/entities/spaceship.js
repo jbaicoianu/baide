@@ -845,6 +845,18 @@ room.registerElement('spacezone-spaceship', {
     // Reset orientation calibration
     this.initialDevicePitch = null;
     this.initialDeviceRoll = null;
+  },
+
+  // New function: visitStore
+  visitStore() {
+    if (!this.store) {
+      this.store = room.createObject('spacezone-store', { budget: this.budget });
+      this.store.addEventListener('purchased', (ev) => {
+        console.log(ev.data);
+        this.budget.currentbalance -= ev.data.price;
+      });
+    }
+    this.dialog.showDialog(this.store.showItems());
   }
 });
     
@@ -978,7 +990,7 @@ room.registerElement('spacezone-cannon', {
       //vel: direction.clone().multiplyScalar(this.muzzlespeed)
     });
     laser.vel = direction.clone().multiplyScalar(this.muzzlespeed);
-//console.log('pew', laser, this.muzzlespeed, direction, laser.vel);
+    //console.log('pew', laser, this.muzzlespeed, direction, laser.vel);
     if (this.muzzleflash) {
       // Trigger the flash light
       this.flashLight.light_intensity = this.flashIntensity;
@@ -1045,7 +1057,7 @@ room.registerElement('spacezone-laserbeam', {
     this.pos.y = -9999;
   }
 });
-
+    
 room.registerElement('spacezone-missile-launcher', {
   scanrange: 1000, // Default scan range in meters
   locktime: 1, // Default lock time in seconds
@@ -1425,7 +1437,7 @@ room.registerElement('spacezone-missile', {
     // Removed distance-based deactivation logic
   }
 });
-
+    
 room.registerElement('spacezone-targeting-reticle', {
   create() {
     // Allocate a square canvas element of size 256x256
