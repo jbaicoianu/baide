@@ -424,7 +424,7 @@ room.registerElement('spacezone-spaceship', {
       this.deviceRoll -= this.initialDeviceRoll;
 
       // Clamp devicePitch and deviceRoll to prevent gimbal lock
-      this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180) + Math.PI/4;
+      this.devicePitch = THREE.MathUtils.clamp(this.devicePitch, -this.maxPitch * Math.PI / 180, this.maxPitch * Math.PI / 180);
       this.deviceRoll = THREE.MathUtils.clamp(this.deviceRoll, -Math.PI / 2, Math.PI / 2);
     }
   },
