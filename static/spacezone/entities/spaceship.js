@@ -85,6 +85,16 @@ room.registerElement('spacezone-spaceship', {
       }
     };
 
+    // Initialize equipment status tracking
+    this.equipmentstatus = {
+      shield: {
+        strength: this.equipment.shield.params.strength
+      },
+      cargo: {
+        current: this.equipment.cargo.params.current
+      }
+    };
+
     // Create HTML overlay for ship stats
     this.createShipStatsOverlay();
 
@@ -370,8 +380,8 @@ room.registerElement('spacezone-spaceship', {
     this.shipStatsOverlay = document.createElement('div');
     this.shipStatsOverlay.className = 'ship-stats-overlay';
     this.shipStatsOverlay.innerHTML = `
-      <div>Shield Strength: <span id="shield-strength">${this.equipment.shield.params.strength}</span>%</div>
-      <div>Cargo Remaining: <span id="cargo-remaining">${this.equipment.cargo.params.current}</span></div>
+      <div>Shield Strength: <span id="shield-strength">${this.equipmentstatus.shield.strength}</span>%</div>
+      <div>Cargo Remaining: <span id="cargo-remaining">${this.equipmentstatus.cargo.current}</span></div>
     `;
     document.body.appendChild(this.shipStatsOverlay);
   },
@@ -379,8 +389,8 @@ room.registerElement('spacezone-spaceship', {
     if (this.shipStatsOverlay) {
       const shieldElement = this.shipStatsOverlay.querySelector('#shield-strength');
       const cargoElement = this.shipStatsOverlay.querySelector('#cargo-remaining');
-      if (shieldElement) shieldElement.textContent = Math.round(this.equipment.shield.params.strength);
-      if (cargoElement) cargoElement.textContent = Math.round(this.equipment.cargo.params.current);
+      if (shieldElement) shieldElement.textContent = Math.round(this.equipmentstatus.shield.strength);
+      if (cargoElement) cargoElement.textContent = Math.round(this.equipmentstatus.cargo.current);
     }
   },
   activateAfterburner() {
@@ -424,8 +434,8 @@ room.registerElement('spacezone-spaceship', {
     console.log(`Ship damaged! Total damage: ${this.damage}`);
 
     // Decrease shield strength based on damage
-    this.equipment.shield.params.strength = Math.max(0, 100 - this.damage);
-    console.log(`Shield strength: ${this.equipment.shield.params.strength}`);
+    this.equipmentstatus.shield.strength = Math.max(0, this.equipmentstatus.shield.strength - damageAmount);
+    console.log(`Shield strength: ${this.equipmentstatus.shield.strength}`);
 
     // Initiate shield flicker
     if (this.shield) {
@@ -437,7 +447,7 @@ room.registerElement('spacezone-spaceship', {
     this.dispatchEvent({ type: 'ship_damaged', data: this.damage });
 
     // Check for race failure due to excessive damage
-    if (this.equipment.shield.params.strength <= 0) {
+    if (this.equipmentstatus.shield.strength <= 0) {
       console.log('Race failed due to excessive damage!');
       this.isRacing = false;
       this.deactivateControlContext('spacezone-spaceship');
@@ -475,8 +485,8 @@ room.registerElement('spacezone-spaceship', {
     }
 
     // Reset medical supplies and shield strength at the start of the race
-    this.equipment.cargo.params.current = this.equipment.cargo.params.capacity;
-    this.equipment.shield.params.strength = 100;
+    this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
+    this.equipmentstatus.shield.strength = this.equipment.shield.params.strength;
     this.damage = 0;
 
     // Hide the "Click ship to start" text
@@ -614,7 +624,7 @@ room.registerElement('spacezone-spaceship', {
         this.isRacing = false;
         console.log('Race completed!');
         
-        this.budget.applyMultiple({"completion bonus": 1, "medical supply delivery": Math.floor(this.equipment.cargo.params.current)});
+        this.budget.applyMultiple({"completion bonus": 1, "medical supply delivery": Math.floor(this.equipmentstatus.cargo.current)});
         
         // Set shipcollider.collidable to false when race ends
         if (this.shipcollider) {
@@ -649,14 +659,14 @@ room.registerElement('spacezone-spaceship', {
       }
 
       // Implement supply expiration logic
-      const effectiveShield = Math.max(0, this.equipment.shield.params.strength);
+      const effectiveShield = Math.max(0, this.equipmentstatus.shield.strength);
       const supplyRate = this.supplyexpirationrate * (1 / (effectiveShield / 100 + 0.1)); // Prevent division by zero
       const suppliesLost = supplyRate * dt;
-      this.equipment.cargo.params.current = Math.max(0, this.equipment.cargo.params.current - suppliesLost);
+      this.equipmentstatus.cargo.current = Math.max(0, this.equipmentstatus.cargo.current - suppliesLost);
       this.dispatchEvent({ type: 'supplies_lost', data: suppliesLost });
 
       // Check if all supplies are lost
-      if(this.equipment.cargo.params.current <= 0){
+      if(this.equipmentstatus.cargo.current <= 0){
         this.isRacing = false;
         console.log('All medical supplies have been lost!');
         // Disarm the missile launcher
@@ -878,7 +888,7 @@ room.registerElement('spacezone-spaceship', {
     this.dialog.showDialog(this.store.showItems());
   }
 });
-    
+        
 room.registerElement('spacezone-enginetrail', {
   create() {
     // Create a particle object for engine trails
@@ -1456,7 +1466,7 @@ room.registerElement('spacezone-missile', {
     // Removed distance-based deactivation logic
   }
 });
-    
+
 // New Element: spacezone-targeting-reticle
 room.registerElement('spacezone-targeting-reticle', {
   create() {
