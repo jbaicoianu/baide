@@ -30,7 +30,7 @@ room.registerElement('spacezone-spaceship', {
 
   // Properties for shield flicker effect
   shieldFlickerTimer: 0, // Timer for shield flicker
-  shieldFlickerDuration: 0.2, // Duration of the shield flicker in seconds
+  shieldFlickerDuration: 0.35, // Duration of the shield flicker in seconds
 
   // Equipment management
   equipment: {}, // To be initialized in create()
@@ -450,7 +450,7 @@ room.registerElement('spacezone-spaceship', {
 
     // Initiate shield flicker
     if (this.shield) {
-      this.shield.opacity = 0.1;
+      this.shield.opacity = 0.3;
       this.shieldFlickerTimer = this.shieldFlickerDuration;
     }
 
