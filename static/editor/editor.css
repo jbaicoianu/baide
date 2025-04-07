@@ -315,6 +315,32 @@ form {
     width: 100%;
     min-width: unset;
     height: 150px;
+    /* Collapsible Sidebar Styles */
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100%;
+    width: 250px;
+    background-color: #2e2e2e;
+    transition: left 0.3s ease;
+    z-index: 1001;
+  }
+  #projectBrowser.expanded {
+    left: 0;
+  }
+  /* Overlay for Sidebar */
+  #projectOverlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+  }
+  #projectOverlay.show {
+    display: block;
   }
   /* #commitSummariesContainer is hidden, no changes needed here */
   #mainContent {
