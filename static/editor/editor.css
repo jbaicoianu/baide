@@ -242,6 +242,13 @@ body {
 /* Styles for commit summaries */
 #commitSummariesContainer {
   display: none;
+  /* width: 20%; */
+  /* min-width: 200px; */
+  /* border-left: 1px solid #444; */
+  /* padding: 10px; */
+  /* box-sizing: border-box; */
+  /* background-color: #1e1e1e; */
+  /* overflow-y: auto; */
 }
 #commitSummariesContainer h2 {
   color: #fff;
@@ -268,8 +275,8 @@ textarea::placeholder {
 input[type="submit"] {
   padding: 10px;
   cursor: pointer;
+  /* display: none; */ /* Removed to make submit buttons visible */
 }
-/* New submit button styles */
 #chatForm {
   position: relative;
 }
@@ -277,23 +284,23 @@ input[type="submit"] {
   position: absolute;
   bottom: 10px;
   right: 10px;
-  width: 20px;
-  height: 20px;
-  background: none;
-  border: none;
-  cursor: pointer;
+  width: 0;
+  height: 0;
   border-left: 10px solid #f0f0f0;
   border-top: 5px solid transparent;
   border-bottom: 5px solid transparent;
+  background: none;
+  border-radius: 0;
+  padding: 0;
+  cursor: pointer;
 }
-/* Rest of the CSS remains unchanged */
 form {
   display: flex;
   flex-direction: column;
 }
 /* Responsive adjustments */
 @media (max-width: 1200px) {
-  #projectBrowser, #commitSummariesContainer {
+  #projectBrowser {
     width: 25%;
   }
   #mainContent {
@@ -304,11 +311,12 @@ form {
   #container {
     flex-direction: column;
   }
-  #projectBrowser, #commitSummariesContainer {
+  #projectBrowser {
     width: 100%;
     min-width: unset;
     height: 150px;
   }
+  /* #commitSummariesContainer is hidden, no changes needed here */
   #mainContent {
     width: 100%;
     flex: 1;
@@ -578,12 +586,12 @@ form {
   color: #f0f0f0;
   border: 1px solid #555;
   border-radius: 4px;
+      
 }
-    
 #commitMessageBox .buttons {
   text-align: right;
 }
-    
+        
 #commitMessageBox .buttons button {
   padding: 6px 12px;
   margin-left: 5px;
