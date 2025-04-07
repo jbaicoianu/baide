@@ -325,9 +325,32 @@ form {
     transition: left 0.3s ease;
     z-index: 1001;
   }
-  #projectBrowser.expanded {
+  /* Removed the .expanded class as hiding is now managed via CSS */
+  
+  /* Toggle Button Styles */
+  #projectToggleCheckbox {
+    display: none;
+  }
+  
+  #projectToggleLabel {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1002;
+    font-size: 18px;
+  }
+  
+  /* Show projectBrowser when toggle is checked */
+  #projectToggleCheckbox:checked ~ #projectBrowser {
     left: 0;
   }
+  
   /* Overlay for Sidebar */
   #projectOverlay {
     display: none;
@@ -670,4 +693,30 @@ form {
 /* Prevent mobile zoom on prompt input focus */
 input[type="text"] {
   font-size: 16px;
+}
+/* Toggle Button Styles Added */
+@media (max-width: 800px) {
+  /* Toggle Button Styles */
+  #projectToggleCheckbox {
+    display: none;
+  }
+  
+  #projectToggleLabel {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    z-index: 1002;
+    font-size: 18px;
+  }
+  
+  /* Show projectBrowser when toggle is checked */
+  #projectToggleCheckbox:checked ~ #projectBrowser {
+    left: 0;
+  }
 }
