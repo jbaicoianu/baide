@@ -361,6 +361,19 @@ form {
     width: 100%;
     flex: 1;
   }
+  /* Added transition for smooth opening */
+  #projectBrowser {
+    transition: left 0.3s ease;
+  }
+  /* Open state for projectBrowser when active */
+  #projectBrowser.open {
+    left: 0;
+  }
+  /* Adjust grabber appearance when project is open */
+  #projectBrowser.open::before {
+    background-color: #f44336;
+    content: '✕';
+  }
 }
 /* Styles for project browser tree */
 .directory, .file {
@@ -684,4 +697,11 @@ form {
 /* Prevent mobile zoom on prompt input focus */
 input[type="text"] {
   font-size: 16px;
+}
+/* Additional Styles for Mobile Project Panel Toggle */
+@media (max-width: 800px) {
+  /* Ensure the grabber is accessible */
+  #projectBrowser::before {
+    touch-action: manipulation;
+  }
 }
