@@ -132,7 +132,7 @@ body {
 .more-tabs-position {
   position: relative;
 }
-.tab.more-tabs {
+.more-tabs {
   position: relative;
   padding: 10px;
   cursor: pointer;
@@ -337,6 +337,7 @@ form {
     justify-content: center;
     cursor: pointer;
     z-index: 1002;
+    pointer-events: auto; /* Added to make the grabber clickable */
   }
   #projectBrowser:focus-within {
     left: 0;
