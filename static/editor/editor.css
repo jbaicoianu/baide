@@ -321,8 +321,8 @@ form {
     transition: left 0.3s ease;
     z-index: 1001;
   }
-  /* Grabber Element */
-  #projectBrowser::before {
+  /* Project Panel Grabber Element */
+  .project-panel-grabber {
     content: '≡';
     position: fixed;
     top: 15px;
@@ -337,10 +337,12 @@ form {
     justify-content: center;
     cursor: pointer;
     z-index: 1002;
-    pointer-events: auto; /* Added to make the grabber clickable */
+    pointer-events: auto; /* Made the grabber clickable */
   }
-  #projectBrowser:focus-within {
-    left: 0;
+  /* Adjust grabber appearance when project is open */
+  .project-panel-grabber.open {
+    background-color: #f44336;
+    content: '✕';
   }
   /* Overlay for Sidebar */
   #projectOverlay {
@@ -369,13 +371,8 @@ form {
   #projectBrowser.open {
     left: 0;
   }
-  /* Adjust grabber appearance when project is open */
-  #projectBrowser.open::before {
-    background-color: #f44336;
-    content: '✕';
-  }
 }
-/* Styles for project browser tree */
+ /* Styles for project browser tree */
 .directory, .file {
   /* Removed margin-left to ensure consistent alignment */
   padding-left: 20px;
@@ -701,7 +698,7 @@ input[type="text"] {
 /* Additional Styles for Mobile Project Panel Toggle */
 @media (max-width: 800px) {
   /* Ensure the grabber is accessible */
-  #projectBrowser::before {
+  .project-panel-grabber {
     touch-action: manipulation;
   }
 }
