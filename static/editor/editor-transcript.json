@@ -1074,5 +1074,22 @@
     "commit_hash": "83249c2cfe8b6d7a9223d57ba758daee1014d562",
     "model": "o1-mini",
     "file_name": "static/editor/editor.css"
+  },
+  {
+    "role": "User",
+    "content": "Let's hide our #aiModelSelect element for now.\n\nAlso, when I focus the prompt I put box, on mobile it's forcing a page zoom, which isn't what I want. Is this a CSS fix or do I have to add something to the HTML to fix it?",
+    "timestamp": "2025-04-07T04:31:04.214765Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor.css"
+  },
+  {
+    "role": "Assistant",
+    "content": "I have hidden the `#aiModelSelect` element as requested. Additionally, to prevent mobile devices from zooming in when focusing on the prompt input box, I've set the `font-size` to `16px` for the input elements. This should address the issue purely through CSS without requiring any HTML changes.",
+    "timestamp": "2025-04-07T04:31:38.844091Z",
+    "branch": "main",
+    "commit_hash": "394e3b171035154ec28bd241be640730c5fbd8e8",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor.css"
   }
 ]
