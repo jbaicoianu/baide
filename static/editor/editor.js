@@ -1251,6 +1251,17 @@ function setupEventListeners() {
       openSearchOverlay(editor);
     }
   });
+
+  // Add click event handler for project panel grabber to toggle 'open' class on projectBrowser
+  const projectPanelGrabbers = document.querySelectorAll('.project-panel-grabber');
+  projectPanelGrabbers.forEach(grabber => {
+    grabber.addEventListener('click', () => {
+      const projectBrowser = document.getElementById('projectBrowser');
+      if (projectBrowser) {
+        projectBrowser.classList.toggle('open');
+      }
+    });
+  });
 }
 
 // Function to create AI Model Dropdown
