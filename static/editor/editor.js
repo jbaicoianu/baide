@@ -355,8 +355,14 @@ async function loadProjectStructure() {
     if (response.ok) {
       const data = await response.json();
       const projectBrowser = document.getElementById('projectBrowser');
+
+      // Remove all child elements except .project-panel-grabber
+      const grabber = projectBrowser.querySelector('.project-panel-grabber');
       projectBrowser.innerHTML = '<h2>Project Browser</h2>';
-          
+      if (grabber) {
+        projectBrowser.appendChild(grabber);
+      }
+
       // Add Project Selector
       addProjectSelector(projectBrowser);
       
@@ -400,9 +406,9 @@ async function loadProjectStructure() {
       // Load open directories from localStorage before restoring
       loadOpenDirectories();
       // Restore open directories from localStorage
-      const treeContainer = document.getElementById('projectTreeContainer'); // Updated to use ID
-      if (treeContainer) {
-        restoreOpenDirectories(treeContainer);
+      const treeContainerNew = document.getElementById('projectTreeContainer'); // Updated to use ID
+      if (treeContainerNew) {
+        restoreOpenDirectories(treeContainerNew);
       }
           
       // Load Git Branch
