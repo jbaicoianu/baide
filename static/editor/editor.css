@@ -282,7 +282,7 @@ input[type="submit"] {
 }
 #chatForm input[type="submit"] {
   position: absolute;
-  bottom: 10px;
+  bottom: 30px;
   right: 10px;
   width: 0;
   height: 0;
@@ -372,7 +372,7 @@ form {
     left: 0;
   }
 }
- /* Styles for project browser tree */
+/* Styles for project browser tree */
 .directory, .file {
   /* Removed margin-left to ensure consistent alignment */
   padding-left: 20px;
@@ -641,7 +641,7 @@ form {
 #commitMessageBox .buttons {
   text-align: right;
 }
-        
+      
 #commitMessageBox .buttons button {
   padding: 6px 12px;
   margin-left: 5px;
