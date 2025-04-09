@@ -268,3 +268,100 @@ room.registerElement('spacezone-enemy-drone', {
     this.dispatchEvent({type: 'dronedestroyed', bubbles: true});
   }
 });
+
+room.registerElement('spacezone-enemy-mine', {
+  pingSoundId: 'pingSound', // Ensure this sound is defined in your assets
+  pingInterval: 5000, // Initial interval in milliseconds
+  minPingInterval: 1000, // Minimum interval as player approaches
+  distanceThreshold: 1000, // Activation distance in meters
+  explosionThreshold: 10, // Explosion distance in meters
+  currentPingInterval: 5000, // Current interval
+  pingTimer: 0,
+
+  create() {
+    // Create the mine as a purple sphere
+    this.mine = this.createObject('object', {
+      id: 'mine',
+      col: 'purple',
+      scale: V(8, 8, 8),
+      pos: V(0, 0, 0),
+      collision_id: 'sphere',
+      mass: 0,
+      visible: true
+    });
+
+    // Reference to the player
+    this.player = this.parent.getElementsByTagName('spacezone-spaceship')[0];
+    
+    if (!this.player) {
+      console.warn('Player spaceship not found. spacezone-enemy-mine may not function correctly.');
+    }
+
+    // Initialize state
+    this.isExploding = false;
+  },
+
+  update(dt) {
+    if (!this.player) return;
+
+    const distance = this.distanceTo(this.player);
+
+    if (distance <= this.distanceThreshold && !this.isExploding) {
+      this.handlePing(dt, distance);
+    }
+
+    if (distance <= this.explosionThreshold && !this.isExploding) {
+      this.explodeMine();
+    }
+  },
+
+  handlePing(dt, distance) {
+    this.pingTimer += dt * 1000; // Convert dt to milliseconds
+
+    // Adjust the ping interval based on distance
+    const desiredPingInterval = this.calculatePingInterval(distance);
+
+    if (this.pingTimer >= this.currentPingInterval) {
+      this.playPingSound();
+      this.pingTimer = 0;
+      this.currentPingInterval = desiredPingInterval;
+    }
+  },
+
+  calculatePingInterval(distance) {
+    // Linearly interpolate between minPingInterval and initial pingInterval based on distance
+    const t = Math.max((this.distanceThreshold - distance) / (this.distanceThreshold - this.explosionThreshold), 0);
+    return this.minPingInterval + t * (this.pingInterval - this.minPingInterval);
+  },
+
+  playPingSound() {
+    if (this.pingSoundId) {
+      room.createObject('sound', {
+        src: this.pingSoundId,
+        pos: this.mine.pos,
+        loop: false,
+        volume: 1
+      });
+    } else {
+      console.warn('pingSoundId is not defined for spacezone-enemy-mine.');
+    }
+  },
+
+  explodeMine() {
+    this.isExploding = true;
+    
+    // Spawn explosion with purple fragments
+    const explosion = room.createObject('explosion', {
+      col: 'purple',
+      scale: V(5, 5, 5),
+      pos: this.mine.pos,
+      visible: true
+    });
+
+    // Optionally, add particle effects or additional logic here
+
+    // Remove the mine from the scene
+    this.mine.pos = V(9999, 9999, 9999); // Move it out of the playable area
+    this.dispatchEvent({type: 'mineexploded', bubbles: true});
+  }
+});
