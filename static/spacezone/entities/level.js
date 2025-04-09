@@ -158,6 +158,22 @@ room.registerElement('spacezone-level', {
     // for (let i = 0; i < 10; i++) {
     //   ...
     // }
+
+    // Generate 10 spacezone-enemy-mine elements positioned randomly along the path
+    this.enemyMines = [];
+    for (let i = 0; i < 10; i++) {
+      const t = Math.random();
+      const pathPos = this.getPositionAtTime(t);
+      const offsetX = Math.random() * 40 - 20; // Random offset between -20 and 20
+      const offsetY = Math.random() * 40 - 20; // Random offset between -20 and 20
+      const minePos = pathPos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
+      const mine = this.createObject('spacezone-enemy-mine', {
+        pos: minePos,
+        rotation: '0 0 0',
+        scale: new THREE.Vector3(1, 1, 1)
+      });
+      this.enemyMines.push(mine);
+    }
   },
   update(dt) {
     // Update logic for spacezone-level
