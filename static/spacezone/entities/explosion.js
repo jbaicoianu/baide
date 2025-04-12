@@ -22,8 +22,8 @@ room.registerElement('explosion', {
       loop: false,
       col: this.col,
       rand_col: V(0.25),
-      vel: V(-50, 0),
-      rand_vel: V(100, 0),
+      vel: V(-100, 0),
+      rand_vel: V(200, 0),
       duration: 20,
       scale: V(5),
       image_id: 'spark'
