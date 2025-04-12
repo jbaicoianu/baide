@@ -37,7 +37,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
           } else {
             // Stop all drones from firing if the player is not racing
             for (let drone of this.drones) {
-              if (drone.cannon) {
+              if (drone.cannon && drone.cannon.firing) {
                 drone.cannon.stopFiring();
                 console.log('Stopped drone firing because player is not racing.');
               }
