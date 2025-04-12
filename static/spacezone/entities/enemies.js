@@ -283,7 +283,7 @@ room.registerElement('spacezone-enemy-mine', {
     this.mine = this.createObject('object', {
       id: 'sphere',
       col: 'purple',
-      scale: V(8, 8, 8),
+      scale: V(12),
       pos: V(0, 0, 0),
       collision_id: 'sphere',
       mass: 0,
