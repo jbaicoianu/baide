@@ -304,13 +304,14 @@ room.registerElement('spacezone-enemy-mine', {
   explosionTimerRemaining: 250, // Time remaining before explosion in milliseconds
   isExploding: false, // Flag to indicate if the mine is in the process of exploding
   exploded: false, // Flag to indicate if the mine has already exploded
+  radius: 12,
 
   create() {
     // Create the mine as a purple sphere
     this.mine = this.createObject('object', {
       id: 'sphere',
       col: 'purple',
-      scale: V(12),
+      scale: V(this.radius),
       pos: V(0, 0, 0),
       collision_id: 'sphere',
       mass: 0,
@@ -394,7 +395,7 @@ room.registerElement('spacezone-enemy-mine', {
     this.exploded = true;
     
     const distance = this.distanceTo(this.player.taufighter);
-    const damageAmount = Math.max(100 * (1 - Math.pow(distance / 25, 2)), 0); // Damage falls off quickly, no damage beyond 25m
+    const damageAmount = Math.max(100 * (1 - Math.pow((distance - this.radius) / 25, 2)), 0); // Damage falls off quickly, no damage beyond 25m
       
     // Dispatch damage event to the player
     if (damageAmount > 0) {
