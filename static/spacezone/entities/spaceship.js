@@ -389,7 +389,7 @@ room.registerElement('spacezone-spaceship', {
     this.offsetYFilter.setInitial(0);
 
     // Add event listener for 'damage' events
-    this.addEventListener('damage', this.handleDamage.bind(this));
+    this.addEventListener('damage', ev => this.handleDamage(ev));
   },
   handleDeviceMotion(event) {
     // Map device orientation to ship's pitch and roll
