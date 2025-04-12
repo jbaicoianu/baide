@@ -342,7 +342,7 @@ room.registerElement('spacezone-enemy-mine', {
     if (distance <= this.explosionThreshold && !this.isExploding && !this.exploded) {
       // Start the explosion timer
       this.isExploding = true;
-      this.explosionTimerRemaining = this.explosionTimer;
+      this.explosionTimerRemaining = this.explosionTimer / 1000;
       this.dispatchEvent({ type: 'trigger', bubbles: true });
       console.log('Mine triggered. Explosion will occur in', this.explosionTimer, 'milliseconds.');
     }
