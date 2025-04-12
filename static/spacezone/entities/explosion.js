@@ -18,9 +18,9 @@ room.registerElement('explosion', {
     // Initialize the radial particle system for the explosion
     this.particlesRing = this.createObject('particle', {
       count: this.count,
-      rate: 20000,
+      rate: 200000,
       loop: false,
-      col: this.col,
+      col: 'white',
       rand_col: V(0.25),
       vel: V(-100, 0, -100),
       rand_vel: V(200, 0, 200),
