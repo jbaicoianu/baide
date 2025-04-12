@@ -3556,5 +3556,13 @@
     "branch": "main",
     "commit_hash": "9db743a776af43f97a18b40bdd0cedf921118b64",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Improved explosions [Manual edit]",
+    "timestamp": "2025-04-12T02:00:05.899354Z",
+    "branch": "main",
+    "commit_hash": "f5184239242996f720d2cd5fd857894760f7282b",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
