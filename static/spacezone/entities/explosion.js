@@ -1,5 +1,6 @@
 room.registerElement('explosion', {
   count: 50,
+  lifetime: 2000,
   create() {
     // Initialize the primary particle system for the explosion
     this.particles = this.createObject('particle', {
@@ -30,14 +31,22 @@ room.registerElement('explosion', {
       image_id: 'spark',
       rotation: V(Math.random() * 180, Math.random() * 180, Math.random() * 180),
     });
+
+    // Set a timeout to hide particle systems after lifetime
+    setTimeout(() => {
+      this.particles.visible = false;
+      this.particlesRing.visible = false;
+    }, this.lifetime);
   },
   reset() {
     // Reset and start the primary particle system
     this.particles.resetParticles();
     this.particles.start();
+    this.particles.visible = true;
 
     // Reset and start the radial particle system
     this.particlesRing.resetParticles();
     this.particlesRing.start();
+    this.particlesRing.visible = true;
   }
 });
