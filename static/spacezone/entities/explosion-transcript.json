@@ -72,5 +72,13 @@
     "branch": "main",
     "commit_hash": "4404f9178036247239eec31f70de4d8031e01255",
     "file_name": "static/spacezone/entities/explosion.js"
+  },
+  {
+    "role": "User",
+    "content": "Explosion tweaks [Manual edit]",
+    "timestamp": "2025-04-12T06:07:41.162453Z",
+    "branch": "main",
+    "commit_hash": "6c4cda9716c70cc704db4a5717b4a77588fc0609",
+    "file_name": "static/spacezone/entities/explosion.js"
   }
 ]
