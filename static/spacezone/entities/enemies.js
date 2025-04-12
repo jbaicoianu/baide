@@ -377,7 +377,7 @@ room.registerElement('spacezone-enemy-mine', {
     // Calculate damage based on distance raised to the power of 1.6
     const distance = this.distanceTo(this.player);
     const damageAmount = Math.max(100 - Math.pow(distance, 1.6), 0); // Ensure damage is not negative
-
+      
     // Dispatch damage event to the player
     if (this.player) {
       this.player.dispatchEvent({
@@ -401,7 +401,7 @@ room.registerElement('spacezone-enemy-mine', {
       showring: true,
       rotation: V(Math.random() * 360, 0, 0),
     });
-    console.log('mine explodes!', this);
+    console.log(`mine explodes ${distance}m from player, dealing ${damageAmount} points of damage!`, this);
     // Optionally, add particle effects or additional logic here
 
     // Remove the mine from the scene
