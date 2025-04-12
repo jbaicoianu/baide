@@ -387,6 +387,9 @@ room.registerElement('spacezone-spaceship', {
     this.rollFilter.setInitial(0);
     this.offsetXFilter.setInitial(0);
     this.offsetYFilter.setInitial(0);
+
+    // Add event listener for 'damage' events
+    this.addEventListener('damage', this.handleDamage.bind(this));
   },
   handleDeviceMotion(event) {
     // Map device orientation to ship's pitch and roll
@@ -489,9 +492,10 @@ room.registerElement('spacezone-spaceship', {
       
     // Implement damage model
     const damageAmount = Math.floor(5 + Math.random() * 5); // Random damage between 5 and 10
-    this.damageShip(damageAmount);
+    this.dispatchEvent({ type: 'damage', data: { amount: damageAmount } });
   },
-  damageShip(amount) {
+  handleDamage(ev) {
+    const amount = ev.data.amount;
     this.damage += amount;
     console.log(`Ship damaged! Total damage: ${this.damage}`);
 
