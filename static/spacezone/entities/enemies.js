@@ -394,7 +394,7 @@ room.registerElement('spacezone-enemy-mine', {
     this.exploded = true;
     
     const distance = this.distanceTo(this.player);
-    const damageAmount = Math.max(120 - Math.pow(distance, 2), 0); // Ensure damage is not negative
+    const damageAmount = Math.max(120 - Math.pow(distance / 2, 2), 0); // Ensure damage is not negative
       
     // Dispatch damage event to the player
     if (damageAmount > 0) {
