@@ -298,8 +298,11 @@ room.registerElement('spacezone-enemy-mine', {
   minPingInterval: 100, // Minimum interval as player approaches
   distanceThreshold: 2000, // Activation distance in meters
   explosionThreshold: 50, // Explosion distance in meters
+  explosionTimer: 5, // Timer in seconds before mine explodes after triggering
   currentPingInterval: 5000, // Current interval
   pingTimer: 0,
+  explosionTimerRemaining: 0, // Time remaining before explosion
+  isExploding: false, // Flag to indicate if the mine is in the process of exploding
 
   create() {
     // Create the mine as a purple sphere
@@ -322,6 +325,7 @@ room.registerElement('spacezone-enemy-mine', {
 
     // Initialize state
     this.isExploding = false;
+    this.explosionTimerRemaining = this.explosionTimer;
   },
 
   update(dt) {
@@ -334,7 +338,19 @@ room.registerElement('spacezone-enemy-mine', {
     }
 
     if (distance <= this.explosionThreshold && !this.isExploding) {
-      this.explodeMine();
+      // Start the explosion timer
+      this.isExploding = true;
+      this.explosionTimerRemaining = this.explosionTimer;
+      this.dispatchEvent({ type: 'trigger', bubbles: true });
+      console.log('Mine triggered. Explosion will occur in', this.explosionTimer, 'seconds.');
+    }
+
+    if (this.isExploding) {
+      this.explosionTimerRemaining -= dt;
+      if (this.explosionTimerRemaining <= 0) {
+        this.explodeMine();
+        this.dispatchEvent({ type: 'explode', bubbles: true });
+      }
     }
   },
 
