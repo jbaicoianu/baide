@@ -1719,10 +1719,11 @@ room.registerElement('spacezone-targeting-reticle', {
 });
 
 room.registerElement('explosion', {
+  count: 50,
   create() {
     // Initialize the particle system for the explosion
     this.particles = this.createObject('particle', {
-      count: 50,
+      count: this.count,
       rate: 20000,
       loop: false,
       col: this.col,
