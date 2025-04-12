@@ -14,5 +14,22 @@
     "branch": "main",
     "commit_hash": "2823bc952250fd7e9a1df74eba1886bf621ad497",
     "file_name": "static/spacezone/entities/explosion.js"
+  },
+  {
+    "role": "User",
+    "content": "Let's add a second particle system to our explosions which will simulate more of a radial explosion effect. Use mostly the same parameters as our current particle system, but restrict the y axis of our vel and rand_vel parameters so our particles are emitted in a 360 degree planar ring.",
+    "timestamp": "2025-04-12T05:37:43.291944Z",
+    "branch": "main",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/explosion.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added a second particle system to the `explosion` entity to create a radial explosion effect. This new system uses the same parameters as the existing one, with the y-axis of the `vel` and `rand_vel` parameters restricted to ensure particles are emitted in a 360-degree planar ring. Let me know if you have any questions or need further adjustments.",
+    "timestamp": "2025-04-12T05:37:55.233868Z",
+    "branch": "main",
+    "commit_hash": "adcbb64b09445d079a58c0e7029ad630e16c7fd9",
+    "model": "o1-mini",
+    "file_name": "static/spacezone/entities/explosion.js"
   }
 ]
