@@ -726,7 +726,7 @@ room.registerElement('spacezone-spaceship', {
 
       // Implement supply expiration logic
       const effectiveShield = Math.max(0, this.equipmentstatus.shield.strength);
-      const supplyRate = this.supplyexpirationrate * (1 / (effectiveShield / 100 + 0.1)); // Prevent division by zero
+      const supplyRate = this.supplyexpirationrate * Math.pow(1 / (effectiveShield / 100 + 0.1), 2); // Exponential rate based on shield strength
       const suppliesLost = supplyRate * dt;
       this.equipmentstatus.cargo.current = Math.max(0, this.equipmentstatus.cargo.current - suppliesLost);
       this.dispatchEvent({ type: 'supplies_lost', data: suppliesLost });
