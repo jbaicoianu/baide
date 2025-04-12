@@ -1,6 +1,7 @@
 room.registerElement('explosion', {
   count: 50,
   lifetime: 2000,
+  showring: false,
   create() {
     // Initialize the primary particle system for the explosion
     this.particles = this.createObject('particle', {
