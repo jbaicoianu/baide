@@ -271,9 +271,9 @@ room.registerElement('spacezone-enemy-drone', {
 
 room.registerElement('spacezone-enemy-mine', {
   pingSoundId: 'pingSound', // Ensure this sound is defined in your assets
-  pingInterval: 5000, // Initial interval in milliseconds
-  minPingInterval: 1000, // Minimum interval as player approaches
-  distanceThreshold: 1000, // Activation distance in meters
+  pingInterval: 2000, // Initial interval in milliseconds
+  minPingInterval: 100, // Minimum interval as player approaches
+  distanceThreshold: 2000, // Activation distance in meters
   explosionThreshold: 10, // Explosion distance in meters
   currentPingInterval: 5000, // Current interval
   pingTimer: 0,
