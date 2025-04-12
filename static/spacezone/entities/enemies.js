@@ -376,7 +376,7 @@ room.registerElement('spacezone-enemy-mine', {
     
     // Calculate damage based on distance raised to the power of 1.6
     const distance = this.distanceTo(this.player);
-    const damageAmount = Math.max(100 - Math.pow(distance, 1.6), 0); // Ensure damage is not negative
+    const damageAmount = Math.max(100 - Math.pow(distance / 10, 1.6), 0); // Ensure damage is not negative
       
     // Dispatch damage event to the player
     if (this.player) {
