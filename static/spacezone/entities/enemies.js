@@ -354,7 +354,7 @@ room.registerElement('spacezone-enemy-mine', {
     // Spawn explosion with purple fragments
     const explosion = room.createObject('explosion', {
       col: 'purple',
-      scale: V(5, 5, 5),
+      count: 500,
       pos: this.getWorldPosition(),
       visible: true
     });
