@@ -394,7 +394,7 @@ room.registerElement('spacezone-enemy-mine', {
     this.exploded = true;
     
     const distance = this.distanceTo(this.player.taufighter);
-    const damageAmount = Math.max(100 * (1 - Math.pow(distance / 40, 2)), 0); // Damage falls off quickly, no damage beyond 40m
+    const damageAmount = Math.max(100 * (1 - Math.pow(distance / 25, 2)), 0); // Damage falls off quickly, no damage beyond 25m
       
     // Dispatch damage event to the player
     if (damageAmount > 0) {
