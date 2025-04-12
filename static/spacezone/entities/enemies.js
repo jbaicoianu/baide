@@ -281,7 +281,7 @@ room.registerElement('spacezone-enemy-mine', {
   create() {
     // Create the mine as a purple sphere
     this.mine = this.createObject('object', {
-      id: 'mine',
+      id: 'sphere',
       col: 'purple',
       scale: V(8, 8, 8),
       pos: V(0, 0, 0),
