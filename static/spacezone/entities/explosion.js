@@ -1,7 +1,7 @@
 room.registerElement('explosion', {
   count: 50,
   create() {
-    // Initialize the particle system for the explosion
+    // Initialize the primary particle system for the explosion
     this.particles = this.createObject('particle', {
       count: this.count,
       rate: 20000,
@@ -14,10 +14,28 @@ room.registerElement('explosion', {
       scale: V(5),
       image_id: 'spark'
     });
+
+    // Initialize the radial particle system for the explosion
+    this.particlesRing = this.createObject('particle', {
+      count: this.count,
+      rate: 20000,
+      loop: false,
+      col: this.col,
+      rand_col: V(0.25),
+      vel: V(-50, 0),
+      rand_vel: V(100, 0),
+      duration: 20,
+      scale: V(5),
+      image_id: 'spark'
+    });
   },
   reset() {
-    // Reset and start the particle system
+    // Reset and start the primary particle system
     this.particles.resetParticles();
     this.particles.start();
+
+    // Reset and start the radial particle system
+    this.particlesRing.resetParticles();
+    this.particlesRing.start();
   }
 });
