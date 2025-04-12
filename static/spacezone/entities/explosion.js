@@ -26,7 +26,8 @@ room.registerElement('explosion', {
       rand_vel: V(200, 0, 200),
       duration: 20,
       scale: V(5),
-      image_id: 'spark'
+      image_id: 'spark',
+      rotation: V(Math.random() * 180, Math.random() * 180, Math.random() * 180),
     });
   },
   reset() {
