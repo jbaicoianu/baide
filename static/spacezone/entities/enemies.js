@@ -34,6 +34,14 @@ room.registerElement('spacezone-enemy-dronecontroller', {
         if (event.data && typeof event.data.currentPathPosition === 'number') {
           if (this.player.isRacing) {
             this.repositionDrones(event.data.currentPathPosition);
+          } else {
+            // Stop all drones from firing if the player is not racing
+            for (let drone of this.drones) {
+              if (drone.cannon) {
+                drone.cannon.stopFiring();
+                console.log('Stopped drone firing because player is not racing.');
+              }
+            }
           }
         } else {
           console.warn('time_elapsed event does not contain currentPathPosition.');
@@ -109,6 +117,10 @@ room.registerElement('spacezone-enemy-dronecontroller', {
   reset() {
     for (let drone of this.drones) {
       drone.pos.z = -9999;
+      if (drone.cannon) {
+        drone.cannon.stopFiring();
+        console.log('Stopped drone firing during reset.');
+      }
     }
     console.log('All drones have been reset to z position -9999.');
   }
@@ -175,10 +187,17 @@ room.registerElement('spacezone-enemy-drone', {
       // Rotate to face the player
       this.facePlayer(dt);
 
-      // Fire at the player
-      this.cannon.firingRate = this.firingRate;
-      if (this.cannon) {
-        this.cannon.startFiring();
+      // Fire at the player only if the player is racing
+      if (this.player && this.player.isRacing) {
+        this.cannon.firingRate = this.firingRate;
+        if (this.cannon) {
+          this.cannon.startFiring();
+        }
+      } else {
+        if (this.cannon) {
+          this.cannon.stopFiring();
+          console.log('Drone stopped firing because player is not racing.');
+        }
       }
     }
   },
