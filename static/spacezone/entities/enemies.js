@@ -297,8 +297,8 @@ room.registerElement('spacezone-enemy-mine', {
   pingInterval: 2000, // Initial interval in milliseconds
   minPingInterval: 100, // Minimum interval as player approaches
   distanceThreshold: 2000, // Activation distance in meters
-  explosionThreshold: 100, // Explosion distance in meters
-  explosionTimer: 250, // Timer in milliseconds before mine explodes after triggering
+  explosionThreshold: 50, // Explosion distance in meters
+  explosionTimer: 100, // Timer in milliseconds before mine explodes after triggering
   currentPingInterval: 5000, // Current interval
   pingTimer: 0,
   explosionTimerRemaining: 250, // Time remaining before explosion in milliseconds
@@ -394,7 +394,7 @@ room.registerElement('spacezone-enemy-mine', {
     this.exploded = true;
     
     const distance = this.distanceTo(this.player);
-    const damageAmount = Math.max(200 - Math.pow(distance / 4, 2), 0); // Ensure damage is not negative
+    const damageAmount = Math.max(100 - Math.pow(distance / 2, 2), 0); // Ensure damage is not negative
       
     // Dispatch damage event to the player
     if (damageAmount > 0) {
