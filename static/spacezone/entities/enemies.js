@@ -79,7 +79,7 @@ room.registerElement('spacezone-enemy-dronecontroller', {
         const randomOffset = 0.1 + Math.random() * 0.2; // Random between 0.1 and 0.3
         const newT = currentPathPosition + randomOffset;
 
-        if (newT >= 0.9) {
+        if (newT >= 0.9 && drone.pos.x != 9999) {
           // Remove drone from playing field
           drone.pos.x = 9999;
           console.log(`Drone repositioned to ${newT * 100}% of the level. Removing from play.`);
