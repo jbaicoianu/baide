@@ -355,7 +355,7 @@ room.registerElement('spacezone-enemy-mine', {
     const explosion = room.createObject('explosion', {
       col: 'purple',
       scale: V(5, 5, 5),
-      pos: this.mine.pos,
+      pos: this.getWorldPosition(),
       visible: true
     });
     console.log('mine explodes!', this);
