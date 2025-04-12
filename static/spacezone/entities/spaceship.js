@@ -489,11 +489,14 @@ room.registerElement('spacezone-spaceship', {
       
     // Implement damage model
     const damageAmount = Math.floor(5 + Math.random() * 5); // Random damage between 5 and 10
-    this.damage += damageAmount;
+    this.damageShip(damageAmount);
+  },
+  damageShip(amount) {
+    this.damage += amount;
     console.log(`Ship damaged! Total damage: ${this.damage}`);
 
     // Decrease shield strength based on damage
-    this.equipmentstatus.shield.strength = Math.max(0, this.equipmentstatus.shield.strength - damageAmount);
+    this.equipmentstatus.shield.strength = Math.max(0, this.equipmentstatus.shield.strength - amount);
     console.log(`Shield strength: ${this.equipmentstatus.shield.strength}`);
 
     // Initiate shield flicker
@@ -1717,4 +1720,3 @@ room.registerElement('spacezone-targeting-reticle', {
     // Additional update logic if needed
   }
 });
-
