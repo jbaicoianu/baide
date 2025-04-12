@@ -274,7 +274,7 @@ room.registerElement('spacezone-enemy-mine', {
   pingInterval: 2000, // Initial interval in milliseconds
   minPingInterval: 100, // Minimum interval as player approaches
   distanceThreshold: 2000, // Activation distance in meters
-  explosionThreshold: 25, // Explosion distance in meters
+  explosionThreshold: 50, // Explosion distance in meters
   currentPingInterval: 5000, // Current interval
   pingTimer: 0,
 
