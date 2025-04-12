@@ -3564,5 +3564,13 @@
     "branch": "main",
     "commit_hash": "f5184239242996f720d2cd5fd857894760f7282b",
     "file_name": "static/spacezone/entities/spaceship.js"
+  },
+  {
+    "role": "User",
+    "content": "Move explosion into its own file [Manual edit]",
+    "timestamp": "2025-04-12T05:29:29.075847Z",
+    "branch": "main",
+    "commit_hash": "02a231e1c26f3cc47afb9adaaf58711d400fba9f",
+    "file_name": "static/spacezone/entities/spaceship.js"
   }
 ]
