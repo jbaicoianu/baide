@@ -1731,7 +1731,7 @@ room.registerElement('explosion', {
       vel: V(-50),
       rand_vel: V(100),
       duration: 20,
-      scale: V(4),
+      scale: V(5),
       image_id: 'spark'
     });
   },
