@@ -642,5 +642,13 @@
     "branch": "main",
     "commit_hash": "6016e2d6be538e0e36fac6abc7a93516f5898d5f",
     "file_name": "static/spacezone/entities/enemies.js"
+  },
+  {
+    "role": "User",
+    "content": "Tweak mine explosion damage [Manual edit]",
+    "timestamp": "2025-04-12T17:17:47.401041Z",
+    "branch": "main",
+    "commit_hash": "46c34e884556a3ec5b236002b3adffda79467ef5",
+    "file_name": "static/spacezone/entities/enemies.js"
   }
 ]
