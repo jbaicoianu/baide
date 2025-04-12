@@ -395,20 +395,22 @@ room.registerElement('spacezone-enemy-mine', {
     
     // Calculate damage based on distance raised to the power of 1.6
     const distance = this.distanceTo(this.player);
-    const damageAmount = Math.max(100 - Math.pow(distance / 10, 1.6), 0); // Ensure damage is not negative
+    const damageAmount = Math.max(100 - Math.pow(distance / 5, 2), 0); // Ensure damage is not negative
       
     // Dispatch damage event to the player
-    if (this.player) {
-      this.player.dispatchEvent({
-        type: 'damage',
-        data: {
-          amount: damageAmount
-        },
-        bubbles: true
-      });
-      console.log(`Dispatched damage event to player with amount: ${damageAmount}`);
-    } else {
-      console.warn('Player object not found. Cannot dispatch damage event.');
+    if (damageAmount > 0) {
+      if (this.player) {
+        this.player.dispatchEvent({
+          type: 'damage',
+          data: {
+            amount: damageAmount
+          },
+          bubbles: true
+        });
+        console.log(`Dispatched damage event to player with amount: ${damageAmount}`);
+      } else {
+        console.warn('Player object not found. Cannot dispatch damage event.');
+      }
     }
 
     // Spawn explosion with purple fragments
