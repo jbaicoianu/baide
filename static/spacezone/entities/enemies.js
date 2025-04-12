@@ -335,6 +335,7 @@ room.registerElement('spacezone-enemy-mine', {
   },
 
   playPingSound() {
+    console.log('ping!', this);
     if (this.pingSoundId) {
       room.createObject('sound', {
         src: this.pingSoundId,
@@ -357,7 +358,7 @@ room.registerElement('spacezone-enemy-mine', {
       pos: this.mine.pos,
       visible: true
     });
-
+    console.log('mine explodes!', this);
     // Optionally, add particle effects or additional logic here
 
     // Remove the mine from the scene
