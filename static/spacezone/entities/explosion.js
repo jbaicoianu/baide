@@ -18,25 +18,29 @@ room.registerElement('explosion', {
     });
 
     // Initialize the radial particle system for the explosion
-    this.particlesRing = this.createObject('particle', {
-      count: this.count,
-      rate: 200000,
-      loop: false,
-      col: 'white',
-      rand_col: V(0.25),
-      vel: V(-100, 0, -100),
-      rand_vel: V(200, 0, 200),
-      duration: 20,
-      speed_min: 100,
-      scale: V(5),
-      image_id: 'spark',
-      rotation: V(Math.random() * 180, Math.random() * 180, Math.random() * 180),
-    });
+    if (this.showring) {
+      this.particlesRing = this.createObject('particle', {
+        count: this.count,
+        rate: 200000,
+        loop: false,
+        col: 'white',
+        rand_col: V(0.25),
+        vel: V(-100, 0, -100),
+        rand_vel: V(200, 0, 200),
+        duration: 20,
+        speed_min: 100,
+        scale: V(5),
+        image_id: 'spark',
+        rotation: V(Math.random() * 180, Math.random() * 180, Math.random() * 180),
+      });
+    }
 
     // Set a timeout to hide particle systems after lifetime
     setTimeout(() => {
       this.particles.visible = false;
-      this.particlesRing.visible = false;
+      if (this.showring) {
+        this.particlesRing.visible = false;
+      }
     }, this.lifetime);
   },
   reset() {
@@ -46,8 +50,10 @@ room.registerElement('explosion', {
     this.particles.visible = true;
 
     // Reset and start the radial particle system
-    this.particlesRing.resetParticles();
-    this.particlesRing.start();
-    this.particlesRing.visible = true;
+    if (this.showring) {
+      this.particlesRing.resetParticles();
+      this.particlesRing.start();
+      this.particlesRing.visible = true;
+    }
   }
 });
