@@ -1153,6 +1153,9 @@ function setupEventListeners() {
     promptInput.value = "";
     throbber.style.display = "block";
     
+    // Store the currently active file when the request is sent
+    const requestedFile = activeFile[currentProject];
+    
     // Gather active context names
     const contexts = fileCodingContexts[filename] ? fileCodingContexts[filename].map(ctx => ctx.name) : [];
     
@@ -1184,8 +1187,10 @@ function setupEventListeners() {
         });
         scrollToBottom(chatBox);
         scrollToBottom(commitSummaries);
-        // Reload the source code after AI updates
-        await loadSourceCode(filename);
+        // Reload the source code after AI updates only if the active file hasn't changed
+        if (activeFile[currentProject] === requestedFile) {
+          await loadSourceCode(filename);
+        }
         // Reload coding contexts
         loadFileCodingContexts(filename);
         // Reload project structure
