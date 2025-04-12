@@ -298,11 +298,12 @@ room.registerElement('spacezone-enemy-mine', {
   minPingInterval: 100, // Minimum interval as player approaches
   distanceThreshold: 2000, // Activation distance in meters
   explosionThreshold: 50, // Explosion distance in meters
-  explosionTimer: 5, // Timer in seconds before mine explodes after triggering
+  explosionTimer: 250, // Timer in milliseconds before mine explodes after triggering
   currentPingInterval: 5000, // Current interval
   pingTimer: 0,
-  explosionTimerRemaining: 0, // Time remaining before explosion
+  explosionTimerRemaining: 250, // Time remaining before explosion in milliseconds
   isExploding: false, // Flag to indicate if the mine is in the process of exploding
+  exploded: false, // Flag to indicate if the mine has already exploded
 
   create() {
     // Create the mine as a purple sphere
@@ -325,6 +326,7 @@ room.registerElement('spacezone-enemy-mine', {
 
     // Initialize state
     this.isExploding = false;
+    this.exploded = false;
     this.explosionTimerRemaining = this.explosionTimer;
   },
 
@@ -333,19 +335,19 @@ room.registerElement('spacezone-enemy-mine', {
 
     const distance = this.distanceTo(this.player);
 
-    if (distance <= this.distanceThreshold && !this.isExploding) {
+    if (distance <= this.distanceThreshold && !this.isExploding && !this.exploded) {
       this.handlePing(dt, distance);
     }
 
-    if (distance <= this.explosionThreshold && !this.isExploding) {
+    if (distance <= this.explosionThreshold && !this.isExploding && !this.exploded) {
       // Start the explosion timer
       this.isExploding = true;
       this.explosionTimerRemaining = this.explosionTimer;
       this.dispatchEvent({ type: 'trigger', bubbles: true });
-      console.log('Mine triggered. Explosion will occur in', this.explosionTimer, 'seconds.');
+      console.log('Mine triggered. Explosion will occur in', this.explosionTimer, 'milliseconds.');
     }
 
-    if (this.isExploding) {
+    if (this.isExploding && !this.exploded) {
       this.explosionTimerRemaining -= dt;
       if (this.explosionTimerRemaining <= 0) {
         this.explodeMine();
@@ -388,7 +390,8 @@ room.registerElement('spacezone-enemy-mine', {
   },
 
   explodeMine() {
-    this.isExploding = true;
+    this.isExploding = false;
+    this.exploded = true;
     
     // Calculate damage based on distance raised to the power of 1.6
     const distance = this.distanceTo(this.player);
