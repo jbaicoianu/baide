@@ -194,7 +194,7 @@ room.registerElement('spacezone-enemy-drone', {
           this.cannon.startFiring();
         }
       } else {
-        if (this.cannon) {
+        if (this.cannon && this.cannon.isFiring) {
           this.cannon.stopFiring();
           console.log('Drone stopped firing because player is not racing.');
         }
