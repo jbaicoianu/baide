@@ -6,5 +6,13 @@
     "branch": "main",
     "commit_hash": "8eb183f59ef313d17001ee9e89c304994f625116",
     "file_name": "static/spacezone/entities/explosion.js"
+  },
+  {
+    "role": "User",
+    "content": "Move explosion into its own file [Manual edit]",
+    "timestamp": "2025-04-12T05:29:44.380107Z",
+    "branch": "main",
+    "commit_hash": "2823bc952250fd7e9a1df74eba1886bf621ad497",
+    "file_name": "static/spacezone/entities/explosion.js"
   }
 ]
