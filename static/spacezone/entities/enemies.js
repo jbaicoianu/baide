@@ -254,7 +254,8 @@ room.registerElement('spacezone-enemy-drone', {
       col: 'red',
       scale: V(2, 2, 2),
       pos: this.getWorldPosition(),
-      visible: true
+      visible: true,
+      showring: true
     });
 
     if (this.cannon) {
@@ -358,7 +359,8 @@ room.registerElement('spacezone-enemy-mine', {
       col: 'purple',
       count: 500,
       pos: this.getWorldPosition(),
-      visible: true
+      visible: true,
+      showring: true
     });
     console.log('mine explodes!', this);
     // Optionally, add particle effects or additional logic here
