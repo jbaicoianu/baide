@@ -26,7 +26,7 @@ room.registerElement('explosion', {
       vel: V(-100, 0, -100),
       rand_vel: V(200, 0, 200),
       duration: 20,
-      speed_min: 200,
+      speed_min: 150,
       scale: V(5),
       image_id: 'spark',
       rotation: V(Math.random() * 180, Math.random() * 180, Math.random() * 180),
