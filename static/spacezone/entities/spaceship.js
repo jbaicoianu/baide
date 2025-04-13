@@ -154,7 +154,6 @@ room.registerElement('spacezone-spaceship', {
       pos: V(0, 0, 2),
       scale: V(16, 3.5, 18),
       col: this.equipmentstatus.shield.color, // Updated to use shield color from equipment
-      lighting: false,
       opacity: 0,
       renderorder: 10,
       //shader_id: 'shield-shader'
@@ -1081,6 +1080,9 @@ room.registerElement('spacezone-spaceship', {
 });
         
 room.registerElement('spacezone-enginetrail', {
+  particlecount: 200,
+  spread: 0.3,
+
   create() {
     const particlecount = typeof this.particlecount === 'number' ? this.particlecount : 200;
     const spread = typeof this.spread === 'number' ? this.spread : 0.3;
