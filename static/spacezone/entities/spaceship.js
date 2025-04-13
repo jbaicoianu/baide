@@ -459,7 +459,7 @@ room.registerElement('spacezone-spaceship', {
     this.afterburner = true;
     this.targetSpeedMultiplier = this.maxspeedmultiplier; // Use maxspeedmultiplier
     for (let trail of this.enginetrails) {
-      trail.particle.col = '#FFFF00'; // Set to brighter yellowish orange
+      trail.particle.col = '#FFAA00'; // Set to brighter yellowish orange
     }
     console.log('Afterburner activated!');
   },
@@ -1114,7 +1114,8 @@ room.registerElement('spacezone-enginetrail', {
       if (player.afterburner) {
         this.particle.col = '#FFAA00'; // Changed to brighter yellowish orange
       } else {
-        this.particle.col = this.col; // Use engine's color when not afterburning
+        // Dynamically take color from equipment status
+        this.particle.col = player.equipmentstatus.engine.color;
       }
 
       // Emit time_elapsed event with updated data
