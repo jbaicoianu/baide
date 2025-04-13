@@ -104,7 +104,9 @@ room.registerElement('spacezone-spaceship', {
         name: "Standard Equipment",
         params: {
           color: 'cyan',      // Color of the engine trails
-          multiplier: 1.0     // Multiplier for raceTime increment
+          multiplier: 1.0,    // Multiplier for raceTime increment
+          particlecount: 200, // Default particle count
+          spread: 0.3         // Default spread value
         }
       }
     };
@@ -165,7 +167,12 @@ room.registerElement('spacezone-spaceship', {
       '1.25 -0.2 -3'
     ];
     for (const pos of trailPositions) {
-      let trail = this.taufighter.createObject('spacezone-enginetrail', { pos: pos, col: this.equipmentstatus.engine.color }); // Passed engine color
+      let trail = this.taufighter.createObject('spacezone-enginetrail', { 
+        pos: pos, 
+        col: this.equipmentstatus.engine.color, 
+        particlecount: this.equipmentstatus.engine.particlecount, 
+        spread: this.equipmentstatus.engine.spread 
+      }); // Passed engine color, particle count, and spread
       this.enginetrails.push(trail);
     }
 
@@ -1016,6 +1023,8 @@ room.registerElement('spacezone-spaceship', {
       this.equipmentstatus.cargo.current = this.equipment.cargo.params.capacity;
       this.equipmentstatus.shield.strength = this.equipment.shield.params.strength; // Fixed typo: should be shield
       this.equipmentstatus.engine.multiplier = this.equipment.engine.params.multiplier; // Initialize engine multiplier
+      this.equipmentstatus.engine.particlecount = this.equipment.engine.params.particlecount; // Initialize particle count
+      this.equipmentstatus.engine.spread = this.equipment.engine.params.spread; // Initialize spread
       
       console.log('Equipment has been reset.');
     } catch (error) {
@@ -1073,13 +1082,16 @@ room.registerElement('spacezone-spaceship', {
         
 room.registerElement('spacezone-enginetrail', {
   create() {
+    const particlecount = typeof this.particlecount === 'number' ? this.particlecount : 200;
+    const spread = typeof this.spread === 'number' ? this.spread : 0.3;
+
     // Create a particle object for engine trails
     this.particle = this.createObject('particle', {
-      pos: V(-0.15), // Set pos to V(-0.15)
-      rand_pos: V(0.3), // Add rand_pos: V(0.3)
+      pos: V(-spread / 2), // Set pos to V(-spread / 2)
+      rand_pos: V(spread), // Add rand_pos: V(spread)
       scale: V(1), // Updated scale from V(0.02) to V(1)
-      rate: 400, // Increased rate to 400
-      count: 200, // Reduced count to 200
+      rate: particlecount / 0.5, // Set rate based on particlecount
+      count: particlecount, // Set count based on particlecount
       duration: 0.5, // Decreased duration to 0.5
       opacity: 0.2,
       vel: V(0, 0, -10), // Set vel to V(0,0,-10)
@@ -1110,7 +1122,7 @@ room.registerElement('spacezone-enginetrail', {
     const player = this.getParentByTagName('spacezone-spaceship');
 
     if (player && player.isRacing) {
-      this.particle.rate = 400;
+      this.particle.rate = player.equipmentstatus.engine.particlecount / 0.5;
       if (player.afterburner) {
         this.particle.col = '#FFAA00'; // Changed to brighter yellowish orange
       } else {
