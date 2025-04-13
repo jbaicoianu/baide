@@ -164,8 +164,10 @@ room.registerElement('spacezone-level', {
     for (let i = 0; i < 10; i++) {
       const t = Math.random();
       const pathPos = this.getPositionAtTime(t);
-      const offsetX = Math.random() * 40 - 20; // Random offset between -20 and 20
-      const offsetY = Math.random() * 40 - 20; // Random offset between -20 and 20
+      const distance = 20 + Math.random() * 20; // Random offset distance between 20 and 40
+      const angle = -Math.PI + Math.random() * 2 * Math.PI; // Random angle between -PI and PI
+      const offsetX = distance * Math.cos(angle);
+      const offsetY = distance * Math.sin(angle);
       const minePos = pathPos.clone().add(new THREE.Vector3(offsetX, offsetY, 0));
       const mine = this.createObject('spacezone-enemy-mine', {
         pos: minePos,
