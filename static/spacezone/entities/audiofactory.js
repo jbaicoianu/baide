@@ -84,6 +84,15 @@ room.registerElement('audio-factory', {
       volume: -14
     }).connect(this.missileFiredGain);
     this.missileFired.start();
+
+    // Create radarPing sound effect
+    this.radarPingGain = new Tone.Gain(0).connect(this.laserDistortion);
+    this.radarPing = new Tone.Oscillator({
+      type: 'triangle',
+      frequency: 800, // Constant pitch
+      volume: -15
+    }).connect(this.radarPingGain);
+    this.radarPing.start();
   },
   
   playSound(id, pos = null) {
@@ -116,7 +125,7 @@ room.registerElement('audio-factory', {
             this.missileTargetAcquiringGain.gain.setValueAtTime(1, Tone.now());
             this.missileTargetAcquiringGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.1);
 
-            toneJSsound = this.missileTargetAcquiredGain;
+            toneJSsound = this.missileTargetAcquiringGain;
         } else {
             console.warn('MissileTargetAcquiring oscillator is not initialized yet.');
             return null;
@@ -161,6 +170,20 @@ room.registerElement('audio-factory', {
     toneJSsound.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 1.5);
     noise.start();
 
+        break;
+      case 'radar-ping':
+        if (this.radarPingGain) {
+            // Trigger the gain to make the radar-ping sound audible with a long fade
+            const now = Tone.now();
+            this.radarPingGain.gain.cancelScheduledValues(now);
+            this.radarPingGain.gain.setValueAtTime(1, now);
+            this.radarPingGain.gain.linearRampToValueAtTime(0, now + 5); // 5 seconds fade
+
+            toneJSsound = this.radarPingGain;
+        } else {
+            console.warn('RadarPing oscillator is not initialized yet.');
+            return null;
+        }
         break;
       default:
         console.warn(`Sound with id "${id}" does not exist.`);
@@ -214,6 +237,16 @@ room.registerElement('audio-factory', {
           this.missileFiredGain.gain.exponentialRampToValueAtTime(0.001, Tone.now() + 0.5);
         } else {
           console.warn('MissileFired noise generator is not initialized yet.');
+        }
+        break;
+      case 'radar-ping':
+        if (this.radarPingGain) {
+          // Fade out the radar-ping sound
+          this.radarPingGain.gain.cancelScheduledValues(Tone.now());
+          this.radarPingGain.gain.setValueAtTime(this.radarPingGain.gain.value, Tone.now());
+          this.radarPingGain.gain.linearRampToValueAtTime(0, Tone.now() + 5); // 5 seconds fade
+        } else {
+          console.warn('RadarPing oscillator is not initialized yet.');
         }
         break;
       default:
