@@ -378,6 +378,7 @@ room.registerElement('spacezone-enemy-mine', {
 
   playPingSound() {
     console.log('ping!', this);
+/*
     if (this.pingSoundId) {
       room.createObject('sound', {
         src: this.pingSoundId,
@@ -388,6 +389,9 @@ room.registerElement('spacezone-enemy-mine', {
     } else {
       console.warn('pingSoundId is not defined for spacezone-enemy-mine.');
     }
+      */
+    room.objects['sounds'].playSound('radar-ping');
+
   },
 
   explodeMine() {
