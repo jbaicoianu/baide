@@ -1407,6 +1407,8 @@ function openNewFileModal() {
   
   // Add file type options if not already present
   if (!document.getElementById('fileTypeOptions')) {
+    const modalContent = modal.querySelector('.modal-content'); // Added to select modal-content
+    
     const fileTypeOptions = document.createElement('div');
     fileTypeOptions.id = 'fileTypeOptions';
     fileTypeOptions.className = 'file-type-options';
@@ -1437,7 +1439,7 @@ function openNewFileModal() {
     fileTypeOptions.appendChild(imageRadio);
     fileTypeOptions.appendChild(imageLabel);
 
-    modal.appendChild(fileTypeOptions);
+    modalContent.appendChild(fileTypeOptions); // Changed to append to modalContent
 
     // Create Image Prompt textarea
     const imagePromptContainer = document.createElement('div');
@@ -1455,7 +1457,7 @@ function openNewFileModal() {
     imagePromptContainer.appendChild(imagePromptLabel);
     imagePromptContainer.appendChild(imagePromptTextarea);
 
-    modal.appendChild(imagePromptContainer);
+    modalContent.appendChild(imagePromptContainer); // Changed to append to modalContent
 
     // Add event listeners for radio buttons
     textRadio.addEventListener('change', () => {
@@ -2129,9 +2131,3 @@ async function loadGitBranch() {
     console.error('Error loading Git branch:', e);
   }
 }
-
-// Continue with the rest of your existing functions as they are...
-// (Functions like createNewFile, extract_commit_summary, etc., remain unchanged)
-```
-
-Commit Summary: Added image generation support to the "New File" modal dialog, including UI updates for selecting file type and handling image prompts, integrated with the `/generateimage` API endpoint, and updated project tree accordingly.
