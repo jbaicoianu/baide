@@ -874,9 +874,9 @@ async function openFileInTab(filename, activate = true) {
   }
     
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/files?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
-      const data = await response.json();
+      const contentType = response.headers.get('Content-Type');
       // Create a new tab
       const tabs = document.getElementById('tabs');
           
@@ -910,8 +910,29 @@ async function openFileInTab(filename, activate = true) {
         // Activate the new tab
         tab.classList.add('active');
             
-        // Load content into CodeMirror editor
-        setEditorValue(data.content);
+        if (contentType.startsWith('text/')) {
+          const content = await response.text();
+          setEditorValue(content);
+          editor.getWrapperElement().style.display = 'block';
+          document.getElementById('imageDisplay').style.display = 'none';
+        } else if (contentType.startsWith('image/')) {
+          const blob = await response.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          const imageDisplay = document.getElementById('imageDisplay');
+          if (!imageDisplay) {
+            const container = document.getElementById('sourceCodeContainer');
+            const img = document.createElement('img');
+            img.id = 'imageDisplay';
+            img.style.maxWidth = '100%';
+            img.style.display = 'none';
+            container.appendChild(img);
+          }
+          const imgElement = document.getElementById('imageDisplay');
+          imgElement.src = imageUrl;
+          imgElement.style.display = 'block';
+          editor.getWrapperElement().style.display = 'none';
+        }
+
         activeFile[currentProject] = filename;
         openFiles[currentProject][filename] = true;
         saveOpenFiles(currentProject);
@@ -966,15 +987,42 @@ async function switchToTab(filename) {
     }
   });
 
-  // Clear the editor before loading new content
+  // Clear the editor and image display before loading new content
   clearEditor();
+  setEditorValue('');
+  const imageDisplay = document.getElementById('imageDisplay');
+  if (imageDisplay) {
+    imageDisplay.style.display = 'none';
+  }
 
-  // Load source code
+  // Load content from /files endpoint
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/files?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
-      const data = await response.json();
-      setEditorValue(data.content);
+      const contentType = response.headers.get('Content-Type');
+      if (contentType.startsWith('text/')) {
+        const content = await response.text();
+        setEditorValue(content);
+        editor.getWrapperElement().style.display = 'block';
+        if (imageDisplay) {
+          imageDisplay.style.display = 'none';
+        }
+      } else if (contentType.startsWith('image/')) {
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        if (!imageDisplay) {
+          const container = document.getElementById('sourceCodeContainer');
+          const img = document.createElement('img');
+          img.id = 'imageDisplay';
+          img.style.maxWidth = '100%';
+          img.style.display = 'none';
+          container.appendChild(img);
+        }
+        const imgElement = document.getElementById('imageDisplay');
+        imgElement.src = imageUrl;
+        imgElement.style.display = 'block';
+        editor.getWrapperElement().style.display = 'none';
+      }
       // Load transcript
       await loadTranscript(filename);
       // Load coding contexts
@@ -1027,6 +1075,10 @@ function closeTab(filename) {
         setEditorValue('');
         if (editor) {
           editor.setValue('');
+        }
+        const imageDisplay = document.getElementById('imageDisplay');
+        if (imageDisplay) {
+          imageDisplay.style.display = 'none';
         }
         document.getElementById('chatBox').innerHTML = '';
         document.getElementById('commitSummaries').innerHTML = '';
@@ -1368,10 +1420,33 @@ function saveFileActiveModels() {
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
   try {
-    const response = await fetch(`/source?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/files?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
-      const data = await response.json();
-      setEditorValue(data.content);
+      const contentType = response.headers.get('Content-Type');
+      if (contentType.startsWith('text/')) {
+        const content = await response.text();
+        setEditorValue(content);
+        editor.getWrapperElement().style.display = 'block';
+        const imageDisplay = document.getElementById('imageDisplay');
+        if (imageDisplay) {
+          imageDisplay.style.display = 'none';
+        }
+      } else if (contentType.startsWith('image/')) {
+        const blob = await response.blob();
+        const imageUrl = URL.createObjectURL(blob);
+        let imageDisplay = document.getElementById('imageDisplay');
+        if (!imageDisplay) {
+          const container = document.getElementById('sourceCodeContainer');
+          imageDisplay = document.createElement('img');
+          imageDisplay.id = 'imageDisplay';
+          imageDisplay.style.maxWidth = '100%';
+          imageDisplay.style.display = 'none';
+          container.appendChild(imageDisplay);
+        }
+        imageDisplay.src = imageUrl;
+        imageDisplay.style.display = 'block';
+        editor.getWrapperElement().style.display = 'none';
+      }
     }
   } catch (e) {
     console.error('Error loading source code:', e);
@@ -1821,9 +1896,6 @@ function adjustTabs() {
   }
 }
 
-// Listen to window resize to adjust tabs
-window.addEventListener('resize', adjustTabs);
-
 // Function to show toast notifications
 function showToast(message, type = 'info') {
   // Create toast container if it doesn't exist
@@ -2104,21 +2176,5 @@ function hidePlaceholderPage() {
   const placeholder = document.getElementById('newProjectPlaceholder');
   if (placeholder) {
     placeholder.classList.add('hidden');
-  }
-}
-
-// Function to load and display the current Git branch
-async function loadGitBranch() {
-  try {
-    const response = await fetch('/git_current_branch?project_name=' + currentProject);
-    if (response.ok) {
-      const data = await response.json();
-      const gitBranchDiv = document.getElementById('gitBranchDisplay');
-      gitBranchDiv.textContent = `${data.current_branch}`;
-    } else {
-      console.error('Failed to load current Git branch.');
-    }
-  } catch (e) {
-    console.error('Error loading Git branch:', e);
   }
 }
