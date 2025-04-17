@@ -1,3 +1,23 @@
+/* CSS for Image Generation in New File Modal:
+.new-file-modal .file-type-options {
+  margin-top: 10px;
+}
+
+.new-file-modal .file-type-options label {
+  margin-right: 15px;
+}
+
+.new-file-modal .image-prompt-container {
+  margin-top: 10px;
+  display: none;
+}
+
+.new-file-modal .image-prompt-container textarea {
+  width: 100%;
+  height: 80px;
+}
+*/
+
 let activeFile = {}; // Mapping of project name to active file
 let openFiles = {}; // Mapping of project name to open files
 let editor = null;
@@ -414,6 +434,9 @@ async function loadProjectStructure() {
       // Load Git Branch
       loadGitBranch();
 
+      // Adjust AI Model Dropdown based on active file
+      updateAIDropdownForActiveFile();
+
       // Check if there are no open files and show placeholder if necessary
       if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
         showPlaceholderPage();
@@ -493,6 +516,9 @@ async function switchProject(projectName) {
       // Restore new project state
       await restoreProjectState(currentProject);
 
+      // Adjust AI Model Dropdown based on active file
+      updateAIDropdownForActiveFile();
+
       // Check if there are no open files and show placeholder if necessary
       if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
         showPlaceholderPage();
@@ -506,6 +532,22 @@ async function switchProject(projectName) {
   } catch (e) {
     showToast('Error switching project.', 'error');
     console.error('Error switching project:', e);
+  }
+}
+
+// Function to update AI Model Dropdown based on active file
+function updateAIDropdownForActiveFile() {
+  const modelSelect = document.getElementById('aiModelSelect');
+  if (modelSelect && currentProject && activeFile[currentProject]) {
+    const activeModel = fileActiveModels[activeFile[currentProject]] || defaultModel;
+    modelSelect.value = activeModel;
+
+    // If no model is set, set to default
+    if (!modelSelect.value && defaultModel) {
+      modelSelect.value = defaultModel;
+    }
+  } else {
+    resetAIDropdown();
   }
 }
 
@@ -902,7 +944,7 @@ async function openFileInTab(filename, activate = true) {
         loadFileActiveModel(filename);
         // Adjust tabs
         adjustTabs(); // Adjust tabs after adding a new tab
-    
+
         // Hide the "more tabs" dropdown
         const moreDropdown = document.querySelector('#moreTabs .dropdown-content');
         if (moreDropdown) {
@@ -959,6 +1001,8 @@ async function switchToTab(filename) {
       loadFileCodingContexts(filename);
       // Load active AI model
       loadFileActiveModel(filename);
+      // Update AI Model Dropdown
+      updateAIDropdownForActiveFile();
     }
   } catch (e) {
     console.error('Error switching tabs:', e);
@@ -1360,8 +1404,72 @@ function openNewFileModal() {
   modal.style.display = "block";
   const newFileNameInput = document.getElementById("newFileName");
   newFileNameInput.focus();
-    
-  // Removed event listeners from here to prevent multiple registrations
+  
+  // Add file type options if not already present
+  if (!document.getElementById('fileTypeOptions')) {
+    const fileTypeOptions = document.createElement('div');
+    fileTypeOptions.id = 'fileTypeOptions';
+    fileTypeOptions.className = 'file-type-options';
+
+    const textRadio = document.createElement('input');
+    textRadio.type = 'radio';
+    textRadio.id = 'fileTypeText';
+    textRadio.name = 'fileType';
+    textRadio.value = 'text';
+    textRadio.checked = true;
+
+    const textLabel = document.createElement('label');
+    textLabel.htmlFor = 'fileTypeText';
+    textLabel.textContent = 'Text';
+
+    const imageRadio = document.createElement('input');
+    imageRadio.type = 'radio';
+    imageRadio.id = 'fileTypeImage';
+    imageRadio.name = 'fileType';
+    imageRadio.value = 'image';
+
+    const imageLabel = document.createElement('label');
+    imageLabel.htmlFor = 'fileTypeImage';
+    imageLabel.textContent = 'Image';
+
+    fileTypeOptions.appendChild(textRadio);
+    fileTypeOptions.appendChild(textLabel);
+    fileTypeOptions.appendChild(imageRadio);
+    fileTypeOptions.appendChild(imageLabel);
+
+    modal.appendChild(fileTypeOptions);
+
+    // Create Image Prompt textarea
+    const imagePromptContainer = document.createElement('div');
+    imagePromptContainer.id = 'imagePromptContainer';
+    imagePromptContainer.className = 'image-prompt-container';
+
+    const imagePromptLabel = document.createElement('label');
+    imagePromptLabel.htmlFor = 'imagePrompt';
+    imagePromptLabel.textContent = 'Image Prompt:';
+
+    const imagePromptTextarea = document.createElement('textarea');
+    imagePromptTextarea.id = 'imagePrompt';
+    imagePromptTextarea.placeholder = 'Enter image prompt...';
+
+    imagePromptContainer.appendChild(imagePromptLabel);
+    imagePromptContainer.appendChild(imagePromptTextarea);
+
+    modal.appendChild(imagePromptContainer);
+
+    // Add event listeners for radio buttons
+    textRadio.addEventListener('change', () => {
+      if (textRadio.checked) {
+        imagePromptContainer.style.display = 'none';
+      }
+    });
+
+    imageRadio.addEventListener('change', () => {
+      if (imageRadio.checked) {
+        imagePromptContainer.style.display = 'block';
+      }
+    });
+  }
 }
 
 // Function to get directory path from filename
@@ -1380,6 +1488,18 @@ function closeNewFileModal() {
   const modal = document.getElementById("newFileModal");
   modal.style.display = "none";
   document.getElementById("newFileName").value = "";
+
+  // Hide Image Prompt container
+  const imagePromptContainer = document.getElementById('imagePromptContainer');
+  if (imagePromptContainer) {
+    imagePromptContainer.style.display = 'none';
+  }
+
+  // Reset file type to Text
+  const textRadio = document.getElementById('fileTypeText');
+  if (textRadio) {
+    textRadio.checked = true;
+  }
 }
 
 // Function to create a new file
@@ -1389,32 +1509,72 @@ async function createNewFile() {
     showToast("File name cannot be empty.", "error");
     return;
   }
-  const response = await fetch("/create_file", {
-    method: "POST",
-    headers: { 
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ file: fileName, project_name: currentProject })
-  });
-  const data = await response.json();
-  if (data.success) {
-    closeNewFileModal();
-    
-    // Extract directory path from fileName
-    const dirPath = getDirectoryPath(fileName);
-    if (dirPath) {
-      openDirectories.get(currentProject).add(dirPath);
-      saveOpenDirectories(currentProject);
+
+  const fileType = document.querySelector('input[name="fileType"]:checked').value;
+
+  if (fileType === 'text') {
+    // Existing behavior for creating text files
+    const response = await fetch("/create_file", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ file: fileName, project_name: currentProject })
+    });
+    const data = await response.json();
+    if (data.success) {
+      closeNewFileModal();
+      
+      // Extract directory path from fileName
+      const dirPath = getDirectoryPath(fileName);
+      if (dirPath) {
+        openDirectories.get(currentProject).add(dirPath);
+        saveOpenDirectories(currentProject);
+      }
+
+      await loadProjectStructure();
+      await openFileInTab(fileName, true); // Open the new file in a new tab
+      showToast(`File ${fileName} created successfully.`, "success");
+    } else {
+      showToast("Error creating file: " + data.error, "error");
+    }
+  } else if (fileType === 'image') {
+    // New behavior for creating image files
+    const imagePrompt = document.getElementById('imagePrompt').value.trim();
+    if (!imagePrompt) {
+      showToast("Image prompt cannot be empty.", "error");
+      return;
     }
 
-    await loadProjectStructure();
-    await openFileInTab(fileName, true); // Open the new file in a new tab
-    showToast(`File ${fileName} created successfully.`, "success");
-  } else {
-    showToast("Error creating file: " + data.error, "error");
+    const response = await fetch("/generateimage", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ file_path: fileName, prompt: imagePrompt, project_name: currentProject })
+    });
+
+    const data = await response.json();
+    if (data.success) {
+      closeNewFileModal();
+      
+      // Create a placeholder entry in the project tree
+      const dirPath = getDirectoryPath(fileName);
+      if (dirPath) {
+        openDirectories.get(currentProject).add(dirPath);
+        saveOpenDirectories(currentProject);
+      }
+
+      await loadProjectStructure();
+      // Optionally, open the image file if applicable
+      await openFileInTab(fileName, true);
+      showToast(`Image file ${fileName} generated successfully.`, "success");
+    } else {
+      showToast("Error generating image: " + data.error, "error");
+    }
   }
 }
-  
+
 // Function to open new project modal
 function openNewProjectModal() {
   let overlay = document.getElementById('newProjectOverlay');
@@ -1972,3 +2132,6 @@ async function loadGitBranch() {
 
 // Continue with the rest of your existing functions as they are...
 // (Functions like createNewFile, extract_commit_summary, etc., remain unchanged)
+```
+
+Commit Summary: Added image generation support to the "New File" modal dialog, including UI updates for selecting file type and handling image prompts, integrated with the `/generateimage` API endpoint, and updated project tree accordingly.
