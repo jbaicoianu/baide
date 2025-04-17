@@ -1405,7 +1405,7 @@ function openNewFileModal() {
   const newFileNameInput = document.getElementById("newFileName");
   newFileNameInput.focus();
   
-  // Add file type options if not already present
+  // Move fileTypeOptions above create button
   if (!document.getElementById('fileTypeOptions')) {
     const modalContent = modal.querySelector('.modal-content'); // Added to select modal-content
     
@@ -1439,7 +1439,13 @@ function openNewFileModal() {
     fileTypeOptions.appendChild(imageRadio);
     fileTypeOptions.appendChild(imageLabel);
 
-    modalContent.appendChild(fileTypeOptions); // Changed to append to modalContent
+    // Insert fileTypeOptions before the create button
+    const createButton = modal.querySelector('.create-btn');
+    if (createButton) {
+      modalContent.insertBefore(fileTypeOptions, createButton);
+    } else {
+      modalContent.appendChild(fileTypeOptions);
+    }
 
     // Create Image Prompt textarea
     const imagePromptContainer = document.createElement('div');
@@ -1457,7 +1463,12 @@ function openNewFileModal() {
     imagePromptContainer.appendChild(imagePromptLabel);
     imagePromptContainer.appendChild(imagePromptTextarea);
 
-    modalContent.appendChild(imagePromptContainer); // Changed to append to modalContent
+    // Insert imagePromptContainer below fileTypeOptions
+    if (fileTypeOptions.nextSibling) {
+      modalContent.insertBefore(imagePromptContainer, fileTypeOptions.nextSibling);
+    } else {
+      modalContent.appendChild(imagePromptContainer);
+    }
 
     // Add event listeners for radio buttons
     textRadio.addEventListener('change', () => {
