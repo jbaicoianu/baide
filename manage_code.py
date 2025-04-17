@@ -371,7 +371,7 @@ def get_file():
             file_path,
             mimetype=mime_type,
             as_attachment=True,
-            attachment_filename=os.path.basename(file_path)
+            download_name=os.path.basename(file_path)
         )
     except PermissionError:
         return jsonify({"error": "Permission denied."}), 403
