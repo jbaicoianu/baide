@@ -5,7 +5,8 @@ import json
 import argparse
 import subprocess
 import difflib
-from flask import Flask, request, render_template, send_from_directory, jsonify
+import mimetypes
+from flask import Flask, request, render_template, send_from_directory, jsonify, send_file
 import openai
 from datetime import datetime  # Added for timestamping
 import requests  # Added for downloading images
@@ -344,6 +345,36 @@ def get_source():
         with open(file_path, "r") as f:
             content = f.read()
         return jsonify({"content": content})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# New Endpoint: Serve binary files
+@app.route("/file", methods=["GET"])
+def get_file():
+    project_name = request.args.get('project_name')
+    file_name = request.args.get('file')
+    if not file_name:
+        return jsonify({"error": "No file specified."}), 400
+    is_valid, project_path = validate_project(project_name)
+    if not is_valid:
+        return jsonify({"error": project_path}), 400
+    file_path = os.path.join(project_path, file_name)
+    if not os.path.exists(file_path):
+        return jsonify({"error": "File not found."}), 404
+    if not os.path.isfile(file_path):
+        return jsonify({"error": "Path is not a file."}), 400
+    try:
+        mime_type, _ = mimetypes.guess_type(file_path)
+        if mime_type is None:
+            mime_type = 'application/octet-stream'
+        return send_file(
+            file_path,
+            mimetype=mime_type,
+            as_attachment=True,
+            attachment_filename=os.path.basename(file_path)
+        )
+    except PermissionError:
+        return jsonify({"error": "Permission denied."}), 403
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
