@@ -8,6 +8,7 @@ import difflib
 from flask import Flask, request, render_template, send_from_directory, jsonify
 import openai
 from datetime import datetime  # Added for timestamping
+import requests  # Added for downloading images
 
 # Instantiate an OpenAI client with your API key.
 API_KEY = os.getenv("OPENAI_API_KEY")
@@ -766,6 +767,37 @@ def chat():
 
     update_transcript(project_name, file_name, commit_hash)
     return jsonify(chat_histories[key])
+
+# New Endpoint: Generate Image
+@app.route("/generateimage", methods=["POST"])
+def generate_image():
+    data = request.get_json()
+    if not data or "file_path" not in data or "prompt" not in data:
+        return jsonify({"error": "Missing 'file_path' or 'prompt' in request data."}), 400
+    
+    file_path = data["file_path"]
+    prompt = data["prompt"]
+    model_name = data.get("model_name", "dall-e-3")
+
+    if model_name not in AVAILABLE_MODELS:
+        return jsonify({"error": f"Model '{model_name}' is not supported."}), 400
+
+    try:
+        response = client.images.create(
+            prompt=prompt,
+            model=model_name
+        )
+        image_url = response['data'][0]['url']
+        # Download the image
+        image_response = requests.get(image_url)
+        image_response.raise_for_status()
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, 'wb') as f:
+            f.write(image_response.content)
+        return jsonify({"success": True, "path": file_path}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 # Main page: serves the HTML page with template reloading logic.
 @app.route("/", methods=["GET"])
