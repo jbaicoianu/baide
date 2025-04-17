@@ -914,7 +914,7 @@ async function openFileInTab(filename, activate = true) {
         if (contentType === 'application/json') {
           const content = await response.json();
           const prettyJson = JSON.stringify(content, null, 2);
-          setEditorValue(prettyJson, 'application/json');
+          setEditorValue(prettyJson, { name: 'javascript', json: true }); // Updated mode configuration
           editor.getWrapperElement().style.display = 'block';
           document.getElementById('imageDisplay').style.display = 'none';
         } else if (contentType.startsWith('text/')) {
@@ -1010,7 +1010,7 @@ async function switchToTab(filename) {
       if (contentType === 'application/json') {
         const content = await response.json();
         const prettyJson = JSON.stringify(content, null, 2);
-        setEditorValue(prettyJson, 'application/json');
+        setEditorValue(prettyJson, { name: 'javascript', json: true }); // Updated mode configuration
         editor.getWrapperElement().style.display = 'block';
         if (imageDisplay) {
           imageDisplay.style.display = 'none';
@@ -1441,7 +1441,7 @@ async function loadSourceCode(filename) {
       if (contentType === 'application/json') {
         const content = await response.json();
         const prettyJson = JSON.stringify(content, null, 2);
-        setEditorValue(prettyJson, 'application/json');
+        setEditorValue(prettyJson, { name: 'javascript', json: true }); // Updated mode configuration
         editor.getWrapperElement().style.display = 'block';
         const imageDisplay = document.getElementById('imageDisplay');
         if (imageDisplay) {
