@@ -49,8 +49,9 @@ function initializeCodeMirror() {
 }
 
 // Function to set editor value and refresh
-function setEditorValue(value) {
+function setEditorValue(value, mode = 'python') {
   if (editor) {
+    editor.setOption('mode', mode);
     editor.setValue(value);
     setTimeout(() => {
       editor.refresh();
@@ -874,7 +875,7 @@ async function openFileInTab(filename, activate = true) {
   }
     
   try {
-    const response = await fetch(`/files?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/file?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const contentType = response.headers.get('Content-Type');
       // Create a new tab
@@ -910,9 +911,15 @@ async function openFileInTab(filename, activate = true) {
         // Activate the new tab
         tab.classList.add('active');
             
-        if (contentType.startsWith('text/')) {
+        if (contentType === 'application/json') {
+          const content = await response.json();
+          const prettyJson = JSON.stringify(content, null, 2);
+          setEditorValue(prettyJson, 'application/json');
+          editor.getWrapperElement().style.display = 'block';
+          document.getElementById('imageDisplay').style.display = 'none';
+        } else if (contentType.startsWith('text/')) {
           const content = await response.text();
-          setEditorValue(content);
+          setEditorValue(content, 'python');
           editor.getWrapperElement().style.display = 'block';
           document.getElementById('imageDisplay').style.display = 'none';
         } else if (contentType.startsWith('image/')) {
@@ -995,14 +1002,22 @@ async function switchToTab(filename) {
     imageDisplay.style.display = 'none';
   }
 
-  // Load content from /files endpoint
+  // Load content from /file endpoint
   try {
-    const response = await fetch(`/files?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/file?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const contentType = response.headers.get('Content-Type');
-      if (contentType.startsWith('text/')) {
+      if (contentType === 'application/json') {
+        const content = await response.json();
+        const prettyJson = JSON.stringify(content, null, 2);
+        setEditorValue(prettyJson, 'application/json');
+        editor.getWrapperElement().style.display = 'block';
+        if (imageDisplay) {
+          imageDisplay.style.display = 'none';
+        }
+      } else if (contentType.startsWith('text/')) {
         const content = await response.text();
-        setEditorValue(content);
+        setEditorValue(content, 'python');
         editor.getWrapperElement().style.display = 'block';
         if (imageDisplay) {
           imageDisplay.style.display = 'none';
@@ -1420,12 +1435,21 @@ function saveFileActiveModels() {
 // Function to load the existing source code content for a specific file into CodeMirror
 async function loadSourceCode(filename) {
   try {
-    const response = await fetch(`/files?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
+    const response = await fetch(`/file?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(currentProject)}`);
     if (response.ok) {
       const contentType = response.headers.get('Content-Type');
-      if (contentType.startsWith('text/')) {
+      if (contentType === 'application/json') {
+        const content = await response.json();
+        const prettyJson = JSON.stringify(content, null, 2);
+        setEditorValue(prettyJson, 'application/json');
+        editor.getWrapperElement().style.display = 'block';
+        const imageDisplay = document.getElementById('imageDisplay');
+        if (imageDisplay) {
+          imageDisplay.style.display = 'none';
+        }
+      } else if (contentType.startsWith('text/')) {
         const content = await response.text();
-        setEditorValue(content);
+        setEditorValue(content, 'python');
         editor.getWrapperElement().style.display = 'block';
         const imageDisplay = document.getElementById('imageDisplay');
         if (imageDisplay) {
@@ -2106,7 +2130,7 @@ function updateChatHistoryViewer(chatHistories) {
   chatBox.innerHTML = '';
   commitSummaries.innerHTML = '';
   activeCodingContexts.innerHTML = '';
-
+  
   // Iterate over chatHistories and append messages and summaries
   chatHistories.forEach(msg => {
     if (msg.role.toLowerCase() === 'assistant') {
