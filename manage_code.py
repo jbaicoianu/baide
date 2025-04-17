@@ -787,7 +787,7 @@ def generate_image():
             prompt=prompt,
             model=model_name
         )
-        image_url = response['data'][0]['url']
+        image_url = response.data[0].url  # Updated access method
         # Download the image
         image_response = requests.get(image_url)
         image_response.raise_for_status()
