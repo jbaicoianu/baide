@@ -1,23 +1,3 @@
-/* CSS for Image Generation in New File Modal:
-.new-file-modal .file-type-options {
-  margin-top: 10px;
-}
-
-.new-file-modal .file-type-options label {
-  margin-right: 15px;
-}
-
-.new-file-modal .image-prompt-container {
-  margin-top: 10px;
-  display: none;
-}
-
-.new-file-modal .image-prompt-container textarea {
-  width: 100%;
-  height: 80px;
-}
-*/
-
 let activeFile = {}; // Mapping of project name to active file
 let openFiles = {}; // Mapping of project name to open files
 let editor = null;
