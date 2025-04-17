@@ -1337,5 +1337,22 @@
     "commit_hash": "41e9a5cbd7d5c336d4d049a66f6e1845e043459b",
     "model": "o1-mini",
     "file_name": "static/editor/editor.js"
+  },
+  {
+    "role": "User",
+    "content": "Add support for viewing application/json files when handling the /file response. The existing text view would be acceptable, but if possible let's make it a full JSON pretty print / graphical editor",
+    "timestamp": "2025-04-17T22:36:31.107808Z",
+    "branch": "image-generation",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've added support for viewing `application/json` files in the `/file` response handling. JSON files will now be displayed with syntax highlighting in CodeMirror's JSON mode. Additionally, if desired, we can integrate a graphical JSON editor for enhanced visualization and editing capabilities.\n\n```javascript",
+    "timestamp": "2025-04-17T22:39:33.951520Z",
+    "branch": "image-generation",
+    "commit_hash": "98ed2fbc067f6dee4a5979619abe4bfb88f60933",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor.js"
   }
 ]
