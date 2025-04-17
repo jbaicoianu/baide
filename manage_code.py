@@ -783,7 +783,7 @@ def generate_image():
         return jsonify({"error": f"Model '{model_name}' is not supported."}), 400
 
     try:
-        response = client.images.create(
+        response = client.images.generate(
             prompt=prompt,
             model=model_name
         )
