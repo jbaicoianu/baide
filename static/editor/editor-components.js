@@ -258,7 +258,7 @@ class BaideEditor extends HTMLElement {
       await this.switchToTab(this.activeFile[projectName]);
     } else {
       // If no active file, clear the editor and show placeholder
-      clearEditor();
+      this.clearEditor();
       showPlaceholderPage();
     }
 
@@ -300,7 +300,7 @@ class BaideEditor extends HTMLElement {
         } else {
           this.activeFile[this.currentProject] = undefined;
           this.saveProjectState(this.currentProject);
-          setEditorValue('');
+          this.clearEditor();
           if (this.editor) {
             this.editor.setValue('');
           }
@@ -384,12 +384,12 @@ class BaideEditor extends HTMLElement {
         if (contentType === 'application/json') {
           const content = await response.json();
           const prettyJson = JSON.stringify(content, null, 2);
-          setEditorValue(prettyJson, { name: 'javascript', json: true }); // Updated mode configuration
+          this.setEditorValue(prettyJson, { name: 'javascript', json: true }); // Updated mode configuration
           this.editor.getWrapperElement().style.display = 'block';
           document.getElementById('imageDisplay').style.display = 'none';
         } else if (contentType.startsWith('text/')) {
           const content = await response.text();
-          setEditorValue(content, 'python');
+          this.setEditorValue(content, 'python');
           this.editor.getWrapperElement().style.display = 'block';
           document.getElementById('imageDisplay').style.display = 'none';
         } else if (contentType.startsWith('image/')) {
@@ -461,6 +461,19 @@ class BaideEditor extends HTMLElement {
   // Function to load active AI model (to be implemented)
   loadFileActiveModel(filename) {
     // TODO: Implement loadFileActiveModel functionality
+  }
+
+  // Member function to set editor value
+  setEditorValue(value, mode = 'python') {
+    const editorCode = this.shadowRoot.querySelector('baide-editor-code');
+    if (editorCode) {
+      editorCode.setEditorValue(value, mode);
+    }
+  }
+
+  // Member function to clear the editor
+  clearEditor() {
+    this.setEditorValue('');
   }
 }
 
@@ -651,6 +664,22 @@ class BaideEditorCode extends HTMLElement {
       }
     });
     callback(this.editor);
+  }
+
+  // Method to set editor value
+  setEditorValue(value, mode = 'python') {
+    if (this.editor) {
+      this.editor.setOption('mode', mode);
+      this.editor.setValue(value);
+      setTimeout(() => {
+        this.editor.refresh();
+      }, 10); // Adjust the timeout as needed
+    }
+  }
+
+  // Method to clear the editor content
+  clearEditor() {
+    this.setEditorValue('');
   }
 }
 
@@ -1354,20 +1383,4 @@ function initializeCodeMirror() {
 // Function to sanitize filename for use in HTML IDs
 function sanitizeId(filename) {
   return filename.replace(/[^a-zA-Z0-9-_]/g, '_');
-}
-
-// Function to set editor value and refresh
-function setEditorValue(value, mode = 'python') {
-  if (editor) {
-    editor.setOption('mode', mode);
-    editor.setValue(value);
-    setTimeout(() => {
-      editor.refresh();
-    }, 10); // Adjust the timeout as needed
-  }
-}
-
-// Function to clear the editor content
-function clearEditor() {
-  setEditorValue('');
 }
