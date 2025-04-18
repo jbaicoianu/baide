@@ -829,7 +829,7 @@ class BaideProjectTree extends HTMLElement {
         projectTreeContainer.innerHTML = ''; // Clear existing content
 
         // Add Project Selector
-        addProjectSelector(projectTreeContainer);
+        //addProjectSelector(projectTreeContainer);
         
         // Add New Project Button
         const newProjectBtn = document.createElement('button');
