@@ -178,12 +178,177 @@ class BaideBranchSelector extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
       <div id="gitBranchDisplay">Loading branch...</div>
+      <div id="branchPopup" class="hidden">
+        <div class="branch-popup-content">
+          <div id="branchList"></div>
+          <button id="addBranchBtn">Add New Branch</button>
+        </div>
+      </div>
     `;
   }
 
   connectedCallback() {
-    loadGitBranch();
-    this.shadowRoot.getElementById('gitBranchDisplay').addEventListener('click', openBranchPopup);
+    this.loadGitBranch();
+    this.shadowRoot.getElementById('gitBranchDisplay').addEventListener('click', () => this.openBranchPopup());
+
+    // Add event listener for adding a new branch
+    this.shadowRoot.getElementById('addBranchBtn').addEventListener('click', () => this.showAddBranchInput());
+
+    // Add event listener to close popup when clicking outside the content
+    this.shadowRoot.getElementById('branchPopup').addEventListener('click', (event) => {
+      if (event.target === this.shadowRoot.getElementById('branchPopup')) {
+        this.shadowRoot.getElementById('branchPopup').classList.add('hidden');
+      }
+    });
+  }
+
+  async loadGitBranch() {
+    try {
+      const response = await fetch('/git_current_branch?project_name=' + currentProject);
+      if (response.ok) {
+        const data = await response.json();
+        const gitBranchDiv = this.shadowRoot.getElementById('gitBranchDisplay');
+        gitBranchDiv.textContent = `${data.current_branch}`;
+      } else {
+        console.error('Failed to load current Git branch.');
+      }
+    } catch (e) {
+      console.error('Error loading Git branch:', e);
+    }
+  }
+
+  async openBranchPopup() {
+    const popup = this.shadowRoot.getElementById('branchPopup');
+    popup.classList.toggle('hidden');
+
+    if (!popup.classList.contains('hidden')) {
+      // Fetch and display branches
+      try {
+        const response = await fetch('/git_branches?project_name=' + currentProject);
+        if (response.ok) {
+          const data = await response.json();
+          const branchList = this.shadowRoot.getElementById('branchList');
+          branchList.innerHTML = '';
+          const currentBranch = this.shadowRoot.getElementById('gitBranchDisplay').textContent;
+          data.branches.forEach(branch => {
+            const branchItem = document.createElement('div');
+            branchItem.className = 'branchItem';
+            if (branch === currentBranch) {
+              branchItem.classList.add('active-branch');
+            }
+            branchItem.textContent = branch;
+            branchItem.addEventListener('click', () => this.switchBranch(branch));
+            branchList.appendChild(branchItem);
+          });
+        } else {
+          console.error('Failed to load Git branches.');
+        }
+      } catch (e) {
+        console.error('Error loading Git branches:', e);
+      }
+    }
+  }
+
+  async switchBranch(branchName) {
+    try {
+      const response = await fetch('/git_switch_branch', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ branch: branchName, project_name: currentProject })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          showToast(`Switched to branch ${branchName}`, 'success');
+          this.loadGitBranch();
+          await loadProjectStructure();
+        } else {
+          showToast(`Error switching branch: ${data.error}`, 'error');
+        }
+      } else {
+        console.error('Failed to switch branch.');
+      }
+    } catch (e) {
+      console.error('Error switching branch:', e);
+    }
+      
+    // Hide the popup after switching
+    this.shadowRoot.getElementById('branchPopup').classList.add('hidden');
+  }
+
+  showAddBranchInput() {
+    const branchList = this.shadowRoot.getElementById('branchList');
+        
+    // Create input field
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.id = 'newBranchName';
+    input.placeholder = 'Enter new branch name';
+        
+    // Create submit button
+    const submitBtn = document.createElement('button');
+    submitBtn.textContent = 'Create';
+    submitBtn.addEventListener('click', () => this.addNewBranch());
+        
+    // Append to branch list
+    branchList.appendChild(input);
+    branchList.appendChild(submitBtn);
+        
+    // Automatically focus on the new branch name input box
+    input.focus();
+    
+    // Add event listener for Enter key to submit the branch
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        this.addNewBranch();
+      }
+    });
+      
+    /*
+    CSS for Add Branch Input:
+    #newBranchName {
+      width: 100%;
+      padding: 8px;
+      margin-top: 10px;
+      box-sizing: border-box;
+    }
+    */
+  }
+
+  async addNewBranch() {
+    const branchName = this.shadowRoot.getElementById('newBranchName').value.trim();
+    if (!branchName) {
+      showToast('Branch name cannot be empty.', 'error');
+      return;
+    }
+      
+    try {
+      const response = await fetch('/git_create_branch', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ branch: branchName, project_name: currentProject })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) {
+          showToast(`Branch ${branchName} created successfully.`, 'success');
+          this.loadGitBranch();
+          // Refresh branch list
+          this.openBranchPopup();
+        } else {
+          showToast(`Error creating branch: ${data.error}`, 'error');
+        }
+      } else {
+        console.error('Failed to create branch.');
+      }
+    } catch (e) {
+      console.error('Error creating branch:', e);
+    }
   }
 }
 
