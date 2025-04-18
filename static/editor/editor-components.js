@@ -1355,3 +1355,19 @@ function initializeCodeMirror() {
 function sanitizeId(filename) {
   return filename.replace(/[^a-zA-Z0-9-_]/g, '_');
 }
+
+// Function to set editor value and refresh
+function setEditorValue(value, mode = 'python') {
+  if (editor) {
+    editor.setOption('mode', mode);
+    editor.setValue(value);
+    setTimeout(() => {
+      editor.refresh();
+    }, 10); // Adjust the timeout as needed
+  }
+}
+
+// Function to clear the editor content
+function clearEditor() {
+  setEditorValue('');
+}
