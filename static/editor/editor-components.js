@@ -161,6 +161,11 @@ class BaideEditor extends HTMLElement {
     this.activeFile = {}; // Mapping of project name to active file
     this.openFiles = {}; // Mapping of project name to open files
     this.openDirectories = new Map(); // Mapping of project name to open directories
+    this.fileCodingContexts = {}; // Mapping of filename to coding contexts
+    this.fileActiveModels = {}; // Mapping of filename to active AI models
+    this.currentProject = ''; // Current project name
+    this.editor = null; // CodeMirror editor instance
+    this.defaultModel = 'default-model'; // Replace with actual default model
   }
 
   connectedCallback() {
@@ -184,6 +189,23 @@ class BaideEditor extends HTMLElement {
     if (this.currentProject) {
       this.restoreProjectState(this.currentProject);
     }
+
+    // Listen for tab-related events from <baide-file-tabs>
+    const fileTabs = this.shadowRoot.querySelector('baide-file-tabs');
+    if (fileTabs) {
+      fileTabs.addEventListener('close-all-tabs', () => this.closeAllTabs());
+      fileTabs.addEventListener('close-tab', (e) => this.closeTab(e.detail.filename));
+      fileTabs.addEventListener('open-file-in-tab', (e) => this.openFileInTab(e.detail.filename, e.detail.activate));
+      fileTabs.addEventListener('switch-to-tab', (e) => this.switchToTab(e.detail.filename));
+    }
+
+    // Initialize CodeMirror editor after <baide-editor-code> is ready
+    const editorCode = this.shadowRoot.querySelector('baide-editor-code');
+    if (editorCode) {
+      editorCode.initializeEditor((cm) => {
+        this.editor = cm;
+      });
+    }
   }
 
   // Function to save the state of a project
@@ -195,6 +217,10 @@ class BaideEditor extends HTMLElement {
     localStorage.setItem(`activeFile_${projectName}`, this.activeFile[projectName] || '');
     // Save open directories
     localStorage.setItem(`openDirectories_${projectName}`, JSON.stringify(Array.from(this.openDirectories.get(projectName) || [])));
+    // Save file coding contexts
+    localStorage.setItem(`fileCodingContexts_${projectName}`, JSON.stringify(this.fileCodingContexts));
+    // Save file active models
+    localStorage.setItem(`fileActiveModels_${projectName}`, JSON.stringify(this.fileActiveModels));
   }
 
   // Function to restore the state of a project
@@ -211,28 +237,424 @@ class BaideEditor extends HTMLElement {
     const storedOpenDirs = localStorage.getItem(`openDirectories_${projectName}`);
     this.openDirectories.set(projectName, storedOpenDirs ? new Set(JSON.parse(storedOpenDirs)) : new Set());
 
+    // Load file coding contexts
+    const storedCodingContexts = localStorage.getItem(`fileCodingContexts_${projectName}`);
+    this.fileCodingContexts = storedCodingContexts ? JSON.parse(storedCodingContexts) : {};
+
+    // Load file active models
+    const storedActiveModels = localStorage.getItem(`fileActiveModels_${projectName}`);
+    this.fileActiveModels = storedActiveModels ? JSON.parse(storedActiveModels) : {};
+
     // Close all current tabs
-    closeAllTabs();
+    await this.closeAllTabs();
 
     // Open files for the new project
     for (const filename of Object.keys(this.openFiles[projectName])) {
-      await openFileInTab(filename, false);
+      await this.openFileInTab(filename, false);
     }
 
     // Switch to active file
     if (this.activeFile[projectName]) {
-      await switchToTab(this.activeFile[projectName]);
+      await this.switchToTab(this.activeFile[projectName]);
     } else {
       // If no active file, clear the editor and show placeholder
       clearEditor();
       showPlaceholderPage();
     }
 
-    adjustTabs(); // Adjust tabs after restoring
+    this.adjustTabs(); // Adjust tabs after restoring
+  }
+
+  // Function to close all open tabs
+  async closeAllTabs() {
+    if (!this.currentProject) return;
+    const filenames = Object.keys(this.openFiles[this.currentProject] || {});
+    for (const filename of filenames) {
+      await this.closeTab(filename);
+    }
+  }
+
+  // Function to close a specific tab
+  async closeTab(filename) {
+    if (!this.currentProject) return;
+
+    const sanitizedId = sanitizeId(filename);
+    const tabElement = this.shadowRoot.querySelector(`baide-file-tabs #tab-${sanitizedId}`);
+    if (tabElement) {
+      tabElement.remove();
+      delete this.openFiles[this.currentProject][filename];
+      this.saveProjectState(this.currentProject);
+      // Remove coding contexts for the closed file
+      delete this.fileCodingContexts[filename];
+      this.saveProjectState(this.currentProject);
+      // Remove active model for the closed file
+      delete this.fileActiveModels[filename];
+      this.saveProjectState(this.currentProject);
+      // If the closed tab was active, switch to another tab
+      if (this.activeFile[this.currentProject] === filename) {
+        const remainingTabs = this.shadowRoot.querySelectorAll(`baide-file-tabs .tab`);
+        if (remainingTabs.length > 0) {
+          const newActiveTab = remainingTabs[remainingTabs.length - 1];
+          const newActiveFilename = newActiveTab.textContent.slice(0, -1); // Remove close button
+          await this.switchToTab(newActiveFilename);
+        } else {
+          this.activeFile[this.currentProject] = undefined;
+          this.saveProjectState(this.currentProject);
+          setEditorValue('');
+          if (this.editor) {
+            this.editor.setValue('');
+          }
+          const imageDisplay = document.getElementById('imageDisplay');
+          if (imageDisplay) {
+            imageDisplay.style.display = 'none';
+          }
+          document.getElementById('chatBox').innerHTML = '';
+          document.getElementById('commitSummaries').innerHTML = '';
+          document.getElementById('activeCodingContexts').innerHTML = '';
+          // Reset AI model dropdown
+          resetAIDropdown();
+          // Show the placeholder page since there are no open files
+          showPlaceholderPage();
+        }
+        this.adjustTabs(); // Adjust tabs after closing a tab
+      }
+    }
+  }
+
+  // Function to open a file in a new tab
+  async openFileInTab(filename, activate = true) {
+    if (!this.currentProject) return;
+
+    // Initialize openFiles for the project if not present
+    if (!this.openFiles[this.currentProject]) {
+      this.openFiles[this.currentProject] = {};
+    }
+
+    // Check if the tab already exists in the DOM
+    const existingTab = this.shadowRoot.querySelector(`baide-file-tabs #tab-${sanitizeId(filename)}`);
+    if (existingTab) {
+      if (activate) {
+        await this.switchToTab(filename);
+      }
+      return;
+    }
+      
+    try {
+      const response = await fetch(`/file?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(this.currentProject)}`);
+      if (response.ok) {
+        const contentType = response.headers.get('Content-Type');
+        // Create a new tab via <baide-file-tabs>
+        const fileTabs = this.shadowRoot.querySelector('baide-file-tabs');
+        if (fileTabs) {
+          await fileTabs.addTab(filename, async () => {
+            await this.switchToTab(filename);
+          }, async () => {
+            await this.closeTab(filename);
+          });
+        }
+
+        if (activate) {
+          // Activate the new tab
+          await this.switchToTab(filename);
+        } else {
+          this.openFiles[this.currentProject][filename] = true;
+          this.saveProjectState(this.currentProject);
+        }
+      }
+    } catch (e) {
+      console.error('Error opening file:', e);
+      showToast('Error opening file.', 'error');
+    }
+  }
+
+  // Function to switch to a specific tab
+  async switchToTab(filename) {
+    if (!this.currentProject) return;
+
+    // Deactivate other tabs
+    const fileTabs = this.shadowRoot.querySelector('baide-file-tabs');
+    if (fileTabs) {
+      fileTabs.setActiveTab(filename);
+    }
+
+    try {
+      const response = await fetch(`/file?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(this.currentProject)}`);
+      if (response.ok) {
+        const contentType = response.headers.get('Content-Type');
+        if (contentType === 'application/json') {
+          const content = await response.json();
+          const prettyJson = JSON.stringify(content, null, 2);
+          setEditorValue(prettyJson, { name: 'javascript', json: true }); // Updated mode configuration
+          this.editor.getWrapperElement().style.display = 'block';
+          document.getElementById('imageDisplay').style.display = 'none';
+        } else if (contentType.startsWith('text/')) {
+          const content = await response.text();
+          setEditorValue(content, 'python');
+          this.editor.getWrapperElement().style.display = 'block';
+          document.getElementById('imageDisplay').style.display = 'none';
+        } else if (contentType.startsWith('image/')) {
+          const blob = await response.blob();
+          const imageUrl = URL.createObjectURL(blob);
+          let imageDisplay = document.getElementById('imageDisplay');
+          if (!imageDisplay) {
+            const container = document.getElementById('sourceCodeContainer');
+            const img = document.createElement('img');
+            img.id = 'imageDisplay';
+            img.style.maxWidth = '100%';
+            img.style.display = 'none';
+            container.appendChild(img);
+            imageDisplay = img;
+          }
+          imageDisplay.src = imageUrl;
+          imageDisplay.style.display = 'block';
+          this.editor.getWrapperElement().style.display = 'none';
+        }
+
+        this.activeFile[this.currentProject] = filename;
+        this.openFiles[this.currentProject][filename] = true;
+        this.saveProjectState(this.currentProject);
+        // Load transcript
+        await this.loadTranscript(filename);
+        // Load coding contexts
+        this.loadFileCodingContexts(filename);
+        // Load active AI model
+        this.loadFileActiveModel(filename);
+        // Adjust tabs
+        this.adjustTabs(); // Adjust tabs after adding a new tab
+
+        // Hide the "more tabs" dropdown
+        const moreDropdown = fileTabs.shadowRoot.querySelector('.dropdown-content');
+        if (moreDropdown) {
+          moreDropdown.classList.remove('show');
+        }
+        
+        // Hide the placeholder if it's visible
+        hidePlaceholderPage();
+      } else {
+        showToast('Failed to load file content.', 'error');
+        console.error('Failed to load file content.');
+      }
+    } catch (e) {
+      console.error('Error switching to tab:', e);
+      showToast('Error switching to tab.', 'error');
+    }
+  }
+
+  // Function to adjust tabs (implementation depends on <baide-file-tabs>)
+  adjustTabs() {
+    const fileTabs = this.shadowRoot.querySelector('baide-file-tabs');
+    if (fileTabs) {
+      fileTabs.adjustTabs();
+    }
+  }
+
+  // Function to load transcript (to be implemented)
+  async loadTranscript(filename) {
+    // TODO: Implement loadTranscript functionality
+  }
+
+  // Function to load coding contexts (to be implemented)
+  loadFileCodingContexts(filename) {
+    // TODO: Implement loadFileCodingContexts functionality
+  }
+
+  // Function to load active AI model (to be implemented)
+  loadFileActiveModel(filename) {
+    // TODO: Implement loadFileActiveModel functionality
   }
 }
 
 customElements.define('baide-editor', BaideEditor);
+
+// Define <baide-file-tabs> custom element
+class BaideFileTabs extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
+      <div id="tabs" class="baide-file-tabs">
+        <!-- Tabs will be populated here -->
+        <div class="tab more-tabs">>> 
+          <div class="dropdown-content hidden"></div>
+        </div>
+      </div>
+      <style>
+        .baide-file-tabs {
+          display: flex;
+          align-items: center;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        .tab {
+          padding: 10px;
+          cursor: pointer;
+          position: relative;
+          user-select: none;
+        }
+        .tab.active {
+          background-color: #ddd;
+        }
+        .close-btn {
+          margin-left: 5px;
+          color: red;
+          cursor: pointer;
+        }
+        .more-tabs {
+          position: relative;
+        }
+        .dropdown-content {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+        .dropdown-content .tab {
+          display: block;
+        }
+        .hidden {
+          display: none;
+        }
+      </style>
+    `;
+  }
+
+  connectedCallback() {
+    // Initial setup if needed
+  }
+
+  // Method to add a new tab
+  async addTab(filename, onActivate, onClose) {
+    const tabsContainer = this.shadowRoot.getElementById('tabs');
+    const sanitizedId = sanitizeId(filename);
+    const existingTab = this.shadowRoot.getElementById(`tab-${sanitizedId}`);
+    if (existingTab) return;
+
+    const tab = document.createElement('div');
+    tab.className = 'tab';
+    tab.id = `tab-${sanitizedId}`;
+    tab.textContent = filename;
+
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'close-btn';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.dispatchEvent(new CustomEvent('close-tab', {
+        detail: { filename },
+        bubbles: true,
+        composed: true
+      }));
+    });
+    tab.appendChild(closeBtn);
+
+    tab.addEventListener('click', () => {
+      this.dispatchEvent(new CustomEvent('switch-to-tab', {
+        detail: { filename },
+        bubbles: true,
+        composed: true
+      }));
+      onActivate();
+    });
+
+    // Insert before 'moreTabs'
+    const moreTabs = this.shadowRoot.querySelector('.more-tabs');
+    tabsContainer.insertBefore(tab, moreTabs);
+  }
+
+  // Method to set a tab as active
+  setActiveTab(filename) {
+    const allTabs = this.shadowRoot.querySelectorAll('.tab');
+    allTabs.forEach(tab => {
+      if (tab.id === `tab-${sanitizeId(filename)}`) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
+    });
+  }
+
+  // Method to close all tabs
+  closeAllTabs() {
+    this.dispatchEvent(new CustomEvent('close-all-tabs', {
+      bubbles: true,
+      composed: true
+    }));
+  }
+
+  // Placeholder for adjustTabs functionality
+  adjustTabs() {
+    // TODO: Implement adjustTabs functionality
+  }
+}
+
+customElements.define('baide-file-tabs', BaideFileTabs);
+
+// Define <baide-editor-code> custom element
+class BaideEditorCode extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
+      <textarea id="sourceCode"></textarea>
+      <img id="imageDisplay" style="max-width: 100%; display: none;" />
+      <div id="searchOverlay" class="hidden">
+        <input type="text" id="searchInput" placeholder="Search..." />
+        <button id="searchButton">Search</button>
+        <span id="closeSearchButton">✖</span>
+        <span id="searchIndicator">0 / 0</span>
+      </div>
+      <div id="commitMessageOverlay" class="hidden">
+        <!-- Commit message content -->
+      </div>
+      <style>
+        /* Add necessary styles */
+      </style>
+    `;
+  }
+
+  connectedCallback() {
+    // Additional event listeners and initialization if needed
+  }
+
+  // Method to initialize CodeMirror editor and pass the instance back to <baide-editor>
+  initializeEditor(callback) {
+    const textarea = this.shadowRoot.getElementById('sourceCode');
+    this.editor = CodeMirror.fromTextArea(textarea, {
+      mode: 'python',
+      theme: 'dracula',
+      lineNumbers: true,
+      lineWrapping: true,
+      tabSize: 4,
+      indentUnit: 4,
+      extraKeys: {
+        "Ctrl-S": () => {
+          promptCommitMessage();
+        },
+        "Ctrl-F": () => {
+          openSearchOverlay(this.editor);
+        },
+        "Ctrl-G": () => { // Added Ctrl+G shortcut for forward search
+          if (lastSearchQuery) {
+            performSearch(this.editor, lastSearchQuery, 'forward');
+            updateSearchIndicator();
+          }
+        },
+        "Ctrl-Shift-G": () => { // Added Ctrl+Shift-G shortcut for backward search
+          if (lastSearchQuery) {
+            performSearch(this.editor, lastSearchQuery, 'reverse');
+            updateSearchIndicator();
+          }
+        }
+      }
+    });
+    callback(this.editor);
+  }
+}
+
+customElements.define('baide-editor-code', BaideEditorCode);
 
 // Define <baide-project-tree> custom element
 class BaideProjectTree extends HTMLElement {
@@ -251,6 +673,9 @@ class BaideProjectTree extends HTMLElement {
         <button id="newFileBtn">New File</button>
         <div id="projectTreeContainer"></div>
       </div>
+      <style>
+        /* Add necessary styles */
+      </style>
     `;
   }
 
@@ -344,7 +769,8 @@ class BaideProjectTree extends HTMLElement {
         updateAIDropdownForActiveFile();
 
         // Check if there are no open files and show placeholder if necessary
-        if (!this.activeFile[this.currentproject] || Object.keys(this.openFiles[this.currentproject]).length === 0) {
+        const editor = document.querySelector('baide-editor');
+        if (editor && (!editor.activeFile[editor.currentProject] || Object.keys(editor.openFiles[editor.currentProject]).length === 0)) {
           showPlaceholderPage();
         } else {
           hidePlaceholderPage();
@@ -407,39 +833,43 @@ class BaideProjectTree extends HTMLElement {
   // Open Branch Popup
   async openBranchPopup() {
     const popup = this.shadowRoot.getElementById('branchPopup');
-    popup.classList.toggle('hidden');
+    if (popup) {
+      popup.classList.toggle('hidden');
 
-    if (!popup.classList.contains('hidden')) {
-      // Fetch and display branches
-      try {
-        const response = await fetch('/git_branches?project_name=' + this.currentproject);
-        if (response.ok) {
-          const data = await response.json();
-          const branchList = this.shadowRoot.getElementById('branchList');
-          branchList.innerHTML = '';
-          const currentBranch = this.shadowRoot.getElementById('gitBranchDisplay').textContent;
-          data.branches.forEach(branch => {
-            const branchItem = document.createElement('div');
-            branchItem.className = 'branchItem';
-            if (branch === currentBranch) {
-              branchItem.classList.add('active-branch');
+      if (!popup.classList.contains('hidden')) {
+        // Fetch and display branches
+        try {
+          const response = await fetch('/git_branches?project_name=' + this.currentproject);
+          if (response.ok) {
+            const data = await response.json();
+            const branchList = this.shadowRoot.getElementById('branchList');
+            if (branchList) {
+              branchList.innerHTML = '';
+              const currentBranch = this.shadowRoot.getElementById('gitBranchDisplay').textContent;
+              data.branches.forEach(branch => {
+                const branchItem = document.createElement('div');
+                branchItem.className = 'branchItem';
+                if (branch === currentBranch) {
+                  branchItem.classList.add('active-branch');
+                }
+                branchItem.textContent = branch;
+                // Emit a custom event instead of calling switchBranch directly
+                branchItem.addEventListener('click', () => {
+                  this.dispatchEvent(new CustomEvent('branch-selected', {
+                    detail: { branch },
+                    bubbles: true,
+                    composed: true
+                  }));
+                });
+                branchList.appendChild(branchItem);
+              });
             }
-            branchItem.textContent = branch;
-            // Emit a custom event instead of calling switchBranch directly
-            branchItem.addEventListener('click', () => {
-              this.dispatchEvent(new CustomEvent('branch-selected', {
-                detail: { branch },
-                bubbles: true,
-                composed: true
-              }));
-            });
-            branchList.appendChild(branchItem);
-          });
-        } else {
-          console.error('Failed to load Git branches.');
+          } else {
+            console.error('Failed to load Git branches.');
+          }
+        } catch (e) {
+          console.error('Error loading Git branches:', e);
         }
-      } catch (e) {
-        console.error('Error loading Git branches:', e);
       }
     }
   }
@@ -471,7 +901,10 @@ class BaideProjectTree extends HTMLElement {
     }
       
     // Hide the popup after switching
-    this.shadowRoot.getElementById('branchPopup').classList.add('hidden');
+    const popup = this.shadowRoot.getElementById('branchPopup');
+    if (popup) {
+      popup.classList.add('hidden');
+    }
   }
 
   // Switch Project
@@ -483,6 +916,8 @@ class BaideProjectTree extends HTMLElement {
       composed: true
     }));
   }
+
+  // Additional methods for loadTranscript, loadFileCodingContexts, loadFileActiveModel can be implemented here
 }
 
 customElements.define('baide-project-tree', BaideProjectTree);
@@ -496,6 +931,9 @@ class BaideProjectSelector extends HTMLElement {
       <select id="projectSelector">
         <option value="">Select Project</option>
       </select>
+      <style>
+        /* Add necessary styles */
+      </style>
     `;
   }
 
@@ -551,6 +989,23 @@ class BaideBranchSelector extends HTMLElement {
           <button id="addBranchBtn">Add New Branch</button>
         </div>
       </div>
+      <style>
+        /* Add necessary styles */
+        .hidden {
+          display: none;
+        }
+        .branch-popup-content {
+          /* Styles for popup content */
+        }
+        .branchItem {
+          padding: 5px 10px;
+          cursor: pointer;
+        }
+        .branchItem.active-branch {
+          background-color: #4CAF50;
+          color: white;
+        }
+      </style>
     `;
   }
 
@@ -720,14 +1175,131 @@ class BaideFileTabs extends HTMLElement {
           <div class="dropdown-content hidden"></div>
         </div>
       </div>
+      <style>
+        .baide-file-tabs {
+          display: flex;
+          align-items: center;
+          overflow-x: auto;
+          white-space: nowrap;
+        }
+        .tab {
+          padding: 10px;
+          cursor: pointer;
+          position: relative;
+          user-select: none;
+        }
+        .tab.active {
+          background-color: #ddd;
+        }
+        .close-btn {
+          margin-left: 5px;
+          color: red;
+          cursor: pointer;
+        }
+        .more-tabs {
+          position: relative;
+        }
+        .dropdown-content {
+          position: absolute;
+          top: 100%;
+          left: 0;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+        .dropdown-content .tab {
+          display: block;
+        }
+        .hidden {
+          display: none;
+        }
+      </style>
     `;
   }
 
   connectedCallback() {
-    this.adjustTabs();
+    // Initial setup if needed
   }
 
-  // Member function stub for adjustTabs
+  // Method to add a new tab
+  async addTab(filename, onActivate, onClose) {
+    const tabsContainer = this.shadowRoot.getElementById('tabs');
+    const sanitizedId = sanitizeId(filename);
+    const existingTab = this.shadowRoot.getElementById(`tab-${sanitizedId}`);
+    if (existingTab) return;
+
+    const tab = document.createElement('div');
+    tab.className = 'tab';
+    tab.id = `tab-${sanitizedId}`;
+    tab.textContent = filename;
+
+    const closeBtn = document.createElement('span');
+    closeBtn.className = 'close-btn';
+    closeBtn.textContent = '×';
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      this.dispatchEvent(new CustomEvent('close-tab', {
+        detail: { filename },
+        bubbles: true,
+        composed: true
+      }));
+    });
+    tab.appendChild(closeBtn);
+
+    tab.addEventListener('click', () => {
+      this.dispatchEvent(new CustomEvent('switch-to-tab', {
+        detail: { filename },
+        bubbles: true,
+        composed: true
+      }));
+      onActivate();
+    });
+
+    // Insert before 'moreTabs'
+    const moreTabs = this.shadowRoot.querySelector('.more-tabs');
+    tabsContainer.insertBefore(tab, moreTabs);
+  }
+
+  // Method to set a tab as active
+  setActiveTab(filename) {
+    const allTabs = this.shadowRoot.querySelectorAll('.tab');
+    allTabs.forEach(tab => {
+      if (tab.id === `tab-${sanitizeId(filename)}`) {
+        tab.classList.add('active');
+      } else {
+        tab.classList.remove('active');
+      }
+    });
+  }
+
+  // Method to set a tab as inactive
+  setInactiveTab(filename) {
+    const tab = this.shadowRoot.getElementById(`tab-${sanitizeId(filename)}`);
+    if (tab) {
+      tab.classList.remove('active');
+    }
+  }
+
+  // Method to close a specific tab
+  closeTab(filename) {
+    const tab = this.shadowRoot.getElementById(`tab-${sanitizeId(filename)}`);
+    if (tab) {
+      tab.remove();
+    }
+  }
+
+  // Method to close all tabs
+  closeAllTabs() {
+    const tabs = this.shadowRoot.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+      if (!tab.classList.contains('more-tabs')) {
+        tab.remove();
+      }
+    });
+  }
+
+  // Placeholder for adjustTabs functionality
   adjustTabs() {
     // TODO: Implement adjustTabs functionality
   }
@@ -752,12 +1324,64 @@ class BaideEditorCode extends HTMLElement {
       <div id="commitMessageOverlay" class="hidden">
         <!-- Commit message content -->
       </div>
+      <style>
+        /* Add necessary styles */
+        #sourceCode {
+          width: 100%;
+          height: 100%;
+        }
+        #searchOverlay {
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          background-color: #fff;
+          padding: 10px;
+          border: 1px solid #ccc;
+          z-index: 1000;
+        }
+        .hidden {
+          display: none;
+        }
+      </style>
     `;
   }
 
   connectedCallback() {
-    initializeCodeMirror();
-    // Additional event listeners and initialization
+    // Additional event listeners and initialization if needed
+  }
+
+  // Method to initialize CodeMirror editor and pass the instance back to <baide-editor>
+  initializeEditor(callback) {
+    const textarea = this.shadowRoot.getElementById('sourceCode');
+    this.editor = CodeMirror.fromTextArea(textarea, {
+      mode: 'python',
+      theme: 'dracula',
+      lineNumbers: true,
+      lineWrapping: true,
+      tabSize: 4,
+      indentUnit: 4,
+      extraKeys: {
+        "Ctrl-S": () => {
+          promptCommitMessage();
+        },
+        "Ctrl-F": () => {
+          openSearchOverlay(this.editor);
+        },
+        "Ctrl-G": () => { // Added Ctrl+G shortcut for forward search
+          if (lastSearchQuery) {
+            performSearch(this.editor, lastSearchQuery, 'forward');
+            updateSearchIndicator();
+          }
+        },
+        "Ctrl-Shift-G": () => { // Added Ctrl+Shift-G shortcut for backward search
+          if (lastSearchQuery) {
+            performSearch(this.editor, lastSearchQuery, 'reverse');
+            updateSearchIndicator();
+          }
+        }
+      }
+    });
+    callback(this.editor);
   }
 }
 
@@ -773,6 +1397,9 @@ class BaideChat extends HTMLElement {
         <baide-chat-history></baide-chat-history>
         <baide-chat-input></baide-chat-input>
       </div>
+      <style>
+        /* Add necessary styles */
+      </style>
     `;
   }
 
@@ -798,6 +1425,9 @@ class BaideChatHistory extends HTMLElement {
       <div id="chatBox"></div>
       <div id="commitSummaries"></div>
       <div id="activeCodingContexts"></div>
+      <style>
+        /* Add necessary styles */
+      </style>
     `;
   }
 
@@ -826,6 +1456,9 @@ class BaideChatInput extends HTMLElement {
         <button type="submit">Send</button>
         <div id="throbber" style="display: none;">Loading...</div>
       </form>
+      <style>
+        /* Add necessary styles */
+      </style>
     `;
   }
 
@@ -836,9 +1469,9 @@ class BaideChatInput extends HTMLElement {
 
     chatForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const editor = document.querySelector('baide-editor');
-      if (!editor.currentProject || !editor.activeFile[editor.currentProject]) return;
-      const filename = editor.activeFile[editor.currentProject];
+      const editorElement = document.querySelector('baide-editor');
+      if (!editorElement.currentProject || !editorElement.activeFile[editorElement.currentProject]) return;
+      const filename = editorElement.activeFile[editorElement.currentProject];
       const prompt = promptInput.value.trim();
       if (!prompt) return;
       appendMessage("User", prompt);
@@ -847,19 +1480,19 @@ class BaideChatInput extends HTMLElement {
       throbber.style.display = "block";
 
       // Store the currently active file when the request is sent
-      const requestedFile = editor.activeFile[editor.currentProject];
+      const requestedFile = editorElement.activeFile[editorElement.currentProject];
 
       // Gather active context names
-      const contexts = editor.fileCodingContexts[filename] ? editor.fileCodingContexts[filename].map(ctx => ctx.name) : [];
+      const contexts = editorElement.fileCodingContexts[filename] ? editorElement.fileCodingContexts[filename].map(ctx => ctx.name) : [];
 
       // Get active AI model for the current file
-      const activeModel = editor.fileActiveModels[filename] || editor.defaultModel;
+      const activeModel = editorElement.fileActiveModels[filename] || editorElement.defaultModel;
 
       try {
         const response = await fetch("/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: prompt, file: filename, contexts: contexts, model: activeModel, project_name: editor.currentProject })
+          body: JSON.stringify({ prompt: prompt, file: filename, contexts: contexts, model: activeModel, project_name: editorElement.currentProject })
         });
         if (response.ok) {
           const data = await response.json();
@@ -867,11 +1500,11 @@ class BaideChatInput extends HTMLElement {
           scrollToBottom(this.shadowRoot.getElementById('chatBox'));
           scrollToBottom(this.shadowRoot.getElementById('commitSummaries'));
           // Reload the source code after AI updates only if the active file hasn't changed
-          if (editor.activeFile[editor.currentProject] === requestedFile) {
+          if (editorElement.activeFile[editorElement.currentProject] === requestedFile) {
             await loadSourceCode(filename);
           }
           // Reload coding contexts
-          loadFileCodingContexts(filename);
+          editorElement.loadFileCodingContexts(filename);
           // Reload project structure
           await loadProjectStructure();
         } else {
