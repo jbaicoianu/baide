@@ -180,7 +180,7 @@ class BaideEditor extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
       <div class="baide-editor">
-        <baide-project-tree></baide-project-tree>
+        <baide-project-tree currentproject="${this.currentProject}"></baide-project-tree>
         <div style="flex: 1; display: flex; flex-direction: column;">
           <baide-file-tabs></baide-file-tabs>
           <baide-editor-code></baide-editor-code>
@@ -775,6 +775,14 @@ class BaideProjectTree extends HTMLElement {
         /* Add necessary styles */
       </style>
     `;
+
+    // Set default currentproject to empty string if not provided
+    if (!this.hasAttribute('currentproject')) {
+      this.setAttribute('currentproject', '');
+    }
+
+    // Initialize openDirectories map
+    this.openDirectories = new Map();
   }
 
   get currentproject() {
@@ -872,6 +880,11 @@ class BaideProjectTree extends HTMLElement {
           editor.showPlaceholderPage();
         } else {
           editor.hidePlaceholderPage();
+        }
+
+        // Set currentproject based on response if project_name is set
+        if (data.project_name) {
+          this.currentproject = data.project_name;
         }
       } else {
         showToast('Failed to fetch project details.', 'error');
