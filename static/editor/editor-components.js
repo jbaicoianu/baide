@@ -606,7 +606,7 @@ class BaideEditor extends HTMLElement {
   }
 }
 
-customElements.define('baide-project-tree', BaideProjectTree);
+customElements.define('baide-editor', BaideEditor);
 
 // Define <baide-file-tabs> custom element
 class BaideFileTabs extends HTMLElement {
