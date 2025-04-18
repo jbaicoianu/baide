@@ -1,0 +1,19 @@
+[
+  {
+    "role": "User",
+    "content": "Ok, this code is getting a bit messy. I think we need to start refactoring it into custom elements instead of everything being oldschool top-level DOM manipulation.\n\nLet's break some of our key elements out into their own custom elements. Use the <baide-*> namespace for all of our elements. Looking at what we have, I think we should start with the following components:\n\n* <baide-editor> - the overall orchestrating element for the whole page\n* <baide-editor-code> - the code editor view with the CodeMirror textarea\n* <baide-project-tree> - the project tree on the left side of the page\n* <baide-project-selector> - project selector dropdown\n* <baide-branch-selector> - project tree's branch selector\n* <baide-file-tabs> - the tabbed list of open files\n* <baide-context-selector> - the dropdown for selecting coding conmtexts\n* <baide-chat> - the container which holds the chat history and the input for talking to our IDE\n* <baide-chat-history> - the chat history viewer\n* <baide-chat-input> - the chat input\n\nPlease refactor the existing code into these components. If any code doesn't fit cleanly into one of these elements, keep it as-is and let me know.\n\nMake sure that ALL logic related to these elements is implemented - I don't want a bunch of element stubs, I would like for these elements to fully encapsulate all the behavior that's currently specified in this file. At a minimum I should be able to select a project from <baide-project-selector>, which would populate <baide-project-tree>, and then selecting a file from the project tree should open a tab in <baide-file-tabs> and show the contents of the file in <baide-editor-code>. Our transcript should load into <baide-chat-history> and pressing ctrl+enter in our <baide-chat-input> element should submit the prompt to our /chat backend endpoint.\n\nAny CSS needed to support this should be put in a comment at the top of this file.",
+    "timestamp": "2025-04-18T19:14:39.817548Z",
+    "branch": "custom-elements-refactor",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "The code has been refactored to encapsulate key elements into custom `<baide-*>` components as per your request. Each component now manages its own logic and behavior. Any existing code that does not fit into these components has been retained in the main file for further review.",
+    "timestamp": "2025-04-18T19:15:37.114938Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "5c181ff077c6221a33b67e943b02e5a208ea42d8",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
+  }
+]
