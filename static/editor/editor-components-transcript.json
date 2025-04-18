@@ -390,5 +390,22 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "df054fcf51616ba5dda67d3d87850b0ae769b130",
     "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "User",
+    "content": "Add this to all of our shadowDom elements:\n\n<style> @import \"editor.css\"; </style>",
+    "timestamp": "2025-04-18T23:08:31.051247Z",
+    "branch": "custom-elements-refactor",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "All shadow DOM elements in `static/editor/editor-components.js` have been updated to include the `<style> @import \"editor.css\"; </style>` statement as requested. Please review the changes and let me know if you have any further modifications or suggestions.",
+    "timestamp": "2025-04-18T23:10:39.979880Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "ceef2b04bd3283449e9262b7a492759314bc4012",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
   }
 ]
