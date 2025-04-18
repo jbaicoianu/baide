@@ -567,13 +567,16 @@ class BaideEditor extends HTMLElement {
         childContainer.classList.toggle('hidden');
         dirSpan.classList.toggle('open');
         const fullPath = currentPath + dir.name + '/';
-        if (childContainer.classList.contains('hidden')) {
-          this.openDirectories.get(this.currentProject).delete(fullPath);
-        } else {
-          this.openDirectories.get(this.currentProject).add(fullPath);
+        const editor = this.closest('baide-editor');
+        if (editor) {
+          if (childContainer.classList.contains('hidden')) {
+            editor.openDirectories.get(this.currentProject).delete(fullPath);
+          } else {
+            editor.openDirectories.get(this.currentProject).add(fullPath);
+          }
+          editor.saveProjectState(this.currentProject);
+          editor.adjustTabs(); // Adjust tabs when directories are toggled
         }
-        this.saveProjectState(this.currentProject);
-        this.adjustTabs(); // Adjust tabs when directories are toggled
       });
       itemDiv.className = 'directory';
       itemDiv.appendChild(dirSpan);
@@ -603,7 +606,7 @@ class BaideEditor extends HTMLElement {
   }
 }
 
-customElements.define('baide-editor', BaideEditor);
+customElements.define('baide-project-tree', BaideProjectTree);
 
 // Define <baide-file-tabs> custom element
 class BaideFileTabs extends HTMLElement {
@@ -842,7 +845,7 @@ class BaideProjectTree extends HTMLElement {
     }
 
     // Initialize openDirectories map
-    this.openDirectories = new Map();
+    // Removed duplicate openDirectories map
   }
 
   get currentproject() {
@@ -962,9 +965,15 @@ class BaideProjectTree extends HTMLElement {
     const storedOpenDirs = localStorage.getItem(`openDirectories_${this.currentproject}`);
     if (storedOpenDirs) {
       const dirs = new Set(JSON.parse(storedOpenDirs));
-      this.openDirectories.set(this.currentproject, dirs);
+      const editor = this.closest('baide-editor');
+      if (editor) {
+        editor.openDirectories.set(this.currentproject, dirs);
+      }
     } else {
-      this.openDirectories.set(this.currentproject, new Set());
+      const editor = this.closest('baide-editor');
+      if (editor) {
+        editor.openDirectories.set(this.currentproject, new Set());
+      }
     }
   }
 
@@ -974,13 +983,16 @@ class BaideProjectTree extends HTMLElement {
     Array.from(directories).forEach(dir => {
       const dirName = dir.firstChild.textContent;
       const fullPath = currentPath + dirName + '/';
-      const openDirs = this.openDirectories.get(this.currentproject);
-      if (openDirs && openDirs.has(fullPath)) {
-        const childContainer = dir.querySelector('.directory-children');
-        if (childContainer) {
-          childContainer.classList.remove('hidden');
-          dir.firstChild.classList.add('open');
-          this.restoreOpenDirectories(childContainer, fullPath);
+      const editor = this.closest('baide-editor');
+      if (editor) {
+        const openDirs = editor.openDirectories.get(this.currentproject);
+        if (openDirs && openDirs.has(fullPath)) {
+          const childContainer = dir.querySelector('.directory-children');
+          if (childContainer) {
+            childContainer.classList.remove('hidden');
+            dir.firstChild.classList.add('open');
+            this.restoreOpenDirectories(childContainer, fullPath);
+          }
         }
       }
     });
@@ -1108,13 +1120,16 @@ class BaideProjectTree extends HTMLElement {
         childContainer.classList.toggle('hidden');
         dirSpan.classList.toggle('open');
         const fullPath = currentPath + dir.name + '/';
-        if (childContainer.classList.contains('hidden')) {
-          this.openDirectories.get(this.currentproject).delete(fullPath);
-        } else {
-          this.openDirectories.get(this.currentproject).add(fullPath);
+        const editor = this.closest('baide-editor');
+        if (editor) {
+          if (childContainer.classList.contains('hidden')) {
+            editor.openDirectories.get(this.currentproject).delete(fullPath);
+          } else {
+            editor.openDirectories.get(this.currentproject).add(fullPath);
+          }
+          editor.saveProjectState(this.currentproject);
+          editor.adjustTabs(); // Adjust tabs when directories are toggled
         }
-        this.saveProjectState(this.currentproject);
-        this.adjustTabs(); // Adjust tabs when directories are toggled
       });
       itemDiv.className = 'directory';
       itemDiv.appendChild(dirSpan);
