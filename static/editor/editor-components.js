@@ -208,6 +208,11 @@ class BaideProjectTree extends HTMLElement {
     this.shadowRoot.querySelector('baide-branch-selector').addEventListener('branch-selected', (e) => {
       this.switchBranch(e.detail.branch);
     });
+
+    // Listen for project-selected event
+    this.addEventListener('project-selected', (e) => {
+      this.switchProject(e.detail.projectName);
+    });
   }
 
   async loadProjectStructure() {
@@ -461,6 +466,46 @@ class BaideProjectTree extends HTMLElement {
       console.error('Error creating branch:', e);
     }
   }
+
+  // Switch Project
+  async switchProject(projectName) {
+    // Save current project state
+    if (currentProject) {
+      saveProjectState(currentProject);
+    }
+
+    // Clear the editor to prevent residual code
+    clearEditor();
+
+    try {
+      const response = await fetch(`/projects/details?project_name=${encodeURIComponent(projectName)}`);
+      if (response.ok) {
+        currentProject = projectName;
+        // Save current project to localStorage
+        localStorage.setItem('currentProject', currentProject);
+        // Reload project structure
+        await this.loadProjectStructure();
+        // Restore new project state
+        await restoreProjectState(currentProject);
+
+        // Adjust AI Model Dropdown based on active file
+        updateAIDropdownForActiveFile();
+
+        // Check if there are no open files and show placeholder if necessary
+        if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+          showPlaceholderPage();
+        } else {
+          hidePlaceholderPage();
+        }
+      } else {
+        showToast('Failed to switch project.', 'error');
+        console.error('Failed to switch project.');
+      }
+    } catch (e) {
+      showToast('Error switching project.', 'error');
+      console.error('Error switching project:', e);
+    }
+  }
 }
 
 customElements.define('baide-project-tree', BaideProjectTree);
@@ -498,7 +543,12 @@ class BaideProjectSelector extends HTMLElement {
     selector.addEventListener('change', (e) => {
       const selectedProject = e.target.value;
       if (selectedProject) {
-        switchProject(selectedProject);
+        // Emit a custom event instead of calling switchProject directly
+        this.dispatchEvent(new CustomEvent('project-selected', {
+          detail: { projectName: selectedProject },
+          bubbles: true,
+          composed: true
+        }));
       }
     });
   }
