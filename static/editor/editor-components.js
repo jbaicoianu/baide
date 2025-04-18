@@ -180,7 +180,7 @@ class BaideEditor extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
       <div class="baide-editor">
-        <baide-project-tree currentproject="${this.currentProject}"></baide-project-tree>
+        <baide-project-tree></baide-project-tree>
         <div style="flex: 1; display: flex; flex-direction: column;">
           <baide-file-tabs></baide-file-tabs>
           <baide-editor-code></baide-editor-code>
