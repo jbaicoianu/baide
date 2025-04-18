@@ -142,3 +142,4 @@ this.dispatchEvent(new CustomEvent('task-done', {
 - Favor declarative code over imperative wherever possible.
 - Store minimal state in each component; use `localStorage` or IndexedDB when needed for persistence.
 - Modularize logic using helper classes — e.g., `DateUtils`, `MyAPI`, etc
+- Any CSS necessary for our elements should be placed in a comment at the top of the file we're working on.
