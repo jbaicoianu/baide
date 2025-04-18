@@ -185,6 +185,10 @@ customElements.define('baide-editor', BaideEditor);
 
 // Define <baide-project-tree> custom element
 class BaideProjectTree extends HTMLElement {
+  static get observedAttributes() {
+    return ['currentproject'];
+  }
+
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -197,6 +201,21 @@ class BaideProjectTree extends HTMLElement {
         <div id="projectTreeContainer"></div>
       </div>
     `;
+  }
+
+  get currentproject() {
+    return this.getAttribute('currentproject');
+  }
+
+  set currentproject(value) {
+    this.setAttribute('currentproject', value);
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    if (name === 'currentproject' && oldValue !== newValue) {
+      currentProject = newValue;
+      this.loadProjectStructure();
+    }
   }
 
   connectedCallback() {
@@ -351,6 +370,14 @@ class BaideProjectTree extends HTMLElement {
               branchItem.classList.add('active-branch');
             }
             branchItem.textContent = branch;
+            // Emit a custom event instead of calling switchBranch directly
+            branchItem.addEventListener('click', () => {
+              this.dispatchEvent(new CustomEvent('branch-selected', {
+                detail: { branch },
+                bubbles: true,
+                composed: true
+              }));
+            });
             branchList.appendChild(branchItem);
           });
         } else {
@@ -392,81 +419,6 @@ class BaideProjectTree extends HTMLElement {
     this.shadowRoot.getElementById('branchPopup').classList.add('hidden');
   }
 
-  // Show Add Branch Input
-  showAddBranchInput() {
-    const branchList = this.shadowRoot.getElementById('branchList');
-        
-    // Create input field
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.id = 'newBranchName';
-    input.placeholder = 'Enter new branch name';
-        
-    // Create submit button
-    const submitBtn = document.createElement('button');
-    submitBtn.textContent = 'Create';
-    submitBtn.addEventListener('click', () => this.addNewBranch());
-        
-    // Append to branch list
-    branchList.appendChild(input);
-    branchList.appendChild(submitBtn);
-        
-    // Automatically focus on the new branch name input box
-    input.focus();
-    
-    // Add event listener for Enter key to submit the branch
-    input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        this.addNewBranch();
-      }
-    });
-      
-    /*
-    CSS for Add Branch Input:
-    #newBranchName {
-      width: 100%;
-      padding: 8px;
-      margin-top: 10px;
-      box-sizing: border-box;
-    }
-    */
-  }
-
-  // Add New Branch
-  async addNewBranch() {
-    const branchName = this.shadowRoot.getElementById('newBranchName').value.trim();
-    if (!branchName) {
-      showToast('Branch name cannot be empty.', 'error');
-      return;
-    }
-      
-    try {
-      const response = await fetch('/git_create_branch', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ branch: branchName, project_name: currentProject })
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          showToast(`Branch ${branchName} created successfully.`, 'success');
-          this.loadGitBranch();
-          // Refresh branch list
-          this.openBranchPopup();
-        } else {
-          showToast(`Error creating branch: ${data.error}`, 'error');
-        }
-      } else {
-        console.error('Failed to create branch.');
-      }
-    } catch (e) {
-      console.error('Error creating branch:', e);
-    }
-  }
-
   // Switch Project
   async switchProject(projectName) {
     // Save current project state
@@ -474,13 +426,19 @@ class BaideProjectTree extends HTMLElement {
       saveProjectState(currentProject);
     }
 
-    // Clear the editor to prevent residual code
-    clearEditor();
+    // Emit a custom event instead of clearing the editor
+    this.dispatchEvent(new CustomEvent('project-changed', {
+      detail: { projectName },
+      bubbles: true,
+      composed: true
+    }));
 
     try {
       const response = await fetch(`/projects/details?project_name=${encodeURIComponent(projectName)}`);
       if (response.ok) {
         currentProject = projectName;
+        // Set the currentproject attribute
+        this.currentproject = currentProject;
         // Save current project to localStorage
         localStorage.setItem('currentProject', currentProject);
         // Reload project structure
@@ -733,7 +691,12 @@ class BaideFileTabs extends HTMLElement {
   }
 
   connectedCallback() {
-    adjustTabs();
+    this.adjustTabs();
+  }
+
+  // Member function stub for adjustTabs
+  adjustTabs() {
+    // TODO: Implement adjustTabs functionality
   }
 }
 
@@ -782,7 +745,12 @@ class BaideChat extends HTMLElement {
 
   connectedCallback() {
     // Initialize chat functionality
-    setupEventListeners();
+    this.setupEventListeners();
+  }
+
+  // Member function stub for setupEventListeners
+  setupEventListeners() {
+    // TODO: Implement setupEventListeners functionality
   }
 }
 
@@ -801,7 +769,12 @@ class BaideChatHistory extends HTMLElement {
   }
 
   connectedCallback() {
-    loadTranscript(activeFile[currentProject]);
+    this.loadTranscript();
+  }
+
+  // Member function stub for loadTranscript
+  loadTranscript() {
+    // TODO: Implement loadTranscript functionality
   }
 
   // Methods to append messages, commit summaries, etc.
