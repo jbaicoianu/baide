@@ -203,6 +203,11 @@ class BaideProjectTree extends HTMLElement {
     this.shadowRoot.getElementById('newProjectBtn').addEventListener('click', openNewProjectModal);
     this.shadowRoot.getElementById('newFileBtn').addEventListener('click', openNewFileModal);
     this.loadProjectStructure();
+
+    // Listen for branch-selected events from <baide-branch-selector>
+    this.shadowRoot.querySelector('baide-branch-selector').addEventListener('branch-selected', (e) => {
+      this.switchBranch(e.detail.branch);
+    });
   }
 
   async loadProjectStructure() {
@@ -341,7 +346,6 @@ class BaideProjectTree extends HTMLElement {
               branchItem.classList.add('active-branch');
             }
             branchItem.textContent = branch;
-            branchItem.addEventListener('click', () => this.switchBranch(branch));
             branchList.appendChild(branchItem);
           });
         } else {
@@ -568,7 +572,14 @@ class BaideBranchSelector extends HTMLElement {
               branchItem.classList.add('active-branch');
             }
             branchItem.textContent = branch;
-            branchItem.addEventListener('click', () => this.switchBranch(branch));
+            // Emit a custom event instead of calling switchBranch directly
+            branchItem.addEventListener('click', () => {
+              this.dispatchEvent(new CustomEvent('branch-selected', {
+                detail: { branch },
+                bubbles: true,
+                composed: true
+              }));
+            });
             branchList.appendChild(branchItem);
           });
         } else {
@@ -578,36 +589,6 @@ class BaideBranchSelector extends HTMLElement {
         console.error('Error loading Git branches:', e);
       }
     }
-  }
-
-  async switchBranch(branchName) {
-    try {
-      const response = await fetch('/git_switch_branch', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ branch: branchName, project_name: currentProject })
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.success) {
-          showToast(`Switched to branch ${branchName}`, 'success');
-          this.loadGitBranch();
-          // Assuming the <baide-project-tree> is the parent element
-          this.loadProjectStructure();
-        } else {
-          showToast(`Error switching branch: ${data.error}`, 'error');
-        }
-      } else {
-        console.error('Failed to switch branch.');
-      }
-    } catch (e) {
-      console.error('Error switching branch:', e);
-    }
-      
-    // Hide the popup after switching
-    this.shadowRoot.getElementById('branchPopup').classList.add('hidden');
   }
 
   showAddBranchInput() {
