@@ -141,6 +141,38 @@ class BaideToast extends HTMLElement {
 
 customElements.define('baide-toast', BaideToast);
 
+// Define <baide-placeholder-page> custom element
+class BaidePlaceholderPage extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
+      <div class="placeholder-container">
+        <h2>Welcome to Your New Project</h2>
+        <p>Please create or open files using the project browser pane on the left.</p>
+        <p>Getting started:</p>
+        <ul>
+          <li>Click the "New File" button to create a new file.</li>
+          <li>Select an existing file from the project browser to open it.</li>
+        </ul>
+      </div>
+      <style>
+        .placeholder-container {
+          padding: 20px;
+          text-align: center;
+          color: #555;
+        }
+      </style>
+    `;
+  }
+
+  connectedCallback() {
+    // Initialize if needed
+  }
+}
+
+customElements.define('baide-placeholder-page', BaidePlaceholderPage);
+
 // Define <baide-editor> custom element
 class BaideEditor extends HTMLElement {
   constructor() {
@@ -154,6 +186,7 @@ class BaideEditor extends HTMLElement {
           <baide-editor-code></baide-editor-code>
           <baide-chat></baide-chat>
         </div>
+        <!-- Placeholder will be injected here -->
       </div>
     `;
 
@@ -208,6 +241,42 @@ class BaideEditor extends HTMLElement {
     }
   }
 
+  // Member function to show the placeholder page
+  showPlaceholderPage() {
+    // Hide relevant components
+    const fileTabs = this.shadowRoot.querySelector('baide-file-tabs');
+    const editorCode = this.shadowRoot.querySelector('baide-editor-code');
+    const chat = this.shadowRoot.querySelector('baide-chat');
+
+    if (fileTabs) fileTabs.classList.add('hidden');
+    if (editorCode) editorCode.classList.add('hidden');
+    if (chat) chat.classList.add('hidden');
+
+    // Add the placeholder page if not already present
+    if (!this.shadowRoot.querySelector('baide-placeholder-page')) {
+      const placeholder = document.createElement('baide-placeholder-page');
+      this.shadowRoot.querySelector('.baide-editor').appendChild(placeholder);
+    }
+  }
+
+  // Member function to hide the placeholder page
+  hidePlaceholderPage() {
+    // Show relevant components
+    const fileTabs = this.shadowRoot.querySelector('baide-file-tabs');
+    const editorCode = this.shadowRoot.querySelector('baide-editor-code');
+    const chat = this.shadowRoot.querySelector('baide-chat');
+
+    if (fileTabs) fileTabs.classList.remove('hidden');
+    if (editorCode) editorCode.classList.remove('hidden');
+    if (chat) chat.classList.remove('hidden');
+
+    // Remove the placeholder page if present
+    const placeholder = this.shadowRoot.querySelector('baide-placeholder-page');
+    if (placeholder) {
+      placeholder.remove();
+    }
+  }
+
   // Function to save the state of a project
   saveProjectState(projectName) {
     if (!projectName) return;
@@ -259,7 +328,7 @@ class BaideEditor extends HTMLElement {
     } else {
       // If no active file, clear the editor and show placeholder
       this.clearEditor();
-      showPlaceholderPage();
+      this.showPlaceholderPage();
     }
 
     this.adjustTabs(); // Adjust tabs after restoring
@@ -314,7 +383,7 @@ class BaideEditor extends HTMLElement {
           // Reset AI model dropdown
           resetAIDropdown();
           // Show the placeholder page since there are no open files
-          showPlaceholderPage();
+          this.showPlaceholderPage();
         }
         this.adjustTabs(); // Adjust tabs after closing a tab
       }
@@ -363,7 +432,7 @@ class BaideEditor extends HTMLElement {
       }
     } catch (e) {
       console.error('Error opening file:', e);
-      showToast('Error opening file.', 'error');
+      this.showToast('Error opening file.', 'error');
     }
   }
 
@@ -429,14 +498,14 @@ class BaideEditor extends HTMLElement {
         }
         
         // Hide the placeholder if it's visible
-        hidePlaceholderPage();
+        this.hidePlaceholderPage();
       } else {
-        showToast('Failed to load file content.', 'error');
+        this.showToast('Failed to load file content.', 'error');
         console.error('Failed to load file content.');
       }
     } catch (e) {
       console.error('Error switching to tab:', e);
-      showToast('Error switching to tab.', 'error');
+      this.showToast('Error switching to tab.', 'error');
     }
   }
 
@@ -474,6 +543,16 @@ class BaideEditor extends HTMLElement {
   // Member function to clear the editor
   clearEditor() {
     this.setEditorValue('');
+  }
+
+  // Member function to show toast messages
+  showToast(message, type = 'info') {
+    let toastElement = document.querySelector('baide-toast');
+    if (!toastElement) {
+      toastElement = document.createElement('baide-toast');
+      document.body.appendChild(toastElement);
+    }
+    toastElement.show(message, type);
   }
 }
 
@@ -782,7 +861,7 @@ class BaideProjectTree extends HTMLElement {
           const structureData = await structureResponse.json();
           createProjectTree(structureData, projectTreeContainer);
         } else {
-          showToast('Failed to load project structure.', 'error');
+          this.showToast('Failed to load project structure.', 'error');
           console.error('Failed to load project structure.');
         }
             
@@ -800,16 +879,16 @@ class BaideProjectTree extends HTMLElement {
         // Check if there are no open files and show placeholder if necessary
         const editor = document.querySelector('baide-editor');
         if (editor && (!editor.activeFile[editor.currentProject] || Object.keys(editor.openFiles[editor.currentProject]).length === 0)) {
-          showPlaceholderPage();
+          editor.showPlaceholderPage();
         } else {
-          hidePlaceholderPage();
+          editor.hidePlaceholderPage();
         }
       } else {
-        showToast('Failed to fetch project details.', 'error');
+        this.showToast('Failed to fetch project details.', 'error');
         console.error('Failed to fetch project details.');
       }
     } catch (e) {
-      showToast('Error loading project structure.', 'error');
+      this.showToast('Error loading project structure.', 'error');
       console.error('Error loading project structure:', e);
     }
   }
@@ -916,11 +995,11 @@ class BaideProjectTree extends HTMLElement {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          showToast(`Switched to branch ${branchName}`, 'success');
+          this.showToast(`Switched to branch ${branchName}`, 'success');
           this.loadGitBranch();
           await this.loadProjectStructure();
         } else {
-          showToast(`Error switching branch: ${data.error}`, 'error');
+          this.showToast(`Error switching branch: ${data.error}`, 'error');
         }
       } else {
         console.error('Failed to switch branch.');
@@ -1156,7 +1235,10 @@ class BaideBranchSelector extends HTMLElement {
   async addNewBranch() {
     const branchName = this.shadowRoot.getElementById('newBranchName').value.trim();
     if (!branchName) {
-      showToast('Branch name cannot be empty.', 'error');
+      const editor = document.querySelector('baide-editor');
+      if (editor) {
+        editor.showToast('Branch name cannot be empty.', 'error');
+      }
       return;
     }
       
@@ -1174,12 +1256,18 @@ class BaideBranchSelector extends HTMLElement {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          showToast(`Branch ${branchName} created successfully.`, 'success');
+          const editor = document.querySelector('baide-editor');
+          if (editor) {
+            editor.showToast(`Branch ${branchName} created successfully.`, 'success');
+          }
           this.loadGitBranch();
           // Refresh branch list
           this.openBranchPopup();
         } else {
-          showToast(`Error creating branch: ${data.error}`, 'error');
+          const editor = document.querySelector('baide-editor');
+          if (editor) {
+            editor.showToast(`Error creating branch: ${data.error}`, 'error');
+          }
         }
       } else {
         console.error('Failed to create branch.');
