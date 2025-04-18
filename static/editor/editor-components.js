@@ -242,6 +242,18 @@ class BaideEditor extends HTMLElement {
         this.editor = cm;
       });
     }
+
+    // Listen for 'file-selected' events from <baide-project-tree>
+    this.addEventListener('file-selected', (e) => {
+      const { projectName, filePath } = e.detail;
+      if (projectName === this.currentProject) {
+        this.openFileInTab(filePath);
+      } else {
+        // Optionally handle project switching here if needed
+        // For now, just open the file
+        this.openFileInTab(filePath);
+      }
+    });
   }
 
   // Member function to show the placeholder page
@@ -570,11 +582,11 @@ class BaideEditor extends HTMLElement {
         const editor = this.closest('baide-editor');
         if (editor) {
           if (childContainer.classList.contains('hidden')) {
-            editor.openDirectories.get(this.currentProject).delete(fullPath);
+            editor.openDirectories.get(this.currentproject).delete(fullPath);
           } else {
-            editor.openDirectories.get(this.currentProject).add(fullPath);
+            editor.openDirectories.get(this.currentproject).add(fullPath);
           }
-          editor.saveProjectState(this.currentProject);
+          editor.saveProjectState(this.currentproject);
           editor.adjustTabs(); // Adjust tabs when directories are toggled
         }
       });
@@ -598,7 +610,14 @@ class BaideEditor extends HTMLElement {
       }
       const fullPath = currentPath + file.name;
       fileSpan.addEventListener('click', () => {
-        this.openFileInTab(fullPath);
+        this.dispatchEvent(new CustomEvent('file-selected', {
+          detail: {
+            projectName: this.currentproject,
+            filePath: fullPath
+          },
+          bubbles: true,
+          composed: true
+        }));
       });
       itemDiv.appendChild(fileSpan);
       parentElement.appendChild(itemDiv);
@@ -1151,7 +1170,14 @@ class BaideProjectTree extends HTMLElement {
       }
       const fullPath = currentPath + file.name;
       fileSpan.addEventListener('click', () => {
-        this.openFileInTab(fullPath);
+        this.dispatchEvent(new CustomEvent('file-selected', {
+          detail: {
+            projectName: this.currentproject,
+            filePath: fullPath
+          },
+          bubbles: true,
+          composed: true
+        }));
       });
       itemDiv.appendChild(fileSpan);
       parentElement.appendChild(itemDiv);
