@@ -69,6 +69,7 @@ class BaideToast extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div id="toastContainer" class="toast-container"></div>
       <style>
         .toast-container {
@@ -147,6 +148,7 @@ class BaidePlaceholderPage extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div class="placeholder-container">
         <h2>Welcome to Your New Project</h2>
         <p>Please create or open files using the project browser pane on the left.</p>
@@ -179,6 +181,7 @@ class BaideEditor extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div class="baide-editor">
         <baide-project-tree></baide-project-tree>
         <div style="flex: 1; display: flex; flex-direction: column;">
@@ -608,6 +611,7 @@ class BaideFileTabs extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div id="tabs" class="baide-file-tabs">
         <!-- Tabs will be populated here -->
         <div class="tab more-tabs">>> 
@@ -734,6 +738,7 @@ class BaideEditorCode extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <textarea id="sourceCode"></textarea>
       <img id="imageDisplay" style="max-width: 100%; display: none;" />
       <div id="searchOverlay" class="hidden">
@@ -818,6 +823,7 @@ class BaideProjectTree extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div class="baide-project-tree">
         <baide-project-selector></baide-project-selector>
         <baide-branch-selector></baide-branch-selector>
@@ -1146,6 +1152,7 @@ class BaideProjectSelector extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <select id="projectSelector">
         <option value="">Select Project</option>
       </select>
@@ -1200,6 +1207,7 @@ class BaideBranchSelector extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div id="gitBranchDisplay">Loading branch...</div>
       <div id="branchPopup" class="hidden">
         <div class="branch-popup-content">
@@ -1396,6 +1404,7 @@ class BaideChat extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div class="baide-chat">
         <baide-chat-history></baide-chat-history>
         <baide-chat-input></baide-chat-input>
@@ -1425,6 +1434,7 @@ class BaideChatHistory extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <div id="chatBox"></div>
       <div id="commitSummaries"></div>
       <div id="activeCodingContexts"></div>
@@ -1454,6 +1464,7 @@ class BaideChatInput extends HTMLElement {
     super();
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
+      <style> @import "editor.css"; </style>
       <form id="chatForm">
         <input type="text" id="promptInput" placeholder="Enter your prompt..." />
         <button type="submit">Send</button>
