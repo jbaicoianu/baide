@@ -407,5 +407,22 @@
     "commit_hash": "ceef2b04bd3283449e9262b7a492759314bc4012",
     "model": "o1-mini",
     "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "User",
+    "content": "Our <baide-editor> and <baide-project-tree> are both implementing this.openDirectories logic. This is causing some problems - they should both use the map on <baide-editor> and we should remove the duplicate openDirectories map in <baide-project-tree>",
+    "timestamp": "2025-04-18T23:15:41.509407Z",
+    "branch": "custom-elements-refactor",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "I've updated the `static/editor/editor-components.js` file to eliminate the duplicate `openDirectories` map in `<baide-project-tree>`. Now, `<baide-project-tree>` references the `openDirectories` map from `<baide-editor>`, ensuring consistency and resolving the issues caused by the duplication.",
+    "timestamp": "2025-04-18T23:18:28.631205Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "4efcdb6c9f5d53dc7b58d9b028a72e776c58a169",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
   }
 ]
