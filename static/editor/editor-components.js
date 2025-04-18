@@ -605,6 +605,120 @@
     
     // Define other custom elements like <baide-context-selector> as needed...
     
+    // Function to load project structure and set up event listeners for files
+    async function loadProjectStructure() {
+      try {
+        const response = await fetch(`/projects/details?project_name=${encodeURIComponent(currentProject)}`);
+        if (response.ok) {
+          const data = await response.json();
+          const projectBrowser = document.getElementById('projectBrowser');
+    
+          // Remove all child elements except .project-panel-grabber
+          const grabber = projectBrowser.querySelector('.project-panel-grabber');
+          projectBrowser.innerHTML = '<h2>Project Browser</h2>';
+          if (grabber) {
+            projectBrowser.appendChild(grabber);
+          }
+    
+          // Add Project Selector
+          addProjectSelector(projectBrowser);
+          
+          // Add New Project Button
+          const newProjectBtn = document.createElement('button');
+          newProjectBtn.id = 'newProjectBtn';
+          newProjectBtn.textContent = 'New Project';
+          newProjectBtn.addEventListener('click', openNewProjectModal);
+          projectBrowser.appendChild(newProjectBtn);
+          
+          // Add Git Branch Display
+          const gitBranchDiv = document.createElement('div');
+          gitBranchDiv.id = 'gitBranchDisplay';
+          gitBranchDiv.textContent = 'Loading branch...';
+          gitBranchDiv.style.cursor = 'pointer';
+          gitBranchDiv.addEventListener('click', openBranchPopup);
+          projectBrowser.appendChild(gitBranchDiv);
+              
+          // Add New File Button
+          const newFileBtn = document.createElement('button');
+          newFileBtn.id = 'newFileBtn';
+          newFileBtn.textContent = 'New File';
+          newFileBtn.addEventListener('click', openNewFileModal);
+          projectBrowser.appendChild(newFileBtn);
+        
+          // Since the new response format does not include the project structure,
+          // fetch the project structure separately if needed
+          // For demonstration, assuming another endpoint '/projects/structure'
+          const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(currentProject)}`);
+          if (structureResponse.ok) {
+            const structureData = await structureResponse.json();
+            const treeContainer = document.createElement('div');
+            treeContainer.id = 'projectTreeContainer'; // Added ID
+            createProjectTree(structureData, treeContainer);
+            projectBrowser.appendChild(treeContainer);
+          } else {
+            showToast('Failed to load project structure.', 'error');
+            console.error('Failed to load project structure.');
+          }
+              
+          // Load open directories from localStorage before restoring
+          loadOpenDirectories();
+          // Restore open directories from localStorage
+          const treeContainerNew = document.getElementById('projectTreeContainer'); // Updated to use ID
+          if (treeContainerNew) {
+            restoreOpenDirectories(treeContainerNew);
+          }
+              
+          // Load Git Branch
+          loadGitBranch();
+    
+          // Adjust AI Model Dropdown based on active file
+          updateAIDropdownForActiveFile();
+    
+          // Check if there are no open files and show placeholder if necessary
+          if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+            showPlaceholderPage();
+          } else {
+            hidePlaceholderPage();
+          }
+        } else {
+          showToast('Failed to fetch project details.', 'error');
+          console.error('Failed to fetch project details.');
+        }
+      } catch (e) {
+        showToast('Error loading project structure.', 'error');
+        console.error('Error loading project structure:', e);
+      }
+    }
+    
+    // Load open directories from localStorage
+    function loadOpenDirectories() {
+      if (!currentProject) return;
+      const storedOpenDirs = localStorage.getItem(`openDirectories_${currentProject}`);
+      if (storedOpenDirs) {
+        const dirs = new Set(JSON.parse(storedOpenDirs));
+        openDirectories.set(currentProject, dirs);
+      } else {
+        openDirectories.set(currentProject, new Set());
+      }
+    }
+    
+    // Restore open directories in the project tree
+    function restoreOpenDirectories(parentElement, currentPath = '') {
+      const directories = parentElement.getElementsByClassName('directory');
+      Array.from(directories).forEach(dir => {
+        const dirName = dir.firstChild.textContent;
+        const fullPath = currentPath + dirName + '/';
+        if (openDirectories.get(currentProject).has(fullPath)) {
+          const childContainer = dir.querySelector('.directory-children');
+          if (childContainer) {
+            childContainer.classList.remove('hidden');
+            dir.firstChild.classList.add('open');
+            restoreOpenDirectories(childContainer, fullPath);
+          }
+        }
+      });
+    }
+    
     // Global showToast function
     function showToast(message, type = 'info') {
       let toastElement = document.querySelector('baide-toast');
