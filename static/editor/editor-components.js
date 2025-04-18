@@ -786,7 +786,7 @@ class BaideProjectTree extends HTMLElement {
   }
 
   get currentproject() {
-    return this.getAttribute('currentproject');
+    return this.getAttribute('currentproject') ?? '';
   }
 
   set currentproject(value) {
