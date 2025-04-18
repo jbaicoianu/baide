@@ -835,7 +835,7 @@ class BaideProjectTree extends HTMLElement {
         const newProjectBtn = document.createElement('button');
         newProjectBtn.id = 'newProjectBtn';
         newProjectBtn.textContent = 'New Project';
-        newProjectBtn.addEventListener('click', openNewProjectModal);
+        //newProjectBtn.addEventListener('click', openNewProjectModal);
         projectTreeContainer.appendChild(newProjectBtn);
         
         // Add Git Branch Display
