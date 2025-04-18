@@ -432,7 +432,7 @@ class BaideEditor extends HTMLElement {
       }
     } catch (e) {
       console.error('Error opening file:', e);
-      this.showToast('Error opening file.', 'error');
+      showToast('Error opening file.', 'error');
     }
   }
 
@@ -500,12 +500,12 @@ class BaideEditor extends HTMLElement {
         // Hide the placeholder if it's visible
         this.hidePlaceholderPage();
       } else {
-        this.showToast('Failed to load file content.', 'error');
+        showToast('Failed to load file content.', 'error');
         console.error('Failed to load file content.');
       }
     } catch (e) {
       console.error('Error switching to tab:', e);
-      this.showToast('Error switching to tab.', 'error');
+      showToast('Error switching to tab.', 'error');
     }
   }
 
@@ -543,16 +543,6 @@ class BaideEditor extends HTMLElement {
   // Member function to clear the editor
   clearEditor() {
     this.setEditorValue('');
-  }
-
-  // Member function to show toast messages
-  showToast(message, type = 'info') {
-    let toastElement = document.querySelector('baide-toast');
-    if (!toastElement) {
-      toastElement = document.createElement('baide-toast');
-      document.body.appendChild(toastElement);
-    }
-    toastElement.show(message, type);
   }
 }
 
@@ -861,7 +851,7 @@ class BaideProjectTree extends HTMLElement {
           const structureData = await structureResponse.json();
           createProjectTree(structureData, projectTreeContainer);
         } else {
-          this.showToast('Failed to load project structure.', 'error');
+          showToast('Failed to load project structure.', 'error');
           console.error('Failed to load project structure.');
         }
             
@@ -884,11 +874,11 @@ class BaideProjectTree extends HTMLElement {
           editor.hidePlaceholderPage();
         }
       } else {
-        this.showToast('Failed to fetch project details.', 'error');
+        showToast('Failed to fetch project details.', 'error');
         console.error('Failed to fetch project details.');
       }
     } catch (e) {
-      this.showToast('Error loading project structure.', 'error');
+      showToast('Error loading project structure.', 'error');
       console.error('Error loading project structure:', e);
     }
   }
@@ -995,11 +985,11 @@ class BaideProjectTree extends HTMLElement {
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          this.showToast(`Switched to branch ${branchName}`, 'success');
+          showToast(`Switched to branch ${branchName}`, 'success');
           this.loadGitBranch();
           await this.loadProjectStructure();
         } else {
-          this.showToast(`Error switching branch: ${data.error}`, 'error');
+          showToast(`Error switching branch: ${data.error}`, 'error');
         }
       } else {
         console.error('Failed to switch branch.');
