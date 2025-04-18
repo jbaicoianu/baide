@@ -544,6 +544,60 @@ class BaideEditor extends HTMLElement {
   clearEditor() {
     this.setEditorValue('');
   }
+
+  // Member function to create the project tree
+  createProjectTree(structure, parentElement, currentPath = '') {
+    const directories = structure.filter(item => item.type === 'directory');
+    const files = structure.filter(item => item.type === 'file');
+      
+    directories.sort((a, b) => a.name.localeCompare(b.name));
+    files.sort((a, b) => a.name.localeCompare(b.name));
+      
+    directories.forEach(dir => {
+      const itemDiv = document.createElement('div');
+      const dirSpan = document.createElement('span');
+      dirSpan.textContent = dir.name;
+      if (dir.name.startsWith('.')) {
+        dirSpan.classList.add('hiddenfile');
+      }
+      dirSpan.addEventListener('click', () => {
+        childContainer.classList.toggle('hidden');
+        dirSpan.classList.toggle('open');
+        const fullPath = currentPath + dir.name + '/';
+        if (childContainer.classList.contains('hidden')) {
+          this.openDirectories.get(this.currentProject).delete(fullPath);
+        } else {
+          this.openDirectories.get(this.currentProject).add(fullPath);
+        }
+        this.saveProjectState(this.currentProject);
+        this.adjustTabs(); // Adjust tabs when directories are toggled
+      });
+      itemDiv.className = 'directory';
+      itemDiv.appendChild(dirSpan);
+      const childContainer = document.createElement('div');
+      childContainer.className = 'directory-children hidden';
+      // Recursively create tree with updated path
+      this.createProjectTree(dir.children, childContainer, currentPath + dir.name + '/');
+      itemDiv.appendChild(childContainer);
+      parentElement.appendChild(itemDiv);
+    });
+      
+    files.forEach(file => {
+      const itemDiv = document.createElement('div');
+      const fileSpan = document.createElement('span');
+      fileSpan.textContent = file.name;
+      fileSpan.className = 'file';
+      if (file.name.startsWith('.')) {
+        fileSpan.classList.add('hiddenfile');
+      }
+      const fullPath = currentPath + file.name;
+      fileSpan.addEventListener('click', () => {
+        this.openFileInTab(fullPath);
+      });
+      itemDiv.appendChild(fileSpan);
+      parentElement.appendChild(itemDiv);
+    });
+  }
 }
 
 customElements.define('baide-editor', BaideEditor);
@@ -857,7 +911,7 @@ class BaideProjectTree extends HTMLElement {
         const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(this.currentproject)}`);
         if (structureResponse.ok) {
           const structureData = await structureResponse.json();
-          createProjectTree(structureData, projectTreeContainer);
+          this.createProjectTree(structureData, projectTreeContainer);
         } else {
           showToast('Failed to load project structure.', 'error');
           console.error('Failed to load project structure.');
@@ -1028,7 +1082,59 @@ class BaideProjectTree extends HTMLElement {
     }));
   }
 
-  // Additional methods for loadTranscript, loadFileCodingContexts, loadFileActiveModel can be implemented here
+  // Member function to create the project tree
+  createProjectTree(structure, parentElement, currentPath = '') {
+    const directories = structure.filter(item => item.type === 'directory');
+    const files = structure.filter(item => item.type === 'file');
+      
+    directories.sort((a, b) => a.name.localeCompare(b.name));
+    files.sort((a, b) => a.name.localeCompare(b.name));
+      
+    directories.forEach(dir => {
+      const itemDiv = document.createElement('div');
+      const dirSpan = document.createElement('span');
+      dirSpan.textContent = dir.name;
+      if (dir.name.startsWith('.')) {
+        dirSpan.classList.add('hiddenfile');
+      }
+      dirSpan.addEventListener('click', () => {
+        childContainer.classList.toggle('hidden');
+        dirSpan.classList.toggle('open');
+        const fullPath = currentPath + dir.name + '/';
+        if (childContainer.classList.contains('hidden')) {
+          this.openDirectories.get(this.currentproject).delete(fullPath);
+        } else {
+          this.openDirectories.get(this.currentproject).add(fullPath);
+        }
+        this.saveProjectState(this.currentproject);
+        this.adjustTabs(); // Adjust tabs when directories are toggled
+      });
+      itemDiv.className = 'directory';
+      itemDiv.appendChild(dirSpan);
+      const childContainer = document.createElement('div');
+      childContainer.className = 'directory-children hidden';
+      // Recursively create tree with updated path
+      this.createProjectTree(dir.children, childContainer, currentPath + dir.name + '/');
+      itemDiv.appendChild(childContainer);
+      parentElement.appendChild(itemDiv);
+    });
+      
+    files.forEach(file => {
+      const itemDiv = document.createElement('div');
+      const fileSpan = document.createElement('span');
+      fileSpan.textContent = file.name;
+      fileSpan.className = 'file';
+      if (file.name.startsWith('.')) {
+        fileSpan.classList.add('hiddenfile');
+      }
+      const fullPath = currentPath + file.name;
+      fileSpan.addEventListener('click', () => {
+        this.openFileInTab(fullPath);
+      });
+      itemDiv.appendChild(fileSpan);
+      parentElement.appendChild(itemDiv);
+    });
+  }
 }
 
 customElements.define('baide-project-tree', BaideProjectTree);
