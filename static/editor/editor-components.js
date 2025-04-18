@@ -850,7 +850,7 @@ class BaideProjectTree extends HTMLElement {
         const newFileBtn = document.createElement('button');
         newFileBtn.id = 'newFileBtn';
         newFileBtn.textContent = 'New File';
-        newFileBtn.addEventListener('click', openNewFileModal);
+        //newFileBtn.addEventListener('click', openNewFileModal);
         projectTreeContainer.appendChild(newFileBtn);
       
         // Fetch the project structure separately if needed
