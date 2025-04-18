@@ -936,7 +936,7 @@ function initializeCodeMirror() {
 }
 
 // ... [Rest of the existing functions remain unchanged]
-
+/*
 window.onload = async function() {
   // Initialize custom editor component
   const editorComponent = document.createElement('baide-editor');
@@ -985,3 +985,4 @@ window.onload = async function() {
     hidePlaceholderPage();
   }
 };
+*/
