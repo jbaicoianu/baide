@@ -1351,54 +1351,7 @@ function initializeCodeMirror() {
   });
 }
 
-// ... [Rest of the existing functions remain unchanged]
-/*
-window.onload = async function() {
-  // Initialize custom editor component
-  const editorComponent = document.createElement('baide-editor');
-  document.body.appendChild(editorComponent);
-  
-  // Initialize toast component if not already present
-  if (!document.querySelector('baide-toast')) {
-    const toastComponent = document.createElement('baide-toast');
-    document.body.appendChild(toastComponent);
-  }
-
-  // Load other initializations
-  loadFileCodingContextsFromStorage();
-  loadFileActiveModelsFromStorage();
-  
-  // Fetch all coding contexts on load
-  try {
-    const response = await fetch('/coding_contexts');
-    if (response.ok) {
-      const data = await response.json();
-      allCodingContexts = data; // Updated to handle array of context objects
-      updateContextSelectorOptions();
-    } else {
-      console.error('Failed to fetch coding contexts.');
-    }
-  } catch (e) {
-    console.error('Error fetching coding contexts:', e);
-  }
-
-  // Load AI Models after creating the dropdown
-  await loadAIModals();
-  
-  loadCurrentProject();
-  // Call loadProjectStructure from the <baide-project-tree> element
-  const projectTreeElement = document.querySelector('baide-project-tree');
-  if (projectTreeElement) {
-    await projectTreeElement.loadProjectStructure();
-  }
-  await restoreProjectState(currentProject);
-  adjustTabs(); // Initial adjustment
-
-  // Check if there are no open files and show placeholder if necessary
-  if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
-    showPlaceholderPage();
-  } else {
-    hidePlaceholderPage();
-  }
-};
-*/
+// Function to sanitize filename for use in HTML IDs
+function sanitizeId(filename) {
+  return filename.replace(/[^a-zA-Z0-9-_]/g, '_');
+}
