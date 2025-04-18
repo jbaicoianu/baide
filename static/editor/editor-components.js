@@ -63,24 +63,6 @@
 }
 */
 
-// Existing global variables
-let activeFile = {}; // Mapping of project name to active file
-let openFiles = {}; // Mapping of project name to open files
-let editor = null;
-let openDirectories = new Map(); // Mapping of project name to open directories
-let fileCodingContexts = {}; // Mapping of filename to contexts
-let allCodingContexts = []; // All available coding contexts
-let fileActiveModels = {}; // Mapping of filename to active model
-let availableModels = []; // List of available AI models
-let defaultModel = ''; // Default AI model
-let lastSearchQuery = '';
-let searchCursor = null;
-let searchDirection = 'forward'; // New variable to track search direction
-let totalSearchResults = 0;
-let currentSearchIndex = 0;
-let searchResults = []; // Array to store all search match positions
-let currentProject = ''; // Variable to track the current project
-
 // Define <baide-toast> custom element
 class BaideToast extends HTMLElement {
   constructor() {
@@ -174,10 +156,79 @@ class BaideEditor extends HTMLElement {
         </div>
       </div>
     `;
+
+    // Initialize member variables
+    this.activeFile = {}; // Mapping of project name to active file
+    this.openFiles = {}; // Mapping of project name to open files
+    this.openDirectories = new Map(); // Mapping of project name to open directories
   }
 
   connectedCallback() {
-    // Initialize components if needed
+    // Listen for project-changed event to save state
+    this.addEventListener('project-changed', (e) => {
+      const projectName = e.detail.projectName;
+      this.saveProjectState(this.currentProject);
+      this.currentProject = projectName;
+    });
+
+    // Listen for project-loaded event to restore state
+    this.addEventListener('project-loaded', (e) => {
+      const projectName = e.detail.projectName;
+      this.restoreProjectState(projectName);
+    });
+
+    // Initialize currentProject from localStorage or default
+    this.currentProject = localStorage.getItem('currentProject') || '';
+
+    // If there's a current project, restore its state
+    if (this.currentProject) {
+      this.restoreProjectState(this.currentProject);
+    }
+  }
+
+  // Function to save the state of a project
+  saveProjectState(projectName) {
+    if (!projectName) return;
+    // Save open files
+    localStorage.setItem(`openFiles_${projectName}`, JSON.stringify(this.openFiles[projectName] || {}));
+    // Save active file
+    localStorage.setItem(`activeFile_${projectName}`, this.activeFile[projectName] || '');
+    // Save open directories
+    localStorage.setItem(`openDirectories_${projectName}`, JSON.stringify(Array.from(this.openDirectories.get(projectName) || [])));
+  }
+
+  // Function to restore the state of a project
+  async restoreProjectState(projectName) {
+    if (!projectName) return;
+    // Load open files
+    const storedOpenFiles = localStorage.getItem(`openFiles_${projectName}`);
+    this.openFiles[projectName] = storedOpenFiles ? JSON.parse(storedOpenFiles) : {};
+
+    // Load active file
+    this.activeFile[projectName] = localStorage.getItem(`activeFile_${projectName}`) || '';
+
+    // Load open directories
+    const storedOpenDirs = localStorage.getItem(`openDirectories_${projectName}`);
+    this.openDirectories.set(projectName, storedOpenDirs ? new Set(JSON.parse(storedOpenDirs)) : new Set());
+
+    // Close all current tabs
+    closeAllTabs();
+
+    // Open files for the new project
+    for (const filename of Object.keys(this.openFiles[projectName])) {
+      await openFileInTab(filename, false);
+    }
+
+    // Switch to active file
+    if (this.activeFile[projectName]) {
+      await switchToTab(this.activeFile[projectName]);
+    } else {
+      // If no active file, clear the editor and show placeholder
+      clearEditor();
+      showPlaceholderPage();
+    }
+
+    adjustTabs(); // Adjust tabs after restoring
   }
 }
 
@@ -213,8 +264,12 @@ class BaideProjectTree extends HTMLElement {
 
   attributeChangedCallback(name, oldValue, newValue) {
     if (name === 'currentproject' && oldValue !== newValue) {
-      currentProject = newValue;
-      this.loadProjectStructure();
+      // Emit project-loaded event from <baide-project-tree>
+      this.dispatchEvent(new CustomEvent('project-loaded', {
+        detail: { projectName: newValue },
+        bubbles: true,
+        composed: true
+      }));
     }
   }
 
@@ -236,7 +291,7 @@ class BaideProjectTree extends HTMLElement {
 
   async loadProjectStructure() {
     try {
-      const response = await fetch(`/projects/details?project_name=${encodeURIComponent(currentProject)}`);
+      const response = await fetch(`/projects/details?project_name=${encodeURIComponent(this.currentproject)}`);
       if (response.ok) {
         const data = await response.json();
         const projectTreeContainer = this.shadowRoot.getElementById('projectTreeContainer');
@@ -268,7 +323,7 @@ class BaideProjectTree extends HTMLElement {
         projectTreeContainer.appendChild(newFileBtn);
       
         // Fetch the project structure separately if needed
-        const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(currentProject)}`);
+        const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(this.currentproject)}`);
         if (structureResponse.ok) {
           const structureData = await structureResponse.json();
           createProjectTree(structureData, projectTreeContainer);
@@ -289,7 +344,7 @@ class BaideProjectTree extends HTMLElement {
         updateAIDropdownForActiveFile();
 
         // Check if there are no open files and show placeholder if necessary
-        if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
+        if (!this.activeFile[this.currentproject] || Object.keys(this.openFiles[this.currentproject]).length === 0) {
           showPlaceholderPage();
         } else {
           hidePlaceholderPage();
@@ -306,13 +361,13 @@ class BaideProjectTree extends HTMLElement {
 
   // Load open directories from localStorage
   loadOpenDirectories() {
-    if (!currentProject) return;
-    const storedOpenDirs = localStorage.getItem(`openDirectories_${currentProject}`);
+    if (!this.currentproject) return;
+    const storedOpenDirs = localStorage.getItem(`openDirectories_${this.currentproject}`);
     if (storedOpenDirs) {
       const dirs = new Set(JSON.parse(storedOpenDirs));
-      openDirectories.set(currentProject, dirs);
+      this.openDirectories.set(this.currentproject, dirs);
     } else {
-      openDirectories.set(currentProject, new Set());
+      this.openDirectories.set(this.currentproject, new Set());
     }
   }
 
@@ -322,7 +377,7 @@ class BaideProjectTree extends HTMLElement {
     Array.from(directories).forEach(dir => {
       const dirName = dir.firstChild.textContent;
       const fullPath = currentPath + dirName + '/';
-      if (openDirectories.get(currentProject).has(fullPath)) {
+      if (this.openDirectories.get(this.currentproject).has(fullPath)) {
         const childContainer = dir.querySelector('.directory-children');
         if (childContainer) {
           childContainer.classList.remove('hidden');
@@ -336,7 +391,7 @@ class BaideProjectTree extends HTMLElement {
   // Load Git Branch
   async loadGitBranch() {
     try {
-      const response = await fetch('/git_current_branch?project_name=' + currentProject);
+      const response = await fetch('/git_current_branch?project_name=' + this.currentproject);
       if (response.ok) {
         const data = await response.json();
         const gitBranchDiv = this.shadowRoot.getElementById('gitBranchDisplay');
@@ -357,7 +412,7 @@ class BaideProjectTree extends HTMLElement {
     if (!popup.classList.contains('hidden')) {
       // Fetch and display branches
       try {
-        const response = await fetch('/git_branches?project_name=' + currentProject);
+        const response = await fetch('/git_branches?project_name=' + this.currentproject);
         if (response.ok) {
           const data = await response.json();
           const branchList = this.shadowRoot.getElementById('branchList');
@@ -397,7 +452,7 @@ class BaideProjectTree extends HTMLElement {
         headers: { 
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ branch: branchName, project_name: currentProject })
+        body: JSON.stringify({ branch: branchName, project_name: this.currentproject })
       });
       if (response.ok) {
         const data = await response.json();
@@ -421,48 +476,12 @@ class BaideProjectTree extends HTMLElement {
 
   // Switch Project
   async switchProject(projectName) {
-    // Save current project state
-    if (currentProject) {
-      saveProjectState(currentProject);
-    }
-
-    // Emit a custom event instead of clearing the editor
-    this.dispatchEvent(new CustomEvent('project-changed', {
+    // Emit a project-loaded event with the new project name
+    this.dispatchEvent(new CustomEvent('project-loaded', {
       detail: { projectName },
       bubbles: true,
       composed: true
     }));
-
-    try {
-      const response = await fetch(`/projects/details?project_name=${encodeURIComponent(projectName)}`);
-      if (response.ok) {
-        currentProject = projectName;
-        // Set the currentproject attribute
-        this.currentproject = currentProject;
-        // Save current project to localStorage
-        localStorage.setItem('currentProject', currentProject);
-        // Reload project structure
-        await this.loadProjectStructure();
-        // Restore new project state
-        await restoreProjectState(currentProject);
-
-        // Adjust AI Model Dropdown based on active file
-        updateAIDropdownForActiveFile();
-
-        // Check if there are no open files and show placeholder if necessary
-        if (!activeFile[currentProject] || Object.keys(openFiles[currentProject]).length === 0) {
-          showPlaceholderPage();
-        } else {
-          hidePlaceholderPage();
-        }
-      } else {
-        showToast('Failed to switch project.', 'error');
-        console.error('Failed to switch project.');
-      }
-    } catch (e) {
-      showToast('Error switching project.', 'error');
-      console.error('Error switching project:', e);
-    }
   }
 }
 
@@ -492,7 +511,7 @@ class BaideProjectSelector extends HTMLElement {
           option.textContent = project;
           selector.appendChild(option);
         });
-        selector.value = currentProject;
+        selector.value = this.getCurrentProject();
       })
       .catch(error => {
         console.error('Error fetching project list:', error);
@@ -509,6 +528,11 @@ class BaideProjectSelector extends HTMLElement {
         }));
       }
     });
+  }
+
+  getCurrentProject() {
+    const editor = document.querySelector('baide-editor');
+    return editor ? editor.currentProject : '';
   }
 }
 
@@ -547,7 +571,10 @@ class BaideBranchSelector extends HTMLElement {
 
   async loadGitBranch() {
     try {
-      const response = await fetch('/git_current_branch?project_name=' + currentProject);
+      const editor = document.querySelector('baide-editor');
+      if (!editor.currentProject) return;
+
+      const response = await fetch('/git_current_branch?project_name=' + editor.currentProject);
       if (response.ok) {
         const data = await response.json();
         const gitBranchDiv = this.shadowRoot.getElementById('gitBranchDisplay');
@@ -567,7 +594,10 @@ class BaideBranchSelector extends HTMLElement {
     if (!popup.classList.contains('hidden')) {
       // Fetch and display branches
       try {
-        const response = await fetch('/git_branches?project_name=' + currentProject);
+        const editor = document.querySelector('baide-editor');
+        if (!editor.currentProject) return;
+
+        const response = await fetch('/git_branches?project_name=' + editor.currentProject);
         if (response.ok) {
           const data = await response.json();
           const branchList = this.shadowRoot.getElementById('branchList');
@@ -647,12 +677,15 @@ class BaideBranchSelector extends HTMLElement {
     }
       
     try {
+      const editor = document.querySelector('baide-editor');
+      if (!editor.currentProject) return;
+
       const response = await fetch('/git_create_branch', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ branch: branchName, project_name: currentProject })
+        body: JSON.stringify({ branch: branchName, project_name: editor.currentProject })
       });
       if (response.ok) {
         const data = await response.json();
@@ -803,8 +836,9 @@ class BaideChatInput extends HTMLElement {
 
     chatForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (!currentProject || !activeFile[currentProject]) return;
-      const filename = activeFile[currentProject];
+      const editor = document.querySelector('baide-editor');
+      if (!editor.currentProject || !editor.activeFile[editor.currentProject]) return;
+      const filename = editor.activeFile[editor.currentProject];
       const prompt = promptInput.value.trim();
       if (!prompt) return;
       appendMessage("User", prompt);
@@ -813,19 +847,19 @@ class BaideChatInput extends HTMLElement {
       throbber.style.display = "block";
 
       // Store the currently active file when the request is sent
-      const requestedFile = activeFile[currentProject];
+      const requestedFile = editor.activeFile[editor.currentProject];
 
       // Gather active context names
-      const contexts = fileCodingContexts[filename] ? fileCodingContexts[filename].map(ctx => ctx.name) : [];
+      const contexts = editor.fileCodingContexts[filename] ? editor.fileCodingContexts[filename].map(ctx => ctx.name) : [];
 
       // Get active AI model for the current file
-      const activeModel = fileActiveModels[filename] || defaultModel;
+      const activeModel = editor.fileActiveModels[filename] || editor.defaultModel;
 
       try {
         const response = await fetch("/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ prompt: prompt, file: filename, contexts: contexts, model: activeModel, project_name: currentProject })
+          body: JSON.stringify({ prompt: prompt, file: filename, contexts: contexts, model: activeModel, project_name: editor.currentProject })
         });
         if (response.ok) {
           const data = await response.json();
@@ -833,7 +867,7 @@ class BaideChatInput extends HTMLElement {
           scrollToBottom(this.shadowRoot.getElementById('chatBox'));
           scrollToBottom(this.shadowRoot.getElementById('commitSummaries'));
           // Reload the source code after AI updates only if the active file hasn't changed
-          if (activeFile[currentProject] === requestedFile) {
+          if (editor.activeFile[editor.currentProject] === requestedFile) {
             await loadSourceCode(filename);
           }
           // Reload coding contexts
