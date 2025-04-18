@@ -258,5 +258,13 @@
     "commit_hash": "c5ccf3c73d98866b5fe74b9672bdea76b0686379",
     "model": "o1-mini",
     "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "User",
+    "content": "Commented out image preview functionality for now [Manual edit]",
+    "timestamp": "2025-04-18T21:09:09.188690Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "fb113e0ea7359269f10012bace3a5b442c30e5fb",
+    "file_name": "static/editor/editor-components.js"
   }
 ]
