@@ -386,12 +386,12 @@ class BaideEditor extends HTMLElement {
           const prettyJson = JSON.stringify(content, null, 2);
           this.setEditorValue(prettyJson, { name: 'javascript', json: true }); // Updated mode configuration
           this.editor.getWrapperElement().style.display = 'block';
-          document.getElementById('imageDisplay').style.display = 'none';
+          //document.getElementById('imageDisplay').style.display = 'none';
         } else if (contentType.startsWith('text/')) {
           const content = await response.text();
           this.setEditorValue(content, 'python');
           this.editor.getWrapperElement().style.display = 'block';
-          document.getElementById('imageDisplay').style.display = 'none';
+          //document.getElementById('imageDisplay').style.display = 'none';
         } else if (contentType.startsWith('image/')) {
           const blob = await response.blob();
           const imageUrl = URL.createObjectURL(blob);
