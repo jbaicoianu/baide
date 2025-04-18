@@ -926,7 +926,7 @@ class BaideProjectTree extends HTMLElement {
         this.loadGitBranch();
 
         // Adjust AI Model Dropdown based on active file
-        updateAIDropdownForActiveFile();
+        //updateAIDropdownForActiveFile();
 
         // Check if there are no open files and show placeholder if necessary
         const editor = document.querySelector('baide-editor');
