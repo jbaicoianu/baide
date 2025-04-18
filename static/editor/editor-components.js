@@ -968,7 +968,8 @@ class BaideProjectTree extends HTMLElement {
     Array.from(directories).forEach(dir => {
       const dirName = dir.firstChild.textContent;
       const fullPath = currentPath + dirName + '/';
-      if (this.openDirectories.get(this.currentproject).has(fullPath)) {
+      const openDirs = this.openDirectories.get(this.currentproject);
+      if (openDirs && openDirs.has(fullPath)) {
         const childContainer = dir.querySelector('.directory-children');
         if (childContainer) {
           childContainer.classList.remove('hidden');
