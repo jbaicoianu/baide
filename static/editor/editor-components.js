@@ -443,8 +443,8 @@ class BaideEditor extends HTMLElement {
           // Activate the new tab
           await this.switchToTab(filename);
         } else {
-          this.openFiles[this.currentProject][filename] = true;
-          this.saveProjectState(this.currentProject);
+          //this.openFiles[this.currentProject][filename] = true;
+          //this.saveProjectState(this.currentProject);
         }
       }
     } catch (e) {
