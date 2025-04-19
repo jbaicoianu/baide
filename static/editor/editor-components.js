@@ -911,9 +911,9 @@ class BaideProjectTree extends HTMLElement {
         const data = await response.json();
         const projectTreeContainer = this.shadowRoot.getElementById('projectTreeContainer');
         projectTreeContainer.innerHTML = ''; // Clear existing content
-
+/*
         // Add Project Selector
-        //addProjectSelector(projectTreeContainer);
+        addProjectSelector(projectTreeContainer);
         
         // Add New Project Button
         const newProjectBtn = document.createElement('button');
@@ -929,7 +929,7 @@ class BaideProjectTree extends HTMLElement {
         gitBranchDiv.style.cursor = 'pointer';
         gitBranchDiv.addEventListener('click', () => this.openBranchPopup());
         projectTreeContainer.appendChild(gitBranchDiv);
-            
+*/            
         // Add New File Button
         const newFileBtn = document.createElement('button');
         newFileBtn.id = 'newFileBtn';
