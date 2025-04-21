@@ -184,7 +184,7 @@ class BaideEditor extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
       <style> @import "editor.css"; </style>
-      <div class="baide-editor">
+      <div class="baide-editor" id="container">
         <div id="projectBrowser">
           <baide-project-tree></baide-project-tree>
         </div>
