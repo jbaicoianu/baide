@@ -185,13 +185,14 @@ class BaideEditor extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style> @import "editor.css"; </style>
       <div class="baide-editor">
-        <baide-project-tree></baide-project-tree>
-        <div style="flex: 1; display: flex; flex-direction: column;">
+        <div id="projectBrowser">
+          <baide-project-tree></baide-project-tree>
+        </div>
+        <div id="mainContent">
           <baide-file-tabs></baide-file-tabs>
           <baide-editor-code></baide-editor-code>
           <baide-chat></baide-chat>
         </div>
-        <!-- Placeholder will be injected here -->
       </div>
     `;
 
