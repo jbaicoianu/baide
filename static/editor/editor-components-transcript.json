@@ -498,5 +498,13 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "de397c31d38254f4329fca1c51aa6d33883f8f3b",
     "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "User",
+    "content": "Disable codemirror [Manual edit]",
+    "timestamp": "2025-04-22T00:34:30.627339Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "bd9a7b34e4f324eb7138d54c8bc30d46ec462171",
+    "file_name": "static/editor/editor-components.js"
   }
 ]
