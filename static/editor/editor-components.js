@@ -937,12 +937,6 @@ class BaideProjectTree extends HTMLElement {
         gitBranchDiv.addEventListener('click', () => this.openBranchPopup());
         projectTreeContainer.appendChild(gitBranchDiv);
 */            
-        // Add New File Button
-        const newFileBtn = document.createElement('button');
-        newFileBtn.id = 'newFileBtn';
-        newFileBtn.textContent = 'New File';
-        //newFileBtn.addEventListener('click', openNewFileModal);
-        projectTreeContainer.appendChild(newFileBtn);
       
         // Fetch the project structure separately if needed
         const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(this.currentproject)}`);
