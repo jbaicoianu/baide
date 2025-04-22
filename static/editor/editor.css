@@ -725,3 +725,7 @@ input[type="text"] {
 baide-editor {
   flex: 1;
 }
+baide-editor-code {
+  flex: 1;
+  height: 100%;
+}
