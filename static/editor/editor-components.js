@@ -243,7 +243,6 @@ class BaideEditor extends HTMLElement {
     if (editorCode) {
       editorCode.initializeEditor((cm) => {
         this.editor = cm;
-          debugger;
       });
     }
 
@@ -396,6 +395,7 @@ class BaideEditor extends HTMLElement {
           if (imageDisplay) {
             imageDisplay.style.display = 'none';
           }
+            /*
           document.getElementById('chatBox').innerHTML = '';
           document.getElementById('commitSummaries').innerHTML = '';
           document.getElementById('activeCodingContexts').innerHTML = '';
@@ -403,6 +403,7 @@ class BaideEditor extends HTMLElement {
           resetAIDropdown();
           // Show the placeholder page since there are no open files
           this.showPlaceholderPage();
+            */
         }
         this.adjustTabs(); // Adjust tabs after closing a tab
       }
