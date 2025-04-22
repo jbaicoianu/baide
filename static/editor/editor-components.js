@@ -661,9 +661,6 @@ class BaideFileTabs extends HTMLElement {
           position: relative;
           user-select: none;
         }
-        .tab.active {
-          background-color: #ddd;
-        }
         .close-btn {
           margin-left: 5px;
           color: red;
