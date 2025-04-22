@@ -722,3 +722,6 @@ input[type="text"] {
   width: 100%;
   height: 80px;
 }
+baide-editor {
+  flex: 1;
+}
