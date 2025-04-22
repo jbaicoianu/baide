@@ -767,6 +767,10 @@ class BaideEditorCode extends HTMLElement {
     this.attachShadow({ mode: 'open' });
     this.shadowRoot.innerHTML = `
       <style> @import "editor.css"; </style>
+      <!-- Load CodeMirror from CDN -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
+
       <textarea id="sourceCode"></textarea>
       <img id="imageDisplay" style="max-width: 100%; display: none;" />
       <div id="searchOverlay" class="hidden">
