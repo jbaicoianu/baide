@@ -959,9 +959,6 @@ class BaideProjectTree extends HTMLElement {
         // Restore open directories from localStorage
         this.restoreOpenDirectories(projectTreeContainer);
             
-        // Load Git Branch
-        this.loadGitBranch();
-
         // Adjust AI Model Dropdown based on active file
         //updateAIDropdownForActiveFile();
 
