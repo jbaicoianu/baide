@@ -241,11 +241,10 @@ class BaideEditor extends HTMLElement {
     // Initialize CodeMirror editor after <baide-editor-code> is ready
     const editorCode = this.shadowRoot.querySelector('baide-editor-code');
     if (editorCode) {
-        /*
       editorCode.initializeEditor((cm) => {
         this.editor = cm;
+          debugger;
       });
-        */
     }
 
     // Listen for 'file-selected' events from <baide-project-tree>
