@@ -554,5 +554,13 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "6338014ada719f40ef9f9fea254322af6ba9c3e7",
     "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "User",
+    "content": "Move codemirror CSS into custom element's shadowRoot [Manual edit]",
+    "timestamp": "2025-04-22T07:16:01.321271Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "d5edf8107e9d3044352e11d82215717f686d64f7",
+    "file_name": "static/editor/editor-components.html"
   }
 ]
