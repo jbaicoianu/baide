@@ -1,4 +1,5 @@
 // CSS for Custom Baide Elements:
+/*
 const globalStyle = document.createElement('style');
 globalStyle.textContent = `
   .baide-editor {
@@ -64,6 +65,7 @@ globalStyle.textContent = `
   }
 `;
 document.head.appendChild(globalStyle);
+*/
 
 // Define <baide-toast> custom element
 class BaideToast extends HTMLElement {
