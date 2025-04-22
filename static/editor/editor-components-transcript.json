@@ -594,5 +594,13 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "4b2c0d8c8e704f3751b3b47dd2c1793ba2df0b13",
     "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "User",
+    "content": "Removed extra new file button [Manual edit]",
+    "timestamp": "2025-04-22T08:14:04.110433Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "814475059dd86855a62813ef5b0b1981b3848ee6",
+    "file_name": "static/editor/editor-components.js"
   }
 ]
