@@ -427,7 +427,8 @@ class BaideEditor extends HTMLElement {
       }
       return;
     }
-      
+    if (activate) return;
+                                                      
     try {
       const response = await fetch(`/file?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(this.currentProject)}`);
       if (response.ok) {
