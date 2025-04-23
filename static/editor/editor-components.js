@@ -2,67 +2,7 @@
 /*
 const globalStyle = document.createElement('style');
 globalStyle.textContent = `
-  .baide-editor {
-    display: flex;
-    flex-direction: row;
-    height: 100vh;
-  }
-  
-  .baide-editor-code {
-    flex: 1;
-    position: relative;
-  }
-  
-  .baide-project-tree {
-    width: 250px;
-    border-right: 1px solid #ccc;
-    overflow-y: auto;
-  }
-  
-  .baide-project-selector,
-  .baide-branch-selector,
-  .baide-file-tabs,
-  .baide-context-selector,
-  .baide-chat {
-    padding: 10px;
-  }
-  
-  .baide-chat-history {
-    height: 70%;
-    overflow-y: auto;
-  }
-  
-  .baide-chat-input {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-  }
-  
-  .toast {
-    min-width: 200px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-    opacity: 0;
-    transition: opacity 0.5s;
-    cursor: pointer;
-  }
-  
-  .toast.success {
-    background-color: #4CAF50;
-  }
-  
-  .toast.error {
-    background-color: #f44336;
-  }
-  
-  .toast.info {
-    background-color: #333;
-  }
-  
-  .hidden {
-    display: none;
-  }
+
 `;
 document.head.appendChild(globalStyle);
 */
