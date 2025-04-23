@@ -126,17 +126,19 @@ room.registerElement('spacezone-spaceship', {
     this.budget = this.createObject('spacezone-budget', { currentbalance: +currentbalance });
 
     // Add spacezone-store object
-    this.store = this.createObject('spacezone-store', { budget: this.budget });
-    this.store.addEventListener('purchased', (ev) => {
-      let item = ev.data;
-      console.log(item);
-      this.budget.apply(item.name, 1, item.price);
-      if (item.type) {
-        this.equipment[item.type] = item;
-        this.saveEquipment(); // Save equipment after purchase
-        this.resetEquipment(); // Reset equipment after loading new equipment
-      }
-    });
+    setTimeout(() => {
+      this.store = this.createObject('spacezone-store', { budget: this.budget });
+      this.store.addEventListener('purchased', (ev) => {
+        let item = ev.data;
+        console.log(item);
+        this.budget.apply(item.name, 1, item.price);
+        if (item.type) {
+          this.equipment[item.type] = item;
+          this.saveEquipment(); // Save equipment after purchase
+          this.resetEquipment(); // Reset equipment after loading new equipment
+        }
+      });
+    }, 1000);
 
     // Add child object 'taufighter' with specified metalness and roughness
     this.taufighter = this.createObject('object', {
