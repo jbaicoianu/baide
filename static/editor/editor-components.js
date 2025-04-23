@@ -369,7 +369,7 @@ class BaideEditor extends HTMLElement {
       }
       return;
     }
-                                                      
+                                    
     try {
       const response = await fetch(`/file?file=${encodeURIComponent(filename)}&project_name=${encodeURIComponent(this.currentProject)}`);
       if (response.ok) {
@@ -1298,9 +1298,9 @@ class BaideBranchSelector extends HTMLElement {
     const branchList = this.shadowRoot.getElementById('branchList');
         
     // Create input field
-    const input = document.createElement('input');
-    input.type = 'text';
+    const input = document.createElement('textarea');
     input.id = 'newBranchName';
+    input.rows = 3;
     input.placeholder = 'Enter new branch name';
         
     // Create submit button
@@ -1317,7 +1317,7 @@ class BaideBranchSelector extends HTMLElement {
     
     // Add event listener for Enter key to submit the branch
     input.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         this.addNewBranch();
       }
@@ -1450,8 +1450,8 @@ class BaideChatInput extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style> @import "editor.css"; </style>
       <form id="chatForm">
-        <input type="text" id="promptInput" placeholder="Enter your prompt..." />
-        <input type="submit">Send</button>
+        <textarea id="promptInput" placeholder="Enter your prompt..."></textarea>
+        <input type="submit" value="Send">
         <div id="throbber" style="display: none;">Loading...</div>
       </form>
       <style>
