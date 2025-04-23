@@ -764,7 +764,7 @@ baide-chat-input {
   bottom: 0;
   width: 100%;
 }
-baide-editor-code .CodeMirror {
+.CodeMirror.CodeMirror-wrap {
   position: absolute;
   top: 0;
   right: 0;
