@@ -1451,7 +1451,7 @@ class BaideChatInput extends HTMLElement {
       <style> @import "editor.css"; </style>
       <form id="chatForm">
         <input type="text" id="promptInput" placeholder="Enter your prompt..." />
-        <button type="submit">Send</button>
+        <input type="submit">Send</button>
         <div id="throbber" style="display: none;">Loading...</div>
       </form>
       <style>
