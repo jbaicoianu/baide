@@ -759,11 +759,6 @@ baide-chat-history {
   overflow-y: auto;
 }
   
-baide-chat-input {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-}
 .CodeMirror.CodeMirror-wrap {
   position: absolute;
   top: 0;
