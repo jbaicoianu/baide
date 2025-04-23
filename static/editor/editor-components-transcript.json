@@ -626,5 +626,21 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "79a124578b9cba0c8d07656ba9c02e6941bbd18e",
     "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "User",
+    "content": "The input inside of baide-chat-input should be a textarea",
+    "timestamp": "2025-04-23T21:52:48.101079Z",
+    "branch": "custom-elements-refactor",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
+  },
+  {
+    "role": "Assistant",
+    "content": "Error calling OpenAI API: Error code: 429 - {'error': {'message': 'You exceeded your current quota, please check your plan and billing details. For more information on this error, read the docs: https://platform.openai.com/docs/guides/error-codes/api-errors.', 'type': 'insufficient_quota', 'param': None, 'code': 'insufficient_quota'}}",
+    "timestamp": "2025-04-23T21:52:51.067544Z",
+    "branch": "custom-elements-refactor",
+    "model": "o1-mini",
+    "file_name": "static/editor/editor-components.js"
   }
 ]
