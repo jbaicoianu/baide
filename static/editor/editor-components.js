@@ -623,6 +623,9 @@ class BaideFileTabs extends HTMLElement {
         .hidden {
           display: none;
         }
+        .show {
+          display: block;
+        }
       </style>
     `;
   }
@@ -632,6 +635,13 @@ class BaideFileTabs extends HTMLElement {
     window.addEventListener('resize', () => this.adjustTabs());
     // Initial adjustment after a short delay to ensure tabs are rendered
     setTimeout(() => this.adjustTabs(), 100);
+
+    // Add click event listener to "more-tabs" button to toggle "show" class on dropdown-content
+    const moreTabs = this.shadowRoot.querySelector('.more-tabs');
+    const dropdownContent = moreTabs.querySelector('.dropdown-content');
+    moreTabs.addEventListener('click', () => {
+      dropdownContent.classList.toggle('show');
+    });
   }
 
   // Method to add a new tab
@@ -706,6 +716,7 @@ class BaideFileTabs extends HTMLElement {
       tabsContainer.insertBefore(tab, moreTabs);
     });
     dropdownContent.classList.add('hidden');
+    dropdownContent.classList.remove('show');
 
     let availableWidth = tabsContainer.clientWidth - moreTabs.offsetWidth;
     let usedWidth = 0;
