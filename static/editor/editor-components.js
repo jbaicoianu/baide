@@ -629,11 +629,15 @@ class BaideFileTabs extends HTMLElement {
 
   connectedCallback() {
     // Initial setup if needed
+    window.addEventListener('resize', () => this.adjustTabs());
+    // Initial adjustment after a short delay to ensure tabs are rendered
+    setTimeout(() => this.adjustTabs(), 100);
   }
 
   // Method to add a new tab
   async addTab(filename, onActivate, onClose) {
     const tabsContainer = this.shadowRoot.getElementById('tabs');
+    const moreTabs = this.shadowRoot.querySelector('.more-tabs');
     const sanitizedId = sanitizeId(filename);
     const existingTab = this.shadowRoot.getElementById(`tab-${sanitizedId}`);
     if (existingTab) return;
@@ -666,8 +670,8 @@ class BaideFileTabs extends HTMLElement {
     });
 
     // Insert before 'moreTabs'
-    const moreTabs = this.shadowRoot.querySelector('.more-tabs');
     tabsContainer.insertBefore(tab, moreTabs);
+    this.adjustTabs();
   }
 
   // Method to set a tab as active
@@ -690,9 +694,37 @@ class BaideFileTabs extends HTMLElement {
     }));
   }
 
-  // Placeholder for adjustTabs functionality
+  // Method to adjust tabs based on available width
   adjustTabs() {
-    // TODO: Implement adjustTabs functionality
+    const tabsContainer = this.shadowRoot.getElementById('tabs');
+    const moreTabs = this.shadowRoot.querySelector('.more-tabs');
+    const dropdownContent = moreTabs.querySelector('.dropdown-content');
+
+    // Reset: move all tabs back from dropdown to main container
+    const overflowTabs = Array.from(dropdownContent.children);
+    overflowTabs.forEach(tab => {
+      tabsContainer.insertBefore(tab, moreTabs);
+    });
+    dropdownContent.classList.add('hidden');
+
+    let availableWidth = tabsContainer.clientWidth - moreTabs.offsetWidth;
+    let usedWidth = 0;
+    const tabs = Array.from(tabsContainer.children).filter(tab => !tab.classList.contains('more-tabs'));
+
+    tabs.forEach(tab => {
+      usedWidth += tab.offsetWidth;
+      if (usedWidth > availableWidth) {
+        dropdownContent.appendChild(tab);
+        dropdownContent.classList.remove('hidden');
+      }
+    });
+
+    // If no tabs are in dropdown, hide the "more-tabs" button
+    if (dropdownContent.children.length === 0) {
+      moreTabs.classList.add('hidden');
+    } else {
+      moreTabs.classList.remove('hidden');
+    }
   }
 }
 
