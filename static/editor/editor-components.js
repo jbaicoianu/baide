@@ -886,7 +886,7 @@
             const data = await response.json();
             const projectTreeContainer = this.shadowRoot.getElementById('projectTreeContainer');
             projectTreeContainer.innerHTML = ''; // Clear existing content
-    /*
+/*
             // Add Project Selector
             addProjectSelector(projectTreeContainer);
             
@@ -904,7 +904,7 @@
             gitBranchDiv.style.cursor = 'pointer';
             gitBranchDiv.addEventListener('click', () => this.openBranchPopup());
             projectTreeContainer.appendChild(gitBranchDiv);
-    */            
+*/            
             // Add New File Button
             const newFileBtn = document.createElement('button');
             newFileBtn.id = 'newFileBtn';
@@ -1263,6 +1263,11 @@
           if (event.target === this.shadowRoot.getElementById('branchPopup')) {
             this.shadowRoot.getElementById('branchPopup').classList.add('hidden');
           }
+        });
+
+        // Add event listener to reload branch selector on project-loaded
+        this.addEventListener('project-loaded', (e) => {
+          this.loadGitBranch();
         });
       }
     
