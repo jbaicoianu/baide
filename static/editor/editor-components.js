@@ -626,11 +626,6 @@
         moreTabs.addEventListener('click', () => {
           dropdownContent.classList.toggle('show');
         });
-        
-        // Add event listener for 'project-loaded' to reload project tree
-        this.addEventListener('project-loaded', () => {
-          this.loadProjectStructure();
-        });
       }
     
       // Method to add a new tab
@@ -724,14 +719,6 @@
           moreTabs.classList.add('hidden');
         } else {
           moreTabs.classList.remove('hidden');
-        }
-      }
-      
-      // New method to load project structure
-      async loadProjectStructure() {
-        const editor = document.querySelector('baide-editor');
-        if (editor) {
-          await editor.loadProjectStructure(editor.currentProject);
         }
       }
     }
