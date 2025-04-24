@@ -1559,6 +1559,7 @@ class BaideSearchOverlay extends HTMLElement {
     this.shadowRoot.innerHTML = `
       <style>
         @import "editor.css";
+      /*
         #searchOverlay {
           position: fixed;
           top: 10%;
@@ -1596,6 +1597,7 @@ class BaideSearchOverlay extends HTMLElement {
           color: #555;
           align-self: flex-end;
         }
+        */
       </style>
       <div id="searchOverlay">
         <span id="closeSearchButton">✖</span>
