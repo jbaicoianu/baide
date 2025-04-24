@@ -1,5 +1,5 @@
-// CSS for Custom Baide Elements:
 /*
+// CSS for Custom Baide Elements:
 const globalStyle = document.createElement('style');
 globalStyle.textContent = `
 
@@ -460,8 +460,8 @@ class BaideEditor extends HTMLElement {
             imageDisplay = img;
           }
           imageDisplay.src = imageUrl;
-          imageDisplay.style.display = 'block';
-          this.editor.getWrapperElement().style.display = 'none';
+          imageDisplay.classList.remove('hidden');
+          this.editor.getWrapperElement().classList.add('hidden');
         }
 
         this.activeFile[this.currentProject] = filename;
@@ -606,7 +606,7 @@ class BaideFileTabs extends HTMLElement {
       <style> @import "editor.css"; </style>
       <div id="tabs" class="baide-file-tabs">
         <!-- Tabs will be populated here -->
-        <div class="tab more-tabs">>> 
+        <div class="tab more-tabs hidden">>> 
           <div class="dropdown-content hidden"></div>
         </div>
       </div>
@@ -736,7 +736,7 @@ class BaideEditorCode extends HTMLElement {
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/dracula.min.css">
 
       <textarea id="sourceCode"></textarea>
-      <img id="imageDisplay" style="max-width: 100%; display: none;" />
+      <img id="imageDisplay" class="hidden" />
       <baide-search-overlay></baide-search-overlay> <!-- Replaced searchOverlay div with custom element -->
       <div id="commitMessageOverlay" class="hidden">
         <!-- Commit message content -->
@@ -1598,7 +1598,7 @@ class BaideSearchOverlay extends HTMLElement {
         }
         */
       </style>
-      <div id="searchOverlay">
+      <div id="searchOverlay" class="hidden">
         <span id="closeSearchButton">✖</span>
         <input type="text" id="searchInput" placeholder="Search...">
         <button id="searchButton">Search</button>
@@ -1637,7 +1637,7 @@ class BaideSearchOverlay extends HTMLElement {
 
   open(editor) {
     this.editor = editor;
-    this.searchOverlay.style.display = 'flex';
+    this.searchOverlay.classList.remove('hidden');
     this.searchOverlay.classList.remove('no-results');
     this.searchInput.value = '';
     this.lastSearchQuery = '';
@@ -1651,7 +1651,7 @@ class BaideSearchOverlay extends HTMLElement {
   }
 
   close() {
-    this.searchOverlay.style.display = 'none';
+    this.searchOverlay.classList.add('hidden');
     this.searchOverlay.classList.remove('no-results');
     this.searchInput.value = '';
     this.lastSearchQuery = '';
