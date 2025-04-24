@@ -915,8 +915,8 @@
             // Fetch the project structure separately if needed
             const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(this.currentproject)}`);
             if (structureResponse.ok) {
-              projectTreeContainer.innerHTML = ''; // Clear existing content
               const structureData = await structureResponse.json();
+              projectTreeContainer.innerHTML = ''; // Clear existing content
               this.createProjectTree(structureData, projectTreeContainer);
             } else {
               showToast('Failed to load project structure.', 'error');
