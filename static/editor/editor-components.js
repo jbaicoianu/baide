@@ -134,6 +134,7 @@ class BaideEditor extends HTMLElement {
           <baide-file-tabs></baide-file-tabs>
           <baide-editor-code></baide-editor-code>
           <baide-chat></baide-chat>
+          <baide-search-overlay></baide-search-overlay> <!-- Added custom search overlay -->
         </div>
       </div>
     `;
@@ -199,6 +200,29 @@ class BaideEditor extends HTMLElement {
         this.openFileInTab(filePath);
       }
     });
+
+    // Listen for 'search-requested' event from <baide-search-overlay>
+    const searchOverlay = this.shadowRoot.querySelector('baide-search-overlay');
+    if (searchOverlay) {
+      searchOverlay.addEventListener('search', (e) => {
+        const query = e.detail.query;
+        const direction = e.detail.direction;
+        if (query) {
+          if (query !== lastSearchQuery) {
+            lastSearchQuery = query;
+            searchResults = [];
+            currentSearchIndex = 0;
+            searchCursor = null;
+          }
+          performSearch(this.editor, query, direction);
+          updateSearchIndicator();
+        }
+      });
+
+      searchOverlay.addEventListener('search-close', () => {
+        this.editor.focus();
+      });
+    }
   }
 
   // Member function to show the placeholder page
@@ -714,12 +738,7 @@ class BaideEditorCode extends HTMLElement {
 
       <textarea id="sourceCode"></textarea>
       <img id="imageDisplay" style="max-width: 100%; display: none;" />
-      <div id="searchOverlay" class="hidden">
-        <input type="text" id="searchInput" placeholder="Search..." />
-        <button id="searchButton">Search</button>
-        <span id="closeSearchButton">✖</span>
-        <span id="searchIndicator">0 / 0</span>
-      </div>
+      <baide-search-overlay></baide-search-overlay> <!-- Replaced searchOverlay div with custom element -->
       <div id="commitMessageOverlay" class="hidden">
         <!-- Commit message content -->
       </div>
@@ -748,18 +767,21 @@ class BaideEditorCode extends HTMLElement {
           promptCommitMessage();
         },
         "Ctrl-F": () => {
-          openSearchOverlay(this.editor);
+          const searchOverlay = this.shadowRoot.querySelector('baide-search-overlay');
+          if (searchOverlay) {
+            searchOverlay.open(this.editor);
+          }
         },
         "Ctrl-G": () => { // Added Ctrl+G shortcut for forward search
-          if (lastSearchQuery) {
-            performSearch(this.editor, lastSearchQuery, 'forward');
-            updateSearchIndicator();
+          const searchOverlay = this.shadowRoot.querySelector('baide-search-overlay');
+          if (searchOverlay && searchOverlay.lastSearchQuery) {
+            searchOverlay.performSearch('forward');
           }
         },
         "Ctrl-Shift-G": () => { // Added Ctrl+Shift-G shortcut for backward search
-          if (lastSearchQuery) {
-            performSearch(this.editor, lastSearchQuery, 'reverse');
-            updateSearchIndicator();
+          const searchOverlay = this.shadowRoot.querySelector('baide-search-overlay');
+          if (searchOverlay && searchOverlay.lastSearchQuery) {
+            searchOverlay.performSearch('reverse');
           }
         }
       }
@@ -1529,7 +1551,230 @@ class BaideChatInput extends HTMLElement {
 
 customElements.define('baide-chat-input', BaideChatInput);
 
-// Define other custom elements like <baide-context-selector> as needed...
+// Define <baide-search-overlay> custom element
+class BaideSearchOverlay extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+    this.shadowRoot.innerHTML = `
+      <style>
+        @import "editor.css";
+        #searchOverlay {
+          position: fixed;
+          top: 10%;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #fff;
+          padding: 20px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+          display: none;
+          flex-direction: column;
+          gap: 10px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          z-index: 1001;
+        }
+        .no-results {
+          border-color: #f44336;
+        }
+        #searchInput {
+          width: 200px;
+          padding: 5px;
+          font-size: 14px;
+        }
+        #searchButton {
+          padding: 5px 10px;
+          font-size: 14px;
+        }
+        #closeSearchButton {
+          cursor: pointer;
+          font-size: 16px;
+          align-self: flex-end;
+        }
+        #searchIndicator {
+          font-size: 12px;
+          color: #555;
+          align-self: flex-end;
+        }
+      </style>
+      <div id="searchOverlay">
+        <span id="closeSearchButton">✖</span>
+        <input type="text" id="searchInput" placeholder="Search...">
+        <button id="searchButton">Search</button>
+        <span id="searchIndicator">0 / 0</span>
+      </div>
+    `;
+
+    // Initialize member variables
+    this.searchInput = null;
+    this.searchButton = null;
+    this.closeButton = null;
+    this.searchIndicator = null;
+    this.editor = null;
+    this.lastSearchQuery = '';
+    this.searchResults = [];
+    this.currentSearchIndex = 0;
+    this.searchDirection = 'forward';
+    this.searchCursor = null;
+    this.totalSearchResults = 0;
+  }
+
+  connectedCallback() {
+    this.searchInput = this.shadowRoot.getElementById('searchInput');
+    this.searchButton = this.shadowRoot.getElementById('searchButton');
+    this.closeButton = this.shadowRoot.getElementById('closeSearchButton');
+    this.searchIndicator = this.shadowRoot.getElementById('searchIndicator');
+    this.searchOverlay = this.shadowRoot.getElementById('searchOverlay');
+
+    this.searchButton.addEventListener('click', () => this.handleSearch());
+    this.closeButton.addEventListener('click', () => this.close());
+
+    // Add event listeners for input change and key presses
+    this.searchInput.addEventListener('input', () => this.handleInput());
+    this.searchInput.addEventListener('keydown', (e) => this.handleKeyDown(e));
+  }
+
+  open(editor) {
+    this.editor = editor;
+    this.searchOverlay.style.display = 'flex';
+    this.searchOverlay.classList.remove('no-results');
+    this.searchInput.value = '';
+    this.lastSearchQuery = '';
+    this.searchResults = [];
+    this.currentSearchIndex = 0;
+    this.searchDirection = 'forward';
+    this.searchCursor = null;
+    this.updateSearchIndicator();
+    this.searchInput.focus();
+    this.searchInput.select();
+  }
+
+  close() {
+    this.searchOverlay.style.display = 'none';
+    this.searchOverlay.classList.remove('no-results');
+    this.searchInput.value = '';
+    this.lastSearchQuery = '';
+    this.searchResults = [];
+    this.currentSearchIndex = 0;
+    this.searchDirection = 'forward';
+    this.searchCursor = null;
+    this.updateSearchIndicator();
+    this.dispatchEvent(new CustomEvent('search-close'));
+  }
+
+  handleSearch() {
+    const query = this.searchInput.value.trim();
+    if (query) {
+      if (query !== this.lastSearchQuery) {
+        this.lastSearchQuery = query;
+        this.searchResults = [];
+        this.currentSearchIndex = 0;
+        this.searchCursor = null;
+      }
+      this.searchDirection = 'forward'; // Default search direction
+      this.performSearch('forward');
+      this.updateSearchIndicator();
+    }
+  }
+
+  handleInput() {
+    const query = this.searchInput.value.trim();
+    if (query) {
+      if (query !== this.lastSearchQuery) {
+        this.lastSearchQuery = query;
+        this.searchResults = [];
+        this.currentSearchIndex = 0;
+        this.searchCursor = null;
+      }
+      this.performSearch(this.searchDirection);
+      this.updateSearchIndicator();
+    } else {
+      this.searchOverlay.classList.remove('no-results');
+      this.searchResults = [];
+      this.currentSearchIndex = 0;
+      this.updateSearchIndicator();
+    }
+  }
+
+  handleKeyDown(e) {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const query = this.searchInput.value.trim();
+      if (query) {
+        if (e.shiftKey) {
+          this.searchDirection = 'reverse';
+        } else {
+          this.searchDirection = 'forward';
+        }
+        this.performSearch(this.searchDirection);
+        this.updateSearchIndicator();
+      }
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      this.close();
+    }
+  }
+
+  performSearch(direction = 'forward') {
+    if (!this.editor) return;
+    const cm = this.editor;
+    const doc = cm.getDoc();
+    const query = this.lastSearchQuery;
+    const caseInsensitive = true; // Enable case insensitive search
+
+    if (query !== this.lastSearchQuery || this.searchResults.length === 0) {
+      // Reset search results
+      this.searchResults = [];
+      const searchOptions = { line: 0, ch: 0 };
+      let cursor = doc.getSearchCursor(query, searchOptions);
+      while (cursor.findNext()) {
+        const from = cursor.from();
+        const to = cursor.to();
+        // Adjust for case insensitivity
+        const matchedText = doc.getRange(from, to).toLowerCase();
+        if (matchedText === query.toLowerCase()) {
+          this.searchResults.push({ from, to });
+        }
+      }
+      this.totalSearchResults = this.searchResults.length;
+      this.currentSearchIndex = 0;
+    }
+
+    if (this.totalSearchResults === 0) {
+      this.searchOverlay.classList.add('no-results');
+      this.updateSearchIndicator();
+      return;
+    }
+
+    if (direction === 'forward') {
+      this.currentSearchIndex++;
+      if (this.currentSearchIndex > this.totalSearchResults) {
+        this.currentSearchIndex = 1; // Wrap around to first match
+      }
+    } else {
+      this.currentSearchIndex--;
+      if (this.currentSearchIndex < 1) {
+        this.currentSearchIndex = this.totalSearchResults; // Wrap around to last match
+      }
+    }
+
+    const match = this.searchResults[this.currentSearchIndex - 1];
+    if (match) {
+      doc.setSelection(match.from, match.to);
+      cm.scrollIntoView({ from: match.from, to: match.to }, 100);
+      this.searchOverlay.classList.remove('no-results');
+    }
+
+    this.updateSearchIndicator();
+  }
+
+  updateSearchIndicator() {
+    if (!this.searchIndicator) return;
+    this.searchIndicator.textContent = `${this.currentSearchIndex} / ${this.totalSearchResults}`;
+  }
+}
+
+customElements.define('baide-search-overlay', BaideSearchOverlay);
 
 // Global showToast function
 function showToast(message, type = 'info') {
@@ -1543,38 +1788,7 @@ function showToast(message, type = 'info') {
 
 // Retain existing functions that do not fit into custom elements
 
-// Initialize CodeMirror editor
-function initializeCodeMirror() {
-  const textarea = document.getElementById('sourceCode') || document.querySelector('baide-editor-code #sourceCode');
-  editor = CodeMirror.fromTextArea(textarea, {
-    mode: 'python',
-    theme: 'dracula',
-    lineNumbers: true,
-    lineWrapping: true,
-    tabSize: 4,
-    indentUnit: 4,
-    extraKeys: {
-      "Ctrl-S": function(cm) {
-        promptCommitMessage();
-      },
-      "Ctrl-F": function(cm) {
-        openSearchOverlay(cm);
-      },
-      "Ctrl-G": function(cm) { // Added Ctrl+G shortcut for forward search
-        if (lastSearchQuery) {
-          performSearch(cm, lastSearchQuery, 'forward');
-          updateSearchIndicator();
-        }
-      },
-      "Ctrl-Shift-G": function(cm) { // Added Ctrl+Shift-G shortcut for backward search
-        if (lastSearchQuery) {
-          performSearch(cm, lastSearchQuery, 'reverse');
-          updateSearchIndicator();
-        }
-      }
-    }
-  });
-}
+// Removed openSearchOverlay, performSearch, updateSearchIndicator
 
 // Function to sanitize filename for use in HTML IDs
 function sanitizeId(filename) {
