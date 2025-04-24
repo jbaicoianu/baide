@@ -860,7 +860,7 @@
       connectedCallback() {
         //this.shadowRoot.getElementById('newProjectBtn').addEventListener('click', openNewProjectModal);
         //this.shadowRoot.getElementById('newFileBtn').addEventListener('click', openNewFileModal);
-        //this.loadProjectStructure();
+        this.loadProjectStructure();
     
         // Listen for branch-selected events from <baide-branch-selector>
         this.shadowRoot.querySelector('baide-branch-selector').addEventListener('branch-selected', (e) => {
