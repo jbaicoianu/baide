@@ -915,6 +915,7 @@
             // Fetch the project structure separately if needed
             const structureResponse = await fetch(`/projects/structure?project_name=${encodeURIComponent(this.currentproject)}`);
             if (structureResponse.ok) {
+              projectTreeContainer.innerHTML = ''; // Clear existing content
               const structureData = await structureResponse.json();
               this.createProjectTree(structureData, projectTreeContainer);
             } else {
