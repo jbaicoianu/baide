@@ -134,7 +134,6 @@ class BaideEditor extends HTMLElement {
           <baide-file-tabs></baide-file-tabs>
           <baide-editor-code></baide-editor-code>
           <baide-chat></baide-chat>
-          <baide-search-overlay></baide-search-overlay> <!-- Added custom search overlay -->
         </div>
       </div>
     `;
