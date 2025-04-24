@@ -534,6 +534,7 @@ form {
   margin-left: 10px;
   cursor: pointer;
   color: #007bff;
+  order: 4;
 }
 .CodeMirror-selected {
   background-color: rgba(0,255,0,.5) !important;
