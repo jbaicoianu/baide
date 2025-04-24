@@ -160,6 +160,7 @@ class BaideEditor extends HTMLElement {
     // Listen for project-loaded event to restore state
     this.addEventListener('project-loaded', (e) => {
       const projectName = e.detail.projectName;
+      this.currentProject = projectName;
       this.restoreProjectState(projectName);
     });
 
