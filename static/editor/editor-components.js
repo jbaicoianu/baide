@@ -873,7 +873,8 @@
         });
         
         // Listen for project-loaded event to reload project tree
-        this.addEventListener('project-loaded', () => {
+        this.addEventListener('project-loaded', (ev) => {
+          this.currentproject = ev.detail.projectName;
           this.loadProjectStructure();
         });
       }
