@@ -587,46 +587,6 @@ class BaideFileTabs extends HTMLElement {
           <div class="dropdown-content hidden"></div>
         </div>
       </div>
-      <style>
-        .baide-file-tabs {
-          display: flex;
-          align-items: center;
-          overflow-x: auto;
-          white-space: nowrap;
-        }
-        .tab {
-          padding: 10px;
-          cursor: pointer;
-          position: relative;
-          user-select: none;
-        }
-        .close-btn {
-          margin-left: 5px;
-          color: red;
-          cursor: pointer;
-        }
-        .more-tabs {
-          position: relative;
-        }
-        .dropdown-content {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          background-color: #f9f9f9;
-          min-width: 160px;
-          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-          z-index: 1;
-        }
-        .dropdown-content .tab {
-          display: block;
-        }
-        .hidden {
-          display: none;
-        }
-        .show {
-          display: block;
-        }
-      </style>
     `;
   }
 
