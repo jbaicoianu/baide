@@ -61,7 +61,7 @@ room.registerElement('weather-metar', {
 
     parseMetar(metar) {
         if (!metar) return null;
-        const metarRegex = /^([A-Z]{4})\s+(\d{6})Z\s+/;
+        const metarRegex = /^([A-Z]{4})\s+(\d{6})Z\s+([\dG]*\d{3}KT)\s+(\d+SM)\s+((?:FEW|SCT|BKN|OVC)\d{3}\s?)+\s+(\d{2})\/(\d{2})\s+A(\d{4})\s+(RMK.*)/;
         const match = metar.match(metarRegex);
         if (!match) {
             console.error('METAR format not recognized:', metar);
