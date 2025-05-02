@@ -133,6 +133,7 @@ room.registerElement('weather-metar', {
                     // Temperature and Dew Point
                     if (/^M?\d{2}\/M?\d{2}$/.test(token)) {
                         const tempDew = token.split('/');
+                        console.log('ehhhh', tempDew, token);
                         metarData.temperatureC = tempDew[0].startsWith('M') ? -parseInt(tempDew[0].slice(1), 10) : parseInt(tempDew[0], 10);
                         metarData.dewPointC = tempDew[1].startsWith('M') ? -parseInt(tempDew[1].slice(1), 10) : parseInt(tempDew[1], 10);
                         state = 'ALTIMETER';
