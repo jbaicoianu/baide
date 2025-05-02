@@ -1,8 +1,5 @@
-class WeatherMetar extends HTMLElement {
-    constructor() {
-        super();
-        this.metarData = {};
-    }
+room.registerElement('weather-metar', {
+    metarData: {},
 
     async getWeather(lat, lon) {
         try {
@@ -17,7 +14,7 @@ class WeatherMetar extends HTMLElement {
             console.error('Error fetching METAR data:', error);
             return null;
         }
-    }
+    },
 
     async findClosestStation(lat, lon) {
         const response = await fetch(`https://aviationweather.gov/adds/dataserver_current/httpparam?datasource=stations&requestType=retrieve&format=XML&latitude=${lat}&longitude=${lon}&radius=50&mostRecent=true`);
@@ -33,7 +30,7 @@ class WeatherMetar extends HTMLElement {
             latitude: parseFloat(station.getElementsByTagName('latitude')[0].textContent),
             longitude: parseFloat(station.getElementsByTagName('longitude')[0].textContent)
         };
-    }
+    },
 
     async fetchMetar(stationId) {
         const response = await fetch(`https://aviationweather.gov/adds/dataserver_current/httpparam?datasource=metars&requestType=retrieve&format=XML&stationString=${stationId}&hoursBeforeNow=2&mostRecent=true`);
@@ -43,7 +40,7 @@ class WeatherMetar extends HTMLElement {
         const metars = xml.getElementsByTagName('METAR');
         if (metars.length === 0) return null;
         return metars[0];
-    }
+    },
 
     parseMetar(metar) {
         if (!metar) return null;
@@ -63,7 +60,13 @@ class WeatherMetar extends HTMLElement {
             flightRules: metar.getElementsByTagName('flight_rules')[0].textContent,
             wxString: metar.getElementsByTagName('wx_string')[0].textContent
         };
-    }
-}
+    },
 
-customElements.define('weather-metar', WeatherMetar);
+    create() {
+        // Initialization code if needed
+    },
+
+    update(dt) {
+        // Per-frame update logic if needed
+    }
+});
