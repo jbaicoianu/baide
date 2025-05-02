@@ -50,34 +50,75 @@ room.registerElement('weather-metar', {
     },
 
     async fetchMetar(stationId) {
-        const response = await fetch(`https://p.janusxr.org/https://aviationweather.gov/api/data/metar?ids=${stationId}`);
+        const response = await fetch(`https://p.janusxr.org/https://aviationweather.gov/api/data/metar?ids=${stationId}&format=raw&taf=false`);
         if (!response.ok) {
             console.error('Failed to fetch METAR data:', response.statusText);
             return null;
         }
-        const data = await response.json();
-        if (!data.metar) return null;
-        return data.metar;
+        const metar = await response.text();
+        return metar;
     },
 
     parseMetar(metar) {
         if (!metar) return null;
+        const metarRegex = /^([A-Z]{4})\s+(\d{6})Z\s+([\dG]*\d{3}KT)\s+(\d+SM)\s+((?:FEW|SCT|BKN|OVC)\d{3}\s?)+\s+(\d{2})\/(\d{2})\s+A(\d{4})\s+(RMK.*)$/;
+        const match = metar.match(metarRegex);
+        if (!match) {
+            console.error('METAR format not recognized:', metar);
+            return null;
+        }
+
+        const [
+            ,
+            stationId,
+            observationTime,
+            wind,
+            visibility,
+            skyConditionsRaw,
+            temperature,
+            dewPoint,
+            altimeter,
+            remarks
+        ] = match;
+
+        // Parse wind
+        const windRegex = /(\d{3})(\d{2})(G(\d{2}))?KT/;
+        const windMatch = wind.match(windRegex);
+        const windDirDegrees = windMatch[1] !== '000' ? parseInt(windMatch[1], 10) : null;
+        const windSpeedKts = parseInt(windMatch[2], 10);
+        const windGustKts = windMatch[4] ? parseInt(windMatch[4], 10) : null;
+
+        // Parse sky conditions
+        const skyConditions = [];
+        const skyRegex = /(FEW|SCT|BKN|OVC)(\d{3})/g;
+        let skyMatchIter;
+        while ((skyMatchIter = skyRegex.exec(skyConditionsRaw)) !== null) {
+            skyConditions.push({
+                skyCover: skyMatchIter[1],
+                cloudBaseFtAgl: parseInt(skyMatchIter[2], 10) * 100
+            });
+        }
+
         return {
-            stationId: metar.station_id,
-            observationTime: metar.observation_time,
-            windDirDegrees: metar.wind_dir_degrees,
-            windSpeedKts: metar.wind_speed_kt,
-            visibilityStatuteMi: metar.visibility_statute_mi,
-            skyConditions: metar.sky_condition.map(cond => ({
-                skyCover: cond.sky_cover,
-                cloudBaseFtAgl: cond.cloud_base_ft_agl
-            })),
-            temperatureC: metar.temp_c,
-            dewPointC: metar.dewpoint_c,
-            altimeterInHg: metar.altim_in_hg,
-            flightRules: metar.flight_rules,
-            wxString: metar.wx_string
+            stationId,
+            observationTime: this.parseObservationTime(observationTime),
+            windDirDegrees,
+            windSpeedKts,
+            windGustKts,
+            visibilityStatuteMi: parseFloat(visibility.replace('SM', '')),
+            skyConditions,
+            temperatureC: parseInt(temperature, 10),
+            dewPointC: parseInt(dewPoint, 10),
+            altimeterInHg: parseInt(altimeter, 10) / 100,
+            remarks
         };
+    },
+
+    parseObservationTime(observationTime) {
+        const day = parseInt(observationTime.slice(0, 2), 10);
+        const hour = parseInt(observationTime.slice(2, 4), 10);
+        const minute = parseInt(observationTime.slice(4, 6), 10);
+        return new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), day, hour, minute));
     },
 
     create() {
