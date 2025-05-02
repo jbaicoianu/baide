@@ -1,14 +1,29 @@
 room.registerElement('weather-metar', {
     metarData: {},
     gps: '',
+    stationid: '',
 
-    async getWeather(lat, lon) {
+    async getWeatherByGPS(lat, lon) {
         try {
             const station = await this.findClosestStation(lat, lon);
             if (!station) {
                 throw new Error('No weather station found nearby.');
             }
             const metar = await this.fetchMetar(station.id);
+            this.metarData = this.parseMetar(metar);
+            return this.metarData;
+        } catch (error) {
+            console.error('Error fetching METAR data:', error);
+            return null;
+        }
+    },
+
+    async getWeatherByStationId(stationId) {
+        try {
+            const metar = await this.fetchMetar(stationId);
+            if (!metar) {
+                throw new Error('No METAR data found for the specified station.');
+            }
             this.metarData = this.parseMetar(metar);
             return this.metarData;
         } catch (error) {
@@ -66,12 +81,18 @@ room.registerElement('weather-metar', {
     },
 
     create() {
-        if (this.gps) {
+        if (this.stationid) {
+            this.getWeatherByStationId(this.stationid).then(weather => {
+                if (weather) {
+                    this.updateRoomWeather(weather);
+                }
+            });
+        } else if (this.gps) {
             const [latStr, lonStr] = this.gps.split(' ');
             const lat = parseFloat(latStr);
             const lon = parseFloat(lonStr);
             if (!isNaN(lat) && !isNaN(lon)) {
-                this.getWeather(lat, lon).then(weather => {
+                this.getWeatherByGPS(lat, lon).then(weather => {
                     if (weather) {
                         this.updateRoomWeather(weather);
                     }
