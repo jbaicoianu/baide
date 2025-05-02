@@ -33,7 +33,7 @@ room.registerElement('weather-metar', {
     },
 
     async findClosestStation(lat, lon) {
-        const response = await fetch(`https://aviationweather.gov/data/stations?lat=${lat}&lon=${lon}&radius=50&mostRecent=true`);
+        const response = await fetch(`https://p.janusxr.org/https://aviationweather.gov/data/stations?lat=${lat}&lon=${lon}&radius=50&mostRecent=true`);
         if (!response.ok) {
             console.error('Failed to fetch stations data:', response.statusText);
             return null;
@@ -50,7 +50,7 @@ room.registerElement('weather-metar', {
     },
 
     async fetchMetar(stationId) {
-        const response = await fetch(`https://aviationweather.gov/api/data/metar?ids=${stationId}`);
+        const response = await fetch(`https://p.janusxr.org/https://aviationweather.gov/api/data/metar?ids=${stationId}`);
         if (!response.ok) {
             console.error('Failed to fetch METAR data:', response.statusText);
             return null;
