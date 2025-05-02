@@ -1,5 +1,6 @@
 room.registerElement('weather-metar', {
     metarData: {},
+    gps: '',
 
     async getWeather(lat, lon) {
         try {
