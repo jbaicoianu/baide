@@ -18,48 +18,50 @@ room.registerElement('weather-metar', {
     },
 
     async findClosestStation(lat, lon) {
-        const response = await fetch(`https://aviationweather.gov/adds/dataserver_current/httpparam?datasource=stations&requestType=retrieve&format=XML&latitude=${lat}&longitude=${lon}&radius=50&mostRecent=true`);
-        const text = await response.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(text, "application/xml");
-        const stations = xml.getElementsByTagName('station');
-        if (stations.length === 0) return null;
-        const station = stations[0];
+        const response = await fetch(`/api/data/stations?lat=${lat}&lon=${lon}&radius=50&mostRecent=true`);
+        if (!response.ok) {
+            console.error('Failed to fetch stations data:', response.statusText);
+            return null;
+        }
+        const data = await response.json();
+        if (!data.stations || data.stations.length === 0) return null;
+        const station = data.stations[0];
         return {
-            id: station.getElementsByTagName('stationId')[0].textContent,
-            name: station.getElementsByTagName('name')[0].textContent,
-            latitude: parseFloat(station.getElementsByTagName('latitude')[0].textContent),
-            longitude: parseFloat(station.getElementsByTagName('longitude')[0].textContent)
+            id: station.stationId,
+            name: station.name,
+            latitude: parseFloat(station.latitude),
+            longitude: parseFloat(station.longitude)
         };
     },
 
     async fetchMetar(stationId) {
-        const response = await fetch(`https://aviationweather.gov/adds/dataserver_current/httpparam?datasource=metars&requestType=retrieve&format=XML&stationString=${stationId}&hoursBeforeNow=2&mostRecent=true`);
-        const text = await response.text();
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(text, "application/xml");
-        const metars = xml.getElementsByTagName('METAR');
-        if (metars.length === 0) return null;
-        return metars[0];
+        const response = await fetch(`/api/data/metar?stationId=${stationId}&hoursBeforeNow=2&mostRecent=true`);
+        if (!response.ok) {
+            console.error('Failed to fetch METAR data:', response.statusText);
+            return null;
+        }
+        const data = await response.json();
+        if (!data.metar) return null;
+        return data.metar;
     },
 
     parseMetar(metar) {
         if (!metar) return null;
         return {
-            stationId: metar.getElementsByTagName('station_id')[0].textContent,
-            observationTime: metar.getElementsByTagName('observation_time')[0].textContent,
-            windDirDegrees: metar.getElementsByTagName('wind_dir_degrees')[0].textContent,
-            windSpeedKts: metar.getElementsByTagName('wind_speed_kt')[0].textContent,
-            visibilityStatuteMi: metar.getElementsByTagName('visibility_statute_mi')[0].textContent,
-            skyConditions: Array.from(metar.getElementsByTagName('sky_condition')).map(cond => ({
-                skyCover: cond.getAttribute('sky_cover'),
-                cloudBaseFtAgl: cond.getAttribute('cloud_base_ft_agl')
+            stationId: metar.station_id,
+            observationTime: metar.observation_time,
+            windDirDegrees: metar.wind_dir_degrees,
+            windSpeedKts: metar.wind_speed_kt,
+            visibilityStatuteMi: metar.visibility_statute_mi,
+            skyConditions: metar.sky_condition.map(cond => ({
+                skyCover: cond.sky_cover,
+                cloudBaseFtAgl: cond.cloud_base_ft_agl
             })),
-            temperatureC: metar.getElementsByTagName('temp_c')[0].textContent,
-            dewPointC: metar.getElementsByTagName('dewpoint_c')[0].textContent,
-            altimeterInHg: metar.getElementsByTagName('altim_in_hg')[0].textContent,
-            flightRules: metar.getElementsByTagName('flight_rules')[0].textContent,
-            wxString: metar.getElementsByTagName('wx_string')[0].textContent
+            temperatureC: metar.temp_c,
+            dewPointC: metar.dewpoint_c,
+            altimeterInHg: metar.altim_in_hg,
+            flightRules: metar.flight_rules,
+            wxString: metar.wx_string
         };
     },
 
