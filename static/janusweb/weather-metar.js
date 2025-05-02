@@ -61,64 +61,117 @@ room.registerElement('weather-metar', {
 
     parseMetar(metar) {
         if (!metar) return null;
-        const metarRegex = /^([A-Z]{4})\s+(\d{6})Z\s+([\dG]*\d*KT)\s+(\d+SM)\s+((?:FEW|SCT|BKN|OVC)\d{3}\s?)+\s+(\d{2})\/(\d{2})\s+A(\d{4})\s+(RMK.*)/;
-        const match = metar.match(metarRegex);
-        if (!match) {
-            console.error('METAR format not recognized:', metar);
-            return null;
-        }
 
-        const [
-            ,
-            stationId,
-            observationTime,
-            wind,
-            visibility,
-            skyConditionsRaw,
-            temperature,
-            dewPoint,
-            altimeter,
-            remarks
-        ] = match;
-
-        // Parse wind
-        const windRegex = /(\d{3})(\d{2})(G(\d{2}))?KT/;
-        const windMatch = wind.match(windRegex);
-        const windDirDegrees = windMatch[1] !== '000' ? parseInt(windMatch[1], 10) : null;
-        const windSpeedKts = parseInt(windMatch[2], 10);
-        const windGustKts = windMatch[4] ? parseInt(windMatch[4], 10) : null;
-
-        // Parse sky conditions
-        const skyConditions = [];
-        const skyRegex = /(FEW|SCT|BKN|OVC)(\d{3})/g;
-        let skyMatchIter;
-        while ((skyMatchIter = skyRegex.exec(skyConditionsRaw)) !== null) {
-            skyConditions.push({
-                skyCover: skyMatchIter[1],
-                cloudBaseFtAgl: parseInt(skyMatchIter[2], 10) * 100
-            });
-        }
-
-        return {
-            stationId,
-            observationTime: this.parseObservationTime(observationTime),
-            windDirDegrees,
-            windSpeedKts,
-            windGustKts,
-            visibilityStatuteMi: parseFloat(visibility.replace('SM', '')),
-            skyConditions,
-            temperatureC: parseInt(temperature, 10),
-            dewPointC: parseInt(dewPoint, 10),
-            altimeterInHg: parseInt(altimeter, 10) / 100,
-            remarks
+        const tokens = metar.trim().split(/\s+/);
+        let state = 'START';
+        let metarData = {
+            stationId: null,
+            observationTime: null,
+            windDirDegrees: null,
+            windSpeedKts: null,
+            windGustKts: null,
+            visibilityStatuteMi: null,
+            skyConditions: [],
+            temperatureC: null,
+            dewPointC: null,
+            altimeterInHg: null,
+            remarks: ''
         };
+
+        for (let token of tokens) {
+            switch (state) {
+                case 'START':
+                    // Station ID
+                    if (/^[A-Z]{4}$/.test(token)) {
+                        metarData.stationId = token;
+                        state = 'OBS_TIME';
+                    }
+                    break;
+                case 'OBS_TIME':
+                    // Observation Time
+                    if (/^\d{6}Z$/.test(token)) {
+                        metarData.observationTime = this.parseObservationTime(token);
+                        state = 'WIND';
+                    }
+                    break;
+                case 'WIND':
+                    // Wind
+                    if (/^\d{3}\d{2,3}(G\d{2})?KT$/.test(token)) {
+                        const windRegex = /^(\d{3})(\d{2,3})(G(\d{2}))?KT$/;
+                        const windMatch = token.match(windRegex);
+                        metarData.windDirDegrees = windMatch[1] !== '000' ? parseInt(windMatch[1], 10) : null;
+                        metarData.windSpeedKts = parseInt(windMatch[2], 10);
+                        metarData.windGustKts = windMatch[4] ? parseInt(windMatch[4], 10) : null;
+                        state = 'VISIBILITY';
+                    }
+                    break;
+                case 'VISIBILITY':
+                    // Visibility
+                    if (/^\d+SM$/.test(token)) {
+                        metarData.visibilityStatuteMi = parseFloat(token.replace('SM', ''));
+                        state = 'SKY_CONDITIONS';
+                    }
+                    break;
+                case 'SKY_CONDITIONS':
+                    // Multiple Sky Conditions
+                    if (/^(FEW|SCT|BKN|OVC)\d{3}$/.test(token)) {
+                        const skyRegex = /^(FEW|SCT|BKN|OVC)(\d{3})$/;
+                        const skyMatch = token.match(skyRegex);
+                        metarData.skyConditions.push({
+                            skyCover: skyMatch[1],
+                            cloudBaseFtAgl: parseInt(skyMatch[2], 10) * 100
+                        });
+                    } else {
+                        state = 'TEMPERATURE';
+                        // Fall through to handle temperature without sky conditions
+                        // No break
+                        // Continue to next case
+                        continue;
+                    }
+                    break;
+                case 'TEMPERATURE':
+                    // Temperature and Dew Point
+                    if (/^M?\d{2}\/M?\d{2}$/.test(token)) {
+                        const tempDew = token.split('/');
+                        metarData.temperatureC = tempDew[0].startsWith('M') ? -parseInt(tempDew[0].slice(1), 10) : parseInt(tempDew[0], 10);
+                        metarData.dewPointC = tempDew[1].startsWith('M') ? -parseInt(tempDew[1].slice(1), 10) : parseInt(tempDew[1], 10);
+                        state = 'ALTIMETER';
+                    }
+                    break;
+                case 'ALTIMETER':
+                    // Altimeter
+                    if (/^A\d{4}$/.test(token)) {
+                        metarData.altimeterInHg = parseInt(token.slice(1), 10) / 100;
+                        state = 'REMARKS';
+                    }
+                    break;
+                case 'REMARKS':
+                    // Remarks
+                    if (token === 'RMK') {
+                        metarData.remarks = metar.substring(metar.indexOf('RMK'));
+                        state = 'END';
+                    }
+                    break;
+                case 'END':
+                    // Do nothing
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return metarData;
     },
 
     parseObservationTime(observationTime) {
+        // Example input: "220530Z"
         const day = parseInt(observationTime.slice(0, 2), 10);
         const hour = parseInt(observationTime.slice(2, 4), 10);
         const minute = parseInt(observationTime.slice(4, 6), 10);
-        return new Date(Date.UTC(new Date().getUTCFullYear(), new Date().getUTCMonth(), day, hour, minute));
+        const now = new Date();
+        const year = now.getUTCFullYear();
+        const month = now.getUTCMonth();
+        return new Date(Date.UTC(year, month, day, hour, minute));
     },
 
     create() {
