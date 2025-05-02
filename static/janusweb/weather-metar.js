@@ -63,7 +63,27 @@ room.registerElement('weather-metar', {
     },
 
     create() {
+        if (this.gps) {
+            const [latStr, lonStr] = this.gps.split(' ');
+            const lat = parseFloat(latStr);
+            const lon = parseFloat(lonStr);
+            if (!isNaN(lat) && !isNaN(lon)) {
+                this.getWeather(lat, lon).then(weather => {
+                    if (weather) {
+                        this.updateRoomWeather(weather);
+                    }
+                });
+            } else {
+                console.error('Invalid GPS format. Expected "<lat> <lon>".');
+            }
+        }
         // Initialization code if needed
+    },
+
+    updateRoomWeather(weather) {
+        // Implementation for updating the room with the weather data
+        console.log('Room weather updated:', weather);
+        // Add your update logic here
     },
 
     update(dt) {
