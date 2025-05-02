@@ -50,7 +50,7 @@ room.registerElement('weather-metar', {
     },
 
     async fetchMetar(stationId) {
-        const response = await fetch(`https://aviationweather.gov/api/data/metar?stationId=${stationId}&hoursBeforeNow=2&mostRecent=true`);
+        const response = await fetch(`https://aviationweather.gov/api/data/metar?ids=${stationId}`);
         if (!response.ok) {
             console.error('Failed to fetch METAR data:', response.statusText);
             return null;
