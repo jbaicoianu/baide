@@ -220,7 +220,7 @@ console.log('go');
         weather.skyConditions.forEach((condition, index) => {
             console.log(condition);
             const color = skyCoverColors[condition.skyCover] || 'rgba(255, 255, 255, 0.2)'; // Default to white
-            const scale = 10 * condition.cloudBaseFtAgl;
+            const scale = .3048 * condition.cloudBaseFtAgl;
 
             const skySphere = room.createObject('object', {
                 id: `sphere`,
