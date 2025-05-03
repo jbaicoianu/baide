@@ -122,14 +122,13 @@ room.registerElement('weather-metar', {
                             skyCover: skyMatch[1],
                             cloudBaseFtAgl: parseInt(skyMatch[2], 10) * 100
                         });
+                        continue;
                     } else {
                         state = 'TEMPERATURE';
                         // Fall through to handle temperature without sky conditions
                         // No break
                         // Continue to next case
-                        continue;
                     }
-                    break;
                 case 'TEMPERATURE':
                     // Temperature and Dew Point
                     if (/^M?\d{2}\/M?\d{2}$/.test(token)) {
