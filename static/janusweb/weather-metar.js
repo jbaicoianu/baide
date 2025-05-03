@@ -228,7 +228,7 @@ console.log('go');
                 pos: '0 0 0',
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
-                opacity: 0.1,
+                opacity: 0,
             });
 
             //room.appendChild(skySphere);
