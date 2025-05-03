@@ -203,6 +203,40 @@ room.registerElement('weather-metar', {
         // Implementation for updating the room with the weather data
         console.log('Room weather updated:', weather);
         // Add your update logic here
+
+        // Remove existing sky spheres if any
+        this.removeSkySpheres();
+
+        // Define color mapping for skyCover values
+        const skyCoverColors = {
+            FEW: 'rgba(135, 206, 235, 0.2)',    // Light Sky Blue
+            SCT: 'rgba(70, 130, 180, 0.2)',     // Steel Blue
+            BKN: 'rgba(25, 25, 112, 0.2)',      // Midnight Blue
+            OVC: 'rgba(105, 105, 105, 0.2)'     // Dim Gray
+        };
+
+        weather.skyConditions.forEach((condition, index) => {
+            const color = skyCoverColors[condition.skyCover] || 'rgba(255, 255, 255, 0.2)'; // Default to white
+            const scale = 10 * condition.cloudBaseFtAgl;
+
+            const skySphere = room.createObject('sphere', {
+                id: `sky-sphere-${index}`,
+                pos: '0 0 0',
+                scale: `${scale} ${scale} ${scale}`,
+                col: color,
+                opacity: 0.2,
+                renderorder: -100 // Ensure it's rendered behind other objects
+            });
+
+            room.appendChild(skySphere);
+        });
+    },
+
+    removeSkySpheres() {
+        const skySpheres = room.getElementsByTagName('sphere').filter(obj => obj.id.startsWith('sky-sphere-'));
+        skySpheres.forEach(sphere => {
+            room.removeChild(sphere);
+        });
     },
 
     update(dt) {
