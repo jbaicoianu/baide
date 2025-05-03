@@ -216,8 +216,9 @@ room.registerElement('weather-metar', {
             BKN: 'rgba(25, 25, 112, 0.2)',      // Midnight Blue
             OVC: 'rgba(105, 105, 105, 0.2)'     // Dim Gray
         };
-
+console.log('go');
         weather.skyConditions.forEach((condition, index) => {
+            console.log(condition);
             const color = skyCoverColors[condition.skyCover] || 'rgba(255, 255, 255, 0.2)'; // Default to white
             const scale = 10 * condition.cloudBaseFtAgl;
 
