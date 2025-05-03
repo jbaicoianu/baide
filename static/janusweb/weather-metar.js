@@ -222,7 +222,8 @@ room.registerElement('weather-metar', {
             const scale = 10 * condition.cloudBaseFtAgl;
 
             const skySphere = room.createObject('object', {
-                id: `sphere-${index}`,
+                id: `sphere`,
+                cull_face: 'none",
                 pos: '0 0 0',
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
