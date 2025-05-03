@@ -2,6 +2,7 @@ room.registerElement('weather-metar', {
     metarData: {},
     gps: '',
     stationid: '',
+    skySpheres: [],
 
     async getWeatherByGPS(lat, lon) {
         try {
@@ -176,6 +177,7 @@ room.registerElement('weather-metar', {
     },
 
     create() {
+        this.skySpheres = [];
         if (this.stationid) {
             this.getWeatherByStationId(this.stationid).then(weather => {
                 if (weather) {
@@ -219,8 +221,8 @@ room.registerElement('weather-metar', {
             const color = skyCoverColors[condition.skyCover] || 'rgba(255, 255, 255, 0.2)'; // Default to white
             const scale = 10 * condition.cloudBaseFtAgl;
 
-            const skySphere = room.createObject('sphere', {
-                id: `sky-sphere-${index}`,
+            const skySphere = room.createObject('object', {
+                id: `sphere-${index}`,
                 pos: '0 0 0',
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
@@ -229,14 +231,15 @@ room.registerElement('weather-metar', {
             });
 
             room.appendChild(skySphere);
+            this.skySpheres.push(skySphere);
         });
     },
 
     removeSkySpheres() {
-        const skySpheres = room.getElementsByTagName('sphere').filter(obj => obj.id.startsWith('sky-sphere-'));
-        skySpheres.forEach(sphere => {
+        this.skySpheres.forEach(sphere => {
             room.removeChild(sphere);
         });
+        this.skySpheres = [];
     },
 
     update(dt) {
