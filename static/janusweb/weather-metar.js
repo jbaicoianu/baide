@@ -229,7 +229,6 @@ console.log('go');
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
                 opacity: 0.2,
-                renderorder: -100 // Ensure it's rendered behind other objects
             });
 
             //room.appendChild(skySphere);
