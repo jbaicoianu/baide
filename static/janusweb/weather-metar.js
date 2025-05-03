@@ -229,6 +229,7 @@ room.registerElement('weather-metar', {
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
                 opacity: 0.5,
+                depth_write: false,
             });
 
             //room.appendChild(skySphere);
