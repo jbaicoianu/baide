@@ -223,7 +223,7 @@ room.registerElement('weather-metar', {
 
             const skySphere = room.createObject('object', {
                 id: `sphere`,
-                cull_face: 'none",
+                cull_face: 'none',
                 pos: '0 0 0',
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
