@@ -213,7 +213,7 @@ room.registerElement('weather-metar', {
         const skyCoverColors = {
             FEW: '0.529 0.808 0.922',    // Light Sky Blue
             SCT: '0.275 0.510 0.706',     // Steel Blue
-            BKN: '0.098 0.098 0.439',      // Midnight Blue
+            BKN: '1 0 0',      // Red
             OVC: '0.411 0.411 0.411'     // Dim Gray
         };
         console.log('go');
