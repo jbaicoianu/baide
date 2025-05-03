@@ -211,15 +211,15 @@ room.registerElement('weather-metar', {
 
         // Define color mapping for skyCover values
         const skyCoverColors = {
-            FEW: 'rgba(135, 206, 235, 0.2)',    // Light Sky Blue
-            SCT: 'rgba(70, 130, 180, 0.2)',     // Steel Blue
-            BKN: 'rgba(25, 25, 112, 0.2)',      // Midnight Blue
-            OVC: 'rgba(105, 105, 105, 0.2)'     // Dim Gray
+            FEW: '0.529 0.808 0.922',    // Light Sky Blue
+            SCT: '0.275 0.510 0.706',     // Steel Blue
+            BKN: '0.098 0.098 0.439',      // Midnight Blue
+            OVC: '0.411 0.411 0.411'     // Dim Gray
         };
-console.log('go');
+        console.log('go');
         weather.skyConditions.forEach((condition, index) => {
             console.log(condition);
-            const color = skyCoverColors[condition.skyCover] || 'rgba(255, 255, 255, 0.2)'; // Default to white
+            const color = skyCoverColors[condition.skyCover] || '1 1 1'; // Default to white
             const scale = .3048 * condition.cloudBaseFtAgl;
 
             const skySphere = room.createObject('object', {
