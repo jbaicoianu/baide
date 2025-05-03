@@ -232,7 +232,8 @@ console.log('go');
                 renderorder: -100 // Ensure it's rendered behind other objects
             });
 
-            room.appendChild(skySphere);
+            //room.appendChild(skySphere);
+            console.log(skySphere);
             this.skySpheres.push(skySphere);
         });
     },
