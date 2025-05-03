@@ -228,7 +228,7 @@ room.registerElement('weather-metar', {
                 pos: '0 0 0',
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
-                opacity: 0.9,
+                opacity: 0.5,
             });
 
             //room.appendChild(skySphere);
