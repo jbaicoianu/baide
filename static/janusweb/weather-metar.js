@@ -79,7 +79,7 @@ room.registerElement('weather-metar', {
         };
 
         for (let token of tokens) {
-            console.log(' -', token);
+            console.log(' -', token, state);
             switch (state) {
                 case 'START':
                     // Station ID
