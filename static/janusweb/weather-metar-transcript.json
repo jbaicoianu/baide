@@ -504,5 +504,13 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "f71e1aa5ccc5236b3e03929394c6fcbf6ad6f61d",
     "file_name": "static/janusweb/weather-metar.html"
+  },
+  {
+    "role": "User",
+    "content": "attribute name change [Manual edit]",
+    "timestamp": "2025-05-04T07:15:35.489908Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "86a956583b512c4b7ecba7e7fc7bcf9a1298e61e",
+    "file_name": "static/janusweb/weather-metar.html"
   }
 ]
