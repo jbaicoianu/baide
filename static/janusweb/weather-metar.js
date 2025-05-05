@@ -252,7 +252,7 @@ room.registerElement('weather-metar', {
         // final sky sphere for overall color
         this.skySpheres.push(room.createObject('object', {
             id: 'sphere',
-            col: '0 .6 1',
+            col: '#87ceeb',
             cull_face: 'front',
             scale: V(largestScale * 1.25),
             
