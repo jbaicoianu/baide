@@ -703,7 +703,7 @@ void mainImage(
 	return;
 #endif
 
-	vec3 col = vec3(1.0, 0, 0);
+	vec3 col = vec3(0, 0, 0);
 
 	//mat3 rot = rotate_around_x(abs(sin(u_time / 2.)) * 45.);
 	//sun_dir = mul(rot, sun_dir);
@@ -738,4 +738,5 @@ void mainImage(
 	}
 
 	fragColor = vec4(col, opacity);
+    fragColor.r = 1.0;
 }
