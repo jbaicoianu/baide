@@ -748,7 +748,7 @@ void mainImage(
 		float cb = checkboard_pattern(vec2(u, v), 50.);
 		col = vec3(cb, cb, cb);
 #endif
-        opacity = 1.0;
+        //opacity = 1.0;
 	}
 
 	fragColor = vec4(col, opacity);
