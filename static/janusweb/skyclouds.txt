@@ -680,7 +680,29 @@ vec4 render_clouds(
 
 	return vec4(C, alpha);
 }
+// Converts equirectangular UV to a unit‐length direction vector on the sphere
+vec3 uvToDirection(vec2 vUv) {
+    // longitude: 0 → 2π as x goes from 0 → 1
+    float theta = vUv.x * 2.0 * PI;
 
+    // polar angle φ: 0 at north pole (vUv.y=1) to π at south pole (vUv.y=0)
+    float phi = (1.0 - vUv.y) * PI;
+
+    float sinPhi = sin(phi);
+    float cosPhi = cos(phi);
+    float cosTheta = cos(theta);
+    float sinTheta = sin(theta);
+
+    // Spherical → Cartesian
+    //   x = sinφ ⋅ cosθ
+    //   y = cosφ
+    //   z = sinφ ⋅ sinθ
+    return vec3(
+        sinPhi * cosTheta,
+        cosPhi,
+        sinPhi * sinTheta
+    );
+}
 void mainImage(
 	_out(vec4) fragColor,
 	vec2 fragCoord
@@ -697,7 +719,12 @@ void mainImage(
 
 	vec3 eye = vec3(0, 0, .1);
 	vec3 look_at = vec3(0, 1, 0);
-	ray_t eye_ray = get_primary_ray(point_cam, eye, look_at);
+	//ray_t eye_ray = get_primary_ray(point_cam, eye, look_at);
+    ray_t eye_ray = _begin(ray_t)
+		vec3(0,0,0),
+		normalize(uvToDirection(vUv))
+	_end;
+    
 
 	//eye_ray.direction.yz = mul(rotate_2d(+u_mouse.y * .13), eye_ray.direction.yz);
 	//eye_ray.direction.xz = mul(rotate_2d(-u_mouse.x * .33), eye_ray.direction.xz);
