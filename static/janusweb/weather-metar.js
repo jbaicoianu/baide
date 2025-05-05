@@ -217,16 +217,18 @@ room.registerElement('weather-metar', {
             OVC: '0.411 0.411 0.411'     // Dim Gray
         };
         console.log('go');
+        largestScale = 100;
         weather.skyConditions.forEach((condition, index) => {
             console.log(condition);
             const color = skyCoverColors[condition.skyCover] || '1 1 1'; // Default to white
             const scale = .3048 * condition.cloudBaseFtAgl / 10;
+            largestScale = scale;
 
             const skySphere = room.createObject('object', {
                 id: `sphere`,
                 shader_id: 'clouds',
                 image_id: 'skynoise',
-                cull_face: 'none',
+                cull_face: 'front',
                 pos: '0 0 0',
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
@@ -246,6 +248,14 @@ room.registerElement('weather-metar', {
             //room.appendChild(skySphere);
             console.log(skySphere);
             this.skySpheres.push(skySphere);
+        });
+        // final sky sphere for overall color
+        this.skySpheres.push(room.createObject('object', {
+            id: 'sphere',
+            col: '1 0 1',
+            cull_face: 'front',
+            scale: largestScale * 1.25;
+            
         });
     },
 
