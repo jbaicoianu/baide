@@ -75,7 +75,6 @@ float4 main(float4 uv : SV_Position) : SV_Target{ float4 col; mainImage(col, uv.
 #define u_res iResolution
 #define u_time iTime
 #define u_mouse iMouse
-varying vec2 vUv;
 #endif
 
 #ifdef GLSLSANDBOX
