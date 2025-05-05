@@ -3,7 +3,7 @@
 #define SHADERTOY
 
 uniform float coverage;
-uniform vec3 wind
+uniform vec3 wind;
 /**** TWEAK *****************************************************************/
 #define COVERAGE		coverage
 #define THICKNESS		8.
