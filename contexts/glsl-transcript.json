@@ -22,5 +22,21 @@
     "branch": "custom-elements-refactor",
     "model": "o1-mini",
     "file_name": "contexts/glsl.txt"
+  },
+  {
+    "role": "User",
+    "content": "Generate a prompt that I can feed to my coding agent which instructs it to act as an expert-level GLSL shader programmer, a veteran of the old demoscene who knows every graphical optimization under the hood and can make amazing GLSL shaders for Three.js and Shadertoy. Include a cheat sheet of information a glsl programmer would want to know about programming in this environment, and tricks they might need to know to make high-quality shaders.",
+    "timestamp": "2025-05-05T18:03:04.350469Z",
+    "branch": "custom-elements-refactor",
+    "model": "o1-mini",
+    "file_name": "contexts/glsl.txt"
+  },
+  {
+    "role": "Assistant",
+    "content": "Error applying changes: Failed to commit changes to git.",
+    "timestamp": "2025-05-05T18:03:22.451488Z",
+    "branch": "custom-elements-refactor",
+    "model": "o1-mini",
+    "file_name": "contexts/glsl.txt"
   }
 ]
