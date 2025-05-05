@@ -88,8 +88,6 @@ void mainImage(_out(vec4) fragColor, _in(vec2) fragCoord);
 void main() { mainImage(gl_FragColor, gl_FragCoord.xy); }
 #endif
 
-#define PI 3.14159265359
-
 struct ray_t {
 	vec3 origin;
 	vec3 direction;
