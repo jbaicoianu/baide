@@ -253,7 +253,7 @@ room.registerElement('weather-metar', {
                 
               skySphere.shader.uniforms.coverage.value = coverage;
               skySphere.shader.uniforms.wind.value = wind;
-              skySphere.traverseObjects(n => { if (n.material) n.renderOrder = 100 + index; });
+              skySphere.traverseObjects(n => { if (n.material) n.renderOrder = 100 - index; });
               
             }, 500);
             //room.appendChild(skySphere);
