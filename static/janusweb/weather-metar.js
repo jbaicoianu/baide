@@ -238,7 +238,7 @@ room.registerElement('weather-metar', {
 
             setTimeout(() => {
               let coverage = 0;
-              if (condition.skyCover == 'FEW') coverage = 0.7;
+              if (condition.skyCover == 'FEW') coverage = 0.4;
               else if (condition.skyCover == 'SCT') coverage = .8;
               else if (condition.skyCover == 'BRN') coverage = .8;
               else if (condition.skyCover == 'OVC') coverage = 1.0;
