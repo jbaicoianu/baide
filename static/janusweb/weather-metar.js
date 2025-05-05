@@ -244,7 +244,7 @@ room.registerElement('weather-metar', {
               else if (condition.skyCover == 'OVC') coverage = 1.0;
 
               let winddir = weather.windDirDegrees * Math.PI / 180;
-              let wind = V(Math.sin(winddir), 0, Math.cos(winddir));
+              let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(.2);
                 
               skySphere.shader.uniforms.coverage.value = coverage;
               skySphere.shader.uniforms.wind.value = wind;
