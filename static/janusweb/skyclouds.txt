@@ -740,6 +740,7 @@ void mainImage(
 		vec3 sky = vec3(0.0); //render_sky_color(eye_ray);
 		vec4 cld = render_clouds(eye_ray);
 		col = mix(sky, cld.rgb/(0.000001+cld.a), cld.a);
+        opacity = cld.a;
 #else
 		intersect_sphere(eye_ray, atmosphere, hit);
 		vec3 d = hit.normal;
