@@ -244,7 +244,7 @@ room.registerElement('weather-metar', {
               else if (condition.skyCover == 'OVC') coverage = 1.0;
 
               skySphere.shader.uniforms.coverage.value = coverage;
-            }, 1000);
+            }, 500);
             //room.appendChild(skySphere);
             console.log(skySphere);
             this.skySpheres.push(skySphere);
