@@ -220,7 +220,7 @@ room.registerElement('weather-metar', {
         weather.skyConditions.forEach((condition, index) => {
             console.log(condition);
             const color = skyCoverColors[condition.skyCover] || '1 1 1'; // Default to white
-            const scale = .3048 * condition.cloudBaseFtAgl;
+            const scale = .3048 * condition.cloudBaseFtAgl / 10;
 
             const skySphere = room.createObject('object', {
                 id: `sphere`,
