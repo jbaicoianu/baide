@@ -708,7 +708,7 @@ void mainImage(
 	//mat3 rot = rotate_around_x(abs(sin(u_time / 2.)) * 45.);
 	//sun_dir = mul(rot, sun_dir);
 
-	vec3 eye = vec3(0, 0, .1);
+	vec3 eye = vec3(0, 0, 1);
 	vec3 look_at = vec3(0, 1, 0);
 	ray_t eye_ray = get_primary_ray(point_cam, eye, look_at);
 
