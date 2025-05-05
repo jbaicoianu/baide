@@ -6,10 +6,11 @@
         <assetscript src="weather-metar.js" />
         <assetobject id="room_plane" src="https://example.com/room_plane.glb" />
         <assetshader id="clouds" fragment_src="skyclouds.txt" shadertype="shadertoy" />
+        <assetimage id="skynoise" src="skynoise.png" />
       </assets>
       <room asset="room_plane" pos="0 0 0">
         <weather-metar stationid="KOAK" />
-        <object id="cube" shader_id="clouds" scale="10 10 10" pos="0 0 -15" />
+        <object id="cube" shader_id="clouds" scale="10 10 10" pos="0 0 -15" image_id="skynoise" />
       </room>
     </janus-viewer>
   </body>
