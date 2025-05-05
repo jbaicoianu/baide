@@ -3,7 +3,7 @@
 #define SHADERTOY
 
 /**** TWEAK *****************************************************************/
-#define COVERAGE		0.80
+#define COVERAGE		0.1
 #define THICKNESS		8.
 #define ABSORPTION		1.030725
 #define WIND			vec3(0, 0, -u_time * .5)
