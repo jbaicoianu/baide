@@ -738,5 +738,6 @@ void mainImage(
 	}
 
 	fragColor = vec4(col, opacity);
-    fragColor.r = sin(iTime);
+    fragColor.r = vUv.x;
+    fragColor.g = vUv.y;
 }
