@@ -221,7 +221,8 @@ room.registerElement('weather-metar', {
         weather.skyConditions.forEach((condition, index) => {
             console.log(condition);
             const color = skyCoverColors[condition.skyCover] || '1 1 1'; // Default to white
-            const scale = .3048 * condition.cloudBaseFtAgl / 10;
+            let altitude = condition.cloudBaseFtAgl * .3048;
+            const scale = altitude / 10;
             largestScale = scale;
 
             const skySphere = room.createObject('object', {
@@ -244,7 +245,11 @@ room.registerElement('weather-metar', {
               else if (condition.skyCover == 'OVC') coverage = 1.0;
 
               let winddir = weather.windDirDegrees * Math.PI / 180;
-              let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(weather.windSpeedKts);
+              let windspeed = weather.windSpeedKts * 0.514444; // meters per second
+              let adjustedWindspeed = windspeed / 10;
+              
+              
+              let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
                 
               skySphere.shader.uniforms.coverage.value = coverage;
               skySphere.shader.uniforms.wind.value = wind;
