@@ -222,7 +222,7 @@ room.registerElement('weather-metar', {
             console.log(condition);
             const color = skyCoverColors[condition.skyCover] || '1 1 1'; // Default to white
             let altitude = condition.cloudBaseFtAgl * .3048;
-            const scale = altitude / 10;
+            const scale = altitude;
             largestScale = scale;
 
             const skySphere = room.createObject('object', {
