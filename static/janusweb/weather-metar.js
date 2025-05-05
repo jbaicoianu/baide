@@ -243,7 +243,11 @@ room.registerElement('weather-metar', {
               else if (condition.skyCover == 'BRN') coverage = .6;
               else if (condition.skyCover == 'OVC') coverage = 1.0;
 
+              let winddir = weather.windDirDegrees * Math.PI / 180;
+              let wind = V(Math.sin(winddir), 0, Math.cos(winddir));
+                
               skySphere.shader.uniforms.coverage.value = coverage;
+              skySphere.shader.uniforms.wind.value = wind;
             }, 500);
             //room.appendChild(skySphere);
             console.log(skySphere);
