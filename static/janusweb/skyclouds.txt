@@ -2,8 +2,10 @@
 
 #define SHADERTOY
 
+uniform float coverage;
+
 /**** TWEAK *****************************************************************/
-#define COVERAGE		0.5
+#define COVERAGE		coverage
 #define THICKNESS		8.
 #define ABSORPTION		1.030725
 #define WIND			vec3(0, 0, -u_time * .1)
