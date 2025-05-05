@@ -237,7 +237,7 @@ room.registerElement('weather-metar', {
             setTimeout(() => {
               skySphere.shader.uniforms.coverage.value = .9;
             console.log('ASSIGN SHADER', skySphere.shader, skySphere);
-            }, 100);
+            }, 1000);
             //room.appendChild(skySphere);
             console.log(skySphere);
             this.skySpheres.push(skySphere);
