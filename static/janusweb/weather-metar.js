@@ -224,13 +224,16 @@ room.registerElement('weather-metar', {
 
             const skySphere = room.createObject('object', {
                 id: `sphere`,
+                shader_id: 'clouds',
+                image_id: 'skynoise',
                 cull_face: 'none',
                 pos: '0 0 0',
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
-                opacity: 0.5,
+                transparent: true,
                 depth_write: false,
             });
+
 
             //room.appendChild(skySphere);
             console.log(skySphere);
