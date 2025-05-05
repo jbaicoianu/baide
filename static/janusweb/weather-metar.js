@@ -238,9 +238,9 @@ room.registerElement('weather-metar', {
 
             setTimeout(() => {
               let coverage = 0;
-              if (condition.skyCover == 'FEW') coverage = 0.3;
-              else if (condition.skyCover == 'SCT') coverage = .7;
-              else if (condition.skyCover == 'BRN') coverage = .6;
+              if (condition.skyCover == 'FEW') coverage = 0.4;
+              else if (condition.skyCover == 'SCT') coverage = .8;
+              else if (condition.skyCover == 'BRN') coverage = .8;
               else if (condition.skyCover == 'OVC') coverage = 1.0;
 
               let winddir = weather.windDirDegrees * Math.PI / 180;
