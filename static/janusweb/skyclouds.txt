@@ -709,7 +709,7 @@ void mainImage(
 		col = vec3(1,1,1);
         opacity = 0.;
 	} else {
-#if 0
+#if 1
 		vec3 sky = render_sky_color(eye_ray);
 		vec4 cld = render_clouds(eye_ray);
 		col = mix(sky, cld.rgb/(0.000001+cld.a), cld.a);
