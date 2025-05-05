@@ -75,6 +75,7 @@ float4 main(float4 uv : SV_Position) : SV_Target{ float4 col; mainImage(col, uv.
 #define u_res iResolution
 #define u_time iTime
 #define u_mouse iMouse
+varying vec2 vUv;
 #endif
 
 #ifdef GLSLSANDBOX
@@ -691,7 +692,7 @@ void mainImage(
 ){
 	vec2 aspect_ratio = vec2(1., 1);
 	float fov = tan(radians(45.0));
-	vec2 point_ndc = fragCoord.xy / u_res.xy;
+	vec2 point_ndc = vUv.xy / u_res.xy;
 #ifdef HLSL
 	point_ndc.y = 1. - point_ndc.y;
 #endif
