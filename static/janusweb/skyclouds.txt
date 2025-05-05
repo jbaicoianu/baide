@@ -691,7 +691,7 @@ void mainImage(
 ){
 	vec2 aspect_ratio = vec2(2. / 1., 1);
 	float fov = tan(radians(45.0));
-	vec2 point_ndc = fragCoord.xy / u_res.xy;
+	vec2 point_ndc = fragCoord.xy;// / u_res.xy;
 #ifdef HLSL
 	point_ndc.y = 1. - point_ndc.y;
 #endif
