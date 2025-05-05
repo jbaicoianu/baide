@@ -6,7 +6,7 @@
 #define COVERAGE		0.2
 #define THICKNESS		8.
 #define ABSORPTION		1.030725
-#define WIND			vec3(0, 0, -u_time * .1
+#define WIND			vec3(0, 0, -u_time * .1)
 
 #define FBM_FREQ		2.76434
 #define NOISE_VALUE
