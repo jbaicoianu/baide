@@ -256,7 +256,7 @@ room.registerElement('weather-metar', {
             cull_face: 'front',
             scale: largestScale * 1.25,
             
-        });
+        }));
     },
 
     removeSkySpheres() {
