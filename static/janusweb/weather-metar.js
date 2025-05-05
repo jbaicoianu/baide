@@ -240,7 +240,7 @@ room.registerElement('weather-metar', {
               let coverage = 0;
               if (condition.skyCover == 'FEW') coverage = 0.4;
               else if (condition.skyCover == 'SCT') coverage = .6;
-              else if (condition.skyCover == 'BKN') coverage = .7;
+              else if (condition.skyCover == 'BKN') coverage = .75;
               else if (condition.skyCover == 'OVC') coverage = 1.0;
 
               let winddir = weather.windDirDegrees * Math.PI / 180;
