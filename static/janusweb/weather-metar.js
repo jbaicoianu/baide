@@ -254,7 +254,7 @@ room.registerElement('weather-metar', {
             id: 'sphere',
             col: '1 0 1',
             cull_face: 'front',
-            scale: largestScale * 1.25,
+            scale: V(largestScale * 1.25),
             
         }));
     },
