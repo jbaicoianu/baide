@@ -266,8 +266,8 @@ room.registerElement('weather-metar', {
             col: '#87ceeb',
             cull_face: 'front',
             scale: V(largestScale * 1.25),
-            
         }));
+        room.far_dist = largestScale * 1.5;
     },
 
     removeSkySpheres() {
