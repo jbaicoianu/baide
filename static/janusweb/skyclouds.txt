@@ -8,7 +8,7 @@ uniform vec3 wind
 #define COVERAGE		coverage
 #define THICKNESS		8.
 #define ABSORPTION		1.030725
-#define WIND			wind
+#define WIND			wind * u_time
 //vec3(0, 0, -u_time * .1)
 
 #define FBM_FREQ		2.76434
