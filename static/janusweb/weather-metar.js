@@ -235,7 +235,13 @@ room.registerElement('weather-metar', {
             });
 
             setTimeout(() => {
-              skySphere.shader.uniforms.coverage.value = .9;
+              let coverage = 0;
+              if (condition.skyCover == 'FEW') coverage = 0.2;
+              else if (condition.skyCover == 'SCT') coverage = .4;
+              else if (condition.skyCover == 'BRN') coverage = .6;
+              else if (condition.skyCover == 'OVC') coverage = 1.0;
+
+              skySphere.shader.uniforms.coverage.value = (;
             console.log('ASSIGN SHADER', skySphere.shader, skySphere);
             }, 1000);
             //room.appendChild(skySphere);
