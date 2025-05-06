@@ -507,10 +507,12 @@ room.registerElement('weather-metar', {
             id: 'sphere',
             col: '#87ceeb',
             cull_face: 'front',
+            fog: false,
             scale: V(largestScale * 1.25),
         }));
         room.far_dist = largestScale * 1.5;
         room.fog = true;
+        room.fog_mode = 'linear';
         room.fog_far = weather.visibilityMeters;
     },
 
