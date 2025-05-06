@@ -390,5 +390,13 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "aa1389077d014c213ac005beb447f9875706c679",
     "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader fisheye mapping [Manual edit]",
+    "timestamp": "2025-05-06T23:04:28.187683Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "666bed15d8aecfbd5421a32d46d46053b1ecbb88",
+    "file_name": "static/janusweb/skyclouds.txt"
   }
 ]
