@@ -158,7 +158,7 @@ room.registerElement('weather-metar', {
                     break;
                 case 'RUNWAY_VISUAL_RANGE_OR_WEATHER':
                     // Runway Visual Range or Weather Phenomena
-                    if (/^R\d{2}[LRC]?\/[PM]\d{4}FT$/.test(token)) {
+                    if (/^R\d{2}[LRC]?\/[PM]?\d{4}FT$/.test(token)) {
                         metarData.runwayVisualRanges.push(this.parseRunwayVisualRange(token));
                     } else if (/^R\d{2}V\d{2}$/.test(token)) {
                         metarData.runwayVisualRanges.push(this.parseVariableRunwayVisualRange(token));
@@ -334,7 +334,33 @@ room.registerElement('weather-metar', {
 
     parseVisibility(token) {
         // Converts visibility from string like "1SM" or "3/4SM" to float in miles
-        return parseFloat(token.replace('SM', '').replace('M', '-0.25'));
+        let visibilityStr = token.replace('SM', '');
+        let isLessThan = false;
+
+        if (visibilityStr.startsWith('M')) {
+            isLessThan = true;
+            visibilityStr = visibilityStr.slice(1);
+        }
+
+        let visibility = 0;
+        if (visibilityStr.includes('/')) {
+            const [numerator, denominator] = visibilityStr.split('/').map(Number);
+            if (denominator !== 0) {
+                visibility = numerator / denominator;
+            } else {
+                console.error('Invalid visibility fraction:', token);
+                visibility = null;
+            }
+        } else {
+            visibility = parseFloat(visibilityStr);
+        }
+
+        if (isLessThan) {
+            // Indicate visibility is less than the parsed value
+            return -visibility;
+        }
+
+        return visibility;
     },
 
     parseRunwayVisualRange(token) {
