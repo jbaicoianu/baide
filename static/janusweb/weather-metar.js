@@ -502,15 +502,17 @@ room.registerElement('weather-metar', {
             console.log(skySphere);
             this.skySpheres.push(skySphere);
         });
+        let far = Math.max(1000, largestScale * 1.5);
         // final sky sphere for overall color
-        this.skySpheres.push(room.createObject('object', {
+        const skyColorSphere = room.createObject('object', {
             id: 'sphere',
             col: '#87ceeb',
             cull_face: 'front',
             fog: false,
-            scale: V(largestScale * 1.25),
+            scale: V(far * .9),
         }));
-        room.far_dist = largestScale * 1.5;
+        this.skySpheres.push(skyColorSphere);
+        room.far_dist = far;
         room.fog = true;
         room.fog_mode = 'linear';
         room.fog_end = weather.visibilityMeters / 20;
@@ -525,5 +527,6 @@ room.registerElement('weather-metar', {
 
     update(dt) {
         // Per-frame update logic if needed
+        this.skySpheres[this.skySphere
     }
 });
