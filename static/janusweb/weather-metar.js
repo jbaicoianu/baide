@@ -158,7 +158,7 @@ room.registerElement('weather-metar', {
                     break;
                 case 'RUNWAY_VISUAL_RANGE_OR_WEATHER':
                     // Runway Visual Range or Weather Phenomena
-                    if (/^R\d{2}[PVLRC]?\d{4}FT$/.test(token)) {
+                    if (/^R\d{2}[LRC]?\/[PM]\d{4}FT$/.test(token)) {
                         metarData.runwayVisualRanges.push(this.parseRunwayVisualRange(token));
                     } else if (/^R\d{2}V\d{2}$/.test(token)) {
                         metarData.runwayVisualRanges.push(this.parseVariableRunwayVisualRange(token));
