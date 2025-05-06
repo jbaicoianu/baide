@@ -707,6 +707,38 @@ vec3 uvToDirection(vec2 vUv) {
         sinPhi * sinTheta
     );
 }
+// vUv: in [0,1]² over your quad.
+// Returns: unit vector for upper‐hemisphere fisheye.
+// Discards fragments outside the circular fisheye (r>1).
+vec3 fisheyeDirection(vec2 vUv) {
+    // remap to [-1, +1] so circle of radius 1 covers the full quad
+    vec2 xy = vUv * 2.0 - 1.0;
+    float r = length(xy);
+    if (r > 1.0) {
+        // outside fisheye circle → transparent / no sample
+        discard;
+    }
+
+    // phi: polar angle from +Y axis (north pole) out to equator
+    // r=0 → φ=0 (north pole); r=1 → φ=π/2 (equator)
+    float phi   = r * (PI * 0.5);
+
+    // θ: azimuth around Y axis
+    float theta = atan(xy.y, xy.x);
+
+    float sinPhi = sin(phi);
+    float cosPhi = cos(phi);
+
+    // spherical → cartesian
+    //   x = sinφ * cosθ
+    //   y = cosφ
+    //   z = sinφ * sinθ
+    return vec3(
+        sinPhi * cos(theta),
+        cosPhi,
+        sinPhi * sin(theta)
+    );
+}
 void mainImage(
 	_out(vec4) fragColor,
 	vec2 fragCoord
@@ -726,7 +758,7 @@ void mainImage(
 	//ray_t eye_ray = get_primary_ray(point_cam, eye, look_at);
     ray_t eye_ray = _begin(ray_t)
 		vec3(0,0,0),
-		normalize(uvToDirection(vUv))
+		normalize(fisheyeDirection(vUv))
 	_end;
     
 
