@@ -473,7 +473,7 @@ room.registerElement('weather-metar', {
                 shader_id: 'clouds',
                 image_id: 'skynoise',
                 cull_face: 'front',
-                pos: `0 ${-1000 + altitude} 0`,
+                pos: `0 ${-scale/2 + altitude} 0`,
                 scale: `${scale} ${scale} ${scale}`,
                 col: color,
                 transparent: true,
