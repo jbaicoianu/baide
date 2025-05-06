@@ -493,7 +493,7 @@ room.registerElement('weather-metar', {
 
                 let winddir = weather.windDirDegrees * Math.PI / 180;
                 let windspeed = weather.windSpeedKts * 0.514444; // meters per second
-                let adjustedWindspeed = (windspeed / 100) * (1 + index);
+                let adjustedWindspeed = (windspeed / 1000) * (1 + index);
 
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 
