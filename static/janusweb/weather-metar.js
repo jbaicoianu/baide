@@ -527,6 +527,5 @@ room.registerElement('weather-metar', {
 
     update(dt) {
         // Per-frame update logic if needed
-        this.skySpheres[this.skySphere
     }
 });
