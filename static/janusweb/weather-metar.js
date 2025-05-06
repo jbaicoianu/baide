@@ -142,7 +142,7 @@ room.registerElement('weather-metar', {
                     break;
                 case 'WIND_VARIATION_OR_VISIBILITY':
                     // Wind Variation or Visibility
-                    if (/^\d{3}V\d{3}$/.test(token) || /^VRB\d{2,3}$/.test(token)) {
+                    if (/^\d{3}V\d{3}$/.test(token) || /^VRB\d{2,3}(KT)?$/.test(token)) {
                         metarData.windVariation = token;
                         continue;
                     }
