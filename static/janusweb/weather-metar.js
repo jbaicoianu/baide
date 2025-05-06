@@ -499,7 +499,7 @@ room.registerElement('weather-metar', {
 
                 skySphere.shader.uniforms.coverage.value = coverage;
                 skySphere.shader.uniforms.wind.value = wind;
-                skySphere.shader.uniforms.timeOffset.value = Math.random() * 10000;
+                skySphere.shader.uniforms.timeOffset.value = Math.random() * 100000;
                 skySphere.traverseObjects(n => { if (n.material) n.renderOrder = 100 - index; });
 
             }, 500);
