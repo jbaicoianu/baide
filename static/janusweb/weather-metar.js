@@ -182,6 +182,8 @@ room.registerElement('weather-metar', {
                             vicinity: skyMatch[3] ? true : false
                         });
                         continue;
+                    } else if (token == 'CLR') {
+                        continue;
                     } else {
                         state = 'TEMPERATURE';
                         i--; // Re-evaluate this token in the new state
