@@ -64,7 +64,7 @@ room.registerElement('weather-metar', {
         if (!metar) return null;
 
         const tokens = metar.trim().split(/\s+/);
-        let state = 'START';
+        let state = 'STATION_ID';
         let metarData = {
             stationId: null,
             observationTime: null,
