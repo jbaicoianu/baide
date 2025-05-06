@@ -109,7 +109,7 @@ room.registerElement('weather-metar', {
                     break;
                 case 'VISIBILITY':
                     // Visibility
-                    if (/^\d+SM$/.test(token)) {
+                    if (/^[\d\/]+SM$/.test(token)) {
                         metarData.visibilityStatuteMi = parseFloat(token.replace('SM', ''));
                         state = 'SKY_CONDITIONS';
                     }
