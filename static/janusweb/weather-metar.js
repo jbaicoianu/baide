@@ -62,7 +62,8 @@ room.registerElement('weather-metar', {
 
     parseMetar(metar) {
         if (!metar) return null;
-
+        console.log(metar);
+        
         const tokens = metar.trim().split(/\s+/);
         let state = 'STATION_ID';
         let metarData = {
