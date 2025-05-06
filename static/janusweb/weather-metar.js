@@ -469,7 +469,7 @@ room.registerElement('weather-metar', {
             console.log(condition);
             const color = skyCoverColors[condition.skyCover] || '1 1 1'; // Default to white
             let altitude = condition.cloudBaseFtAgl * 0.3048;
-            const scale = 1000 + altitude;
+            const scale = 4000;
             largestScale = Math.max(largestScale, scale);
 
             const skySphere = room.createObject('object', {
@@ -477,8 +477,8 @@ room.registerElement('weather-metar', {
                 shader_id: 'clouds',
                 image_id: 'skynoise',
                 cull_face: 'front',
-                pos: `0 ${(-scale + altitude) / 2} 0`,
-                scale: `${scale} ${scale} ${scale}`,
+                pos: `0 ${(-altitude) / 2} 0`,
+                scale: `${scale} ${altitude} ${scale}`,
                 col: color,
                 transparent: true,
                 depth_write: false,
