@@ -182,7 +182,7 @@ room.registerElement('weather-metar', {
                             vicinity: skyMatch[3] ? true : false
                         });
                         continue;
-                    } else if (token == 'CLR') {
+                    } else if (token == 'CLR' || token == 'SKC') {
                         continue;
                     } else {
                         state = 'TEMPERATURE';
