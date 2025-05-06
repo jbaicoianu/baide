@@ -510,7 +510,7 @@ room.registerElement('weather-metar', {
             cull_face: 'front',
             fog: false,
             scale: V(far * .9),
-        }));
+        });
         this.skySpheres.push(skyColorSphere);
         room.far_dist = far;
         room.fog = true;
