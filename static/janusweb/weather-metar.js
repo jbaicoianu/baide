@@ -513,7 +513,7 @@ room.registerElement('weather-metar', {
         room.far_dist = largestScale * 1.5;
         room.fog = true;
         room.fog_mode = 'linear';
-        room.fog_end = weather.visibilityMeters / 100;
+        room.fog_end = weather.visibilityMeters / 20;
     },
 
     removeSkySpheres() {
