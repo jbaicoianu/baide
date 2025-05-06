@@ -424,6 +424,9 @@ room.registerElement('weather-metar', {
 
     create() {
         this.skySpheres = [];
+        this.refreshWeather();
+    },
+	refreshWeather() {
         if (this.stationid) {
             this.getWeatherByStationId(this.stationid).then(weather => {
                 if (weather) {
@@ -444,9 +447,7 @@ room.registerElement('weather-metar', {
                 console.error('Invalid GPS format. Expected "<lat> <lon>".');
             }
         }
-        // Initialization code if needed
     },
-
     updateRoomWeather(weather) {
         // Implementation for updating the room with the weather data
         console.log('Room weather updated:', weather);
