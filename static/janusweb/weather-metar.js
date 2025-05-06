@@ -150,6 +150,7 @@ room.registerElement('weather-metar', {
                     // Visibility
                     if (/^[\d\/]+SM$/.test(token)) {
                         metarData.visibilityStatuteMi = this.parseVisibility(token);
+                        metarData.visibilityMeters = metarData.visibilityStatuteMi * 1609.34;
                         state = 'RUNWAY_VISUAL_RANGE_OR_WEATHER';
                     } else {
                         state = 'RUNWAY_VISUAL_RANGE_OR_WEATHER';
@@ -509,6 +510,8 @@ room.registerElement('weather-metar', {
             scale: V(largestScale * 1.25),
         }));
         room.far_dist = largestScale * 1.5;
+        room.fog = true;
+        room.fog_far = weather.visibilityMeters;
     },
 
     removeSkySpheres() {
