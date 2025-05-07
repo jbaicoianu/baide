@@ -612,8 +612,6 @@ room.registerElement('weather-skydome', {
 
         // 4) create your mesh
         const material = new THREE.MeshBasicMaterial({
-          map: yourFisheyeTexture,
-          side: THREE.DoubleSide
         });
         const hemiMesh = new THREE.Mesh(hemiGeo, material);
         this.loadNewAsset('object', { id: 'hemisphere', object: hemiMesh });
