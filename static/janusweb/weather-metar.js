@@ -650,7 +650,7 @@ room.registerElement('weather-skydome', {
 
                 let winddir = weather.windDirDegrees * Math.PI / 180;
                 let windspeed = weather.windSpeedKts * 0.514444; // meters per second
-                let adjustedWindspeed = Math.max(0.001, (windspeed / 10)) * (4 - this.level);
+                let adjustedWindspeed = Math.max(0.001, (windspeed / 100)) * (4 - this.level);
 
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
@@ -662,7 +662,6 @@ console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindsp
                         skydome.material.uniforms.wind.value.copy(wind);
                         if (+skydome.material.uniforms.timeOffset.value == 0) skydome.material.uniforms.timeOffset.value = Math.random() * 100000;
                         skydome.renderOrder = 100 - this.level;
-                        console.log('aaaaaaaaaaa', skydome);
                         this.shaderNeedsUpdate = false;
                     }
                 });
