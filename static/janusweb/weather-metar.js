@@ -520,7 +520,7 @@ room.registerElement('weather-metar', {
             skyDome.updateConditions(weather);
             console.log(skyDome);
             //this.skyDomes.push(skyDome);
-            this.skyDomes[this.level] = skyDome;
+            this.skyDomes[index] = skyDome;
             skyDome.visible = true;
         });
         if (this.skyDomes.length > weather.skyConditions.length) {
