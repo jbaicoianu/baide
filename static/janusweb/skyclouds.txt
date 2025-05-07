@@ -14,8 +14,8 @@ uniform vec3 wind;
 
 #define FBM_FREQ		2.76434
 //#define NOISE_VALUE
-#define NOISE_WORLEY
-//#define NOISE_PERLIN
+//#define NOISE_WORLEY
+#define NOISE_PERLIN
 
 //#define SIMULATE_LIGHT
 #define FAKE_LIGHT
