@@ -2,7 +2,7 @@ room.registerElement('weather-metar', {
     metarData: {},
     gps: '',
     stationid: '',
-    skySpheres: [],
+    skyDomes: [],
 
     async getWeatherByGPS(lat, lon) {
         try {
@@ -423,7 +423,7 @@ room.registerElement('weather-metar', {
     },
 
     create() {
-        this.skySpheres = [];
+        this.skyDomess = [];
         this.refreshWeather();
     },
 	refreshWeather() {
@@ -516,14 +516,12 @@ room.registerElement('weather-metar', {
 
             let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 
-            const skySphere = this.createObject('weather-skydome', {
-                altitude: altitude,
-                coverage: coverage,
-                wind: wind,
+            const skyDome = this.createObject('weather-skydome', {
                 level: index
             });
-            console.log(skySphere);
-            this.skySpheres.push(skySphere);
+            skyDome.updateConditions(conditions);
+            console.log(skyDome);
+            this.skyDomes.push(skyDomes);
         });
         let far = Math.max(1000, largestScale * 1.5);
         // final sky sphere for overall color
@@ -534,7 +532,7 @@ room.registerElement('weather-metar', {
             fog: false,
             scale: V(far * .9),
         });
-        this.skySpheres.push(skyColorSphere);
+        this.skyDomes.push(skyColorSphere);
         room.far_dist = far;
         room.fog = true;
         room.fog_mode = 'linear';
@@ -542,10 +540,10 @@ room.registerElement('weather-metar', {
     },
 
     removeSkySpheres() {
-        this.skySpheres.forEach(sphere => {
-            room.removeChild(sphere);
+        this.skyDomes.forEach(sphere => {
+            this.removeChild(sphere);
         });
-        this.skySpheres = [];
+        this.skyDomes = [];
     },
 
     update(dt) {
@@ -556,6 +554,7 @@ room.registerElement('weather-skydome', {
     altitude: 10000,
     coverage: .2,
     wind: V(),
+    conditions: {},
     level: 0,
     
     create() {
@@ -625,6 +624,17 @@ room.registerElement('weather-skydome', {
             scale: `${scale} ${this.altitude} ${scale}`,
             transparent: true,
             depth_write: false,
-		});        
+		});
+        this.shaderNeedsUpdate = true;
+    },
+    update() {
+        if (this.shaderNeedsUpdate) {
+            if (this.conditions && this.skydome && this.skydome.shader) {
+            }
+        }
+    },
+    updateConditions(conditions) {
+        this.conditions = conditions;
+        this.shaderNeedsUpdate = true;
     }
 });
