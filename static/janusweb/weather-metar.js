@@ -622,7 +622,7 @@ room.registerElement('weather-skydome', {
             image_id: 'skynoise',
             cull_face: 'front',
             pos: `0 0 0`,
-            scale: `${scale} ${this.altitude} ${scale}`,
+            scale: `${scale} ${this.altitude / 10} ${scale}`,
             transparent: true,
             depth_write: false,
 		});
