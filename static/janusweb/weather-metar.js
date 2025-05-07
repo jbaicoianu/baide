@@ -560,7 +560,7 @@ room.registerElement('weather-skydome', {
     
     create() {
         // 1) parameters
-        const radius         = 1;
+        const radius         = .5;
         const widthSegments  = 64;
         const heightSegments = 32;
         // SphereBufferGeometry args: radius, widthSeg, heightSeg, φstart, φlength, θstart, θlength
