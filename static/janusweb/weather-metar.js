@@ -653,6 +653,7 @@ room.registerElement('weather-skydome', {
                         skydome.material.uniforms.wind.value = wind;
                         skydome.material.uniforms.timeOffset.value = Math.random() * 100000;
                         skydome.renderOrder = this.renderorder;
+                        console.log('aaaaaaaaaaa', skydome);
                     }
                 });
                 this.shaderNeedsUpdate = false;
