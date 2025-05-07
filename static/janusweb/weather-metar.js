@@ -615,7 +615,7 @@ room.registerElement('weather-skydome', {
         });
         const hemiMesh = new THREE.Mesh(hemiGeo, material);
         this.loadNewAsset('object', { id: 'hemisphere', object: hemiMesh });
-        const scale = 4000;
+        const scale = this.altitude;
         this.skydome = this.createObject('object', { 
             id: 'hemisphere',
             shader_id: 'clouds',
