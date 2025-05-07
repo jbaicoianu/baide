@@ -648,7 +648,7 @@ room.registerElement('weather-skydome', {
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 
 				this.skydome.traverseObjects(n => {
-                    if (n.material) {
+                    if (n.material && n.material.uniforms) {
                         console.log(n.material, n);
                         let skydome = n;
                         skydome.material.uniforms.coverage.value = coverage;
