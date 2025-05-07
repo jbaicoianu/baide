@@ -530,13 +530,16 @@ room.registerElement('weather-metar', {
         }
         let far = Math.max(1000, largestScale * 2.5);
         // final sky sphere for overall color
-        const skyColorSphere = this.createObject('object', {
-            id: 'sphere',
-            col: '#87ceeb',
-            cull_face: 'front',
-            fog: false,
-            scale: V(far * .9),
-        });
+        if (!this.skyColor) {
+	        const skyColorSphere = this.createObject('object', {
+    	        id: 'sphere',
+        	    col: '#87ceeb',
+            	cull_face: 'front',
+            	fog: false,
+	            scale: V(far * .9),
+	        });
+        	this.skyColor = skyColorSphere;
+        }
         //this.skyDomes.push(skyColorSphere);
         room.far_dist = far;
         room.fog = true;
