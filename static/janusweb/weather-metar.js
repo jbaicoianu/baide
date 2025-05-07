@@ -519,7 +519,7 @@ room.registerElement('weather-metar', {
             const skyDome = this.createObject('weather-skydome', {
                 level: index
             });
-            skyDome.updateConditions(conditions);
+            skyDome.updateConditions(condition);
             console.log(skyDome);
             this.skyDomes.push(skyDomes);
         });
