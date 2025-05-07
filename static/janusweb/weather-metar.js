@@ -524,7 +524,7 @@ room.registerElement('weather-metar', {
             console.log(skyDome);
             this.skyDomes.push(skyDome);
         });
-        let far = Math.max(1000, largestScale * 1.5);
+        let far = Math.max(1000, largestScale * 2);
         // final sky sphere for overall color
         const skyColorSphere = room.createObject('object', {
             id: 'sphere',
