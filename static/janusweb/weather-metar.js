@@ -615,7 +615,6 @@ room.registerElement('weather-skydome', {
         });
         const hemiMesh = new THREE.Mesh(hemiGeo, material);
         this.loadNewAsset('object', { id: 'hemisphere', object: hemiMesh });
-        let altitude = condition.cloudBaseFtAgl * 0.3048;
         const scale = 4000;
         this.skydome = this.createObject('object', { 
             id: 'hemisphere',
