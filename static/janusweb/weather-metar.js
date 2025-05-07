@@ -651,7 +651,7 @@ room.registerElement('weather-skydome', {
                     if (n.material && n.material.uniforms) {
                         console.log(n.material, n);
                         let skydome = n;
-                        skydome.material.uniforms.coverage.value = coverage;
+                        skydome.material.uniforms.coverage.value = coverage * 2;
                         skydome.material.uniforms.wind.value = wind;
                         skydome.material.uniforms.timeOffset.value = Math.random() * 100000;
                         skydome.renderOrder = this.renderorder;
