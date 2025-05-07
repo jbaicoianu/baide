@@ -650,7 +650,7 @@ room.registerElement('weather-skydome', {
 
                 let winddir = weather.windDirDegrees * Math.PI / 180;
                 let windspeed = weather.windSpeedKts * 0.514444; // meters per second
-                let adjustedWindspeed = Math.max(0.01, (windspeed / 10) * (4 - this.level));
+                let adjustedWindspeed = Math.max(0.01, (windspeed / 10)) * (4 - this.level);
 
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
