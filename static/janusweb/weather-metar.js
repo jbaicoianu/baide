@@ -519,7 +519,7 @@ room.registerElement('weather-metar', {
             const skyDome = this.createObject('weather-skydome', {
                 level: index
             });
-            skyDome.updateConditions(condition);
+            skyDome.updateConditions(weather);
             console.log(skyDome);
             this.skyDomes.push(skyDome);
         });
@@ -630,8 +630,9 @@ room.registerElement('weather-skydome', {
     update() {
         if (this.shaderNeedsUpdate) {
             console.log('update?', this.conditions, this.skydome);
-            if (this.conditions && this.skydome) {
-                const condition = this.conditions;
+            if (this.weather && this.skydome) {
+                const weather = this.weather,
+                      condition = weather.skyConditions[this.level];
                 let coverage = 0;
                 if (condition.skyCover == 'FEW') coverage = 0.3;
                 else if (condition.skyCover == 'SCT') coverage = 0.4;
@@ -646,19 +647,19 @@ room.registerElement('weather-skydome', {
 
 				this.skydome.traverseObjects(n => {
                     if (n.material instanceof THREE.ShaderMaterial) {
-                let skydome = n;
-                skydome.material.uniforms.coverage.value = coverage;
-                skydome.material.uniforms.wind.value = wind;
-                skydome.material.uniforms.timeOffset.value = Math.random() * 100000;
+                        let skydome = n;
+                        skydome.material.uniforms.coverage.value = coverage;
+                        skydome.material.uniforms.wind.value = wind;
+                        skydome.material.uniforms.timeOffset.value = Math.random() * 100000;
                     }
-                });
-                        this.shaderNeedsUpdate = false;
+                }
+                this.shaderNeedsUpdate = false;
                 console.log('changed shader params', this);
             }
         }
     },
-    updateConditions(conditions) {
-        this.conditions = conditions;
+    updateConditions(weather) {
+        this.weather = weather;
         this.shaderNeedsUpdate = true;
     }
 });
