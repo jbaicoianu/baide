@@ -647,16 +647,16 @@ room.registerElement('weather-skydome', {
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 
 				this.skydome.traverseObjects(n => {
-                    if (n.material instanceof THREE.ShaderMaterial) {
+                    if (n.material) {
                         let skydome = n;
                         skydome.material.uniforms.coverage.value = coverage;
                         skydome.material.uniforms.wind.value = wind;
                         skydome.material.uniforms.timeOffset.value = Math.random() * 100000;
                         skydome.renderOrder = this.renderorder;
                         console.log('aaaaaaaaaaa', skydome);
+                        this.shaderNeedsUpdate = false;
                     }
                 });
-                this.shaderNeedsUpdate = false;
                 console.log('changed shader params', this);
             }
         }
