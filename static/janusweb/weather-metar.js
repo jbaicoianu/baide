@@ -659,7 +659,7 @@ room.registerElement('weather-skydome', {
                         console.log(n.material, n);
                         let skydome = n;
                         skydome.material.uniforms.coverage.value = coverage * 1.5;
-                        skydome.material.uniforms.wind.value = wind;
+                        skydome.material.uniforms.wind.value.copy(wind);
                         if (+skydome.material.uniforms.timeOffset.value == 0) skydome.material.uniforms.timeOffset.value = Math.random() * 100000;
                         skydome.renderOrder = 100 - this.level;
                         console.log('aaaaaaaaaaa', skydome);
