@@ -541,7 +541,7 @@ room.registerElement('weather-metar', {
         	this.skyColor = skyColorSphere;
         }
         //this.skyDomes.push(skyColorSphere);
-        room.far_dist = far;
+        room.far_dist = 100000;
         room.fog = true;
         room.fog_mode = 'linear';
         room.fog_end = weather.visibilityMeters / 20;
