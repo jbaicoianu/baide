@@ -552,7 +552,7 @@ room.registerElement('weather-metar', {
     }
 });
 room.registerElement('weather-skydome', {
-    altitude: 10000,
+    altitude: 1000,
     coverage: .2,
     wind: V(),
     conditions: {},
