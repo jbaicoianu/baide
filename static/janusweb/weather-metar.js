@@ -630,6 +630,25 @@ room.registerElement('weather-skydome', {
     update() {
         if (this.shaderNeedsUpdate) {
             if (this.conditions && this.skydome && this.skydome.shader) {
+                const condition = this.conditions;
+                let coverage = 0;
+                if (condition.skyCover == 'FEW') coverage = 0.3;
+                else if (condition.skyCover == 'SCT') coverage = 0.4;
+                else if (condition.skyCover == 'BKN') coverage = 0.5;
+                else if (condition.skyCover == 'OVC') coverage = 1.0;
+
+                let winddir = weather.windDirDegrees * Math.PI / 180;
+                let windspeed = weather.windSpeedKts * 0.514444; // meters per second
+                let adjustedWindspeed = (windspeed / 1000) * (1 + index);
+
+                let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
+
+                this.skydome.shader.uniforms.coverage.value = coverage;
+                this.skydome.shader.uniforms.wind.value = wind;
+                this.skydome.shader.uniforms.timeOffset.value = Math.random() * 100000;
+                this.skydome.traverseObjects(n => { if (n.material) n.renderOrder = 100 - this.level; });
+				this.shaderNeedsUpdate = false;
+                console.log('changed shader params', this);
             }
         }
     },
