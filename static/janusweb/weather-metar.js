@@ -626,6 +626,7 @@ room.registerElement('weather-skydome', {
             transparent: true,
             depth_write: false,
 		});
+        this.skydome.assignTextures();
         this.shaderNeedsUpdate = true;
     },
     update() {
