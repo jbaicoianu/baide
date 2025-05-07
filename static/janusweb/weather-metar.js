@@ -648,6 +648,7 @@ room.registerElement('weather-skydome', {
 
 				this.skydome.traverseObjects(n => {
                     if (n.material) {
+                        console.log(n.material, n);
                         let skydome = n;
                         skydome.material.uniforms.coverage.value = coverage;
                         skydome.material.uniforms.wind.value = wind;
