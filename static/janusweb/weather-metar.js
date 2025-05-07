@@ -629,8 +629,8 @@ room.registerElement('weather-skydome', {
     },
     update() {
         if (this.shaderNeedsUpdate) {
-            console.log('update?', this.conditions, this.skydome, this.skydome.skydome);
-            if (this.conditions && this.skydome && this.skydome.skydome && this.skydome.skydome.shader) {
+            console.log('update?', this.conditions, this.skydome, this.skydome.shader);
+            if (this.conditions && this.skydome && this.skydome.shader) {
                 let skydome = this.skydome.skydome.shader;
                 const condition = this.conditions;
                 let coverage = 0;
