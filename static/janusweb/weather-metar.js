@@ -519,8 +519,15 @@ room.registerElement('weather-metar', {
             });
             skyDome.updateConditions(weather);
             console.log(skyDome);
-            this.skyDomes.push(skyDome);
+            //this.skyDomes.push(skyDome);
+            this.skyDomes[this.level] = skyDome;
+            skyDome.visible = true;
         });
+        if (this.skyDomes.length > weather.skyConditions.length) {
+            for (let i = weather.skyConditions.length; i < this.skyDomes.length; i++) {
+                this.skyDomes[i].visible = false;
+            }
+        }
         let far = Math.max(1000, largestScale * 2.5);
         // final sky sphere for overall color
         const skyColorSphere = this.createObject('object', {
