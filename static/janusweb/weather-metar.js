@@ -630,7 +630,8 @@ room.registerElement('weather-skydome', {
     update() {
         if (this.shaderNeedsUpdate) {
             console.log('update?', this.conditions, this.skydome, this.skydome.shader);
-            if (this.conditions && this.skydome && this.skydome.shader) {
+            if (this.conditions && this.skydome && this.skydome.skydome && this.skydome.skydome.shader) {
+                let skydome = this.skydome.skydome.shader;
                 const condition = this.conditions;
                 let coverage = 0;
                 if (condition.skyCover == 'FEW') coverage = 0.3;
@@ -644,10 +645,10 @@ room.registerElement('weather-skydome', {
 
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 
-                this.skydome.shader.uniforms.coverage.value = coverage;
-                this.skydome.shader.uniforms.wind.value = wind;
-                this.skydome.shader.uniforms.timeOffset.value = Math.random() * 100000;
-                this.skydome.traverseObjects(n => { if (n.material) n.renderOrder = 100 - this.level; });
+                skydome.shader.uniforms.coverage.value = coverage;
+                skydome.shader.uniforms.wind.value = wind;
+                skydome.shader.uniforms.timeOffset.value = Math.random() * 100000;
+                skydome.traverseObjects(n => { if (n.material) n.renderOrder = 100 - this.level; });
 				this.shaderNeedsUpdate = false;
                 console.log('changed shader params', this);
             }
