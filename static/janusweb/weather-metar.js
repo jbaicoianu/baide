@@ -471,7 +471,7 @@ room.registerElement('weather-metar', {
             let altitude = condition.cloudBaseFtAgl * 0.3048;
             const scale = 4000;
             largestScale = Math.max(largestScale, altitude);
-
+/*
             const skySphere = room.createObject('object', {
                 id: `sphere`,
                 shader_id: 'clouds',
@@ -503,7 +503,25 @@ room.registerElement('weather-metar', {
                 skySphere.traverseObjects(n => { if (n.material) n.renderOrder = 100 - index; });
 
             }, 500);
-            //room.appendChild(skySphere);
+*/
+            let coverage = 0;
+            if (condition.skyCover == 'FEW') coverage = 0.3;
+            else if (condition.skyCover == 'SCT') coverage = 0.4;
+            else if (condition.skyCover == 'BKN') coverage = 0.5;
+            else if (condition.skyCover == 'OVC') coverage = 1.0;
+
+            let winddir = weather.windDirDegrees * Math.PI / 180;
+            let windspeed = weather.windSpeedKts * 0.514444; // meters per second
+            let adjustedWindspeed = (windspeed / 1000) * (1 + index);
+
+            let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
+
+            const skySphere = this.createObject('weather-skydome', {
+                altitude: altitude,
+                coverage: coverage,
+                wind: wind,
+                level: index
+            });
             console.log(skySphere);
             this.skySpheres.push(skySphere);
         });
@@ -532,5 +550,84 @@ room.registerElement('weather-metar', {
 
     update(dt) {
         // Per-frame update logic if needed
+    }
+});
+room.registerElement('weather-skydome', {
+    altitude: 10000,
+    coverage: .2,
+    wind: V(),
+    level: 0,
+    
+    create() {
+        // 1) parameters
+        const radius         = 1;
+        const widthSegments  = 64;
+        const heightSegments = 32;
+        // SphereBufferGeometry args: radius, widthSeg, heightSeg, φstart, φlength, θstart, θlength
+        const phiStart   = 0;
+        const phiLength  = Math.PI * 2;
+        const thetaStart = 0;
+        const thetaLength= Math.PI / 2;  // only upper hemisphere
+
+        // 2) make the hemisphere
+        const hemiGeo = new THREE.SphereBufferGeometry(
+          radius,
+          widthSegments,
+          heightSegments,
+          phiStart,
+          phiLength,
+          thetaStart,
+          thetaLength
+        );
+
+        // 3) overwrite its UVs with fisheye mapping
+        const posAttr = hemiGeo.attributes.position;
+        const count   = posAttr.count;
+        const fisheyeUVs = new Float32Array(count * 2);
+
+        for (let i = 0; i < count; i++) {
+          // get vertex
+          const x = posAttr.getX(i);
+          const y = posAttr.getY(i);
+          const z = posAttr.getZ(i);
+
+          // compute polar angle φ from Y axis
+          const phi = Math.acos(y);               // 0 at north pole, π/2 at equator
+          const r   = phi / (Math.PI * 0.5);      // normalized radius: 0→1
+
+          // compute azimuth θ in XZ plane
+          const theta = Math.atan2(z, x);         // -π→π
+
+          // fisheye plane coords
+          const fx = Math.cos(theta) * r;
+          const fy = Math.sin(theta) * r;
+
+          // map from [-1,1] to [0,1] UV space
+          fisheyeUVs[2*i    ] = fx * 0.5 + 0.5;
+          fisheyeUVs[2*i + 1] = fy * 0.5 + 0.5;
+        }
+
+        // replace UV attribute
+        hemiGeo.setAttribute('uv', new THREE.BufferAttribute(fisheyeUVs, 2));
+
+        // 4) create your mesh
+        const material = new THREE.MeshBasicMaterial({
+          map: yourFisheyeTexture,
+          side: THREE.DoubleSide
+        });
+        const hemiMesh = new THREE.Mesh(hemiGeo, material);
+        this.loadNewAsset('object', { id: 'hemisphere', object: hemiMesh });
+        let altitude = condition.cloudBaseFtAgl * 0.3048;
+        const scale = 4000;
+        this.skydome = this.createObject('object', { 
+            id: 'hemisphere',
+            shader_id: 'clouds',
+            image_id: 'skynoise',
+            cull_face: 'front',
+            pos: `0 0 0`,
+            scale: `${scale} ${this.altitude} ${scale}`,
+            transparent: true,
+            depth_write: false,
+		});        
     }
 });
