@@ -521,7 +521,7 @@ room.registerElement('weather-metar', {
             });
             skyDome.updateConditions(condition);
             console.log(skyDome);
-            this.skyDomes.push(skyDomes);
+            this.skyDomes.push(skyDome);
         });
         let far = Math.max(1000, largestScale * 1.5);
         // final sky sphere for overall color
