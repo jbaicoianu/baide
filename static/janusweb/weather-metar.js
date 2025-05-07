@@ -638,7 +638,7 @@ room.registerElement('weather-skydome', {
     },
     update() {
         if (this.shaderNeedsUpdate) {
-            console.log('update?', this.conditions, this.skydome);
+            //console.log('update?', this.conditions, this.skydome);
             if (this.weather && this.skydome) {
                 const weather = this.weather,
                       condition = weather.skyConditions[this.level];
@@ -656,7 +656,7 @@ room.registerElement('weather-skydome', {
 console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
 				this.skydome.traverseObjects(n => {
                     if (n.material && n.material.uniforms) {
-                        console.log(n.material, n);
+                        //console.log(n.material, n);
                         let skydome = n;
                         skydome.material.uniforms.coverage.value = coverage * 1.5;
                         skydome.material.uniforms.wind.value.copy(wind);
@@ -665,7 +665,7 @@ console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindsp
                         this.shaderNeedsUpdate = false;
                     }
                 });
-                console.log('changed shader params', this);
+                //console.log('changed shader params', this);
             }
         }
     },
