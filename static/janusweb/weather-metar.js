@@ -517,7 +517,8 @@ room.registerElement('weather-metar', {
             let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 
             const skyDome = this.createObject('weather-skydome', {
-                level: index
+                level: index,
+                altitude: altitude,
             });
             skyDome.updateConditions(weather);
             console.log(skyDome);
