@@ -534,7 +534,7 @@ room.registerElement('weather-metar', {
 	        const skyColorSphere = this.createObject('object', {
     	        id: 'sphere',
         	    col: '#87ceeb',
-            	cull_face: 'front',
+            	cull_face: 'none',
             	fog: false,
 	            scale: V(far * .9),
 	        });
