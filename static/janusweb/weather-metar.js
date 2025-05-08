@@ -686,7 +686,7 @@ room.registerElement('weather-skybox', {
         };
         let rendertarget = new THREE.WebGLCubeRenderTarget( this.resolution, options );
         rendertarget.mapping = THREE.CubeReflectionMapping;
-        let cubeCamera = new THREE.CubeCamera( room.near_dist, room.far_dist, rendertarget );
+        let cubeCamera = new THREE.CubeCamera( 1, 100000, rendertarget );
         let skyscene = new THREE.Scene();
         let weather = this.createObject('weather-metar', { stationid: this.stationid });
         skyscene.add(weather.objects['3d']);
