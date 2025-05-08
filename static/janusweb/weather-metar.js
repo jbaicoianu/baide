@@ -710,7 +710,7 @@ room.registerElement('weather-skybox', {
     updateTexture() {
 	    let renderer = this.engine.systems.render.renderer;
 	    this.cubeCamera.update(renderer, this.skyscene);
-        console.log('feh', this.cubeCamera, this.skyscene);
+        //console.log('feh', this.cubeCamera, this.skyscene);
     },
   	update(dt) {
     	if (this.cubeCamera && dt <= 1/30) {
