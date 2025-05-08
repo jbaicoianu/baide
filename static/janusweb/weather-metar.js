@@ -690,7 +690,7 @@ room.registerElement('weather-skybox', {
         let skyscene = new THREE.Scene();
         let weather = this.createObject('weather-metar', { stationid: this.stationid });
         skyscene.add(weather.objects['3d']);
-        scene.add(cubeCamera);
+        skyscene.add(cubeCamera);
         
         this.cubeCamera = cubeCamera;
         this.cubeRenderTarget = rendertarget;
