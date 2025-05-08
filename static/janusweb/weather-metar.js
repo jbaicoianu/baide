@@ -679,6 +679,11 @@ room.registerElement('weather-skybox', {
     stationid: 'KOAK',
     
     create() {
+        var options = {
+          generateMipmaps: true,
+          minFilter: THREE.LinearMipmapLinearFilter,
+          magFilter: THREE.LinearFilter
+        };
         let rendertarget = new THREE.WebGLCubeRenderTarget( this.resolution, options );
         rendertarget.mapping = THREE.CubeReflectionMapping;
         let cubeCamera = new THREE.CubeCamera( room.near_dist, room.far_dist, rendertarget );
