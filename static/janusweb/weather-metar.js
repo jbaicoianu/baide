@@ -700,6 +700,7 @@ room.registerElement('weather-skybox', {
         this.cubeRenderTarget = rendertarget;
         this.skyscene = skyscene;
         this.weather = weather;
+        this.cube = cube;
         
         this.updateTexture();
 
