@@ -717,7 +717,7 @@ room.registerElement('weather-skybox', {
         this.cube.position.y = Math.sin(Date.now() / 1000);
     },
   	update(dt) {
-    	if (this.cubeCamera && this.elapsed >= 1/2) {
+    	if (this.cubeCamera && this.elapsed >= 1/10) {
             this.weather.update();
 	    	this.updateTexture();
             this.elapsed = 0;
