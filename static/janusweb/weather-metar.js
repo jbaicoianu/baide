@@ -545,6 +545,7 @@ room.registerElement('weather-metar', {
         room.fog = true;
         room.fog_mode = 'linear';
         room.fog_end = weather.visibilityMeters / 20;
+        this.dispatchEvent({type: 'update_weather', data: weather});
     },
 
     removeSkySpheres() {
@@ -707,7 +708,7 @@ room.registerElement('weather-skybox', {
 
         let scene = this.engine.systems.world.scene['world-3d'];
     	room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
-        elation.events.fire({element: room._target, type: 'skybox_update'});
+        weather.addEventListener('weather_update', ev => this.updateTexture());
         console.log('ok set up our skybox', scene, room.skyboxobj, rendertarget.texture);
 
     },
