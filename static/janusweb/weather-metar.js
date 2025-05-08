@@ -547,7 +547,7 @@ room.registerElement('weather-metar', {
         room.fog_end = weather.visibilityMeters / 20;
         setTimeout(() => {
         	this.dispatchEvent({type: 'weather_update', data: weather});
-        }, 20);
+        }, 200);
     },
 
     removeSkySpheres() {
