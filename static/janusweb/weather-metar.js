@@ -727,6 +727,7 @@ room.registerElement('weather-skybox', {
         if (scene.background !== this.cubeRenderTarget.texture) {
             console.log('set it', this.cubeRenderTarget.texture);
     		room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
+            elation.events.fire({element: room._target, type: 'skybox_update'});
         }
 	},
 
