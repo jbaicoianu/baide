@@ -717,10 +717,12 @@ room.registerElement('weather-skybox', {
         this.cube.position.y = Math.sin(Date.now() / 1000);
     },
   	update(dt) {
-    	if (this.cubeCamera && dt <= 1/30) {
+    	if (this.cubeCamera && this.elapsed <= 1/30) {
             this.weather.update();
 	    	this.updateTexture();
+            this.elapsed = 0;
     	}
+        this.elapsed = (this.elapsed ?? 0) + dt;
         let scene = this.engine.systems.world.scene['world-3d'];
         if (scene.background !== this.cubeRenderTarget.texture) {
     		room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
