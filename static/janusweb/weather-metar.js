@@ -701,7 +701,7 @@ room.registerElement('weather-skybox', {
         this.cubeRenderTarget = rendertarget;
         this.skyscene = skyscene;
         this.weather = weather;
-        this.cube = cube;
+        //this.cube = cube;
         
         this.updateTexture();
 
@@ -715,7 +715,7 @@ room.registerElement('weather-skybox', {
 	    let renderer = this.engine.systems.render.renderer;
 	    this.cubeCamera.update(renderer, this.skyscene);
         //console.log('feh', this.cubeCamera, this.skyscene);
-        this.cube.position.y = Math.sin(Date.now() / 1000);
+        //this.cube.position.y = Math.sin(Date.now() / 1000);
     },
   	update(dt) {
     	if (this.cubeCamera && this.elapsed >= this.refreshtime) {
