@@ -675,7 +675,7 @@ console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindsp
     }
 });
 room.registerElement('weather-skybox', {
-    resolution: 2048,
+    resolution: 1024,
     stationid: 'KOAK',
     
     create() {
