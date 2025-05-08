@@ -691,6 +691,10 @@ room.registerElement('weather-skybox', {
         let weather = this.createObject('weather-metar', { stationid: this.stationid });
         skyscene.add(weather.objects['3d']);
         skyscene.add(cubeCamera);
+
+        let cube THREE.Mesh(new THREE.CubeGeometry(1), new THREE.MeshBasicMaterial({color: new THREE.Color('green')}));
+        cube.pos.set(0, 0, -5);
+        skyscene.add(cube);
         
         this.cubeCamera = cubeCamera;
         this.cubeRenderTarget = rendertarget;
