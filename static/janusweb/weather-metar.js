@@ -537,6 +537,7 @@ room.registerElement('weather-metar', {
             	cull_face: 'none',
             	fog: false,
 	            scale: V(far * .9),
+                lighting: false,
 	        });
         	this.skyColor = skyColorSphere;
         }
