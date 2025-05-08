@@ -677,7 +677,7 @@ console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindsp
 room.registerElement('weather-skybox', {
     resolution: 1024,
     stationid: 'KOAK',
-    refreshtime: 1/10,
+    refreshtime: 10,
     
     create() {
         var options = {
