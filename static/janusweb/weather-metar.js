@@ -713,13 +713,12 @@ room.registerElement('weather-skybox', {
     updateTexture() {
 	    let renderer = this.engine.systems.render.renderer;
 	    this.cubeCamera.update(renderer, this.skyscene);
-        //console.log('feh', this.cubeCamera, this.skyscene);
+        console.log('feh', this.cubeCamera, this.skyscene);
         this.cube.position.y = Math.sin(Date.now() / 1000);
     },
   	update(dt) {
     	if (this.cubeCamera && dt <= 1/30) {
             this.weather.update();
-            console.log('ehhhh');
 	    	this.updateTexture();
     	}
         let scene = this.engine.systems.world.scene['world-3d'];
