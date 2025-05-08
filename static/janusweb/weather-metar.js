@@ -688,6 +688,7 @@ room.registerElement('weather-skybox', {
         rendertarget.mapping = THREE.CubeReflectionMapping;
         let cubeCamera = new THREE.CubeCamera( room.near_dist, room.far_dist, rendertarget );
         let skyscene = new THREE.Scene();
+        skyscene.background = new THREE.Color('pink');
         let weather = this.createObject('weather-metar', { stationid: this.stationid });
         skyscene.add(weather.objects['3d']);
         skyscene.add(cubeCamera);
