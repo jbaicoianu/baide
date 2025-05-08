@@ -713,6 +713,7 @@ room.registerElement('weather-skybox', {
 	    let renderer = this.engine.systems.render.renderer;
 	    this.cubeCamera.update(renderer, this.skyscene);
         //console.log('feh', this.cubeCamera, this.skyscene);
+        this.cube.position.y = Math.sin(Date.now());
     },
   	update(dt) {
     	if (this.cubeCamera && dt <= 1/30) {
