@@ -717,6 +717,7 @@ room.registerElement('weather-skybox', {
   	update(dt) {
     	if (this.cubeCamera && dt <= 1/30) {
             this.weather.update();
+            console.log('ehhhh');
 	    	this.updateTexture();
     	}
         let scene = this.engine.systems.world.scene['world-3d'];
