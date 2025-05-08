@@ -708,7 +708,7 @@ room.registerElement('weather-skybox', {
 
         let scene = this.engine.systems.world.scene['world-3d'];
     	room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
-        weather.addEventListener('weather_update', ev => this.updateTexture());
+        weather.addEventListener('weather_update', ev => { console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'); this.updateTexture(); });
         console.log('ok set up our skybox', scene, room.skyboxobj, rendertarget.texture);
 
     },
