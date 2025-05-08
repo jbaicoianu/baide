@@ -700,6 +700,7 @@ room.registerElement('weather-skybox', {
         let scene = this.engine.systems.world.scene['world-3d'];
     	room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
         elation.events.fire({element: room, type: 'skybox_update'});
+        console.log('ok set up our skybox', scene, room.skyboxobj);
 
     },
     updateTexture() {
