@@ -677,6 +677,7 @@ console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindsp
 room.registerElement('weather-skybox', {
     resolution: 1024,
     stationid: 'KOAK',
+    refreshtime: 1/10,
     
     create() {
         var options = {
@@ -717,7 +718,7 @@ room.registerElement('weather-skybox', {
         this.cube.position.y = Math.sin(Date.now() / 1000);
     },
   	update(dt) {
-    	if (this.cubeCamera && this.elapsed >= 1/60) {
+    	if (this.cubeCamera && this.elapsed >= this.refreshtime) {
             this.weather.update();
 	    	this.updateTexture();
             this.elapsed = 0;
