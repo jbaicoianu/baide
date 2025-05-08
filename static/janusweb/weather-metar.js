@@ -725,6 +725,7 @@ room.registerElement('weather-skybox', {
         this.elapsed = (this.elapsed ?? 0) + dt;
         let scene = this.engine.systems.world.scene['world-3d'];
         if (scene.background !== this.cubeRenderTarget.texture) {
+            console.log('set it', this.cubeRenderTarget.texture);
     		room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
         }
 	},
