@@ -674,3 +674,38 @@ console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindsp
         this.shaderNeedsUpdate = true;
     }
 });
+room.registerElement('weather-skybox', {
+    resolution: 2048,
+    stationid: 'KOAK',
+    
+    create() {
+        let rendertarget = new THREE.WebGLCubeRenderTarget( this.resolution, options );
+        rendertarget.mapping = THREE.CubeReflectionMapping;
+        let cubeCamera = new THREE.CubeCamera( room.near_dist, room.far_dist, rendertarget );
+        let skyscene = new THREE.Scene();
+        let weather = this.createObject('weather-metar', { stationid: this.stationid });
+        skyscene.add(weather.objects['3d']);
+        scene.add(cubeCamera);
+        
+        this.cubeCamera = cubeCamera;
+        this.cubeRenderTarget = rendertarget;
+        this.skyscene = skyscene;
+        this.updateTexture();
+
+        let scene = this.engine.systems.world.scene['world-3d'];
+    	room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
+        elation.events.fire({element: room, type: 'skybox_update'});
+
+    },
+    updateTexture() {
+	    let renderer = this.engine.systems.render.renderer;
+	    this.cubeCamera.update(renderer, this.skyscene);
+        console.log('feh', this.cubeCamera);
+    },
+  	update(dt) {
+    	if (this.cubeCamera && dt <= 1/30) {
+	    	this.updateTexture();
+    	}
+	},
+
+});
