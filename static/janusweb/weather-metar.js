@@ -758,7 +758,7 @@ room.registerElement('weather-winds', {
         }
     },
 
-    async getWindAt(lat, lon, level) {
+    async getWindAt(lat, lon, level = 30) {
         if (!this.windtempdata[level]) {
             console.warn(`Wind data for level ${level} not loaded. Loading now...`);
             const loadedData = await this.loadRegionData('your-region', level); // Replace 'your-region' with actual region parameter
