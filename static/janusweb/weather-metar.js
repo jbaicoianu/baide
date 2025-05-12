@@ -739,7 +739,7 @@ room.registerElement('weather-skybox', {
 });
 room.registerElement('weather-winds', {
     windtempdata: {},
-    region = 'sfo',
+    region: 'sfo',
 
     async loadRegionData(region, level = 30) {
         try {
