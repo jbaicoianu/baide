@@ -793,7 +793,7 @@ room.registerElement('weather-winds', {
         }
 
         // Inverse Distance Weighting Interpolation
-        let weightedWind = { dir: 0, spd: 0 };
+        let weightedWind = { dir: 0, spd: 0, u: 0, v: 0 };
         let weightSum = 0;
 
         closestSites.forEach(site => {
