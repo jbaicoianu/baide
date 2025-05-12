@@ -426,7 +426,7 @@ room.registerElement('weather-metar', {
         this.skyDomess = [];
         this.refreshWeather();
     },
-	refreshWeather() {
+    refreshWeather() {
         if (this.stationid) {
             this.getWeatherByStationId(this.stationid).then(weather => {
                 if (weather) {
@@ -531,15 +531,15 @@ room.registerElement('weather-metar', {
         let far = Math.max(1000, largestScale * 2.5);
         // final sky sphere for overall color
         if (!this.skyColor) {
-	        const skyColorSphere = this.createObject('object', {
-    	        id: 'sphere',
-        	    col: '#87ceeb',
-            	cull_face: 'none',
-            	fog: false,
-	            scale: V(far * .9),
+            const skyColorSphere = this.createObject('object', {
+                id: 'sphere',
+                col: '#87ceeb',
+                cull_face: 'none',
+                fog: false,
+                scale: V(far * .9),
                 lighting: false,
-	        });
-        	this.skyColor = skyColorSphere;
+            });
+            this.skyColor = skyColorSphere;
         }
         //this.skyDomes.push(skyColorSphere);
         room.far_dist = 100000;
@@ -547,7 +547,7 @@ room.registerElement('weather-metar', {
         room.fog_mode = 'linear';
         room.fog_end = weather.visibilityMeters / 20;
         setTimeout(() => {
-        	this.dispatchEvent({type: 'weather_update', data: weather});
+            this.dispatchEvent({type: 'weather_update', data: weather});
         }, 200);
     },
 
@@ -636,7 +636,7 @@ room.registerElement('weather-skydome', {
             scale: `${scale} ${this.altitude} ${scale}`,
             transparent: true,
             depth_write: false,
-		});
+        });
         this.skydome.assignTextures();
         this.shaderNeedsUpdate = true;
     },
@@ -657,8 +657,8 @@ room.registerElement('weather-skydome', {
                 let adjustedWindspeed = Math.max(0.001, (windspeed / 1000)) * Math.pow(1.1, -this.level);
 
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
-console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
-				this.skydome.traverseObjects(n => {
+                console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
+                this.skydome.traverseObjects(n => {
                     if (n.material && n.material.uniforms) {
                         //console.log(n.material, n);
                         let skydome = n;
@@ -710,30 +710,140 @@ room.registerElement('weather-skybox', {
         this.updateTexture();
 
         let scene = this.engine.systems.world.scene['world-3d'];
-    	room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
+        room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
         weather.addEventListener('weather_update', ev => { console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA'); this.updateTexture(); });
         console.log('ok set up our skybox', scene, room.skyboxobj, rendertarget.texture);
 
     },
     updateTexture() {
-	    let renderer = this.engine.systems.render.renderer;
-	    this.cubeCamera.update(renderer, this.skyscene);
+        let renderer = this.engine.systems.render.renderer;
+        this.cubeCamera.update(renderer, this.skyscene);
         //console.log('feh', this.cubeCamera, this.skyscene);
         //this.cube.position.y = Math.sin(Date.now() / 1000);
     },
-  	update(dt) {
-    	if (this.cubeCamera && this.elapsed >= this.refreshtime) {
+    update(dt) {
+        if (this.cubeCamera && this.elapsed >= this.refreshtime) {
             this.weather.update();
-	    	this.updateTexture();
+            this.updateTexture();
             this.elapsed = 0;
-    	}
+        }
         this.elapsed = (this.elapsed ?? 0) + dt;
         let scene = this.engine.systems.world.scene['world-3d'];
         if (scene.background !== this.cubeRenderTarget.texture) {
             console.log('set it', this.cubeRenderTarget.texture);
-    		room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
+            room.skyboxobj.setTexture(this.cubeRenderTarget.texture);
             //elation.events.fire({element: room._target, type: 'skybox_update'});
         }
-	},
+    },
 
+});
+room.registerElement('weather-winds', {
+    windtempdata: {},
+
+    async loadRegionData(region, level = 30) {
+        try {
+            const response = await fetch(`https://p.janusxr.org/https://aviationweather.gov/api/data/windtemp?region=${region}&level=low&format=json&level=${level}`);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch wind data: ${response.statusText}`);
+            }
+            const data = await response.json();
+            if (!data.sites || data.sites.length === 0) {
+                throw new Error('No wind data available for the specified region and level.');
+            }
+            this.windtempdata[level] = data.sites;
+            return this.windtempdata[level];
+        } catch (error) {
+            console.error('Error loading region wind data:', error);
+            return null;
+        }
+    },
+
+    async getWindAt(lat, lon, level) {
+        if (!this.windtempdata[level]) {
+            console.warn(`Wind data for level ${level} not loaded. Loading now...`);
+            const loadedData = await this.loadRegionData('your-region', level); // Replace 'your-region' with actual region parameter
+            if (!loadedData) {
+                console.error('Unable to load wind data.');
+                return null;
+            }
+        }
+
+        const sites = this.windtempdata[level];
+        if (!sites || sites.length === 0) {
+            console.error('No wind data available.');
+            return null;
+        }
+
+        // Calculate distance for each site
+        const sitesWithDistance = sites.map(site => {
+            const distance = this.calculateDistance(lat, lon, site.lat, site.lon);
+            return { ...site, distance };
+        });
+
+        // Sort by distance and take the closest 4
+        const closestSites = sitesWithDistance
+            .filter(site => site.distance > 0) // Exclude the exact location if present
+            .sort((a, b) => a.distance - b.distance)
+            .slice(0, 4);
+
+        if (closestSites.length === 0) {
+            console.error('No nearby wind stations found.');
+            return null;
+        }
+
+        // Inverse Distance Weighting Interpolation
+        let weightedWind = { dir: 0, spd: 0 };
+        let weightSum = 0;
+
+        closestSites.forEach(site => {
+            const weight = 1 / (site.distance ** 2);
+            const windSpd = site.spd;
+            const windDir = site.dir;
+
+            // Convert wind direction and speed to u and v components
+            const u = windSpd * Math.sin(windDir * Math.PI / 180);
+            const v = windSpd * Math.cos(windDir * Math.PI / 180);
+
+            weightedWind.u += u * weight;
+            weightedWind.v += v * weight;
+            weightSum += weight;
+        });
+
+        if (weightSum === 0) {
+            console.error('Weight sum is zero, cannot interpolate wind.');
+            return null;
+        }
+
+        weightedWind.u /= weightSum;
+        weightedWind.v /= weightSum;
+
+        // Convert back to wind direction and speed
+        const interpolatedSpd = Math.sqrt(weightedWind.u ** 2 + weightedWind.v ** 2);
+        const interpolatedDir = (Math.atan2(weightedWind.u, weightedWind.v) * 180 / Math.PI + 360) % 360;
+
+        return {
+            windSpeedKts: interpolatedSpd,
+            windDirDegrees: interpolatedDir
+        };
+    },
+
+    calculateDistance(lat1, lon1, lat2, lon2) {
+        const toRad = angle => angle * Math.PI / 180;
+        const R = 6371; // Earth's radius in km
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a = Math.sin(dLat / 2) ** 2 +
+                  Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+                  Math.sin(dLon / 2) ** 2;
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c; // Distance in km
+    },
+
+    create() {
+        this.windtempdata = {};
+    },
+
+    update(dt) {
+        // Update logic if needed
+    }
 });
