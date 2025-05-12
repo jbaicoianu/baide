@@ -739,6 +739,7 @@ room.registerElement('weather-skybox', {
 });
 room.registerElement('weather-winds', {
     windtempdata: {},
+    region = 'sfo',
 
     async loadRegionData(region, level = 30) {
         try {
@@ -761,7 +762,7 @@ room.registerElement('weather-winds', {
     async getWindAt(lat, lon, level = 30) {
         if (!this.windtempdata[level]) {
             console.warn(`Wind data for level ${level} not loaded. Loading now...`);
-            const loadedData = await this.loadRegionData('your-region', level); // Replace 'your-region' with actual region parameter
+            const loadedData = await this.loadRegionData(this.region, level); // Replace 'your-region' with actual region parameter
             if (!loadedData) {
                 console.error('Unable to load wind data.');
                 return null;
