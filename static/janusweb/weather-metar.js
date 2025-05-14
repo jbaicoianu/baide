@@ -680,7 +680,7 @@ room.registerElement('weather-layer', {
 });
 room.registerElement('weather-skybox', {
     resolution: 1024,
-    stationid: 'KOAK',
+    stationid: '',
     refreshtime: 1/6,
     
     create() {
