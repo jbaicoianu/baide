@@ -620,32 +620,24 @@ room.registerElement('weather-layer', {
             };
             let coverage = coverageValues[this.coverage] ?? this.coverage;
 
-            if (this.weather && this.skydome) {
-                const weather = this.weather,
-                      condition = weather.skyConditions[this.level];
-            
+            let winddir = this.winddir * Math.PI / 180;
+            let windspeed = this.windspeed * 0.514444; // meters per second
+            let adjustedWindspeed = Math.max(0.001, (windspeed / 1000)) * Math.pow(1.1, -this.level);
 
-                //let winddir = weather.windDirDegrees * Math.PI / 180;
-                //let windspeed = weather.windSpeedKts * 0.514444; // meters per second
-                let winddir = this.winddir * Math.PI / 180;
-                let windspeed = this.windspeed * 0.514444; // meters per second
-                let adjustedWindspeed = Math.max(0.001, (windspeed / 1000)) * Math.pow(1.1, -this.level);
-
-                let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
-                console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
-                this.skydome.traverseObjects(n => {
-                    if (n.material && n.material.uniforms) {
-                        //console.log(n.material, n);
-                        let skydome = n;
-                        skydome.material.uniforms.coverage.value = coverage * 1.5;
-                        skydome.material.uniforms.wind.value.copy(wind);
-                        if (+skydome.material.uniforms.timeOffset.value == 0) skydome.material.uniforms.timeOffset.value = ((Date.now() / 1000) * (this.level + 1)) % 100000;
-                        skydome.renderOrder = 100 - this.level;
-                        this.shaderNeedsUpdate = false;
-                    }
-                });
-                //console.log('changed shader params', this);
-            }
+            let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
+            console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
+            this.skydome.traverseObjects(n => {
+                if (n.material && n.material.uniforms) {
+                    //console.log(n.material, n);
+                    let skydome = n;
+                    skydome.material.uniforms.coverage.value = coverage * 1.5;
+                    skydome.material.uniforms.wind.value.copy(wind);
+                    if (+skydome.material.uniforms.timeOffset.value == 0) skydome.material.uniforms.timeOffset.value = ((Date.now() / 1000) * (this.level + 1)) % 100000;
+                    skydome.renderOrder = 100 - this.level;
+                    this.shaderNeedsUpdate = false;
+                }
+            });
+            //console.log('changed shader params', this);
         }
     },
     updateConditions(weather) {
