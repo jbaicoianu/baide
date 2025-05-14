@@ -651,9 +651,10 @@ room.registerElement('weather-layer', {
     updateConditions(weather) {
         this.weather = weather;
         const condition = weather.skyConditions[this.level];
+        this.altitude = +condition.altitude;
         this.coverage = condition.skyCover;
-        this.winddir = weather.windDirDegrees;
-        this.windspeed = weather.windSpeedKts;
+        this.winddir = +weather.windDirDegrees;
+        this.windspeed = +weather.windSpeedKts;
         this.shaderNeedsUpdate = true;
     }
 });
