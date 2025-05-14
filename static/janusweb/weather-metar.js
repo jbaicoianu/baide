@@ -625,7 +625,7 @@ room.registerElement('weather-layer', {
             let adjustedWindspeed = Math.max(0.001, (windspeed / 1000)) * Math.pow(1.1, -this.level);
 
             let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
-            console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
+            //console.log('my wind!', winddir, windspeed, weather.windSpeedKts, adjustedWindspeed, wind);
             this.skydome.traverseObjects(n => {
                 if (n.material && n.material.uniforms) {
                     //console.log(n.material, n);
