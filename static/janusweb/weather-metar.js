@@ -513,7 +513,7 @@ room.registerElement('weather-metar', {
 
             let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
 
-            const skyDome = this.skyDomes[index] || this.createObject('weather-skydome', {
+            const skyDome = this.skyDomes[index] || this.createObject('weather-layer', {
                 level: index,
                 altitude: altitude,
             });
@@ -562,7 +562,7 @@ room.registerElement('weather-metar', {
         // Per-frame update logic if needed
     }
 });
-room.registerElement('weather-skydome', {
+room.registerElement('weather-layer', {
     altitude: 1000,
     coverage: .2,
     wind: V(),
