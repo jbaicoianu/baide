@@ -2459,5 +2459,13 @@
     "branch": "custom-elements-refactor",
     "commit_hash": "2a32f9dfbf08674ba9e31804c7fb5cb5918f5abb",
     "file_name": "static/janusweb/weather-metar.html"
+  },
+  {
+    "role": "User",
+    "content": "Rename weather-skydome to weather-layer [Manual edit]",
+    "timestamp": "2025-05-14T22:36:27.503628Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "26d316012b913770d106e427f55f461b7e7d3af3",
+    "file_name": "static/janusweb/weather-metar.js"
   }
 ]
