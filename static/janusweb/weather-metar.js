@@ -468,39 +468,7 @@ room.registerElement('weather-metar', {
             let altitude = condition.cloudBaseFtAgl * 0.3048;
             const scale = 4000;
             largestScale = Math.max(largestScale, altitude);
-/*
-            const skySphere = room.createObject('object', {
-                id: `sphere`,
-                shader_id: 'clouds',
-                image_id: 'skynoise',
-                cull_face: 'front',
-                pos: `0 0 0`,
-                scale: `${scale} ${altitude} ${scale}`,
-                col: color,
-                transparent: true,
-                depth_write: false,
-            });
 
-            setTimeout(() => {
-                let coverage = 0;
-                if (condition.skyCover == 'FEW') coverage = 0.3;
-                else if (condition.skyCover == 'SCT') coverage = 0.4;
-                else if (condition.skyCover == 'BKN') coverage = 0.5;
-                else if (condition.skyCover == 'OVC') coverage = 1.0;
-
-                let winddir = weather.windDirDegrees * Math.PI / 180;
-                let windspeed = weather.windSpeedKts * 0.514444; // meters per second
-                let adjustedWindspeed = (windspeed / 1000) * (1 + index);
-
-                let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
-
-                skySphere.shader.uniforms.coverage.value = coverage;
-                skySphere.shader.uniforms.wind.value = wind;
-                skySphere.shader.uniforms.timeOffset.value = (Date.now() / 1000) * (index + 1);
-                skySphere.traverseObjects(n => { if (n.material) n.renderOrder = 100 - index; });
-
-            }, 500);
-*/
             let coverage = 0;
             if (condition.skyCover == 'FEW') coverage = 0.3;
             else if (condition.skyCover == 'SCT') coverage = 0.4;
@@ -565,7 +533,8 @@ room.registerElement('weather-metar', {
 room.registerElement('weather-layer', {
     altitude: 1000,
     coverage: .2,
-    wind: V(),
+    winddir: 0,
+    windspeed: 0,
     conditions: {},
     level: 0,
     
@@ -643,17 +612,23 @@ room.registerElement('weather-layer', {
     update() {
         if (this.shaderNeedsUpdate) {
             //console.log('update?', this.conditions, this.skydome);
+            const coverageValues = {
+                'FEW': 0.3,
+                'SCT': 0.4,
+                'BKN': 0.5,
+                'OVC': 1.0
+            };
+            let coverage = coverageValues[this.coverage] ?? this.coverage;
+
             if (this.weather && this.skydome) {
                 const weather = this.weather,
                       condition = weather.skyConditions[this.level];
-                let coverage = 0;
-                if (condition.skyCover == 'FEW') coverage = 0.3;
-                else if (condition.skyCover == 'SCT') coverage = 0.4;
-                else if (condition.skyCover == 'BKN') coverage = 0.5;
-                else if (condition.skyCover == 'OVC') coverage = 1.0;
+            
 
-                let winddir = weather.windDirDegrees * Math.PI / 180;
-                let windspeed = weather.windSpeedKts * 0.514444; // meters per second
+                //let winddir = weather.windDirDegrees * Math.PI / 180;
+                //let windspeed = weather.windSpeedKts * 0.514444; // meters per second
+                let winddir = this.winddir * Math.PI / 180;
+                let windspeed = this.windspeed * 0.514444; // meters per second
                 let adjustedWindspeed = Math.max(0.001, (windspeed / 1000)) * Math.pow(1.1, -this.level);
 
                 let wind = V(Math.sin(winddir), 0, Math.cos(winddir)).multiplyScalar(adjustedWindspeed);
@@ -675,6 +650,10 @@ room.registerElement('weather-layer', {
     },
     updateConditions(weather) {
         this.weather = weather;
+        const condition = weather.skyConditions[this.level];
+        this.coverage = condition.skyCover;
+        this.winddir = weather.windDirDegrees;
+        this.windspeed = weather.windSpeedKts;
         this.shaderNeedsUpdate = true;
     }
 });
