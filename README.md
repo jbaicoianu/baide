@@ -30,7 +30,7 @@ Instructions on how to install BaiDE.
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/baide.git
+git clone https://github.com/jbaicoianu/baide.git
 
 # Navigate to the project directory
 cd baide
