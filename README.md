@@ -66,10 +66,7 @@ Specify the license under which BaiDE is distributed.
 
 ## Contact
 
-Provide contact information or links for users to reach out with questions or feedback.
-
-- **Email:** your.email@example.com
-- **GitHub:** [yourusername](https://github.com/yourusername)
+- **GitHub:** [jbaicoianu](https://github.com/jbaicoianu)
 
 ---
 
