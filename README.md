@@ -1,6 +1,6 @@
 # BaiDE
 
-**BaiDE** stands for **Bespoke Artificial Intelligence Development Environment**. It is an AI-assisted development environment that integrates with various generative AI sources to handle multimodal generation of code and assets. BaiDE provides a flexible and comprehensive platform for developing cutting-edge AI applications, streamlining the development process by leveraging the power of AI to enhance productivity and creativity.
+**BaiDE** stands for **Bespoke Artificial Intelligence Development Environment**. It is an AI-assisted development environment that integrates with various generative AI sources to handle multimodal generation of code and assets. **Beyond developing AI applications**, BaiDE provides a flexible and comprehensive platform for vibecoding any type of app, from simple personal apps to 3D games, streamlining the development process by leveraging the power of AI to enhance productivity and creativity. Additionally, BaiDE was developed entirely within itself, showcasing its capabilities and robustness.
 
 ## Table of Contents
 
