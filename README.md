@@ -45,7 +45,7 @@ Guidelines and examples on how to use BaiDE.
 
 ```bash
 # Start the development server
-npm start
+./baide.py
 ```
 
 Include code examples, screenshots, or demos to illustrate usage.
