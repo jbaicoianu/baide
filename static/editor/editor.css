@@ -11,6 +11,8 @@ body {
   display: flex;
   height: 100%;
   width: 100%;
+  max-width: 100vw;
+  max-height: 100vh;
 }
 /* Left Column - Project Browser */
 #projectBrowser {
@@ -282,7 +284,7 @@ input[type="submit"] {
 }
 #chatForm input[type="submit"] {
   position: absolute;
-  bottom: 30px;
+  bottom: 10px;
   right: 10px;
   width: 0;
   height: 0;
@@ -532,6 +534,7 @@ form {
   margin-left: 10px;
   cursor: pointer;
   color: #007bff;
+  order: 4;
 }
 .CodeMirror-selected {
   background-color: rgba(0,255,0,.5) !important;
@@ -719,4 +722,86 @@ input[type="text"] {
 .new-file-modal .image-prompt-container textarea {
   width: 100%;
   height: 80px;
+}
+baide-editor {
+  flex: 1;
+}
+baide-editor-code {
+  flex: 1;
+  height: 100%;
+}
+baide-editor {
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+}
+  
+baide-editor-code {
+  flex: 1;
+  position: relative;
+}
+  
+baide-project-tree {
+  width: 250px;
+  border-right: 1px solid #ccc;
+  overflow-y: auto;
+}
+  
+baide-project-selector,
+baide-branch-selector,
+baide-file-tabs,
+baide-context-selector,
+baide-chat {
+  padding: 10px;
+}
+  
+baide-chat-history {
+  height: 70%;
+  overflow-y: auto;
+}
+  
+.CodeMirror.CodeMirror-wrap {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 100%;
+}
+.baide-file-tabs {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.tab {
+  padding: 10px;
+  cursor: pointer;
+  position: relative;
+  user-select: none;
+}
+.close-btn {
+  margin-left: 5px;
+  color: red;
+  cursor: pointer;
+}
+.more-tabs {
+  position: relative;
+}
+.dropdown-content {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+.dropdown-content .tab {
+  display: block;
+}
+.hidden {
+  display: none;
+}
+.show {
+  display: block;
 }

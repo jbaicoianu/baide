@@ -1,0 +1,458 @@
+[
+  {
+    "role": "System",
+    "content": "Created new file static/janusweb/skyclouds.frag.",
+    "timestamp": "2025-05-03T08:15:46.079316Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "fd4b1bf049d80741bc3394807dfdd49212b9d3da",
+    "file_name": "static/janusweb/skyclouds.frag"
+  },
+  {
+    "role": "User",
+    "content": "Add sky cloud shader [Manual edit]",
+    "timestamp": "2025-05-03T08:16:30.385806Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "54b97941765730b017d8ea8dc68218868c5e214f",
+    "file_name": "static/janusweb/skyclouds.frag"
+  },
+  {
+    "role": "User",
+    "content": "Added clouds shader [Manual edit]",
+    "timestamp": "2025-05-04T07:08:16.916758Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "7d2234b0321cab3dad20a49f45db1c7c94a22941",
+    "file_name": "static/janusweb/skyclouds.frag"
+  },
+  {
+    "role": "User",
+    "content": "Don't define PI [Manual edit]",
+    "timestamp": "2025-05-05T07:05:48.510579Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "f59288aa577776368d815434e8c648a21287a7a5",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:20:23.256271Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "10dfa80e74a55b68a89e6d8c9817179c87ef4f04",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:21:28.324684Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "155c5285886d903a4790d5a9a39c753c33a38a40",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:21:41.527811Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "15da1ebe6061fc6cdba75e3610fc700862f7633f",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:21:50.718954Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "51e5df9113de86a797dc81dac56a630adf1deba5",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:24:28.333605Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "5cee75a7f09fe013f334b65fe9a83866b62c7936",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:25:19.727627Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "73c2bdb814d4d2cc7ae60005c95fd263e43528d2",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:30:04.426178Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "9ed8190ee7f2d61aceb8662bc4677d2bc3642e8f",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:30:38.644651Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "a84a1bdf47cb6f7c1e72a9ea7be52128fa7a8bf0",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:31:27.357301Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "7710a59d6754d87f6388f4994632b8940d64c9e0",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:31:50.066467Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "c0d6db6b5395d4fda035d09888a9bce939af2bb6",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:32:08.182828Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "1bded648fce22bd1954bb1c1cd171905cc2258d2",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:32:22.761523Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "964733c66b9fb70c6c34a324869d088e11e69698",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:33:17.916109Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "1c4229094678eb3f4bd5b0a74f85df1b59ba1209",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:34:25.631153Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "d8fa51b07fb41b44a1560cfb64f9cafc695986df",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:34:33.101837Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "14515c10ef0bf34e39b5c73f184a8fe908bcff57",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:48:56.241924Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "4b417f98164002ca90113b077c9f20899d2e07ce",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:49:23.801396Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "c7fed920393dedc66a90ccff091861e873c129b8",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:50:15.537385Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "b493bdfbd274e80ad7f4792d5a71066ba579fd21",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:50:27.027179Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "5baa53d84b64f03e598481eae4917fd6bc479f3f",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:54:16.109820Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "b1e0d109cfe5eca0346aab4f2c88b3dc6f2afaf3",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T17:55:26.170028Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "ca1823c8a3f7651b358977799d757a520aed82d4",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:24:58.190206Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "3a80db1b4d59ee55949e960d8e5ea7c4871abf7d",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:26:06.266206Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "3d3e97b5cfc736356341e544bc3281eba4075945",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:26:41.962877Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "7990d0aee3127195fc5d31e770583b3e4bd0bb7c",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:26:51.069906Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "c43507ebc5af46eeffeed0024895d36a22e641ef",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:27:01.592996Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "2db73bc4876cf2a9a9fa11332028e6778fcf0a86",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:27:12.746382Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "0cadb9f8ed21d88a8580387bf8993bbac26dcd8d",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:27:24.462263Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "76d6752d563dfe4efed85eb36d0a5e0251ddbcc0",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:27:42.674915Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "a5ea7a52f3cc740cefd310de0f38065c7696b070",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:32:30.624589Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "8abc8b2f889edbfc1054be4bb5a0d499ae9b4387",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:32:49.137220Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "f459703d5184f41264f3e06a1cc576e6f237ee69",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:32:56.619965Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "31bcaf5c98a629eafc738119c31a0da2ec611e79",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:34:07.712722Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "8a91e618462ca6dfff65c57e1ce9ac80041ba55c",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:34:29.815940Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "67ebe0ea949aed09a640c69d3637f105d17ac442",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:34:43.262635Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "7d49337785da2d73aa5907e7a3afd03e24cb3f2a",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:36:00.694434Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "2c9de0cadda5ee8cb8d29b9e6da3f1125ba1ab9b",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:36:32.915678Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "09091655e14ce6c2c371c479fef10e72a40d8190",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:36:39.253939Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "c794d41b68338d131106ef23a2dc774942cb061a",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:37:52.760679Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "6297eab3d20a1e0a538f65e696f5d42efbd2b9f9",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T18:39:33.274112Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "15e66151965d0f79b9e7ded53d328852ee88da19",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T19:03:26.992752Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "2663c17a8a4d33d50311280cc2da7d6fc56cd168",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T19:16:46.366001Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "79588b5de818cf80834742a86f283805af0c5f53",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T19:17:24.562829Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "8fc1e2895c06fd16f01b2b92e4008f0804d912cf",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-05T19:17:55.071483Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "6a4d95550a46aa5c1beb08c28727ed94fa35138e",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader tweaks [Manual edit]",
+    "timestamp": "2025-05-06T05:28:47.789357Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "aa1389077d014c213ac005beb447f9875706c679",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Sky shader fisheye mapping [Manual edit]",
+    "timestamp": "2025-05-06T23:04:28.187683Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "666bed15d8aecfbd5421a32d46d46053b1ecbb88",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Changed noise method [Manual edit]",
+    "timestamp": "2025-05-07T00:34:34.006120Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "549dbf5e71bda8ddec8b68dc58fadd3f8763c8bb",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Updated skydome [Manual edit]",
+    "timestamp": "2025-05-07T05:15:05.924695Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "755f7e374eb8a8fd83bc9ac836be023c320727aa",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Updated skydome [Manual edit]",
+    "timestamp": "2025-05-07T16:43:31.397514Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "c96ff050771ff6a7e8fcf0eb5f8cc69322cb6e2b",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Updated skydome [Manual edit]",
+    "timestamp": "2025-05-07T16:45:34.256157Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "523210c248e25e847940dd8a6e3c2e3f05d917bc",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Updated skydome [Manual edit]",
+    "timestamp": "2025-05-07T16:45:42.173091Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "ad539dc8b3afda54aed5301c1bb20acac8cde95e",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Updated skydome [Manual edit]",
+    "timestamp": "2025-05-07T16:56:01.905951Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "22e22ece609dc72e73b017f5e802a5e8dcaf938b",
+    "file_name": "static/janusweb/skyclouds.txt"
+  },
+  {
+    "role": "User",
+    "content": "Updated skydome [Manual edit]",
+    "timestamp": "2025-05-07T16:57:29.706787Z",
+    "branch": "custom-elements-refactor",
+    "commit_hash": "bc3d8fe669839506c961d0793fa1a17879b515ab",
+    "file_name": "static/janusweb/skyclouds.txt"
+  }
+]
